@@ -1,0 +1,84 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "noResults": "No results",
+    "retry": "Retry",
+    "seeAll": "See all"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "firstName": "First name",
+    "lastName": "Last name"
+  },
+  "dashboard": {
+    "greeting": "Hello",
+    "pendingTasks": "Pending tasks",
+    "recentDocuments": "Recent documents"
+  },
+  "documents": {
+    "title": "Documents",
+    "search": "Search for a document...",
+    "upload": "Add document",
+    "noDocuments": "No documents",
+    "startWorkflow": "Start workflow",
+    "download": "Download",
+    "share": "Share",
+    "lock": "Lock",
+    "unlock": "Unlock"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "pending": "Pending",
+    "completed": "Completed",
+    "approve": "Approve",
+    "reject": "Reject",
+    "sign": "Sign",
+    "delegate": "Delegate",
+    "noTasks": "No tasks"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications"
+  },
+  "signature": {
+    "title": "Signature",
+    "sign": "Sign",
+    "clear": "Clear",
+    "save": "Save",
+    "pinRequired": "PIN required",
+    "biometricPrompt": "Authenticate to sign"
+  },
+  "profile": {
+    "title": "Profile",
+    "account": "Account",
+    "preferences": "Preferences",
+    "support": "Support",
+    "about": "About"
+  },
+  "status": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "inProgress": "In progress",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "signed": "Signed",
+    "archived": "Archived"
+  }
+}

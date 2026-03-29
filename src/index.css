@@ -1,0 +1,832 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Grand+Hotel&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================
+   ADVIST Design System
+   =====================================================
+   Palette : Grayscale Professional
+   Fonts : Exo 2, Grand Hotel, JetBrains Mono
+   ===================================================== */
+
+@layer base {
+  :root {
+    /* Fond gris tres clair */
+    --color-background: #fafafa;
+    --color-background-rgb: 250 250 250;
+    --color-surface: #ffffff;
+    --color-surface-rgb: 255 255 255;
+    --color-surface-alt: #f5f5f5;
+
+    /* Noir pour elements forts */
+    --color-primary: #171717;
+    --color-primary-rgb: 23 23 23;
+
+    /* Texte */
+    --color-text-primary: #171717;
+    --color-text-secondary: #737373;
+    --color-text-muted: #a3a3a3;
+    --color-text-label: #525252;
+
+    /* Bordures */
+    --color-border: #e5e5e5;
+    --color-border-dark: #d4d4d4;
+
+    /* Etats */
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+    --color-info: #3b82f6;
+
+    /* Severite */
+    --color-severity-low: #6b7280;
+    --color-severity-medium: #f59e0b;
+    --color-severity-high: #ef4444;
+    --color-severity-critical: #7f1d1d;
+  }
+
+  .dark {
+    --color-background: #171717;
+    --color-background-rgb: 23 23 23;
+    --color-surface: #262626;
+    --color-surface-rgb: 38 38 38;
+    --color-surface-alt: #404040;
+    --color-primary: #ffffff;
+    --color-primary-rgb: 255 255 255;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #a3a3a3;
+    --color-text-muted: #737373;
+    --color-text-label: #d4d4d4;
+    --color-border: #404040;
+    --color-border-dark: #525252;
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+    --color-info: #3b82f6;
+  }
+
+  html {
+    font-family:
+      'Exo 2',
+      system-ui,
+      -apple-system,
+      sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    transition:
+      background-color 300ms ease,
+      color 300ms ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  /* Titres decoratifs avec Grand Hotel */
+  .font-decorative {
+    font-family: 'Grand Hotel', cursive;
+  }
+
+  /* Code avec JetBrains Mono */
+  code,
+  pre,
+  .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+}
+
+@layer components {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* =====================================================
+     CARD SYSTEM - Monochrome
+     ===================================================== */
+  .advist-card {
+    @apply bg-white rounded-2xl p-6;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition:
+      transform 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  .dark .advist-card {
+    background: #262626;
+    border-color: #404040;
+  }
+
+  .advist-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .advist-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Card sombre */
+  .advist-card-dark {
+    @apply rounded-2xl p-6 text-white;
+    background: #171717;
+  }
+
+  /* =====================================================
+     BUTTONS - Grayscale
+     ===================================================== */
+  .advist-btn-primary {
+    @apply px-6 py-3 rounded-xl font-medium;
+    background: #171717;
+    color: white;
+    transition: all 200ms ease;
+  }
+
+  .advist-btn-primary:hover {
+    background: #262626;
+  }
+
+  .advist-btn-primary:active {
+    background: #0a0a0a;
+  }
+
+  .advist-btn-secondary {
+    @apply px-6 py-3 rounded-xl font-medium bg-transparent;
+    border: 1px solid #e5e5e5;
+    color: #171717;
+    transition: all 200ms ease;
+  }
+
+  .advist-btn-secondary:hover {
+    background: #f5f5f5;
+    border-color: #d4d4d4;
+  }
+
+  .advist-btn-ghost {
+    @apply px-6 py-3 rounded-xl font-medium bg-transparent;
+    color: #404040;
+    transition: all 200ms ease;
+  }
+
+  .advist-btn-ghost:hover {
+    background: #f5f5f5;
+    color: #171717;
+  }
+
+  .advist-btn-float {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center;
+    background: #171717;
+    color: white;
+    transition: all 200ms ease;
+  }
+
+  .advist-btn-float:hover {
+    background: #262626;
+  }
+
+  .advist-btn-float-danger {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center;
+    background: #ef4444;
+    color: white;
+    transition: all 200ms ease;
+  }
+
+  .advist-btn-float-danger:hover {
+    background: #dc2626;
+  }
+
+  /* =====================================================
+     PROGRESS BARS & STATUS
+     ===================================================== */
+  .advist-progress {
+    @apply h-2 rounded-full overflow-hidden;
+    background: #f5f5f5;
+  }
+
+  .advist-progress-validated {
+    @apply h-full rounded-full;
+    background: #22c55e;
+  }
+
+  .advist-progress-in-progress {
+    @apply h-full rounded-full;
+    background: #3b82f6;
+  }
+
+  .advist-progress-blocked {
+    @apply h-full rounded-full;
+    background: #f59e0b;
+  }
+
+  .advist-progress-pending {
+    @apply h-full rounded-full;
+    background: #e5e5e5;
+  }
+
+  /* =====================================================
+     BADGES & TAGS
+     ===================================================== */
+  .advist-badge {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #f5f5f5;
+    color: #171717;
+  }
+
+  .advist-badge-success {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #f0fdf4;
+    color: #166534;
+  }
+
+  .advist-badge-warning {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #fffbeb;
+    color: #92400e;
+  }
+
+  .advist-badge-error {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #fef2f2;
+    color: #991b1b;
+  }
+
+  .advist-badge-info {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #eff6ff;
+    color: #1e40af;
+  }
+
+  .advist-badge-dark {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold text-white;
+    background: #171717;
+  }
+
+  /* Badges de severite */
+  .advist-badge-severity-low {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+
+  .advist-badge-severity-medium {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #fffbeb;
+    color: #92400e;
+  }
+
+  .advist-badge-severity-high {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #fef2f2;
+    color: #991b1b;
+  }
+
+  .advist-badge-severity-critical {
+    @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
+    background: #7f1d1d;
+    color: white;
+  }
+
+  /* =====================================================
+     LIST ITEMS
+     ===================================================== */
+  .advist-list-item {
+    @apply p-4 rounded-xl;
+    transition: background-color 240ms ease;
+  }
+
+  .advist-list-item:hover {
+    background: #fafafa;
+  }
+
+  /* =====================================================
+     NAVIGATION
+     ===================================================== */
+  .advist-nav {
+    @apply text-white;
+    background: #171717;
+  }
+
+  .advist-nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl;
+    transition: background-color 240ms ease;
+  }
+
+  .advist-nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .advist-nav-item.active {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* =====================================================
+     KPI WIDGETS
+     ===================================================== */
+  .advist-kpi {
+    @apply relative p-4 rounded-2xl;
+    background: #fafafa;
+  }
+
+  .advist-kpi-dark {
+    @apply relative p-4 rounded-2xl text-white;
+    background: #171717;
+  }
+
+  /* =====================================================
+     AVATARS
+     ===================================================== */
+  .advist-avatar {
+    @apply rounded-full border-2 border-white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .advist-avatar-group {
+    @apply flex -space-x-2;
+  }
+
+  /* =====================================================
+     INPUTS
+     ===================================================== */
+  .advist-input {
+    @apply w-full px-4 py-3 rounded-xl border bg-white;
+    border-color: #e5e5e5;
+    transition:
+      border-color 240ms ease,
+      box-shadow 240ms ease;
+  }
+
+  .advist-input:focus {
+    border-color: #171717;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.1);
+  }
+
+  .advist-input::placeholder {
+    color: #a3a3a3;
+  }
+}
+
+/* Custom scrollbar - uses theme colors */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}
+
+/* =====================================================
+   PRINT STYLES - Document Only (A4 Portrait)
+   ===================================================== */
+@media print {
+  /* Masquer TOUS les elements de l'interface */
+  header,
+  nav,
+  aside,
+  footer,
+  .sidebar,
+  .navbar,
+  .top-navbar,
+  .user-sidebar,
+  .admin-sidebar,
+  .modal-backdrop,
+  .print\\:hidden,
+  .no-print,
+  [class*='Sidebar'],
+  [class*='Navbar'],
+  [class*='TopNav'],
+  button:not(.print-keep),
+  .fixed.top-0,
+  .fixed.left-0,
+  .fixed.bottom-0,
+  .sticky,
+  .z-50,
+  .z-40,
+  .z-30 {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Reset du body et html */
+  html,
+  body {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Configuration de la page A4 */
+  @page {
+    size: A4 portrait;
+    margin: 10mm 15mm 15mm 15mm;
+  }
+
+  /* Le contenu principal prend toute la largeur */
+  main,
+  .main-content,
+  [class*='main'],
+  .document-content,
+  .document-viewer,
+  .print-content,
+  [data-print='true'] {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  /* Supprimer les marges/paddings des layouts */
+  .ml-64,
+  .ml-72,
+  .ml-80,
+  .pl-64,
+  .pl-72,
+  .pl-80,
+  .pt-16,
+  .pt-20 {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Validation report content */
+  .validation-report-content,
+  [data-print='true'] {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 180mm !important;
+    margin: 0 auto !important;
+    padding: 10mm !important;
+    background: white !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Modals - masquer le backdrop, garder le contenu */
+  .modal-overlay {
+    background: transparent !important;
+  }
+
+  /* Preserver les couleurs */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Saut de page */
+  .print-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .print-avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Masquer les boutons d'action et toolbars */
+  .action-buttons,
+  .toolbar,
+  .actions-bar,
+  [class*='actions'],
+  [class*='toolbar'] {
+    display: none !important;
+  }
+
+  /* Afficher le document viewer en pleine page */
+  .document-viewer-container,
+  .pdf-viewer,
+  iframe {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 250mm !important;
+    border: none !important;
+  }
+
+  /* Reset des transformations pour l'impression */
+  [style*='transform'],
+  [style*='scale'] {
+    transform: none !important;
+  }
+
+  /* Le document doit prendre toute la page */
+  .w-\\[595px\\],
+  .h-\\[842px\\] {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+  }
+
+  /* Supprimer le fond gris du viewer */
+  .bg-\\[\\#525659\\],
+  .bg-\\[\\#3A3D40\\],
+  .bg-\\[\\#2D2D2D\\] {
+    background: white !important;
+  }
+
+  /* Flex containers en block pour impression */
+  .flex-1.flex.flex-col,
+  .flex-1.overflow-auto {
+    display: block !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+}
+
+/* =====================================================
+   RTL (Right-to-Left) SUPPORT
+   ===================================================== */
+html[dir='rtl'] {
+  direction: rtl;
+}
+
+html[dir='rtl'] body {
+  text-align: right;
+}
+
+/* RTL-aware flex and spacing */
+html[dir='rtl'] .rtl\:flex-row-reverse {
+  flex-direction: row-reverse;
+}
+
+html[dir='rtl'] .rtl\:space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* RTL-aware margins */
+html[dir='rtl'] .rtl\:ml-auto {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+html[dir='rtl'] .rtl\:mr-auto {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+/* RTL-aware text alignment */
+html[dir='rtl'] .rtl\:text-right {
+  text-align: right;
+}
+
+html[dir='rtl'] .rtl\:text-left {
+  text-align: left;
+}
+
+/* RTL navigation */
+html[dir='rtl'] .advist-nav-item {
+  flex-direction: row-reverse;
+}
+
+/* RTL sidebar */
+html[dir='rtl'] .sidebar-left {
+  left: auto;
+  right: 0;
+}
+
+html[dir='rtl'] .ml-64 {
+  margin-left: 0;
+  margin-right: 16rem;
+}
+
+html[dir='rtl'] .ml-72 {
+  margin-left: 0;
+  margin-right: 18rem;
+}
+
+/* RTL icons */
+html[dir='rtl'] .rtl\:rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* RTL transitions */
+html[dir='rtl'] .translate-x-full {
+  transform: translateX(-100%);
+}
+
+html[dir='rtl'] .-translate-x-full {
+  transform: translateX(100%);
+}
+
+/* Arabic font support */
+html[lang='ar'] {
+  font-family:
+    'Noto Sans Arabic',
+    'Exo 2',
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+/* =====================================================
+   ACCESSIBILITY - IMPROVED CONTRAST (WCAG AA)
+   ===================================================== */
+/* Improved muted text contrast - from #a3a3a3 to #6b7280 */
+.text-muted-accessible {
+  color: #6b7280;
+}
+
+/* Dark mode accessible muted text */
+html.dark .text-muted-accessible {
+  color: #9ca3af;
+}
+
+/* Override low-contrast colors */
+.text-gray-400,
+.text-neutral-400 {
+  color: #6b7280 !important;
+}
+
+html.dark .text-gray-400,
+html.dark .text-neutral-400 {
+  color: #9ca3af !important;
+}
+
+/* Improved placeholder contrast */
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Focus indicators for better accessibility */
+:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 2px;
+}
+
+html.dark :focus-visible {
+  outline-color: #ffffff;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #171717;
+  color: white;
+  padding: 8px 16px;
+  z-index: 100;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* =====================================================
+   DARK MODE STYLES
+   Utilise les couleurs du theme via CSS variables
+   ===================================================== */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark .advist-card {
+  background: #262626;
+  border-color: #404040;
+}
+
+html.dark .advist-btn-secondary {
+  border-color: #404040;
+  color: #f5f5f5;
+}
+
+html.dark .advist-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #525252;
+}
+
+html.dark .advist-progress {
+  background: #404040;
+}
+
+html.dark .advist-badge {
+  background: #404040;
+  color: #f5f5f5;
+}
+
+html.dark .advist-list-item:hover {
+  background: #262626;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #262626;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #525252;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #737373;
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #262626;
+  border-color: #404040;
+  color: #ffffff;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #737373;
+}
+
+html.dark input:focus,
+html.dark textarea:focus,
+html.dark select:focus {
+  border-color: #525252;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+html.dark .bg-white {
+  background-color: #262626 !important;
+}
+
+html.dark .bg-primary-50,
+html.dark .bg-primary-100 {
+  background-color: #171717 !important;
+}
+
+html.dark .text-primary-900 {
+  color: #ffffff !important;
+}
+
+html.dark .text-primary-700,
+html.dark .text-primary-600 {
+  color: #a3a3a3 !important;
+}
+
+html.dark .text-primary-500 {
+  color: #737373 !important;
+}
+
+html.dark .border-primary-100,
+html.dark .border-primary-200,
+html.dark .border-primary-300 {
+  border-color: #404040 !important;
+}

@@ -1,0 +1,3 @@
+-- ADVIST Seed Data
+-- This file will be populated with initial data in later phases
+-- (default roles, subscription plans, notification templates, etc.)

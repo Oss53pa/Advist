@@ -1,0 +1,84 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "noResults": "Aucun résultat",
+    "retry": "Réessayer",
+    "seeAll": "Voir tout"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Déjà un compte ?",
+    "firstName": "Prénom",
+    "lastName": "Nom"
+  },
+  "dashboard": {
+    "greeting": "Bonjour",
+    "pendingTasks": "Tâches en attente",
+    "recentDocuments": "Documents récents"
+  },
+  "documents": {
+    "title": "Documents",
+    "search": "Rechercher un document...",
+    "upload": "Ajouter un document",
+    "noDocuments": "Aucun document",
+    "startWorkflow": "Démarrer un workflow",
+    "download": "Télécharger",
+    "share": "Partager",
+    "lock": "Verrouiller",
+    "unlock": "Déverrouiller"
+  },
+  "tasks": {
+    "title": "Tâches",
+    "pending": "En attente",
+    "completed": "Terminées",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "sign": "Signer",
+    "delegate": "Déléguer",
+    "noTasks": "Aucune tâche"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Tout marquer comme lu",
+    "noNotifications": "Aucune notification"
+  },
+  "signature": {
+    "title": "Signature",
+    "sign": "Signer",
+    "clear": "Effacer",
+    "save": "Enregistrer",
+    "pinRequired": "Code PIN requis",
+    "biometricPrompt": "Authentifiez-vous pour signer"
+  },
+  "profile": {
+    "title": "Profil",
+    "account": "Compte",
+    "preferences": "Préférences",
+    "support": "Support",
+    "about": "À propos"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "pending": "En attente",
+    "inProgress": "En cours",
+    "approved": "Approuvé",
+    "rejected": "Rejeté",
+    "signed": "Signé",
+    "archived": "Archivé"
+  }
+}

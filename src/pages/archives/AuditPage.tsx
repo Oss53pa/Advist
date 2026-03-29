@@ -1,0 +1,646 @@
+﻿import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Shield,
+  Search,
+  Filter,
+  Download,
+  Eye,
+  Calendar,
+  User,
+  Clock,
+  FileText,
+  Edit,
+  Trash2,
+  LogIn,
+  LogOut,
+  UserPlus,
+  Settings,
+  Key,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react';
+import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
+import { Badge } from '../../components/ui/Badge';
+import { Modal } from '../../components/ui/Modal';
+
+interface AuditLog {
+  id: number;
+  action: string;
+  action_type: 'create' | 'read' | 'update' | 'delete' | 'login' | 'logout' | 'export' | 'share';
+  resource_type: string;
+  resource_id: string;
+  resource_name: string;
+  user_name: string;
+  user_email: string;
+  ip_address: string;
+  user_agent: string;
+  timestamp: string;
+  status: 'success' | 'failure' | 'warning';
+  details?: Record<string, unknown>;
+  changes?: { field: string; old_value: string; new_value: string }[];
+}
+
+// Mock data
+const MOCK_AUDIT_LOGS: AuditLog[] = [
+  {
+    id: 1,
+    action: 'Connexion reussie',
+    action_type: 'login',
+    resource_type: 'Session',
+    resource_id: 'sess_123',
+    resource_name: 'Session utilisateur',
+    user_name: 'Jean Dupont',
+    user_email: 'jean.dupont@advist.com',
+    ip_address: '192.168.1.100',
+    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    timestamp: '2024-11-27T10:30:00',
+    status: 'success',
+  },
+  {
+    id: 2,
+    action: 'Document modifie',
+    action_type: 'update',
+    resource_type: 'Document',
+    resource_id: 'doc_456',
+    resource_name: 'Contrat Client ABC',
+    user_name: 'Marie Martin',
+    user_email: 'marie.martin@advist.com',
+    ip_address: '192.168.1.101',
+    user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+    timestamp: '2024-11-27T10:15:00',
+    status: 'success',
+    changes: [
+      { field: 'title', old_value: 'Contrat Client', new_value: 'Contrat Client ABC' },
+      { field: 'status', old_value: 'draft', new_value: 'pending' },
+    ],
+  },
+  {
+    id: 3,
+    action: 'Workflow cree',
+    action_type: 'create',
+    resource_type: 'Workflow',
+    resource_id: 'wf_789',
+    resource_name: 'Validation contrat Q4',
+    user_name: 'Pierre Bernard',
+    user_email: 'pierre.bernard@advist.com',
+    ip_address: '192.168.1.102',
+    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    timestamp: '2024-11-27T09:45:00',
+    status: 'success',
+  },
+  {
+    id: 4,
+    action: 'Tentative de connexion echouee',
+    action_type: 'login',
+    resource_type: 'Session',
+    resource_id: 'sess_124',
+    resource_name: 'Session utilisateur',
+    user_name: 'Utilisateur inconnu',
+    user_email: 'unknown@example.com',
+    ip_address: '203.0.113.50',
+    user_agent: 'Mozilla/5.0',
+    timestamp: '2024-11-27T09:30:00',
+    status: 'failure',
+  },
+  {
+    id: 5,
+    action: 'Document supprime',
+    action_type: 'delete',
+    resource_type: 'Document',
+    resource_id: 'doc_321',
+    resource_name: 'Brouillon - Note interne',
+    user_name: 'Sophie Petit',
+    user_email: 'sophie.petit@advist.com',
+    ip_address: '192.168.1.103',
+    user_agent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0)',
+    timestamp: '2024-11-27T09:00:00',
+    status: 'success',
+  },
+  {
+    id: 6,
+    action: 'Document exporte',
+    action_type: 'export',
+    resource_type: 'Document',
+    resource_id: 'doc_654',
+    resource_name: 'Rapport financier',
+    user_name: 'Jean Dupont',
+    user_email: 'jean.dupont@advist.com',
+    ip_address: '192.168.1.100',
+    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    timestamp: '2024-11-26T17:30:00',
+    status: 'success',
+  },
+  {
+    id: 7,
+    action: 'Utilisateur ajoute',
+    action_type: 'create',
+    resource_type: 'User',
+    resource_id: 'usr_987',
+    resource_name: 'Lucas Robert',
+    user_name: 'Jean Dupont',
+    user_email: 'jean.dupont@advist.com',
+    ip_address: '192.168.1.100',
+    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    timestamp: '2024-11-26T16:00:00',
+    status: 'success',
+  },
+  {
+    id: 8,
+    action: 'Parametres modifies',
+    action_type: 'update',
+    resource_type: 'Settings',
+    resource_id: 'org_001',
+    resource_name: 'Organisation ADVIST',
+    user_name: 'Jean Dupont',
+    user_email: 'jean.dupont@advist.com',
+    ip_address: '192.168.1.100',
+    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    timestamp: '2024-11-26T15:30:00',
+    status: 'warning',
+    changes: [
+      { field: 'two_factor_enabled', old_value: 'false', new_value: 'true' },
+    ],
+  },
+];
+
+const ACTION_TYPE_CONFIG = {
+  create: { icon: UserPlus, color: 'green', label: 'Creation' },
+  read: { icon: Eye, color: 'blue', label: 'Lecture' },
+  update: { icon: Edit, color: 'yellow', label: 'Modification' },
+  delete: { icon: Trash2, color: 'red', label: 'Suppression' },
+  login: { icon: LogIn, color: 'blue', label: 'Connexion' },
+  logout: { icon: LogOut, color: 'gray', label: 'Deconnexion' },
+  export: { icon: Download, color: 'purple', label: 'Export' },
+  share: { icon: RefreshCw, color: 'green', label: 'Partage' },
+} as const;
+
+const STATUS_CONFIG = {
+  success: { icon: CheckCircle, color: 'green' as const, label: 'Succes' },
+  failure: { icon: XCircle, color: 'red' as const, label: 'Echec' },
+  warning: { icon: AlertTriangle, color: 'yellow' as const, label: 'Avertissement' },
+};
+
+export const AuditPage: React.FC = () => {
+  const { t } = useTranslation();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedActionType, setSelectedActionType] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [selectedResource, setSelectedResource] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
+    start: '',
+    end: '',
+  });
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
+
+  const filteredLogs = MOCK_AUDIT_LOGS.filter((log) => {
+    const matchesSearch =
+      log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      log.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      log.resource_name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesActionType =
+      selectedActionType === 'all' || log.action_type === selectedActionType;
+    const matchesStatus = selectedStatus === 'all' || log.status === selectedStatus;
+    const matchesResource =
+      selectedResource === 'all' || log.resource_type === selectedResource;
+    return matchesSearch && matchesActionType && matchesStatus && matchesResource;
+  });
+
+  const stats = {
+    total: MOCK_AUDIT_LOGS.length,
+    success: MOCK_AUDIT_LOGS.filter((l) => l.status === 'success').length,
+    failure: MOCK_AUDIT_LOGS.filter((l) => l.status === 'failure').length,
+    warning: MOCK_AUDIT_LOGS.filter((l) => l.status === 'warning').length,
+  };
+
+  const resourceTypes = [...new Set(MOCK_AUDIT_LOGS.map((l) => l.resource_type))];
+
+  const handleViewDetails = (log: AuditLog) => {
+    setSelectedLog(log);
+    setShowDetailModal(true);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-advist-gray900">{t('audit.title')}</h1>
+          <p className="text-advist-gray900 mt-1">
+            {t('audit.subtitle')}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm">
+            <Download size={16} className="mr-2" />
+            {t('common.export')}
+          </Button>
+          <Button variant="outline" size="sm">
+            <RefreshCw size={16} className="mr-2" />
+            {t('common.loading')}
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatsCard
+          icon={Shield}
+          label={t('audit.allLogs')}
+          value={stats.total}
+          color="blue"
+        />
+        <StatsCard
+          icon={CheckCircle}
+          label={t('audit.status.success')}
+          value={stats.success}
+          color="green"
+        />
+        <StatsCard
+          icon={XCircle}
+          label={t('audit.status.failure')}
+          value={stats.failure}
+          color="red"
+        />
+        <StatsCard
+          icon={AlertTriangle}
+          label={t('audit.status.warning')}
+          value={stats.warning}
+          color="yellow"
+        />
+      </div>
+
+      {/* Filters */}
+      <Card className="p-4">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
+                />
+                <input
+                  type="text"
+                  placeholder={t('audit.search')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-advist-bg rounded-xl text-advist-gray900 placeholder-advist-blue-light focus:outline-none focus:ring-2 focus:ring-advist-gold"
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                value={selectedActionType}
+                onChange={(e) => setSelectedActionType(e.target.value)}
+                className="px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
+              >
+                <option value="all">{t('common.all')}</option>
+                <option value="create">{t('audit.actionTypes.create')}</option>
+                <option value="read">{t('audit.actionTypes.read')}</option>
+                <option value="update">{t('audit.actionTypes.update')}</option>
+                <option value="delete">{t('audit.actionTypes.delete')}</option>
+                <option value="login">{t('audit.actionTypes.login')}</option>
+                <option value="logout">{t('audit.actionTypes.logout')}</option>
+                <option value="export">{t('audit.actionTypes.export')}</option>
+              </select>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
+              >
+                <option value="all">{t('users.allStatuses')}</option>
+                <option value="success">{t('audit.status.success')}</option>
+                <option value="failure">{t('audit.status.failure')}</option>
+                <option value="warning">{t('audit.status.warning')}</option>
+              </select>
+              <select
+                value={selectedResource}
+                onChange={(e) => setSelectedResource(e.target.value)}
+                className="px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
+              >
+                <option value="all">{t('common.all')}</option>
+                {resourceTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm text-advist-gray900">Periode:</span>
+            <input
+              type="date"
+              value={dateRange.start}
+              onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+              className="px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
+            />
+            <span className="text-sm text-advist-gray900">a</span>
+            <input
+              type="date"
+              value={dateRange.end}
+              onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+              className="px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
+            />
+          </div>
+        </div>
+      </Card>
+
+      {/* Audit Logs Table */}
+      <Card className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-advist-bg">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                  Date/Heure
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                  Action
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                  Utilisateur
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                  Ressource
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                  Adresse IP
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                  Statut
+                </th>
+                <th className="px-4 py-3 text-right text-sm font-semibold text-advist-gray900">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-advist-bg">
+              {filteredLogs.map((log) => (
+                <AuditLogRow
+                  key={log.id}
+                  log={log}
+                  onViewDetails={handleViewDetails}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {filteredLogs.length === 0 && (
+          <div className="text-center py-12">
+            <Shield size={48} className="mx-auto text-advist-blue-light mb-4" />
+            <h3 className="text-lg font-medium text-advist-gray900">
+              {t('audit.noLogs')}
+            </h3>
+            <p className="text-advist-gray900 mt-1">
+              {t('common.filter')}
+            </p>
+          </div>
+        )}
+      </Card>
+
+      {/* Detail Modal */}
+      {selectedLog && (
+        <AuditDetailModal
+          isOpen={showDetailModal}
+          onClose={() => {
+            setShowDetailModal(false);
+            setSelectedLog(null);
+          }}
+          log={selectedLog}
+        />
+      )}
+    </div>
+  );
+};
+
+// Stats Card Component
+const StatsCard: React.FC<{
+  icon: React.ElementType;
+  label: string;
+  value: number;
+  color: 'blue' | 'green' | 'yellow' | 'red';
+}> = ({ icon: Icon, label, value, color }) => {
+  const colorClasses = {
+    blue: 'bg-advist-gold-light text-advist-gray900',
+    green: 'bg-green-50 text-advist-success',
+    yellow: 'bg-advist-gold-light text-advist-gold-dark',
+    red: 'bg-advist-gold-light text-advist-error',
+  };
+
+  return (
+    <Card className="p-4">
+      <div className="flex items-center gap-3">
+        <div className={`p-2 rounded-xl ${colorClasses[color]}`}>
+          <Icon size={18} />
+        </div>
+        <div>
+          <p className="text-xl font-bold text-advist-gray900">{value}</p>
+          <p className="text-xs text-advist-gray900">{label}</p>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+// Audit Log Row Component
+const AuditLogRow: React.FC<{
+  log: AuditLog;
+  onViewDetails: (log: AuditLog) => void;
+}> = ({ log, onViewDetails }) => {
+  const actionConfig = ACTION_TYPE_CONFIG[log.action_type];
+  const statusConfig = STATUS_CONFIG[log.status];
+  const ActionIcon = actionConfig.icon;
+  const StatusIcon = statusConfig.icon;
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return {
+      date: date.toLocaleDateString('fr-FR'),
+      time: date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+    };
+  };
+
+  const { date, time } = formatDate(log.timestamp);
+
+  return (
+    <tr className="hover:bg-advist-bg/30">
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Calendar size={14} className="text-advist-blue-light" />
+          <div>
+            <p className="text-sm font-medium text-advist-gray900">{date}</p>
+            <p className="text-xs text-advist-blue-light">{time}</p>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2">
+          <div className={`p-1.5 rounded bg-${actionConfig.color}-50`}>
+            <ActionIcon size={14} className={`text-${actionConfig.color}-600`} />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-advist-gray900">{log.action}</p>
+            <Badge variant={actionConfig.color as 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'} size="sm">
+              {actionConfig.label}
+            </Badge>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2">
+          <User size={14} className="text-advist-blue-light" />
+          <div>
+            <p className="text-sm font-medium text-advist-gray900">{log.user_name}</p>
+            <p className="text-xs text-advist-blue-light">{log.user_email}</p>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div>
+          <p className="text-sm font-medium text-advist-gray900">{log.resource_name}</p>
+          <p className="text-xs text-advist-blue-light">{log.resource_type}</p>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <code className="text-xs bg-advist-bg px-2 py-1 rounded">
+          {log.ip_address}
+        </code>
+      </td>
+      <td className="px-4 py-3">
+        <Badge variant={statusConfig.color} size="sm">
+          <StatusIcon size={12} className="mr-1" />
+          {statusConfig.label}
+        </Badge>
+      </td>
+      <td className="px-4 py-3">
+        <button
+          onClick={() => onViewDetails(log)}
+          className="p-1.5 rounded hover:bg-advist-bg"
+          title="Voir les details"
+        >
+          <Eye size={14} className="text-advist-gray900" />
+        </button>
+      </td>
+    </tr>
+  );
+};
+
+// Audit Detail Modal
+const AuditDetailModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  log: AuditLog;
+}> = ({ isOpen, onClose, log }) => {
+  const statusConfig = STATUS_CONFIG[log.status];
+  const StatusIcon = statusConfig.icon;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Details de l'evenement" size="lg">
+      <div className="space-y-6">
+        {/* Status Banner */}
+        <div
+          className={`flex items-center gap-3 p-4 rounded-xl ${
+            log.status === 'success'
+              ? 'bg-green-50'
+              : log.status === 'failure'
+              ? 'bg-advist-gold-light'
+              : 'bg-advist-gold-light'
+          }`}
+        >
+          <StatusIcon
+            size={24}
+            className={
+              log.status === 'success'
+                ? 'text-advist-success'
+                : log.status === 'failure'
+                ? 'text-advist-error'
+                : 'text-advist-gold-dark'
+            }
+          />
+          <div>
+            <p className="font-medium text-advist-gray900">{log.action}</p>
+            <p className="text-sm text-advist-gray900">
+              {new Date(log.timestamp).toLocaleString('fr-FR')}
+            </p>
+          </div>
+        </div>
+
+        {/* Details Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          <DetailItem label="Utilisateur" value={log.user_name} />
+          <DetailItem label="Email" value={log.user_email} />
+          <DetailItem label="Adresse IP" value={log.ip_address} />
+          <DetailItem label="Type de ressource" value={log.resource_type} />
+          <DetailItem label="Nom de la ressource" value={log.resource_name} />
+          <DetailItem label="ID de la ressource" value={log.resource_id} />
+        </div>
+
+        {/* User Agent */}
+        <div>
+          <p className="text-sm font-medium text-advist-gray900 mb-1">Navigateur</p>
+          <code className="block text-xs bg-advist-bg p-3 rounded-xl break-all">
+            {log.user_agent}
+          </code>
+        </div>
+
+        {/* Changes (if any) */}
+        {log.changes && log.changes.length > 0 && (
+          <div>
+            <p className="text-sm font-medium text-advist-gray900 mb-2">
+              Modifications apportees
+            </p>
+            <div className="space-y-2">
+              {log.changes.map((change, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-4 p-3 bg-advist-bg/50 rounded-xl"
+                >
+                  <span className="text-sm font-medium text-advist-gray900 min-w-24">
+                    {change.field}
+                  </span>
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="text-sm text-advist-error bg-advist-gold-light px-2 py-1 rounded">
+                      {change.old_value}
+                    </span>
+                    <ChevronRight size={16} className="text-advist-blue-light" />
+                    <span className="text-sm text-advist-success bg-green-50 px-2 py-1 rounded">
+                      {change.new_value}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-end pt-4 border-t border-advist-bg">
+          <Button variant="outline" onClick={onClose}>
+            Fermer
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+// Detail Item Component
+const DetailItem: React.FC<{ label: string; value: string }> = ({
+  label,
+  value,
+}) => (
+  <div>
+    <p className="text-xs text-advist-blue-light mb-1">{label}</p>
+    <p className="text-sm font-medium text-advist-gray900">{value}</p>
+  </div>
+);
+
+export default AuditPage;
