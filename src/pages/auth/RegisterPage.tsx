@@ -47,8 +47,38 @@ type Step3Form = {
 };
 
 // Static arrays with translation keys
-const industryKeys = ['finance', 'legal', 'healthcare', 'technology', 'manufacturing', 'retail', 'construction', 'education', 'government', 'agriculture', 'other'];
-const countryKeys = ['CI', 'SN', 'ML', 'BF', 'BJ', 'TG', 'NE', 'GN', 'CM', 'GA', 'CG', 'CD', 'FR', 'BE', 'CH', 'CA', 'OTHER'];
+const industryKeys = [
+  'finance',
+  'legal',
+  'healthcare',
+  'technology',
+  'manufacturing',
+  'retail',
+  'construction',
+  'education',
+  'government',
+  'agriculture',
+  'other',
+];
+const countryKeys = [
+  'CI',
+  'SN',
+  'ML',
+  'BF',
+  'BJ',
+  'TG',
+  'NE',
+  'GN',
+  'CM',
+  'GA',
+  'CG',
+  'CD',
+  'FR',
+  'BE',
+  'CH',
+  'CA',
+  'OTHER',
+];
 const planIds = ['business', 'enterprise'] as const;
 
 export const RegisterPage: React.FC = () => {
@@ -61,17 +91,20 @@ export const RegisterPage: React.FC = () => {
 
   // Zod schemas with translations - Harmonisés avec Mobile
   const step1Schema = z.object({
-    first_name: z.string()
+    first_name: z
+      .string()
       .min(2, t('validation.minLength', { count: 2 }))
       .max(50, t('validation.maxLength', { count: 50 }))
       .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, t('validation.nameInvalidChars')),
-    last_name: z.string()
+    last_name: z
+      .string()
       .min(2, t('validation.minLength', { count: 2 }))
       .max(50, t('validation.maxLength', { count: 50 }))
       .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, t('validation.nameInvalidChars')),
     email: z.string().email(t('validation.emailInvalid')),
     // Format international: +225 (CI), +221 (SN), +33 (FR), etc.
-    phone: z.string()
+    phone: z
+      .string()
       .refine((val) => !val || val === '' || /^\+[0-9]{1,4}[0-9]{8,12}$/.test(val), {
         message: t('validation.phoneInvalid'),
       })
@@ -98,7 +131,7 @@ export const RegisterPage: React.FC = () => {
         .regex(/[A-Z]/, t('validation.passwordUppercase'))
         .regex(/[a-z]/, t('validation.passwordLowercase'))
         .regex(/[0-9]/, t('validation.passwordNumber'))
-        .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, t('validation.passwordSpecial')),
+        .regex(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/, t('validation.passwordSpecial')),
       confirmPassword: z.string(),
       plan: z.enum(['business', 'enterprise']),
       acceptTerms: z.boolean().refine((val) => val === true, {
@@ -111,20 +144,20 @@ export const RegisterPage: React.FC = () => {
     });
 
   // Translated arrays
-  const industries = industryKeys.map(key => ({
+  const industries = industryKeys.map((key) => ({
     value: key,
-    label: t(`auth.register.industries.${key}`, key)
+    label: t(`auth.register.industries.${key}`, key),
   }));
 
-  const countries = countryKeys.map(key => ({
+  const countries = countryKeys.map((key) => ({
     value: key,
-    label: t(`auth.register.countries.${key}`, key)
+    label: t(`auth.register.countries.${key}`, key),
   }));
 
-  const plans = planIds.map(id => ({
+  const plans = planIds.map((id) => ({
     id,
     name: t(`auth.register.plans.${id}.name`, id),
-    price: id === 'business' ? '59 000 FCFA' : t('auth.register.custom', 'Sur mesure'),
+    price: id === 'business' ? '25 000 FCFA/emetteur' : t('auth.register.custom', 'Sur mesure'),
     period: id === 'enterprise' ? '' : '/mois',
     description: t(`auth.register.plans.${id}.description`),
     features: t(`auth.register.plans.${id}.features`, { returnObjects: true }) as string[],
@@ -189,7 +222,7 @@ export const RegisterPage: React.FC = () => {
     if (!step1Data || !step2Data) return;
 
     // Get plan name for display
-    const selectedPlanInfo = plans.find(p => p.id === data.plan);
+    const selectedPlanInfo = plans.find((p) => p.id === data.plan);
 
     // Redirect to checkout page with all collected data
     navigate('/checkout', {
@@ -211,7 +244,8 @@ export const RegisterPage: React.FC = () => {
         plan_name: selectedPlanInfo?.name || data.plan,
         billing_cycle: 'monthly',
         // Addons
-        includeIAOption: includeIAOption && (data.plan === 'business' || data.plan === 'enterprise'),
+        includeIAOption:
+          includeIAOption && (data.plan === 'business' || data.plan === 'enterprise'),
       },
     });
   };
@@ -238,7 +272,9 @@ export const RegisterPage: React.FC = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-advist-navy to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-advist-dark/20 group-hover:shadow-advist-dark/40 transition-all">
                 <Sparkles className="w-5 h-5 text-advist-gold" />
               </div>
-              <span className="font-decorative text-2xl bg-gradient-to-r from-advist-navy to-primary-600 bg-clip-text text-transparent">Advist</span>
+              <span className="font-decorative text-2xl bg-gradient-to-r from-advist-navy to-primary-600 bg-clip-text text-transparent">
+                Advist
+              </span>
             </Link>
             <Link
               to="/"
@@ -259,10 +295,10 @@ export const RegisterPage: React.FC = () => {
               <Shield size={18} />
               <span className="font-semibold">{t('auth.register.guarantee')}</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-advist-gray900 mb-2">{t('auth.register.createAccount')}</h1>
-            <p className="text-advist-text-secondary">
-              {t('auth.register.adminDescription')}
-            </p>
+            <h1 className="text-3xl md:text-4xl font-bold text-advist-gray900 mb-2">
+              {t('auth.register.createAccount')}
+            </h1>
+            <p className="text-advist-text-secondary">{t('auth.register.adminDescription')}</p>
           </div>
 
           {/* Progress Steps */}
@@ -275,15 +311,11 @@ export const RegisterPage: React.FC = () => {
                       currentStep > step.number
                         ? 'bg-gradient-to-br from-green-500 to-green-600 text-white shadow-green-500/30'
                         : currentStep === step.number
-                        ? 'bg-gradient-to-br from-advist-gold to-primary-500 text-white shadow-advist-gold/30'
-                        : 'bg-advist-surface-dark text-advist-text-muted shadow-none'
+                          ? 'bg-gradient-to-br from-advist-gold to-primary-500 text-white shadow-advist-gold/30'
+                          : 'bg-advist-surface-dark text-advist-text-muted shadow-none'
                     }`}
                   >
-                    {currentStep > step.number ? (
-                      <Check size={24} />
-                    ) : (
-                      <step.icon size={20} />
-                    )}
+                    {currentStep > step.number ? <Check size={24} /> : <step.icon size={20} />}
                   </div>
                   <span
                     className={`mt-2 text-sm font-medium ${
@@ -296,7 +328,9 @@ export const RegisterPage: React.FC = () => {
                 {index < steps.length - 1 && (
                   <div
                     className={`w-20 sm:w-32 h-1 mx-2 rounded-full transition-all ${
-                      currentStep > step.number ? 'bg-gradient-to-r from-green-500 to-green-400' : 'bg-advist-border'
+                      currentStep > step.number
+                        ? 'bg-gradient-to-r from-green-500 to-green-400'
+                        : 'bg-advist-border'
                     }`}
                   />
                 )}
@@ -322,7 +356,9 @@ export const RegisterPage: React.FC = () => {
                   <User className="w-5 h-5 text-advist-gray900" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-advist-gray900">{t('auth.register.step1Title')}</h2>
+                  <h2 className="text-xl font-semibold text-advist-gray900">
+                    {t('auth.register.step1Title')}
+                  </h2>
                   <p className="text-sm text-advist-gray900/60">{t('auth.register.adminRole')}</p>
                 </div>
               </div>
@@ -388,7 +424,9 @@ export const RegisterPage: React.FC = () => {
                   <Building2 className="w-5 h-5 text-advist-gray900" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-advist-gray900">{t('auth.register.step2Title')}</h2>
+                  <h2 className="text-xl font-semibold text-advist-gray900">
+                    {t('auth.register.step2Title')}
+                  </h2>
                   <p className="text-sm text-advist-gray900/60">{t('auth.register.companyInfo')}</p>
                 </div>
               </div>
@@ -458,7 +496,9 @@ export const RegisterPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-advist-gray900 mb-2">{t('auth.register.country')}</label>
+                    <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                      {t('auth.register.country')}
+                    </label>
                     <select
                       className="w-full px-4 py-3 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold border border-transparent"
                       {...step2Form.register('country')}
@@ -506,8 +546,12 @@ export const RegisterPage: React.FC = () => {
                   <CreditCard className="w-5 h-5 text-advist-gray900" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-advist-gray900">{t('auth.register.choosePlan')}</h2>
-                  <p className="text-sm text-advist-gray900/60">{t('auth.register.securePayment')}</p>
+                  <h2 className="text-xl font-semibold text-advist-gray900">
+                    {t('auth.register.choosePlan')}
+                  </h2>
+                  <p className="text-sm text-advist-gray900/60">
+                    {t('auth.register.securePayment')}
+                  </p>
                 </div>
               </div>
 
@@ -542,7 +586,10 @@ export const RegisterPage: React.FC = () => {
                       <p className="text-sm text-advist-gray900/60 mb-4">{plan.description}</p>
                       <ul className="space-y-2 mt-auto">
                         {plan.features.map((feature, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm text-advist-gray900">
+                          <li
+                            key={i}
+                            className="flex items-center gap-2 text-sm text-advist-gray900"
+                          >
                             <Check size={14} className="text-advist-success flex-shrink-0" />
                             {feature}
                           </li>
@@ -569,24 +616,35 @@ export const RegisterPage: React.FC = () => {
                     <label className="flex cursor-pointer">
                       <div className="p-5 flex-1">
                         <div className="flex items-start gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                            includeIAOption
-                              ? 'bg-gradient-to-br from-amber-500 to-orange-600'
-                              : 'bg-gray-100'
-                          }`}>
-                            <Sparkles className={`w-6 h-6 ${includeIAOption ? 'text-white' : 'text-amber-500'}`} />
+                          <div
+                            className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                              includeIAOption
+                                ? 'bg-gradient-to-br from-amber-500 to-orange-600'
+                                : 'bg-gray-100'
+                            }`}
+                          >
+                            <Sparkles
+                              className={`w-6 h-6 ${includeIAOption ? 'text-white' : 'text-amber-500'}`}
+                            />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-semibold text-advist-gray900">{t('auth.register.iaOption')}</h4>
+                              <h4 className="font-semibold text-advist-gray900">
+                                {t('auth.register.iaOption')}
+                              </h4>
                               <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
                                 {t('auth.register.option')}
                               </span>
                             </div>
-                            <p className="text-sm text-advist-gray900/60 mb-3">{iaAddonInfo.description}</p>
+                            <p className="text-sm text-advist-gray900/60 mb-3">
+                              {iaAddonInfo.description}
+                            </p>
                             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                               {iaAddonInfo.features.map((feature, i) => (
-                                <li key={i} className="flex items-center gap-2 text-sm text-advist-gray900">
+                                <li
+                                  key={i}
+                                  className="flex items-center gap-2 text-sm text-advist-gray900"
+                                >
                                   <Check size={14} className="text-amber-500 flex-shrink-0" />
                                   {feature}
                                 </li>
@@ -602,7 +660,9 @@ export const RegisterPage: React.FC = () => {
                               iaAddonInfo.pricing[selectedPlan as 'business' | 'enterprise']
                             )}
                           </span>
-                          <span className="text-sm text-advist-gray900/60 ml-1">{iaAddonInfo.currency}</span>
+                          <span className="text-sm text-advist-gray900/60 ml-1">
+                            {iaAddonInfo.currency}
+                          </span>
                           <p className="text-xs text-advist-gray900/50">/mois</p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -613,7 +673,9 @@ export const RegisterPage: React.FC = () => {
                             className="w-5 h-5 rounded border-gray-300 text-amber-500 focus:ring-amber-500"
                           />
                           <span className="text-sm font-medium text-advist-gray900">
-                            {includeIAOption ? t('auth.register.included') : t('auth.register.addOption')}
+                            {includeIAOption
+                              ? t('auth.register.included')
+                              : t('auth.register.addOption')}
                           </span>
                         </div>
                       </div>
@@ -629,7 +691,9 @@ export const RegisterPage: React.FC = () => {
                 <div className="bg-green-50 border border-advist-success rounded-xl p-4 flex items-start gap-3">
                   <Shield className="w-5 h-5 text-advist-success flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-medium text-advist-success">{t('auth.register.guaranteeText')}</p>
+                    <p className="font-medium text-advist-success">
+                      {t('auth.register.guaranteeText')}
+                    </p>
                     <p className="text-sm text-advist-success">
                       {t('auth.register.guaranteeDesc')}
                     </p>
@@ -637,7 +701,9 @@ export const RegisterPage: React.FC = () => {
                 </div>
 
                 <div className="border-t border-advist-border pt-6 space-y-4">
-                  <h3 className="font-semibold text-advist-gray900">{t('auth.register.createPassword')}</h3>
+                  <h3 className="font-semibold text-advist-gray900">
+                    {t('auth.register.createPassword')}
+                  </h3>
 
                   <Input
                     label={t('auth.password')}
@@ -682,11 +748,15 @@ export const RegisterPage: React.FC = () => {
                           <User size={18} className="text-advist-gray900" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-advist-text-secondary mb-0.5">{t('auth.register.administrator')}</p>
+                          <p className="text-xs text-advist-text-secondary mb-0.5">
+                            {t('auth.register.administrator')}
+                          </p>
                           <p className="font-medium text-advist-gray900 truncate">
                             {step1Data.first_name} {step1Data.last_name}
                           </p>
-                          <p className="text-sm text-advist-text-secondary truncate">{step1Data.email}</p>
+                          <p className="text-sm text-advist-text-secondary truncate">
+                            {step1Data.email}
+                          </p>
                         </div>
                       </div>
 
@@ -696,10 +766,16 @@ export const RegisterPage: React.FC = () => {
                           <Building2 size={18} className="text-advist-gray900" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-advist-text-secondary mb-0.5">{t('auth.register.organizationLabel')}</p>
-                          <p className="font-medium text-advist-gray900 truncate">{step2Data.organization_name}</p>
+                          <p className="text-xs text-advist-text-secondary mb-0.5">
+                            {t('auth.register.organizationLabel')}
+                          </p>
+                          <p className="font-medium text-advist-gray900 truncate">
+                            {step2Data.organization_name}
+                          </p>
                           <p className="text-sm text-advist-text-secondary">
-                            {step2Data.organization_size} {t('auth.register.employees')} • {industries.find(i => i.value === step2Data.industry)?.label || step2Data.industry}
+                            {step2Data.organization_size} {t('auth.register.employees')} •{' '}
+                            {industries.find((i) => i.value === step2Data.industry)?.label ||
+                              step2Data.industry}
                           </p>
                         </div>
                       </div>
@@ -708,46 +784,64 @@ export const RegisterPage: React.FC = () => {
                       <div className="border-t border-advist-border/50 pt-4">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                              selectedPlan === 'enterprise' ? 'bg-gradient-to-br from-purple-500 to-indigo-600' :
-                              selectedPlan === 'business' ? 'bg-gradient-to-br from-advist-gold to-primary-500' :
-                              'bg-gradient-to-br from-gray-400 to-gray-500'
-                            }`}>
+                            <div
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                                selectedPlan === 'enterprise'
+                                  ? 'bg-gradient-to-br from-purple-500 to-indigo-600'
+                                  : selectedPlan === 'business'
+                                    ? 'bg-gradient-to-br from-advist-gold to-primary-500'
+                                    : 'bg-gradient-to-br from-gray-400 to-gray-500'
+                              }`}
+                            >
                               <Sparkles size={14} className="text-white" />
                             </div>
                             <div>
                               <p className="font-medium text-advist-gray900">
-                                {t('auth.register.planLabel')} {plans.find(p => p.id === selectedPlan)?.name}
+                                {t('auth.register.planLabel')}{' '}
+                                {plans.find((p) => p.id === selectedPlan)?.name}
                               </p>
                               <p className="text-xs text-advist-text-secondary">
-                                {plans.find(p => p.id === selectedPlan)?.description}
+                                {plans.find((p) => p.id === selectedPlan)?.description}
                               </p>
                             </div>
                           </div>
                           <p className="font-semibold text-advist-gray900">
-                            {plans.find(p => p.id === selectedPlan)?.price}
-                            <span className="text-xs font-normal text-advist-text-secondary">{plans.find(p => p.id === selectedPlan)?.period}</span>
+                            {plans.find((p) => p.id === selectedPlan)?.price}
+                            <span className="text-xs font-normal text-advist-text-secondary">
+                              {plans.find((p) => p.id === selectedPlan)?.period}
+                            </span>
                           </p>
                         </div>
 
                         {/* IA Option if selected */}
-                        {includeIAOption && (selectedPlan === 'business' || selectedPlan === 'enterprise') && (
-                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-advist-border/50">
-                            <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
-                                <Sparkles size={14} className="text-white" />
+                        {includeIAOption &&
+                          (selectedPlan === 'business' || selectedPlan === 'enterprise') && (
+                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-advist-border/50">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
+                                  <Sparkles size={14} className="text-white" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-advist-gray900">
+                                    {t('auth.register.iaOption')}
+                                  </p>
+                                  <p className="text-xs text-advist-text-secondary">
+                                    {t('auth.register.aiOptionLabel')}
+                                  </p>
+                                </div>
                               </div>
-                              <div>
-                                <p className="font-medium text-advist-gray900">{t('auth.register.iaOption')}</p>
-                                <p className="text-xs text-advist-text-secondary">{t('auth.register.aiOptionLabel')}</p>
-                              </div>
+                              <p className="font-semibold text-amber-600">
+                                +
+                                {new Intl.NumberFormat('fr-FR').format(
+                                  iaAddonInfo.pricing[selectedPlan as 'business' | 'enterprise']
+                                )}{' '}
+                                {iaAddonInfo.currency}
+                                <span className="text-xs font-normal text-advist-text-secondary">
+                                  /mois
+                                </span>
+                              </p>
                             </div>
-                            <p className="font-semibold text-amber-600">
-                              +{new Intl.NumberFormat('fr-FR').format(iaAddonInfo.pricing[selectedPlan as 'business' | 'enterprise'])} {iaAddonInfo.currency}
-                              <span className="text-xs font-normal text-advist-text-secondary">/mois</span>
-                            </p>
-                          </div>
-                        )}
+                          )}
                       </div>
 
                       {/* Total */}
@@ -763,13 +857,19 @@ export const RegisterPage: React.FC = () => {
                             <>
                               <p className="text-2xl font-bold">
                                 {(() => {
-                                  const planPrice = selectedPlan === 'business' ? 59000 : 0;
-                                  const iaPrice = includeIAOption && (selectedPlan === 'business' || selectedPlan === 'enterprise')
-                                    ? iaAddonInfo.pricing[selectedPlan as 'business' | 'enterprise']
-                                    : 0;
+                                  const planPrice = selectedPlan === 'business' ? 25000 : 0;
+                                  const iaPrice =
+                                    includeIAOption &&
+                                    (selectedPlan === 'business' || selectedPlan === 'enterprise')
+                                      ? iaAddonInfo.pricing[
+                                          selectedPlan as 'business' | 'enterprise'
+                                        ]
+                                      : 0;
                                   // Convert plan price to FCFA (approximation)
                                   const planPriceFCFA = planPrice * 655;
-                                  return new Intl.NumberFormat('fr-FR').format(planPriceFCFA + iaPrice);
+                                  return new Intl.NumberFormat('fr-FR').format(
+                                    planPriceFCFA + iaPrice
+                                  );
                                 })()}
                                 <span className="text-sm font-normal ml-1">FCFA</span>
                               </p>

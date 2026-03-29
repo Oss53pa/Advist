@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DemoModal } from '../components/demo/DemoModal';
-import { InteractiveWorkflowDemo, InteractiveSignatureDemo, InteractiveDocumentDemo } from '../components/demo';
+import {
+  InteractiveWorkflowDemo,
+  InteractiveSignatureDemo,
+  InteractiveDocumentDemo,
+} from '../components/demo';
 
 import {
   Header,
@@ -19,7 +23,6 @@ import {
   GitBranch,
   PenTool,
   Shield,
-  Clock,
   ArrowRight,
   Play,
   Star,
@@ -29,9 +32,7 @@ import {
   Monitor,
   Quote,
   Search,
-  CheckCircle,
   RefreshCw,
-  Link2,
   BadgeCheck,
   Fingerprint,
   ScrollText,
@@ -67,16 +68,28 @@ const HowItWorksSection: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
 
   const steps = [
-    { icon: FileText, title: 'Importez', desc: 'Glissez-deposez vos fichiers ou connectez votre cloud' },
-    { icon: GitBranch, title: 'Configurez', desc: 'Definissez vos circuits de validation en quelques clics' },
-    { icon: PenTool, title: 'Validez & Signez', desc: 'Approuvez et signez electroniquement en toute securite' },
+    {
+      icon: FileText,
+      title: 'Importez',
+      desc: 'Glissez-deposez vos fichiers ou connectez votre cloud',
+    },
+    {
+      icon: GitBranch,
+      title: 'Configurez',
+      desc: 'Definissez vos circuits de validation en quelques clics',
+    },
+    {
+      icon: PenTool,
+      title: 'Validez & Signez',
+      desc: 'Approuvez et signez electroniquement en toute securite',
+    },
     { icon: Shield, title: 'Archivez', desc: 'Stockage securise avec audit trail complet' },
   ];
 
   useEffect(() => {
     if (isVisible) {
       const interval = setInterval(() => {
-        setActiveStep(prev => (prev + 1) % steps.length);
+        setActiveStep((prev) => (prev + 1) % steps.length);
       }, 3000);
       return () => clearInterval(interval);
     }
@@ -85,7 +98,9 @@ const HowItWorksSection: React.FC = () => {
   return (
     <section ref={ref} id="how-it-works" className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full mb-6">
             <Zap className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-medium text-gray-500">Simple & rapide</span>
@@ -115,19 +130,31 @@ const HowItWorksSection: React.FC = () => {
                 style={{ transitionDelay: `${i * 150}ms` }}
                 onMouseEnter={() => setActiveStep(i)}
               >
-                <div className={`absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10 transition-all duration-300 ${
-                  i <= activeStep ? 'bg-gray-900 text-white scale-110' : 'bg-gray-200 text-gray-400'
-                }`}>
+                <div
+                  className={`absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10 transition-all duration-300 ${
+                    i <= activeStep
+                      ? 'bg-gray-900 text-white scale-110'
+                      : 'bg-gray-200 text-gray-400'
+                  }`}
+                >
                   {i + 1}
                 </div>
 
-                <div className={`relative p-6 bg-white rounded-2xl border-2 transition-all duration-300 ${
-                  i === activeStep ? 'border-gray-900 shadow-xl scale-105' : 'border-gray-100 hover:border-gray-200 hover:shadow-lg'
-                }`}>
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all duration-300 ${
-                    i === activeStep ? 'bg-gray-900 scale-110' : 'bg-gray-100'
-                  }`}>
-                    <step.icon className={`w-8 h-8 ${i === activeStep ? 'text-white' : 'text-gray-500'}`} />
+                <div
+                  className={`relative p-6 bg-white rounded-2xl border-2 transition-all duration-300 ${
+                    i === activeStep
+                      ? 'border-gray-900 shadow-xl scale-105'
+                      : 'border-gray-100 hover:border-gray-200 hover:shadow-lg'
+                  }`}
+                >
+                  <div
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all duration-300 ${
+                      i === activeStep ? 'bg-gray-900 scale-110' : 'bg-gray-100'
+                    }`}
+                  >
+                    <step.icon
+                      className={`w-8 h-8 ${i === activeStep ? 'text-white' : 'text-gray-500'}`}
+                    />
                   </div>
                   <h3 className="font-bold text-gray-900 mb-1">{step.title}</h3>
                   <p className="text-sm text-gray-400">{step.desc}</p>
@@ -162,7 +189,8 @@ const ComplianceSection: React.FC = () => {
     {
       icon: Database,
       title: 'Retention des Donnees',
-      description: 'Politiques de conservation configurables, suppression automatique et archivage legal',
+      description:
+        'Politiques de conservation configurables, suppression automatique et archivage legal',
       badges: ['Auto-purge', 'Archivage'],
     },
     {
@@ -174,7 +202,7 @@ const ComplianceSection: React.FC = () => {
   ];
 
   const certifications = [
-    { name: 'ISO 27001', desc: 'Securite de l\'information' },
+    { name: 'ISO 27001', desc: "Securite de l'information" },
     { name: 'eIDAS', desc: 'Signatures electroniques' },
     { name: 'RGPD', desc: 'Protection des donnees' },
     { name: 'OHADA', desc: 'Droit des affaires' },
@@ -183,22 +211,27 @@ const ComplianceSection: React.FC = () => {
   return (
     <section ref={ref} id="compliance" className="py-32 bg-gray-950 relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6">
-        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur border border-white/10 rounded-full mb-6">
             <BadgeCheck className="w-4 h-4 text-white/60" />
             <span className="text-sm font-medium text-white/70">Conformite & Integrations</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Conforme RGPD & eIDAS
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Conforme RGPD & eIDAS</h2>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">
             Respectez les reglementations europeennes et africaines sans effort
           </p>
         </div>
 
-        <div className={`grid md:grid-cols-2 gap-6 mb-16 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`grid md:grid-cols-2 gap-6 mb-16 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           {items.map((item, i) => (
-            <div key={i} className="p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/[0.08] transition-all">
+            <div
+              key={i}
+              className="p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/[0.08] transition-all"
+            >
               <div className="flex items-start gap-4">
                 <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center flex-shrink-0">
                   <item.icon className="w-7 h-7 text-white/70" />
@@ -208,7 +241,10 @@ const ComplianceSection: React.FC = () => {
                   <p className="text-gray-500 text-sm mb-4">{item.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {item.badges.map((badge, j) => (
-                      <span key={j} className="px-3 py-1 bg-white/10 border border-white/10 rounded-full text-xs font-medium text-white/60">
+                      <span
+                        key={j}
+                        className="px-3 py-1 bg-white/10 border border-white/10 rounded-full text-xs font-medium text-white/60"
+                      >
                         {badge}
                       </span>
                     ))}
@@ -219,10 +255,15 @@ const ComplianceSection: React.FC = () => {
           ))}
         </div>
 
-        <div className={`transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="flex flex-wrap justify-center gap-4">
             {certifications.map((cert, i) => (
-              <div key={i} className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-xl">
+              <div
+                key={i}
+                className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-xl"
+              >
                 <BadgeCheck className="w-5 h-5 text-white/40" />
                 <div>
                   <p className="font-bold text-white/80">{cert.name}</p>
@@ -254,7 +295,9 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
   return (
     <section ref={ref} id="demo" className="py-32 bg-gray-950 relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6">
-        <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/10 rounded-full mb-6">
             <Play className="w-4 h-4 text-white/60" />
             <span className="text-sm font-medium text-white/70">Essayez maintenant</span>
@@ -263,7 +306,8 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
             Testez ADVIST en <span className="text-white/40">conditions reelles</span>
           </h2>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-            Decouvrez nos fonctionnalites cles avec ces demos interactives. Aucune inscription requise.
+            Decouvrez nos fonctionnalites cles avec ces demos interactives. Aucune inscription
+            requise.
           </p>
         </div>
 
@@ -275,7 +319,9 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
                 key={tab.id}
                 onClick={() => setActiveDemo(tab.id)}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all ${
-                  activeDemo === tab.id ? 'bg-white text-gray-900 shadow-lg' : 'text-white/50 hover:text-white/80'
+                  activeDemo === tab.id
+                    ? 'bg-white text-gray-900 shadow-lg'
+                    : 'text-white/50 hover:text-white/80'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -286,13 +332,18 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
         </div>
 
         {/* Demo container */}
-        <div className={`relative transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`relative transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
             <div className="bg-gray-900 px-6 py-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                    {React.createElement(demoTabs.find(t => t.id === activeDemo)?.icon || Monitor, { className: 'w-6 h-6 text-white' })}
+                    {React.createElement(
+                      demoTabs.find((t) => t.id === activeDemo)?.icon || Monitor,
+                      { className: 'w-6 h-6 text-white' }
+                    )}
                   </div>
                   <div>
                     <h3 className="text-white font-semibold text-lg">
@@ -303,7 +354,7 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
                     <p className="text-white/40 text-sm">
                       {activeDemo === 'workflow' && 'Approuvez un document en 3 etapes'}
                       {activeDemo === 'signature' && 'Signez un document de test'}
-                      {activeDemo === 'documents' && 'Explorez l\'interface de gestion'}
+                      {activeDemo === 'documents' && "Explorez l'interface de gestion"}
                     </p>
                   </div>
                 </div>
@@ -334,7 +385,7 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
             </button>
             <Link to="/register">
               <button className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white/20 text-white font-semibold rounded-2xl hover:bg-white/10 transition-all">
-                Essai gratuit 14 jours
+                Essai gratuit 1 mois
               </button>
             </Link>
           </div>
@@ -352,19 +403,22 @@ const TestimonialsSection: React.FC = () => {
 
   const testimonials = [
     {
-      quote: "ADVIST a revolutionne notre gestion documentaire. Nous avons reduit de 70% le temps de validation de nos contrats.",
+      quote:
+        'ADVIST a revolutionne notre gestion documentaire. Nous avons reduit de 70% le temps de validation de nos contrats.',
       author: 'Aminata Kone',
       role: 'Directrice Juridique',
       company: 'Orange CI',
     },
     {
-      quote: "La signature electronique nous permet de finaliser nos accords commerciaux en quelques heures au lieu de plusieurs jours.",
+      quote:
+        'La signature electronique nous permet de finaliser nos accords commerciaux en quelques heures au lieu de plusieurs jours.',
       author: 'Jean-Baptiste Diallo',
       role: 'Directeur General',
       company: 'Ecobank Senegal',
     },
     {
-      quote: "Interface intuitive et adoption facile par toutes nos equipes. Le support est reactif et professionnel.",
+      quote:
+        'Interface intuitive et adoption facile par toutes nos equipes. Le support est reactif et professionnel.',
       author: 'Fatou Sarr',
       role: 'Responsable Qualite',
       company: 'Total Energies',
@@ -373,7 +427,7 @@ const TestimonialsSection: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % testimonials.length);
+      setActiveIndex((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
   }, [testimonials.length]);
@@ -381,7 +435,9 @@ const TestimonialsSection: React.FC = () => {
   return (
     <section ref={ref} className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full mb-6">
             <Star className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-medium text-gray-500">Temoignages</span>
@@ -391,7 +447,9 @@ const TestimonialsSection: React.FC = () => {
           </h2>
         </div>
 
-        <div className={`relative max-w-4xl mx-auto mb-12 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`relative max-w-4xl mx-auto mb-12 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="relative bg-white rounded-3xl p-8 md:p-12 border border-gray-200 shadow-lg">
             <Quote className="w-12 h-12 text-gray-200 mb-6" />
             <p className="text-xl md:text-2xl text-gray-700 font-medium leading-relaxed mb-8">
@@ -399,11 +457,16 @@ const TestimonialsSection: React.FC = () => {
             </p>
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-gray-900 flex items-center justify-center text-white text-xl font-bold">
-                {testimonials[activeIndex].author.split(' ').map(n => n[0]).join('')}
+                {testimonials[activeIndex].author
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')}
               </div>
               <div>
                 <p className="font-bold text-gray-900">{testimonials[activeIndex].author}</p>
-                <p className="text-gray-400">{testimonials[activeIndex].role}, {testimonials[activeIndex].company}</p>
+                <p className="text-gray-400">
+                  {testimonials[activeIndex].role}, {testimonials[activeIndex].company}
+                </p>
               </div>
             </div>
 
@@ -431,16 +494,34 @@ const IAPromotionSection: React.FC = () => {
   const { ref, isVisible } = useScrollAnimation();
 
   const iaFeatures = [
-    { icon: Sparkles, title: 'Assistant IA conversationnel', description: 'Posez vos questions et obtenez des reponses instantanees sur vos documents' },
-    { icon: FileText, title: 'Generation automatique', description: 'Creez des documents professionnels en quelques secondes grace a l\'IA' },
-    { icon: Search, title: 'Analyse intelligente', description: 'Extraction automatique des informations cles de vos documents' },
-    { icon: GitBranch, title: 'Suggestions de workflows', description: 'L\'IA vous recommande les meilleurs circuits de validation' },
+    {
+      icon: Sparkles,
+      title: 'Assistant IA conversationnel',
+      description: 'Posez vos questions et obtenez des reponses instantanees sur vos documents',
+    },
+    {
+      icon: FileText,
+      title: 'Generation automatique',
+      description: "Creez des documents professionnels en quelques secondes grace a l'IA",
+    },
+    {
+      icon: Search,
+      title: 'Analyse intelligente',
+      description: 'Extraction automatique des informations cles de vos documents',
+    },
+    {
+      icon: GitBranch,
+      title: 'Suggestions de workflows',
+      description: "L'IA vous recommande les meilleurs circuits de validation",
+    },
   ];
 
   return (
     <section ref={ref} id="proph3t" className="py-32 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6 relative">
-        <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full mb-6">
             <Sparkles className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-semibold text-gray-500">Nouveau - Option IA</span>
@@ -453,7 +534,9 @@ const IAPromotionSection: React.FC = () => {
           </p>
         </div>
 
-        <div className={`relative transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`relative transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="relative bg-white rounded-3xl border border-gray-200 p-8 md:p-12">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Features */}
@@ -518,7 +601,7 @@ const IAPromotionSection: React.FC = () => {
                     </button>
                   </Link>
                   <p className="text-center text-xs text-gray-400 mt-3">
-                    Inclus dans les 14 jours d'essai gratuit
+                    Inclus dans le mois d'essai gratuit
                   </p>
                 </div>
               </div>

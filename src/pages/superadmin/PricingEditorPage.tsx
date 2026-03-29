@@ -1,10 +1,8 @@
 ﻿import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  CreditCard,
   Plus,
   Trash2,
-  GripVertical,
   Check,
   X,
   Save,
@@ -102,39 +100,39 @@ const mockPlans: PricingPlan[] = [
   {
     id: '3',
     name: 'Business',
-    description: 'Pour les PME en croissance',
-    monthlyPrice: 59000,
-    yearlyPrice: 590000,
+    description: 'Pour les PME (par emetteur)',
+    monthlyPrice: 25000,
+    yearlyPrice: 240000,
     currency: 'XOF',
     icon: 'Star',
     color: 'bg-primary-900',
     isPopular: true,
     isEnterprise: false,
-    maxUsers: 50,
-    maxDocuments: 15000,
-    maxStorage: 250,
+    maxUsers: 5,
+    maxDocuments: 50,
+    maxStorage: 10,
     enabled: true,
     features: [
       { id: 'f1', name: 'Gestion documentaire', included: true },
-      { id: 'f2', name: 'Signature électronique', included: true, limit: '1000/mois' },
-      { id: 'f3', name: 'Workflows avancés', included: true, limit: '100 workflows' },
+      { id: 'f2', name: 'Signature simple', included: true, limit: '50/mois' },
+      { id: 'f3', name: 'Workflows configurables', included: true, limit: '10 workflows' },
       { id: 'f4', name: '2FA', included: true },
-      { id: 'f5', name: 'Support prioritaire', included: true },
+      { id: 'f5', name: 'Support email', included: true },
       { id: 'f6', name: 'Audit logs', included: true, limit: '1 an' },
-      { id: 'f7', name: 'Intégration cloud', included: true },
+      { id: 'f7', name: 'Annotations & commentaires', included: true },
       { id: 'f8', name: 'OCR', included: true },
-      { id: 'f9', name: 'API Access', included: true },
-      { id: 'f10', name: 'Webhooks', included: true },
-      { id: 'f11', name: 'Assistant IA', included: true },
-      { id: 'f12', name: 'Branding personnalisé', included: true },
+      { id: 'f9', name: 'API Access', included: false },
+      { id: 'f10', name: 'SSO / SAML', included: false },
+      { id: 'f11', name: 'OHADA / eIDAS', included: false },
+      { id: 'f12', name: 'Branding personnalise', included: false },
     ],
   },
   {
     id: '4',
-    name: 'Enterprise',
-    description: 'Solutions sur mesure',
-    monthlyPrice: 149000,
-    yearlyPrice: 0,
+    name: 'Entreprise',
+    description: 'Tout illimite',
+    monthlyPrice: 150000,
+    yearlyPrice: 1440000,
     currency: 'XOF',
     icon: 'Crown',
     color: 'bg-status-error',
@@ -181,7 +179,7 @@ const COLOR_OPTIONS = [
 ];
 
 export const PricingEditorPage: React.FC = () => {
-  const { t } = useTranslation();
+  useTranslation();
   const [plans, setPlans] = useState<PricingPlan[]>(mockPlans);
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
   const [showPlanModal, setShowPlanModal] = useState(false);
@@ -189,7 +187,6 @@ export const PricingEditorPage: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
 
   const handleSave = () => {
-    console.log('Saving plans:', plans);
     setHasChanges(false);
   };
 
@@ -231,7 +228,7 @@ export const PricingEditorPage: React.FC = () => {
   const savePlan = () => {
     if (!selectedPlan) return;
 
-    const existingIndex = plans.findIndex(p => p.id === selectedPlan.id);
+    const existingIndex = plans.findIndex((p) => p.id === selectedPlan.id);
     if (existingIndex >= 0) {
       const newPlans = [...plans];
       newPlans[existingIndex] = selectedPlan;
@@ -244,7 +241,7 @@ export const PricingEditorPage: React.FC = () => {
   };
 
   const deletePlan = (planId: string) => {
-    setPlans(plans.filter(p => p.id !== planId));
+    setPlans(plans.filter((p) => p.id !== planId));
     setHasChanges(true);
   };
 
@@ -264,7 +261,7 @@ export const PricingEditorPage: React.FC = () => {
   };
 
   const getIconComponent = (iconName: string) => {
-    const iconOption = ICON_OPTIONS.find(opt => opt.value === iconName);
+    const iconOption = ICON_OPTIONS.find((opt) => opt.value === iconName);
     return iconOption?.icon || Zap;
   };
 
@@ -328,7 +325,8 @@ export const PricingEditorPage: React.FC = () => {
                 ) : (
                   <div>
                     <p className="text-3xl font-bold text-white">
-                      {formatPrice(plan.monthlyPrice)} <span className="text-lg font-normal text-white">FCFA/mois</span>
+                      {formatPrice(plan.monthlyPrice)}{' '}
+                      <span className="text-lg font-normal text-white">FCFA/mois</span>
                     </p>
                     <p className="text-sm text-white/70">
                       ou {formatPrice(plan.yearlyPrice)} FCFA/an
@@ -371,21 +369,30 @@ export const PricingEditorPage: React.FC = () => {
                       ) : (
                         <X size={16} className="text-primary-500/40" />
                       )}
-                      <span className={feature.included ? 'text-primary-900' : 'text-primary-500/60'}>
+                      <span
+                        className={feature.included ? 'text-primary-900' : 'text-primary-500/60'}
+                      >
                         {feature.name}
                         {feature.limit && <span className="text-xs ml-1">({feature.limit})</span>}
                       </span>
                     </li>
                   ))}
                   {plan.features.length > 5 && (
-                    <li className="text-xs text-primary-500">+{plan.features.length - 5} autres fonctionnalités</li>
+                    <li className="text-xs text-primary-500">
+                      +{plan.features.length - 5} autres fonctionnalités
+                    </li>
                   )}
                 </ul>
               </div>
 
               {/* Actions */}
               <div className="p-4 border-t border-primary-200 flex items-center gap-2">
-                <Button variant="outline" size="sm" className="flex-1" onClick={() => openPlanEditor(plan)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => openPlanEditor(plan)}
+                >
                   <Edit size={14} className="mr-1" />
                   Modifier
                 </Button>
@@ -431,7 +438,9 @@ export const PricingEditorPage: React.FC = () => {
             {/* Basic Info */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-primary-900 mb-2">Nom du plan</label>
+                <label className="block text-sm font-medium text-primary-900 mb-2">
+                  Nom du plan
+                </label>
                 <input
                   type="text"
                   value={selectedPlan.name}
@@ -440,11 +449,15 @@ export const PricingEditorPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-primary-900 mb-2">Description</label>
+                <label className="block text-sm font-medium text-primary-900 mb-2">
+                  Description
+                </label>
                 <input
                   type="text"
                   value={selectedPlan.description}
-                  onChange={(e) => setSelectedPlan({ ...selectedPlan, description: e.target.value })}
+                  onChange={(e) =>
+                    setSelectedPlan({ ...selectedPlan, description: e.target.value })
+                  }
                   className="w-full px-4 py-3 border border-primary-200 rounded-xl"
                 />
               </div>
@@ -453,20 +466,31 @@ export const PricingEditorPage: React.FC = () => {
             {/* Pricing */}
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-primary-900 mb-2">Prix mensuel (FCFA)</label>
+                <label className="block text-sm font-medium text-primary-900 mb-2">
+                  Prix mensuel (FCFA)
+                </label>
                 <input
                   type="number"
                   value={selectedPlan.monthlyPrice}
-                  onChange={(e) => setSelectedPlan({ ...selectedPlan, monthlyPrice: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setSelectedPlan({
+                      ...selectedPlan,
+                      monthlyPrice: parseInt(e.target.value) || 0,
+                    })
+                  }
                   className="w-full px-4 py-3 border border-primary-200 rounded-xl"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-primary-900 mb-2">Prix annuel (FCFA)</label>
+                <label className="block text-sm font-medium text-primary-900 mb-2">
+                  Prix annuel (FCFA)
+                </label>
                 <input
                   type="number"
                   value={selectedPlan.yearlyPrice}
-                  onChange={(e) => setSelectedPlan({ ...selectedPlan, yearlyPrice: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setSelectedPlan({ ...selectedPlan, yearlyPrice: parseInt(e.target.value) || 0 })
+                  }
                   className="w-full px-4 py-3 border border-primary-200 rounded-xl"
                 />
               </div>
@@ -487,31 +511,52 @@ export const PricingEditorPage: React.FC = () => {
             {/* Limits */}
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-primary-900 mb-2">Max utilisateurs</label>
+                <label className="block text-sm font-medium text-primary-900 mb-2">
+                  Max utilisateurs
+                </label>
                 <input
                   type="number"
                   value={selectedPlan.maxUsers || ''}
-                  onChange={(e) => setSelectedPlan({ ...selectedPlan, maxUsers: e.target.value ? parseInt(e.target.value) : null })}
+                  onChange={(e) =>
+                    setSelectedPlan({
+                      ...selectedPlan,
+                      maxUsers: e.target.value ? parseInt(e.target.value) : null,
+                    })
+                  }
                   placeholder="Illimité"
                   className="w-full px-4 py-3 border border-primary-200 rounded-xl"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-primary-900 mb-2">Max documents</label>
+                <label className="block text-sm font-medium text-primary-900 mb-2">
+                  Max documents
+                </label>
                 <input
                   type="number"
                   value={selectedPlan.maxDocuments || ''}
-                  onChange={(e) => setSelectedPlan({ ...selectedPlan, maxDocuments: e.target.value ? parseInt(e.target.value) : null })}
+                  onChange={(e) =>
+                    setSelectedPlan({
+                      ...selectedPlan,
+                      maxDocuments: e.target.value ? parseInt(e.target.value) : null,
+                    })
+                  }
                   placeholder="Illimité"
                   className="w-full px-4 py-3 border border-primary-200 rounded-xl"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-primary-900 mb-2">Stockage (GB)</label>
+                <label className="block text-sm font-medium text-primary-900 mb-2">
+                  Stockage (GB)
+                </label>
                 <input
                   type="number"
                   value={selectedPlan.maxStorage || ''}
-                  onChange={(e) => setSelectedPlan({ ...selectedPlan, maxStorage: e.target.value ? parseInt(e.target.value) : null })}
+                  onChange={(e) =>
+                    setSelectedPlan({
+                      ...selectedPlan,
+                      maxStorage: e.target.value ? parseInt(e.target.value) : null,
+                    })
+                  }
                   placeholder="Illimité"
                   className="w-full px-4 py-3 border border-primary-200 rounded-xl"
                 />
@@ -546,7 +591,9 @@ export const PricingEditorPage: React.FC = () => {
                       key={opt.value}
                       onClick={() => setSelectedPlan({ ...selectedPlan, color: opt.value })}
                       className={`w-10 h-10 rounded-xl ${opt.value} ${
-                        selectedPlan.color === opt.value ? 'ring-2 ring-offset-2 ring-primary-900' : ''
+                        selectedPlan.color === opt.value
+                          ? 'ring-2 ring-offset-2 ring-primary-900'
+                          : ''
                       }`}
                     />
                   ))}
@@ -560,7 +607,9 @@ export const PricingEditorPage: React.FC = () => {
                 <input
                   type="checkbox"
                   checked={selectedPlan.isPopular}
-                  onChange={(e) => setSelectedPlan({ ...selectedPlan, isPopular: e.target.checked })}
+                  onChange={(e) =>
+                    setSelectedPlan({ ...selectedPlan, isPopular: e.target.checked })
+                  }
                   className="w-5 h-5 rounded border-primary-200 text-primary-900"
                 />
                 <span className="text-sm font-medium text-primary-900">Plan populaire</span>
@@ -569,10 +618,14 @@ export const PricingEditorPage: React.FC = () => {
                 <input
                   type="checkbox"
                   checked={selectedPlan.isEnterprise}
-                  onChange={(e) => setSelectedPlan({ ...selectedPlan, isEnterprise: e.target.checked })}
+                  onChange={(e) =>
+                    setSelectedPlan({ ...selectedPlan, isEnterprise: e.target.checked })
+                  }
                   className="w-5 h-5 rounded border-primary-200 text-primary-900"
                 />
-                <span className="text-sm font-medium text-primary-900">Plan Enterprise (sur devis)</span>
+                <span className="text-sm font-medium text-primary-900">
+                  Plan Enterprise (sur devis)
+                </span>
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -593,8 +646,15 @@ export const PricingEditorPage: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    const newFeature = { id: `f-${Date.now()}`, name: 'Nouvelle fonctionnalité', included: true };
-                    setSelectedPlan({ ...selectedPlan, features: [...selectedPlan.features, newFeature] });
+                    const newFeature = {
+                      id: `f-${Date.now()}`,
+                      name: 'Nouvelle fonctionnalité',
+                      included: true,
+                    };
+                    setSelectedPlan({
+                      ...selectedPlan,
+                      features: [...selectedPlan.features, newFeature],
+                    });
                   }}
                 >
                   <Plus size={14} className="mr-1" />
@@ -603,7 +663,10 @@ export const PricingEditorPage: React.FC = () => {
               </div>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {selectedPlan.features.map((feature, index) => (
-                  <div key={feature.id} className="flex items-center gap-2 p-2 bg-primary-100/30 rounded-lg">
+                  <div
+                    key={feature.id}
+                    className="flex items-center gap-2 p-2 bg-primary-100/30 rounded-lg"
+                  >
                     <input
                       type="checkbox"
                       checked={feature.included}
@@ -671,37 +734,44 @@ export const PricingEditorPage: React.FC = () => {
         size="xl"
       >
         <div className="grid grid-cols-3 gap-4">
-          {plans.filter(p => p.enabled).map((plan) => {
-            const IconComponent = getIconComponent(plan.icon);
-            return (
-              <div
-                key={plan.id}
-                className={`rounded-2xl border-2 overflow-hidden ${
-                  plan.isPopular ? 'border-primary-900' : 'border-primary-200'
-                }`}
-              >
-                <div className={`${plan.color} p-4 text-center`}>
-                  <IconComponent size={28} className="mx-auto mb-2 text-white" />
-                  <h3 className="text-lg font-bold text-white">{plan.name}</h3>
-                  {plan.isEnterprise ? (
-                    <p className="text-xl font-bold mt-2 text-white">Sur devis</p>
-                  ) : (
-                    <p className="text-xl font-bold mt-2 text-white">{formatPrice(plan.monthlyPrice)} FCFA/mois</p>
-                  )}
+          {plans
+            .filter((p) => p.enabled)
+            .map((plan) => {
+              const IconComponent = getIconComponent(plan.icon);
+              return (
+                <div
+                  key={plan.id}
+                  className={`rounded-2xl border-2 overflow-hidden ${
+                    plan.isPopular ? 'border-primary-900' : 'border-primary-200'
+                  }`}
+                >
+                  <div className={`${plan.color} p-4 text-center`}>
+                    <IconComponent size={28} className="mx-auto mb-2 text-white" />
+                    <h3 className="text-lg font-bold text-white">{plan.name}</h3>
+                    {plan.isEnterprise ? (
+                      <p className="text-xl font-bold mt-2 text-white">Sur devis</p>
+                    ) : (
+                      <p className="text-xl font-bold mt-2 text-white">
+                        {formatPrice(plan.monthlyPrice)} FCFA/mois
+                      </p>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <ul className="space-y-2 text-sm">
+                      {plan.features
+                        .filter((f) => f.included)
+                        .slice(0, 4)
+                        .map((feature) => (
+                          <li key={feature.id} className="flex items-center gap-2">
+                            <Check size={14} className="text-status-success" />
+                            {feature.name}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
                 </div>
-                <div className="p-4">
-                  <ul className="space-y-2 text-sm">
-                    {plan.features.filter(f => f.included).slice(0, 4).map((feature) => (
-                      <li key={feature.id} className="flex items-center gap-2">
-                        <Check size={14} className="text-status-success" />
-                        {feature.name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </Modal>
     </div>

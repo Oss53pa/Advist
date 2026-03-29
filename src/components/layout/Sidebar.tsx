@@ -12,18 +12,15 @@ import {
   ChevronDown,
   Plus,
   Bell,
-  Search,
-  Sparkles,
   Inbox,
   Send,
   Clock,
   CheckCircle,
   AlertCircle,
-  Compass,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { usePlanTheme, PLAN_ICONS } from '../../hooks/usePlanTheme';
+import { usePlanTheme } from '../../hooks/usePlanTheme';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -45,7 +42,7 @@ const getMainNavItems = (t: (key: string, fallback?: string) => string): NavItem
     id: 'dashboard',
     label: t('nav.dashboard', 'Dashboard'),
     icon: LayoutDashboard,
-    path: '/app'
+    path: '/app',
   },
   {
     id: 'documents',
@@ -60,10 +57,26 @@ const getMainNavItems = (t: (key: string, fallback?: string) => string): NavItem
     icon: GitBranch,
     hasAdd: true,
     children: [
-      { id: 'workflows-active', label: t('nav.workflowsActive', 'Actifs'), icon: Clock, path: '/app/workflows' },
-      { id: 'workflows-pending', label: t('nav.workflowsPending', 'En attente'), icon: Inbox, path: '/app/workflows?status=pending', badge: 3 },
-      { id: 'workflows-completed', label: t('nav.workflowsCompleted', 'Terminés'), icon: CheckCircle, path: '/app/workflows?status=completed' },
-    ]
+      {
+        id: 'workflows-active',
+        label: t('nav.workflowsActive', 'Actifs'),
+        icon: Clock,
+        path: '/app/workflows',
+      },
+      {
+        id: 'workflows-pending',
+        label: t('nav.workflowsPending', 'En attente'),
+        icon: Inbox,
+        path: '/app/workflows?status=pending',
+        badge: 3,
+      },
+      {
+        id: 'workflows-completed',
+        label: t('nav.workflowsCompleted', 'Terminés'),
+        icon: CheckCircle,
+        path: '/app/workflows?status=completed',
+      },
+    ],
   },
   {
     id: 'signatures',
@@ -71,10 +84,26 @@ const getMainNavItems = (t: (key: string, fallback?: string) => string): NavItem
     icon: PenTool,
     badge: 5,
     children: [
-      { id: 'signatures-pending', label: t('nav.signaturesToSign', 'À signer'), icon: AlertCircle, path: '/app/signatures', badge: 5 },
-      { id: 'signatures-sent', label: t('nav.signaturesSent', 'Envoyées'), icon: Send, path: '/app/signatures?tab=sent' },
-      { id: 'signatures-completed', label: t('nav.signaturesCompleted', 'Complétées'), icon: CheckCircle, path: '/app/signatures?tab=completed' },
-    ]
+      {
+        id: 'signatures-pending',
+        label: t('nav.signaturesToSign', 'À signer'),
+        icon: AlertCircle,
+        path: '/app/signatures',
+        badge: 5,
+      },
+      {
+        id: 'signatures-sent',
+        label: t('nav.signaturesSent', 'Envoyées'),
+        icon: Send,
+        path: '/app/signatures?tab=sent',
+      },
+      {
+        id: 'signatures-completed',
+        label: t('nav.signaturesCompleted', 'Complétées'),
+        icon: CheckCircle,
+        path: '/app/signatures?tab=completed',
+      },
+    ],
   },
 ];
 
@@ -90,7 +119,7 @@ const getAdminNavItems = (t: (key: string, fallback?: string) => string): NavIte
     id: 'archives',
     label: t('nav.archives', 'Archives'),
     icon: Archive,
-    path: '/app/archives'
+    path: '/app/archives',
   },
 ];
 
@@ -106,14 +135,14 @@ const getBottomNavItems = (t: (key: string, fallback?: string) => string): NavIt
     id: 'settings',
     label: t('nav.settings', 'Paramètres'),
     icon: Settings,
-    path: '/app/settings'
+    path: '/app/settings',
   },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const { theme: planTheme, plan, Icon: PlanIcon } = usePlanTheme();
+  const { theme: planTheme } = usePlanTheme();
   const [expandedItems, setExpandedItems] = useState<string[]>(['workflows', 'signatures']);
 
   // Get translated nav items
@@ -122,17 +151,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const bottomNavItems = getBottomNavItems(t);
 
   const toggleExpand = (id: string) => {
-    setExpandedItems(prev =>
-      prev.includes(id)
-        ? prev.filter(item => item !== id)
-        : [...prev, id]
+    setExpandedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
   const isItemActive = (item: NavItem): boolean => {
     if (item.path && location.pathname === item.path) return true;
     if (item.children) {
-      return item.children.some(child => child.path && location.pathname.startsWith(child.path?.split('?')[0] || ''));
+      return item.children.some(
+        (child) => child.path && location.pathname.startsWith(child.path?.split('?')[0] || '')
+      );
     }
     return false;
   };
@@ -148,16 +177,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       `}
     >
       {/* Header with Logo - couleur du plan */}
-      <div className={`
+      <div
+        className={`
         h-16 flex items-center border-b border-advist-border
         ${isCollapsed ? 'justify-center px-3' : 'justify-between px-4'}
-      `}>
+      `}
+      >
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 ${planTheme.bgGradient} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg`}>
-            <PlanIcon size={20} className={planTheme.textOnBg} />
-          </div>
-          {!isCollapsed && (
-            <span className={`font-bold text-lg ${planTheme.text}`}>{t('nav.menu', 'Menu')}</span>
+          {isCollapsed ? (
+            <span className={`font-decorative text-xl ${planTheme.text}`}>A</span>
+          ) : (
+            <span className={`font-decorative text-xl ${planTheme.text}`}>Advist</span>
           )}
         </div>
         {!isCollapsed && (
@@ -271,15 +301,18 @@ const NavMenuItem: React.FC<{
           }}
           className={`
             w-full flex items-center justify-center p-3 rounded-xl transition-all duration-200
-            ${isActive
-              ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-              : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+            ${
+              isActive
+                ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+                : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
             }
           `}
         >
           <Icon size={20} />
           {item.badge && (
-            <span className={`absolute -top-1 -right-1 w-5 h-5 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}>
+            <span
+              className={`absolute -top-1 -right-1 w-5 h-5 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
+            >
               {item.badge > 9 ? '9+' : item.badge}
             </span>
           )}
@@ -306,25 +339,30 @@ const NavMenuItem: React.FC<{
           onClick={onToggle}
           className={`
             w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200
-            ${isActive
-              ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-              : 'text-advist-text-secondary hover:bg-advist-surface-dark'
+            ${
+              isActive
+                ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+                : 'text-advist-text-secondary hover:bg-advist-surface-dark'
             }
           `}
         >
           <Icon size={18} />
           <span className="flex-1 font-medium text-sm">{item.label}</span>
           {item.badge && (
-            <span className={`
+            <span
+              className={`
               px-1.5 py-0.5 text-[10px] font-bold rounded-full
               ${isActive ? 'bg-white/20 text-white' : `${planTheme.bgMedium} ${planTheme.text}`}
-            `}>
+            `}
+            >
               {item.badge}
             </span>
           )}
           {item.hasAdd && (
             <button
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
               className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-white/10' : 'hover:bg-advist-border'}`}
             >
               <Plus size={14} />
@@ -341,7 +379,8 @@ const NavMenuItem: React.FC<{
           <div className={`ml-4 mt-1 pl-4 border-l-2 ${planTheme.border} space-y-1`}>
             {item.children?.map((child) => {
               const ChildIcon = child.icon;
-              const childActive = child.path && location.pathname.startsWith(child.path.split('?')[0]);
+              const childActive =
+                child.path && location.pathname.startsWith(child.path.split('?')[0]);
 
               return (
                 <NavLink
@@ -349,16 +388,19 @@ const NavMenuItem: React.FC<{
                   to={child.path || '#'}
                   className={`
                     flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
-                    ${childActive
-                      ? `${planTheme.bgLight} text-advist-gray900 font-medium`
-                      : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+                    ${
+                      childActive
+                        ? `${planTheme.bgLight} text-advist-gray900 font-medium`
+                        : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
                     }
                   `}
                 >
                   <ChildIcon size={16} />
                   <span className="flex-1 text-sm">{child.label}</span>
                   {child.badge && (
-                    <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${planTheme.bgMedium} ${planTheme.text}`}>
+                    <span
+                      className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${planTheme.bgMedium} ${planTheme.text}`}
+                    >
                       {child.badge}
                     </span>
                   )}
@@ -377,25 +419,30 @@ const NavMenuItem: React.FC<{
       to={item.path || '#'}
       className={`
         flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-        ${isActive
-          ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-          : 'text-advist-text-secondary hover:bg-advist-surface-dark'
+        ${
+          isActive
+            ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+            : 'text-advist-text-secondary hover:bg-advist-surface-dark'
         }
       `}
     >
       <Icon size={18} />
       <span className="flex-1 font-medium text-sm">{item.label}</span>
       {item.badge && (
-        <span className={`
+        <span
+          className={`
           px-1.5 py-0.5 text-[10px] font-bold rounded-full
           ${isActive ? 'bg-white/20 text-white' : `${planTheme.bgMedium} ${planTheme.text}`}
-        `}>
+        `}
+        >
           {item.badge}
         </span>
       )}
       {item.hasAdd && (
         <button
-          onClick={(e) => { e.stopPropagation(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
           className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-white/10' : 'hover:bg-advist-border'}`}
         >
           <Plus size={14} />

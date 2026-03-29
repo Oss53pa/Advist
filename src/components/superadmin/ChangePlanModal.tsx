@@ -20,7 +20,7 @@ import {
   subscriptionsService,
   Subscription,
   Plan,
-  PlanChangePreview
+  PlanChangePreview,
 } from '../../services/subscriptions';
 
 interface ChangePlanModalProps {
@@ -35,16 +35,22 @@ const MOCK_PLANS: Plan[] = [
   {
     id: 'business',
     name: 'Business',
-    price: 59000,
+    price: 25000,
     period: 'monthly',
-    features: ['50 utilisateurs', '250 GB stockage', '15 000 documents', '1 000 signatures/mois', 'API & Webhooks'],
+    features: ['1-5 emetteurs', '50 documents/mois', 'Signature simple', 'Support email'],
   },
   {
     id: 'enterprise',
-    name: 'Enterprise',
-    price: 149000,
+    name: 'Entreprise',
+    price: 150000,
     period: 'monthly',
-    features: ['Utilisateurs illimités', 'Stockage illimité', 'Documents illimités', 'Signatures illimitées', 'Support dédié'],
+    features: [
+      'Tout illimite',
+      'eIDAS & OHADA',
+      'API REST & SSO/SAML',
+      'Support prioritaire',
+      'SLA 99,9%',
+    ],
   },
 ];
 
@@ -113,8 +119,10 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
   const calculateLocalPreview = (planId: string) => {
     if (!subscription) return;
 
-    const currentPlan = plans.find(p => p.name.toLowerCase() === subscription.plan.name.toLowerCase());
-    const newPlan = plans.find(p => p.id === planId);
+    const currentPlan = plans.find(
+      (p) => p.name.toLowerCase() === subscription.plan.name.toLowerCase()
+    );
+    const newPlan = plans.find((p) => p.id === planId);
 
     if (!currentPlan || !newPlan) return;
 
@@ -122,8 +130,13 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
     const today = new Date();
     const periodStart = new Date(subscription.currentPeriodStart);
 
-    const totalDays = Math.ceil((periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24));
-    const daysRemaining = Math.max(0, Math.ceil((periodEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+    const totalDays = Math.ceil(
+      (periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    const daysRemaining = Math.max(
+      0,
+      Math.ceil((periodEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    );
 
     const isUpgrade = newPlan.price > currentPlan.price;
     const isDowngrade = newPlan.price < currentPlan.price;
@@ -211,7 +224,9 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
 
         {/* Plan Selection */}
         <div>
-          <h3 className="text-sm font-medium text-primary-700 mb-3">Sélectionner le nouveau plan</h3>
+          <h3 className="text-sm font-medium text-primary-700 mb-3">
+            Sélectionner le nouveau plan
+          </h3>
 
           {isLoadingPlans ? (
             <div className="flex items-center justify-center py-8">
@@ -223,7 +238,6 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
                 const isCurrent = plan.name.toLowerCase() === currentPlanName;
                 const isSelected = selectedPlanId === plan.id;
                 const isUpgrade = plan.price > (subscription?.plan.price || 0);
-                const isDowngrade = plan.price < (subscription?.plan.price || 0);
 
                 return (
                   <button
@@ -234,8 +248,8 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
                       isCurrent
                         ? 'border-primary-200 bg-primary-50 opacity-60 cursor-not-allowed'
                         : isSelected
-                        ? 'border-primary-900 bg-primary-50'
-                        : 'border-primary-200 hover:border-primary-300'
+                          ? 'border-primary-900 bg-primary-50'
+                          : 'border-primary-200 hover:border-primary-300'
                     }`}
                   >
                     {isCurrent && (
@@ -252,9 +266,11 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
                         </p>
                       </div>
                       {!isCurrent && (
-                        <div className={`p-1.5 rounded-lg ${
-                          isUpgrade ? 'bg-primary-100' : 'bg-primary-100'
-                        }`}>
+                        <div
+                          className={`p-1.5 rounded-lg ${
+                            isUpgrade ? 'bg-primary-100' : 'bg-primary-100'
+                          }`}
+                        >
                           {isUpgrade ? (
                             <ArrowUpRight size={14} className="text-primary-900" />
                           ) : (
@@ -266,7 +282,10 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
 
                     <ul className="space-y-1">
                       {plan.features.slice(0, 3).map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-1.5 text-xs text-primary-600">
+                        <li
+                          key={idx}
+                          className="flex items-center gap-1.5 text-xs text-primary-600"
+                        >
                           <Check size={12} className="text-primary-900" />
                           {feature}
                         </li>
@@ -296,11 +315,13 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
             ) : preview ? (
               <div className="space-y-4">
                 {/* Change Type Badge */}
-                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                  preview.changeType === 'upgrade'
-                    ? 'bg-primary-100 text-green-600'
-                    : 'bg-primary-100 text-primary-700'
-                }`}>
+                <div
+                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
+                    preview.changeType === 'upgrade'
+                      ? 'bg-primary-100 text-green-600'
+                      : 'bg-primary-100 text-primary-700'
+                  }`}
+                >
                   {preview.changeType === 'upgrade' ? (
                     <>
                       <ArrowUpRight size={16} />
@@ -357,9 +378,7 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
                     <div className="flex items-start gap-3">
                       <Info size={20} className="text-primary-900 mt-0.5" />
                       <div>
-                        <p className="font-medium text-primary-800">
-                          Changement programmé
-                        </p>
+                        <p className="font-medium text-primary-800">Changement programmé</p>
                         <p className="text-sm text-primary-700 mt-1">
                           Le plan {preview.newPlan.name} sera activé le{' '}
                           <strong>
@@ -372,7 +391,8 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
                           , à la fin de la période de facturation actuelle.
                         </p>
                         <p className="text-sm text-primary-700 mt-2">
-                          L'organisation conserve l'accès aux fonctionnalités {subscription?.plan.name} jusqu'à cette date.
+                          L'organisation conserve l'accès aux fonctionnalités{' '}
+                          {subscription?.plan.name} jusqu'à cette date.
                         </p>
                       </div>
                     </div>
@@ -398,12 +418,7 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
 
         {/* Actions */}
         <div className="flex gap-3 pt-4 border-t">
-          <Button
-            variant="outline"
-            className="flex-1"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
+          <Button variant="outline" className="flex-1" onClick={onClose} disabled={isSubmitting}>
             Annuler
           </Button>
           <Button

@@ -107,7 +107,20 @@ interface DataExportRequest {
 export const SettingsPage: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'notifications' | 'security' | 'privacy' | 'offline' | 'organization' | 'export' | 'accounts' | 'mail' | 'ai' | 'integrations'>('general');
+  const [activeTab, setActiveTab] = useState<
+    | 'general'
+    | 'appearance'
+    | 'notifications'
+    | 'security'
+    | 'privacy'
+    | 'offline'
+    | 'organization'
+    | 'export'
+    | 'accounts'
+    | 'mail'
+    | 'ai'
+    | 'integrations'
+  >('general');
   const [settings, setSettings] = useState<AppSettings>({
     theme: 'light',
     language: 'fr',
@@ -130,21 +143,81 @@ export const SettingsPage: React.FC = () => {
   const isOrgAdmin = user?.is_org_admin ?? false;
 
   const tabs = [
-    { id: 'general' as const, label: t('settings.general', 'Général'), icon: Settings, adminOnly: false },
-    { id: 'appearance' as const, label: t('settings.appearance', 'Apparence'), icon: Paintbrush, adminOnly: false },
-    { id: 'notifications' as const, label: t('settings.notifications', 'Notifications'), icon: Bell, adminOnly: false },
-    { id: 'security' as const, label: t('settings.security', 'Sécurité'), icon: Shield, adminOnly: false },
-    { id: 'privacy' as const, label: t('settings.privacy', 'Confidentialité'), icon: Lock, adminOnly: false },
-    { id: 'offline' as const, label: t('settings.offline', 'Mode hors-ligne'), icon: WifiOff, adminOnly: false },
-    { id: 'organization' as const, label: t('settings.organization', 'Organisation'), icon: Building, adminOnly: true },
-    { id: 'accounts' as const, label: t('settings.accounts', 'Comptes'), icon: Users, adminOnly: true },
-    { id: 'mail' as const, label: t('settings.mail', 'Paramétrage mail'), icon: Mail, adminOnly: true },
-    { id: 'ai' as const, label: t('settings.ai', 'Intelligence Artificielle'), icon: Brain, adminOnly: true },
-    { id: 'integrations' as const, label: t('settings.integrations', 'Intégrations'), icon: Plug, adminOnly: true },
-    { id: 'export' as const, label: t('settings.dataExport', 'Export données'), icon: Download, adminOnly: true },
+    {
+      id: 'general' as const,
+      label: t('settings.general', 'Général'),
+      icon: Settings,
+      adminOnly: false,
+    },
+    {
+      id: 'appearance' as const,
+      label: t('settings.appearance', 'Apparence'),
+      icon: Paintbrush,
+      adminOnly: false,
+    },
+    {
+      id: 'notifications' as const,
+      label: t('settings.notifications', 'Notifications'),
+      icon: Bell,
+      adminOnly: false,
+    },
+    {
+      id: 'security' as const,
+      label: t('settings.security', 'Sécurité'),
+      icon: Shield,
+      adminOnly: false,
+    },
+    {
+      id: 'privacy' as const,
+      label: t('settings.privacy', 'Confidentialité'),
+      icon: Lock,
+      adminOnly: false,
+    },
+    {
+      id: 'offline' as const,
+      label: t('settings.offline', 'Mode hors-ligne'),
+      icon: WifiOff,
+      adminOnly: false,
+    },
+    {
+      id: 'organization' as const,
+      label: t('settings.organization', 'Organisation'),
+      icon: Building,
+      adminOnly: true,
+    },
+    {
+      id: 'accounts' as const,
+      label: t('settings.accounts', 'Comptes'),
+      icon: Users,
+      adminOnly: true,
+    },
+    {
+      id: 'mail' as const,
+      label: t('settings.mail', 'Paramétrage mail'),
+      icon: Mail,
+      adminOnly: true,
+    },
+    {
+      id: 'ai' as const,
+      label: t('settings.ai', 'Intelligence Artificielle'),
+      icon: Brain,
+      adminOnly: true,
+    },
+    {
+      id: 'integrations' as const,
+      label: t('settings.integrations', 'Intégrations'),
+      icon: Plug,
+      adminOnly: true,
+    },
+    {
+      id: 'export' as const,
+      label: t('settings.dataExport', 'Export données'),
+      icon: Download,
+      adminOnly: true,
+    },
   ];
 
-  const visibleTabs = tabs.filter(tab => !tab.adminOnly || isOrgAdmin);
+  const visibleTabs = tabs.filter((tab) => !tab.adminOnly || isOrgAdmin);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -156,7 +229,9 @@ export const SettingsPage: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-advist-gray900">{t('settings.title', 'Paramètres')}</h1>
+        <h1 className="text-2xl font-bold text-advist-gray900">
+          {t('settings.title', 'Paramètres')}
+        </h1>
         <p className="text-advist-gray900 mt-1">
           {t('settings.subtitle', 'Personnalisez votre expérience ADVIST')}
         </p>
@@ -173,16 +248,19 @@ export const SettingsPage: React.FC = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`
                     flex items-center gap-3 w-full px-3 py-2 rounded-xl text-left transition-all duration-240
-                    ${activeTab === tab.id
-                      ? 'bg-advist-dark text-white'
-                      : 'text-advist-gray900 hover:bg-advist-bg'
+                    ${
+                      activeTab === tab.id
+                        ? 'bg-advist-dark text-white'
+                        : 'text-advist-gray900 hover:bg-advist-bg'
                     }
                   `}
                 >
                   <tab.icon size={18} />
                   {tab.label}
                   {tab.adminOnly && (
-                    <Badge variant="secondary" size="sm" className="ml-auto">Admin</Badge>
+                    <Badge variant="secondary" size="sm" className="ml-auto">
+                      Admin
+                    </Badge>
                   )}
                 </button>
               ))}
@@ -201,7 +279,10 @@ export const SettingsPage: React.FC = () => {
                 {t('settings.appearance', 'Apparence')}
               </h2>
               <p className="text-advist-gray900/60 mb-6">
-                {t('settings.appearanceDesc', 'Personnalisez les couleurs, polices et la mise en page de votre interface')}
+                {t(
+                  'settings.appearanceDesc',
+                  'Personnalisez les couleurs, polices et la mise en page de votre interface'
+                )}
               </p>
               <ThemeCustomizer />
             </Card>
@@ -232,7 +313,9 @@ export const SettingsPage: React.FC = () => {
             <div className="flex justify-end">
               <Button onClick={handleSave} disabled={isSaving}>
                 <Save size={16} className="mr-2" />
-                {isSaving ? t('settings.saving', 'Enregistrement...') : t('settings.save', 'Enregistrer les modifications')}
+                {isSaving
+                  ? t('settings.saving', 'Enregistrement...')
+                  : t('settings.save', 'Enregistrer les modifications')}
               </Button>
             </div>
           )}
@@ -261,7 +344,9 @@ const GeneralSettings: React.FC<{
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Palette size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.appearance', 'Apparence')}</h2>
+          <h2 className="text-lg font-semibold text-advist-gray900">
+            {t('settings.appearance', 'Apparence')}
+          </h2>
         </div>
         <p className="text-sm text-advist-gray900 mb-4">
           {t('settings.chooseTheme', "Choisissez le thème de l'application")}
@@ -273,15 +358,18 @@ const GeneralSettings: React.FC<{
               onClick={() => setSettings({ ...settings, theme: theme.id })}
               className={`
                 flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-240
-                ${settings.theme === theme.id
-                  ? 'border-advist-dark bg-advist-bg'
-                  : 'border-advist-bg hover:border-advist-blue-light'
+                ${
+                  settings.theme === theme.id
+                    ? 'border-advist-dark bg-advist-bg'
+                    : 'border-advist-bg hover:border-advist-blue-light'
                 }
               `}
             >
               <theme.icon
                 size={24}
-                className={settings.theme === theme.id ? 'text-advist-gray900' : 'text-advist-gray900'}
+                className={
+                  settings.theme === theme.id ? 'text-advist-gray900' : 'text-advist-gray900'
+                }
               />
               <span
                 className={`text-sm font-medium ${
@@ -313,12 +401,51 @@ const NotificationSettings: React.FC<{
   };
 
   const notificationOptions = [
-    { key: 'email' as const, label: t('settings.notif.email', 'Notifications par email'), description: t('settings.notif.emailDesc', 'Recevoir des notifications importantes par email'), icon: Mail },
-    { key: 'push' as const, label: t('settings.notif.push', 'Notifications push'), description: t('settings.notif.pushDesc', 'Recevoir des notifications dans le navigateur'), icon: Bell },
-    { key: 'documents' as const, label: t('settings.notif.documents', 'Documents'), description: t('settings.notif.documentsDesc', 'Notifications pour les mises à jour de documents'), icon: FileText },
-    { key: 'workflows' as const, label: t('settings.notif.workflows', 'Workflows'), description: t('settings.notif.workflowsDesc', 'Notifications pour les étapes de validation'), icon: GitBranch },
-    { key: 'signatures' as const, label: t('settings.notif.signatures', 'Signatures'), description: t('settings.notif.signaturesDesc', 'Notifications pour les demandes de signature'), icon: MessageSquare },
-    { key: 'weekly_digest' as const, label: t('settings.notif.weekly', 'Résumé hebdomadaire'), description: t('settings.notif.weeklyDesc', "Recevoir un résumé d'activité chaque semaine"), icon: Mail },
+    {
+      key: 'email' as const,
+      label: t('settings.notif.email', 'Notifications par email'),
+      description: t(
+        'settings.notif.emailDesc',
+        'Recevoir des notifications importantes par email'
+      ),
+      icon: Mail,
+    },
+    {
+      key: 'push' as const,
+      label: t('settings.notif.push', 'Notifications push'),
+      description: t('settings.notif.pushDesc', 'Recevoir des notifications dans le navigateur'),
+      icon: Bell,
+    },
+    {
+      key: 'documents' as const,
+      label: t('settings.notif.documents', 'Documents'),
+      description: t(
+        'settings.notif.documentsDesc',
+        'Notifications pour les mises à jour de documents'
+      ),
+      icon: FileText,
+    },
+    {
+      key: 'workflows' as const,
+      label: t('settings.notif.workflows', 'Workflows'),
+      description: t('settings.notif.workflowsDesc', 'Notifications pour les étapes de validation'),
+      icon: GitBranch,
+    },
+    {
+      key: 'signatures' as const,
+      label: t('settings.notif.signatures', 'Signatures'),
+      description: t(
+        'settings.notif.signaturesDesc',
+        'Notifications pour les demandes de signature'
+      ),
+      icon: MessageSquare,
+    },
+    {
+      key: 'weekly_digest' as const,
+      label: t('settings.notif.weekly', 'Résumé hebdomadaire'),
+      description: t('settings.notif.weeklyDesc', "Recevoir un résumé d'activité chaque semaine"),
+      icon: Mail,
+    },
   ];
 
   return (
@@ -373,16 +500,39 @@ const PrivacySettings: React.FC<{
   };
 
   const privacyOptions = [
-    { key: 'show_online_status' as const, label: t('settings.privacy.online', 'Afficher le statut en ligne'), description: t('settings.privacy.onlineDesc', 'Les autres utilisateurs peuvent voir quand vous êtes connecté') },
-    { key: 'show_last_seen' as const, label: t('settings.privacy.lastSeen', 'Afficher la dernière activité'), description: t('settings.privacy.lastSeenDesc', 'Les autres utilisateurs peuvent voir votre dernière connexion') },
-    { key: 'allow_analytics' as const, label: t('settings.privacy.analytics', 'Analyses anonymes'), description: t('settings.privacy.analyticsDesc', "Aider à améliorer ADVIST en partageant des données d'utilisation anonymes") },
+    {
+      key: 'show_online_status' as const,
+      label: t('settings.privacy.online', 'Afficher le statut en ligne'),
+      description: t(
+        'settings.privacy.onlineDesc',
+        'Les autres utilisateurs peuvent voir quand vous êtes connecté'
+      ),
+    },
+    {
+      key: 'show_last_seen' as const,
+      label: t('settings.privacy.lastSeen', 'Afficher la dernière activité'),
+      description: t(
+        'settings.privacy.lastSeenDesc',
+        'Les autres utilisateurs peuvent voir votre dernière connexion'
+      ),
+    },
+    {
+      key: 'allow_analytics' as const,
+      label: t('settings.privacy.analytics', 'Analyses anonymes'),
+      description: t(
+        'settings.privacy.analyticsDesc',
+        "Aider à améliorer ADVIST en partageant des données d'utilisation anonymes"
+      ),
+    },
   ];
 
   return (
     <Card className="p-6">
       <div className="flex items-center gap-3 mb-4">
         <Lock size={20} className="text-advist-gray900" />
-        <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.confidentiality', 'Confidentialité')}</h2>
+        <h2 className="text-lg font-semibold text-advist-gray900">
+          {t('settings.confidentiality', 'Confidentialité')}
+        </h2>
       </div>
       <div className="space-y-4">
         {privacyOptions.map((option) => (
@@ -479,7 +629,9 @@ const OrganizationSettings: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <CreditCard size={20} className="text-advist-gray900" />
-            <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.subscription', 'Abonnement')}</h2>
+            <h2 className="text-lg font-semibold text-advist-gray900">
+              {t('settings.subscription', 'Abonnement')}
+            </h2>
           </div>
           <Badge className={planLabels[subscriptionPlan].color} size="lg">
             {planLabels[subscriptionPlan].label}
@@ -490,7 +642,9 @@ const OrganizationSettings: React.FC = () => {
           <div className="p-4 bg-advist-bg/30 rounded-xl text-center">
             <Zap size={24} className="mx-auto text-advist-gold mb-2" />
             <p className="text-2xl font-bold text-advist-gray900">25</p>
-            <p className="text-sm text-advist-gray900">{t('settings.plan.maxUsers', 'Utilisateurs max')}</p>
+            <p className="text-sm text-advist-gray900">
+              {t('settings.plan.maxUsers', 'Utilisateurs max')}
+            </p>
           </div>
           <div className="p-4 bg-advist-bg/30 rounded-xl text-center">
             <Database size={24} className="mx-auto text-advist-gray900 mb-2" />
@@ -500,7 +654,9 @@ const OrganizationSettings: React.FC = () => {
           <div className="p-4 bg-advist-bg/30 rounded-xl text-center">
             <Shield size={24} className="mx-auto text-advist-success mb-2" />
             <p className="text-2xl font-bold text-advist-gray900">OHADA</p>
-            <p className="text-sm text-advist-gray900">{t('settings.plan.compliance', 'Conformité')}</p>
+            <p className="text-sm text-advist-gray900">
+              {t('settings.plan.compliance', 'Conformité')}
+            </p>
           </div>
         </div>
 
@@ -520,7 +676,9 @@ const OrganizationSettings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-6">
           <BarChart3 size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.quotasLimits', 'Quotas et Limites')}</h2>
+          <h2 className="text-lg font-semibold text-advist-gray900">
+            {t('settings.quotasLimits', 'Quotas et Limites')}
+          </h2>
         </div>
 
         <div className="space-y-6">
@@ -537,11 +695,11 @@ const OrganizationSettings: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-advist-gray900">
-                      {item.current}{item.unit} / {item.max}{item.unit}
+                      {item.current}
+                      {item.unit} / {item.max}
+                      {item.unit}
                     </span>
-                    {percentage >= 90 && (
-                      <AlertTriangle size={16} className="text-advist-error" />
-                    )}
+                    {percentage >= 90 && <AlertTriangle size={16} className="text-advist-error" />}
                   </div>
                 </div>
                 <div className="h-3 bg-advist-bg rounded-full overflow-hidden">
@@ -552,7 +710,10 @@ const OrganizationSettings: React.FC = () => {
                 </div>
                 {percentage >= 90 && (
                   <p className="text-xs text-advist-error">
-                    {t('settings.quotaWarning', 'Attention: Quota presque atteint. Envisagez une mise à niveau.')}
+                    {t(
+                      'settings.quotaWarning',
+                      'Attention: Quota presque atteint. Envisagez une mise à niveau.'
+                    )}
                   </p>
                 )}
               </div>
@@ -565,10 +726,15 @@ const OrganizationSettings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Globe size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.regional', 'Paramètres Régionaux')}</h2>
+          <h2 className="text-lg font-semibold text-advist-gray900">
+            {t('settings.regional', 'Paramètres Régionaux')}
+          </h2>
         </div>
         <p className="text-sm text-advist-gray900 mb-6">
-          {t('settings.regionalDesc', "Configurez le pays, la devise et les formats pour votre organisation")}
+          {t(
+            'settings.regionalDesc',
+            'Configurez le pays, la devise et les formats pour votre organisation'
+          )}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -736,19 +902,43 @@ const OrganizationSettings: React.FC = () => {
       >
         <div className="grid md:grid-cols-2 gap-4">
           {[
-            { id: 'business', label: 'Business', price: '59 000', users: 50, storage: 250, features: ['50 utilisateurs', '250 GB stockage', 'Support téléphonique', 'OHADA', 'SSO/SAML', 'Assistant IA'] },
-            { id: 'enterprise', label: 'Entreprise', price: 'Sur mesure', users: 'Illimité', storage: 'Illimité', features: ['Utilisateurs illimités', 'Stockage illimité', 'Support dédié 24/7', 'OHADA', 'SSO/SAML', 'White label'] },
+            {
+              id: 'business',
+              label: 'Business',
+              price: '25 000/emetteur',
+              users: '1-5 emetteurs',
+              storage: '10 Go',
+              features: ['1-5 emetteurs', '50 docs/mois', 'Signature simple', 'Support email'],
+            },
+            {
+              id: 'enterprise',
+              label: 'Entreprise',
+              price: '150 000',
+              users: 'Illimite',
+              storage: 'Illimite',
+              features: [
+                'Tout illimite',
+                'eIDAS & OHADA',
+                'API & SSO',
+                'Support prioritaire',
+                'SLA 99,9%',
+              ],
+            },
           ].map((plan) => (
             <div
               key={plan.id}
               className={`p-4 border-2 rounded-xl ${
-                plan.id === subscriptionPlan ? 'border-advist-dark bg-advist-bg/30' : 'border-advist-bg'
+                plan.id === subscriptionPlan
+                  ? 'border-advist-dark bg-advist-bg/30'
+                  : 'border-advist-bg'
               }`}
             >
               <h3 className="text-lg font-bold text-advist-gray900">{plan.label}</h3>
               <p className="text-2xl font-bold text-advist-gray900 mt-2">
                 {plan.price}
-                {plan.price !== 'Sur mesure' && <span className="text-sm font-normal text-advist-gray900">€/mois</span>}
+                {plan.price !== 'Sur mesure' && (
+                  <span className="text-sm font-normal text-advist-gray900">€/mois</span>
+                )}
               </p>
               <ul className="mt-4 space-y-2">
                 {plan.features.map((feature) => (
@@ -763,7 +953,9 @@ const OrganizationSettings: React.FC = () => {
                 className="w-full mt-4"
                 disabled={plan.id === subscriptionPlan}
               >
-                {plan.id === subscriptionPlan ? t('settings.currentPlan', 'Plan actuel') : t('settings.select', 'Sélectionner')}
+                {plan.id === subscriptionPlan
+                  ? t('settings.currentPlan', 'Plan actuel')
+                  : t('settings.select', 'Sélectionner')}
               </Button>
             </div>
           ))}
@@ -782,20 +974,67 @@ const AccountsManagement: React.FC = () => {
 
   // Mock users
   const users = [
-    { id: 1, first_name: 'Jean', last_name: 'Dupont', email: 'jean@example.com', role: 'admin', is_active: true, last_login: '2024-11-28T10:00:00Z' },
-    { id: 2, first_name: 'Marie', last_name: 'Martin', email: 'marie@example.com', role: 'manager', is_active: true, last_login: '2024-11-27T15:30:00Z' },
-    { id: 3, first_name: 'Pierre', last_name: 'Durand', email: 'pierre@example.com', role: 'user', is_active: true, last_login: '2024-11-25T09:00:00Z' },
-    { id: 4, first_name: 'Sophie', last_name: 'Laurent', email: 'sophie@example.com', role: 'user', is_active: false, last_login: '2024-10-15T11:00:00Z' },
+    {
+      id: 1,
+      first_name: 'Jean',
+      last_name: 'Dupont',
+      email: 'jean@example.com',
+      role: 'admin',
+      is_active: true,
+      last_login: '2024-11-28T10:00:00Z',
+    },
+    {
+      id: 2,
+      first_name: 'Marie',
+      last_name: 'Martin',
+      email: 'marie@example.com',
+      role: 'manager',
+      is_active: true,
+      last_login: '2024-11-27T15:30:00Z',
+    },
+    {
+      id: 3,
+      first_name: 'Pierre',
+      last_name: 'Durand',
+      email: 'pierre@example.com',
+      role: 'user',
+      is_active: true,
+      last_login: '2024-11-25T09:00:00Z',
+    },
+    {
+      id: 4,
+      first_name: 'Sophie',
+      last_name: 'Laurent',
+      email: 'sophie@example.com',
+      role: 'user',
+      is_active: false,
+      last_login: '2024-10-15T11:00:00Z',
+    },
   ];
 
   const pendingInvites = [
-    { id: 1, email: 'nouveau@example.com', role: 'user', invited_at: '2024-11-26T10:00:00Z', expires_at: '2024-12-03T10:00:00Z' },
+    {
+      id: 1,
+      email: 'nouveau@example.com',
+      role: 'user',
+      invited_at: '2024-11-26T10:00:00Z',
+      expires_at: '2024-12-03T10:00:00Z',
+    },
   ];
 
   const roleLabels: Record<string, { label: string; color: string }> = {
-    admin: { label: t('settings.roles.admin', 'Administrateur'), color: 'bg-advist-surface-dark text-advist-gray900' },
-    manager: { label: t('settings.roles.manager', 'Manager'), color: 'bg-advist-gold-light text-advist-gray900' },
-    user: { label: t('settings.roles.user', 'Utilisateur'), color: 'bg-advist-surface-dark text-advist-gray900' },
+    admin: {
+      label: t('settings.roles.admin', 'Administrateur'),
+      color: 'bg-advist-surface-dark text-advist-gray900',
+    },
+    manager: {
+      label: t('settings.roles.manager', 'Manager'),
+      color: 'bg-advist-gold-light text-advist-gray900',
+    },
+    user: {
+      label: t('settings.roles.user', 'Utilisateur'),
+      color: 'bg-advist-surface-dark text-advist-gray900',
+    },
   };
 
   return (
@@ -805,8 +1044,10 @@ const AccountsManagement: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Users size={20} className="text-advist-gray900" />
-            <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.activeUsers', 'Utilisateurs actifs')}</h2>
-            <Badge variant="secondary">{users.filter(u => u.is_active).length} / 25</Badge>
+            <h2 className="text-lg font-semibold text-advist-gray900">
+              {t('settings.activeUsers', 'Utilisateurs actifs')}
+            </h2>
+            <Badge variant="secondary">{users.filter((u) => u.is_active).length} / 25</Badge>
           </div>
           <Button onClick={() => setShowInviteModal(true)} leftIcon={<UserPlus size={16} />}>
             {t('settings.inviteUser', 'Inviter un utilisateur')}
@@ -822,10 +1063,15 @@ const AccountsManagement: React.FC = () => {
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-medium ${
-                  user.is_active ? 'bg-advist-dark text-white' : 'bg-advist-surface-dark text-advist-text-secondary'
-                }`}>
-                  {user.first_name[0]}{user.last_name[0]}
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-medium ${
+                    user.is_active
+                      ? 'bg-advist-dark text-white'
+                      : 'bg-advist-surface-dark text-advist-text-secondary'
+                  }`}
+                >
+                  {user.first_name[0]}
+                  {user.last_name[0]}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -836,12 +1082,15 @@ const AccountsManagement: React.FC = () => {
                       {roleLabels[user.role].label}
                     </Badge>
                     {!user.is_active && (
-                      <Badge variant="danger" size="sm">{t('settings.deactivated', 'Désactivé')}</Badge>
+                      <Badge variant="danger" size="sm">
+                        {t('settings.deactivated', 'Désactivé')}
+                      </Badge>
                     )}
                   </div>
                   <p className="text-sm text-advist-gray900">{user.email}</p>
                   <p className="text-xs text-advist-blue-light">
-                    {t('settings.lastLogin', 'Dernière connexion')}: {new Date(user.last_login).toLocaleDateString('fr-FR')}
+                    {t('settings.lastLogin', 'Dernière connexion')}:{' '}
+                    {new Date(user.last_login).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
               </div>
@@ -864,7 +1113,11 @@ const AccountsManagement: React.FC = () => {
                     {t('settings.deactivate', 'Désactiver')}
                   </Button>
                 ) : (
-                  <Button variant="ghost" size="sm" className="text-advist-success hover:bg-green-50">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-advist-success hover:bg-green-50"
+                  >
                     <Check size={14} className="mr-1" />
                     {t('settings.reactivate', 'Réactiver')}
                   </Button>
@@ -880,16 +1133,23 @@ const AccountsManagement: React.FC = () => {
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <Clock size={20} className="text-advist-gray900" />
-            <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.pendingInvites', 'Invitations en attente')}</h2>
+            <h2 className="text-lg font-semibold text-advist-gray900">
+              {t('settings.pendingInvites', 'Invitations en attente')}
+            </h2>
           </div>
           <div className="space-y-3">
             {pendingInvites.map((invite) => (
-              <div key={invite.id} className="flex items-center justify-between p-4 bg-advist-gold-light rounded-xl border border-advist-gold">
+              <div
+                key={invite.id}
+                className="flex items-center justify-between p-4 bg-advist-gold-light rounded-xl border border-advist-gold"
+              >
                 <div>
                   <p className="font-medium text-advist-gray900">{invite.email}</p>
                   <p className="text-sm text-advist-gray900">
-                    {t('settings.invitedOn', 'Invité le')} {new Date(invite.invited_at).toLocaleDateString('fr-FR')} •
-                    {t('settings.expiresOn', 'Expire le')} {new Date(invite.expires_at).toLocaleDateString('fr-FR')}
+                    {t('settings.invitedOn', 'Invité le')}{' '}
+                    {new Date(invite.invited_at).toLocaleDateString('fr-FR')} •
+                    {t('settings.expiresOn', 'Expire le')}{' '}
+                    {new Date(invite.expires_at).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -961,7 +1221,10 @@ const AccountsManagement: React.FC = () => {
                   {t('settings.deactivateWarning', 'Attention')}
                 </p>
                 <p className="text-sm text-advist-error mt-1">
-                  {t('settings.deactivateDesc', "L'utilisateur ne pourra plus se connecter. Ses documents et workflows seront préservés.")}
+                  {t(
+                    'settings.deactivateDesc',
+                    "L'utilisateur ne pourra plus se connecter. Ses documents et workflows seront préservés."
+                  )}
                 </p>
               </div>
             </div>
@@ -996,7 +1259,7 @@ const SecuritySettings: React.FC = () => {
   const [showSessionsModal, setShowSessionsModal] = useState(false);
   const [showPINModal, setShowPINModal] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [pinEnabled, setPinEnabled] = useState(true);
+  const [pinEnabled] = useState(true);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
@@ -1034,15 +1297,24 @@ const SecuritySettings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Key size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.security.password', 'Mot de passe')}</h2>
+          <h2 className="text-lg font-semibold text-advist-gray900">
+            {t('settings.security.password', 'Mot de passe')}
+          </h2>
         </div>
         <p className="text-sm text-advist-gray900 mb-4">
-          {t('settings.security.passwordDesc', 'Modifiez votre mot de passe régulièrement pour sécuriser votre compte')}
+          {t(
+            'settings.security.passwordDesc',
+            'Modifiez votre mot de passe régulièrement pour sécuriser votre compte'
+          )}
         </p>
         <div className="flex items-center justify-between p-4 bg-advist-bg/30 rounded-xl">
           <div>
-            <p className="font-medium text-advist-gray900">{t('settings.security.lastChanged', 'Dernier changement')}</p>
-            <p className="text-sm text-advist-gray900">{t('settings.security.daysAgo', 'Il y a 45 jours')}</p>
+            <p className="font-medium text-advist-gray900">
+              {t('settings.security.lastChanged', 'Dernier changement')}
+            </p>
+            <p className="text-sm text-advist-gray900">
+              {t('settings.security.daysAgo', 'Il y a 45 jours')}
+            </p>
           </div>
           <Button variant="outline" onClick={() => setShowPasswordModal(true)}>
             {t('settings.security.changePassword', 'Changer le mot de passe')}
@@ -1054,10 +1326,15 @@ const SecuritySettings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Shield size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.security.twoFactor', 'Authentification à deux facteurs')}</h2>
+          <h2 className="text-lg font-semibold text-advist-gray900">
+            {t('settings.security.twoFactor', 'Authentification à deux facteurs')}
+          </h2>
         </div>
         <p className="text-sm text-advist-gray900 mb-4">
-          {t('settings.security.twoFactorDesc', 'Ajoutez une couche de sécurité supplémentaire en activant la 2FA')}
+          {t(
+            'settings.security.twoFactorDesc',
+            'Ajoutez une couche de sécurité supplémentaire en activant la 2FA'
+          )}
         </p>
         <div className="flex items-center justify-between p-4 bg-advist-bg/30 rounded-xl">
           <div className="flex items-center gap-3">
@@ -1078,8 +1355,14 @@ const SecuritySettings: React.FC = () => {
               </p>
               <p className="text-sm text-advist-gray900">
                 {twoFactorEnabled
-                  ? t('settings.security.2faEnabledDesc', 'Votre compte est protégé par une authentification à deux facteurs')
-                  : t('settings.security.2faDisabledDesc', 'Nous recommandons d\'activer la 2FA pour plus de sécurité')}
+                  ? t(
+                      'settings.security.2faEnabledDesc',
+                      'Votre compte est protégé par une authentification à deux facteurs'
+                    )
+                  : t(
+                      'settings.security.2faDisabledDesc',
+                      "Nous recommandons d'activer la 2FA pour plus de sécurité"
+                    )}
               </p>
             </div>
           </div>
@@ -1098,15 +1381,25 @@ const SecuritySettings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Lock size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.security.signaturePIN', 'Code PIN de signature')}</h2>
+          <h2 className="text-lg font-semibold text-advist-gray900">
+            {t('settings.security.signaturePIN', 'Code PIN de signature')}
+          </h2>
         </div>
         <p className="text-sm text-advist-gray900 mb-4">
-          {t('settings.security.pinDesc', 'Protégez vos signatures électroniques avec un code PIN personnel')}
+          {t(
+            'settings.security.pinDesc',
+            'Protégez vos signatures électroniques avec un code PIN personnel'
+          )}
         </p>
         <div className="flex items-center justify-between p-4 bg-advist-bg/30 rounded-xl">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl ${pinEnabled ? 'bg-green-50' : 'bg-advist-surface-dark'}`}>
-              <Lock size={20} className={pinEnabled ? 'text-advist-success' : 'text-advist-text-muted'} />
+            <div
+              className={`p-2 rounded-xl ${pinEnabled ? 'bg-green-50' : 'bg-advist-surface-dark'}`}
+            >
+              <Lock
+                size={20}
+                className={pinEnabled ? 'text-advist-success' : 'text-advist-text-muted'}
+              />
             </div>
             <div>
               <p className="font-medium text-advist-gray900">
@@ -1115,7 +1408,10 @@ const SecuritySettings: React.FC = () => {
                   : t('settings.security.pinDisabled', 'PIN désactivé')}
               </p>
               <p className="text-sm text-advist-gray900">
-                {t('settings.security.pinStatusDesc', 'Votre PIN protège l\'utilisation de vos signatures')}
+                {t(
+                  'settings.security.pinStatusDesc',
+                  "Votre PIN protège l'utilisation de vos signatures"
+                )}
               </p>
             </div>
           </div>
@@ -1130,32 +1426,52 @@ const SecuritySettings: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Monitor size={20} className="text-advist-gray900" />
-            <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.security.sessions', 'Sessions actives')}</h2>
+            <h2 className="text-lg font-semibold text-advist-gray900">
+              {t('settings.security.sessions', 'Sessions actives')}
+            </h2>
             <Badge variant="secondary">{activeSessions.length}</Badge>
           </div>
-          <Button variant="ghost" size="sm" className="text-advist-error" onClick={() => setShowSessionsModal(true)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-advist-error"
+            onClick={() => setShowSessionsModal(true)}
+          >
             {t('settings.security.terminateAll', 'Terminer toutes les sessions')}
           </Button>
         </div>
         <div className="space-y-3">
           {activeSessions.slice(0, 3).map((session) => (
-            <div key={session.id} className={`flex items-center justify-between p-4 rounded-xl ${
-              session.is_current ? 'bg-green-50 border border-advist-success' : 'bg-advist-bg/30'
-            }`}>
+            <div
+              key={session.id}
+              className={`flex items-center justify-between p-4 rounded-xl ${
+                session.is_current ? 'bg-green-50 border border-advist-success' : 'bg-advist-bg/30'
+              }`}
+            >
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${session.is_current ? 'bg-green-50' : 'bg-white'}`}>
-                  <Monitor size={20} className={session.is_current ? 'text-advist-success' : 'text-advist-gray900'} />
+                <div
+                  className={`p-2 rounded-xl ${session.is_current ? 'bg-green-50' : 'bg-white'}`}
+                >
+                  <Monitor
+                    size={20}
+                    className={session.is_current ? 'text-advist-success' : 'text-advist-gray900'}
+                  />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-advist-gray900">{session.device}</p>
                     {session.is_current && (
-                      <Badge variant="success" size="sm">{t('settings.security.currentSession', 'Session actuelle')}</Badge>
+                      <Badge variant="success" size="sm">
+                        {t('settings.security.currentSession', 'Session actuelle')}
+                      </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-advist-gray900">{session.location} • {session.ip}</p>
+                  <p className="text-sm text-advist-gray900">
+                    {session.location} • {session.ip}
+                  </p>
                   <p className="text-xs text-advist-blue-light">
-                    {t('settings.security.lastActivity', 'Dernière activité')}: {new Date(session.last_activity).toLocaleString('fr-FR')}
+                    {t('settings.security.lastActivity', 'Dernière activité')}:{' '}
+                    {new Date(session.last_activity).toLocaleString('fr-FR')}
                   </p>
                 </div>
               </div>
@@ -1211,13 +1527,30 @@ const SecuritySettings: React.FC = () => {
             placeholder="••••••••"
           />
           <div className="p-3 bg-advist-bg/30 rounded-xl">
-            <p className="text-sm font-medium text-advist-gray900 mb-2">{t('settings.security.requirements', 'Exigences du mot de passe')}</p>
+            <p className="text-sm font-medium text-advist-gray900 mb-2">
+              {t('settings.security.requirements', 'Exigences du mot de passe')}
+            </p>
             <ul className="space-y-1 text-sm text-advist-gray900">
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.security.minChars', 'Au moins 8 caractères')}</li>
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.security.uppercase', 'Une majuscule')}</li>
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.security.lowercase', 'Une minuscule')}</li>
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.security.number', 'Un chiffre')}</li>
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-blue-light" /> {t('settings.security.special', 'Un caractère spécial (recommandé)')}</li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.security.minChars', 'Au moins 8 caractères')}
+              </li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.security.uppercase', 'Une majuscule')}
+              </li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.security.lowercase', 'Une minuscule')}
+              </li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.security.number', 'Un chiffre')}
+              </li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-blue-light" />{' '}
+                {t('settings.security.special', 'Un caractère spécial (recommandé)')}
+              </li>
             </ul>
           </div>
           <div className="flex justify-end gap-3 pt-4">
@@ -1235,9 +1568,11 @@ const SecuritySettings: React.FC = () => {
       <Modal
         isOpen={show2FAModal}
         onClose={() => setShow2FAModal(false)}
-        title={twoFactorEnabled
-          ? t('settings.security.manage2FA', 'Gérer la 2FA')
-          : t('settings.security.setup2FA', 'Configurer la 2FA')}
+        title={
+          twoFactorEnabled
+            ? t('settings.security.manage2FA', 'Gérer la 2FA')
+            : t('settings.security.setup2FA', 'Configurer la 2FA')
+        }
         size="md"
       >
         <div className="space-y-4">
@@ -1245,7 +1580,10 @@ const SecuritySettings: React.FC = () => {
             <>
               <div className="p-4 bg-advist-gold-light rounded-xl border border-advist-gold">
                 <p className="text-sm text-advist-gray900">
-                  {t('settings.security.2faInstructions', 'Scannez le QR code avec votre application d\'authentification (Google Authenticator, Authy, etc.)')}
+                  {t(
+                    'settings.security.2faInstructions',
+                    "Scannez le QR code avec votre application d'authentification (Google Authenticator, Authy, etc.)"
+                  )}
                 </p>
               </div>
               <div className="flex justify-center p-6 bg-white border border-advist-bg rounded-xl">
@@ -1262,7 +1600,12 @@ const SecuritySettings: React.FC = () => {
                 <Button variant="ghost" onClick={() => setShow2FAModal(false)}>
                   {t('common.cancel', 'Annuler')}
                 </Button>
-                <Button onClick={() => { setTwoFactorEnabled(true); setShow2FAModal(false); }}>
+                <Button
+                  onClick={() => {
+                    setTwoFactorEnabled(true);
+                    setShow2FAModal(false);
+                  }}
+                >
                   {t('settings.security.verify', 'Vérifier et activer')}
                 </Button>
               </div>
@@ -1282,7 +1625,14 @@ const SecuritySettings: React.FC = () => {
                   <RefreshCw size={16} className="mr-2" />
                   {t('settings.security.regenerateCodes', 'Régénérer les codes de secours')}
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-advist-error hover:bg-advist-gold-light" onClick={() => { setTwoFactorEnabled(false); setShow2FAModal(false); }}>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-advist-error hover:bg-advist-gold-light"
+                  onClick={() => {
+                    setTwoFactorEnabled(false);
+                    setShow2FAModal(false);
+                  }}
+                >
                   <Shield size={16} className="mr-2" />
                   {t('settings.security.disable2FA', 'Désactiver la 2FA')}
                 </Button>
@@ -1320,16 +1670,17 @@ const SecuritySettings: React.FC = () => {
           />
           <div className="p-3 bg-advist-gold-light rounded-xl border border-advist-gold">
             <p className="text-sm text-advist-gold-dark">
-              {t('settings.security.pinWarning', 'Ce code PIN sera requis chaque fois que vous utiliserez une signature électronique.')}
+              {t(
+                'settings.security.pinWarning',
+                'Ce code PIN sera requis chaque fois que vous utiliserez une signature électronique.'
+              )}
             </p>
           </div>
           <div className="flex justify-end gap-3 pt-4">
             <Button variant="ghost" onClick={() => setShowPINModal(false)}>
               {t('common.cancel', 'Annuler')}
             </Button>
-            <Button>
-              {t('settings.security.updatePIN', 'Mettre à jour le PIN')}
-            </Button>
+            <Button>{t('settings.security.updatePIN', 'Mettre à jour le PIN')}</Button>
           </div>
         </div>
       </Modal>
@@ -1346,16 +1697,23 @@ const SecuritySettings: React.FC = () => {
             <div className="flex items-start gap-3">
               <AlertTriangle size={24} className="text-advist-error shrink-0" />
               <div>
-                <p className="font-medium text-advist-gray900">{t('settings.security.terminateWarning', 'Attention')}</p>
+                <p className="font-medium text-advist-gray900">
+                  {t('settings.security.terminateWarning', 'Attention')}
+                </p>
                 <p className="text-sm text-advist-error mt-1">
-                  {t('settings.security.terminateDesc', 'Cette action déconnectera tous les appareils sauf celui-ci. Vous devrez vous reconnecter sur vos autres appareils.')}
+                  {t(
+                    'settings.security.terminateDesc',
+                    'Cette action déconnectera tous les appareils sauf celui-ci. Vous devrez vous reconnecter sur vos autres appareils.'
+                  )}
                 </p>
               </div>
             </div>
           </div>
           <div className="p-4 bg-advist-bg/30 rounded-xl">
             <p className="text-sm text-advist-gray900">
-              {t('settings.security.sessionsToTerminate', '{{count}} session(s) seront terminées', { count: activeSessions.filter(s => !s.is_current).length })}
+              {t('settings.security.sessionsToTerminate', '{{count}} session(s) seront terminées', {
+                count: activeSessions.filter((s) => !s.is_current).length,
+              })}
             </p>
           </div>
           <div className="flex justify-end gap-3 pt-4">
@@ -1382,10 +1740,15 @@ const OfflineSettings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <WifiOff size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.offline.title', 'Mode hors-ligne')}</h2>
+          <h2 className="text-lg font-semibold text-advist-gray900">
+            {t('settings.offline.title', 'Mode hors-ligne')}
+          </h2>
         </div>
         <p className="text-sm text-advist-gray900 mb-6">
-          {t('settings.offline.description', 'Gérez vos données en mode hors-ligne et synchronisez-les lorsque vous êtes connecté')}
+          {t(
+            'settings.offline.description',
+            'Gérez vos données en mode hors-ligne et synchronisez-les lorsque vous êtes connecté'
+          )}
         </p>
 
         {/* Use the existing OfflineManager component */}
@@ -1413,7 +1776,10 @@ const OfflineSettings: React.FC = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Check size={14} className="text-advist-gray900" />
-                {t('settings.offline.feature3', 'File d\'attente des actions (synchronisation automatique)')}
+                {t(
+                  'settings.offline.feature3',
+                  "File d'attente des actions (synchronisation automatique)"
+                )}
               </li>
               <li className="flex items-center gap-2">
                 <Check size={14} className="text-advist-gray900" />
@@ -1437,15 +1803,24 @@ const OfflineSettings: React.FC = () => {
             <ul className="mt-2 space-y-1 text-sm text-advist-gold-dark">
               <li className="flex items-center gap-2">
                 <CloudOff size={14} className="text-advist-gold-dark" />
-                {t('settings.offline.limitation1', 'Les signatures électroniques nécessitent une connexion')}
+                {t(
+                  'settings.offline.limitation1',
+                  'Les signatures électroniques nécessitent une connexion'
+                )}
               </li>
               <li className="flex items-center gap-2">
                 <CloudOff size={14} className="text-advist-gold-dark" />
-                {t('settings.offline.limitation2', 'Les validations de workflow sont mises en file d\'attente')}
+                {t(
+                  'settings.offline.limitation2',
+                  "Les validations de workflow sont mises en file d'attente"
+                )}
               </li>
               <li className="flex items-center gap-2">
                 <CloudOff size={14} className="text-advist-gold-dark" />
-                {t('settings.offline.limitation3', 'Les nouveaux documents ne sont pas disponibles hors-ligne')}
+                {t(
+                  'settings.offline.limitation3',
+                  'Les nouveaux documents ne sont pas disponibles hors-ligne'
+                )}
               </li>
             </ul>
           </div>
@@ -1547,7 +1922,7 @@ const MailSettings: React.FC = () => {
     </tr>
   </table>
 </body>
-</html>`
+</html>`,
     },
     password_reset: {
       subject: 'Réinitialisation de votre mot de passe',
@@ -1611,7 +1986,7 @@ const MailSettings: React.FC = () => {
     </tr>
   </table>
 </body>
-</html>`
+</html>`,
     },
     document_shared: {
       subject: 'Un document a été partagé avec vous',
@@ -1690,7 +2065,7 @@ const MailSettings: React.FC = () => {
     </tr>
   </table>
 </body>
-</html>`
+</html>`,
     },
     workflow_notification: {
       subject: 'Action requise sur un workflow',
@@ -1779,7 +2154,7 @@ const MailSettings: React.FC = () => {
     </tr>
   </table>
 </body>
-</html>`
+</html>`,
     },
     signature_request: {
       subject: 'Demande de signature électronique',
@@ -1864,7 +2239,7 @@ const MailSettings: React.FC = () => {
     </tr>
   </table>
 </body>
-</html>`
+</html>`,
     },
     weekly_digest: {
       subject: 'Votre résumé hebdomadaire ADVIST',
@@ -1967,7 +2342,7 @@ const MailSettings: React.FC = () => {
     </tr>
   </table>
 </body>
-</html>`
+</html>`,
     },
     external_invitation: {
       subject: 'Vous êtes invité à consulter un document sur ADVIST',
@@ -2127,15 +2502,15 @@ const MailSettings: React.FC = () => {
     </tr>
   </table>
 </body>
-</html>`
-    }
+</html>`,
+    },
   };
 
   const handleTestEmail = async () => {
     setIsTesting(true);
     setTestResult(null);
     // Simulate test
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsTesting(false);
     setTestResult('success');
   };
@@ -2177,148 +2552,163 @@ const MailSettings: React.FC = () => {
         <>
           {/* SMTP Configuration */}
           <Card className="p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Mail size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">
-            {t('settings.mail.smtpConfig', 'Configuration SMTP')}
-          </h2>
-        </div>
-        <p className="text-sm text-advist-gray900 mb-6">
-          {t('settings.mail.smtpDesc', "Configurez le serveur SMTP pour l'envoi des emails de notification")}
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <Input
-            label={t('settings.mail.host', 'Serveur SMTP')}
-            value={smtpConfig.host}
-            onChange={(e) => setSmtpConfig({ ...smtpConfig, host: e.target.value })}
-            placeholder="smtp.example.com"
-          />
-          <Input
-            label={t('settings.mail.port', 'Port')}
-            value={smtpConfig.port}
-            onChange={(e) => setSmtpConfig({ ...smtpConfig, port: e.target.value })}
-            placeholder="587"
-          />
-        </div>
-
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-advist-gray900 mb-2">
-            {t('settings.mail.encryption', 'Chiffrement')}
-          </label>
-          <div className="grid grid-cols-3 gap-3">
-            {encryptionOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => setSmtpConfig({ ...smtpConfig, encryption: option.value as any })}
-                className={`p-3 rounded-xl border-2 text-left transition-all ${
-                  smtpConfig.encryption === option.value
-                    ? 'border-advist-dark bg-advist-dark/5'
-                    : 'border-advist-bg hover:border-advist-blue-light'
-                }`}
-              >
-                <p className={`font-medium text-sm ${
-                  smtpConfig.encryption === option.value ? 'text-advist-gray900' : 'text-advist-gray900'
-                }`}>
-                  {option.label}
-                </p>
-                <p className="text-xs text-advist-blue-light">{option.description}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-4 mt-4">
-          <Input
-            label={t('settings.mail.username', "Nom d'utilisateur")}
-            value={smtpConfig.username}
-            onChange={(e) => setSmtpConfig({ ...smtpConfig, username: e.target.value })}
-            placeholder="user@example.com"
-          />
-          <div className="relative">
-            <Input
-              label={t('settings.mail.password', 'Mot de passe')}
-              type={showPassword ? 'text' : 'password'}
-              value={smtpConfig.password}
-              onChange={(e) => setSmtpConfig({ ...smtpConfig, password: e.target.value })}
-              placeholder="••••••••"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 text-advist-blue-light hover:text-advist-gray900"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-        </div>
-      </Card>
-
-      {/* Sender Configuration */}
-      <Card className="p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Upload size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">
-            {t('settings.mail.senderConfig', "Paramètres d'envoi")}
-          </h2>
-        </div>
-        <p className="text-sm text-advist-gray900 mb-6">
-          {t('settings.mail.senderDesc', "Configurez les informations de l'expéditeur pour tous les emails sortants")}
-        </p>
-
-        <div className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            <Input
-              label={t('settings.mail.fromName', "Nom de l'expéditeur")}
-              value={smtpConfig.from_name}
-              onChange={(e) => setSmtpConfig({ ...smtpConfig, from_name: e.target.value })}
-              placeholder="ADVIST"
-            />
-            <Input
-              label={t('settings.mail.fromEmail', "Email de l'expéditeur")}
-              type="email"
-              value={smtpConfig.from_email}
-              onChange={(e) => setSmtpConfig({ ...smtpConfig, from_email: e.target.value })}
-              placeholder="notifications@advist.com"
-            />
-          </div>
-          <Input
-            label={t('settings.mail.replyTo', 'Email de réponse (Reply-To)')}
-            type="email"
-            value={smtpConfig.reply_to}
-            onChange={(e) => setSmtpConfig({ ...smtpConfig, reply_to: e.target.value })}
-            placeholder="support@advist.com"
-          />
-        </div>
-
-        {/* Test Email Button */}
-        <div className="mt-6 p-4 bg-advist-bg/30 rounded-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium text-advist-gray900">
-                {t('settings.mail.testConnection', 'Tester la connexion')}
-              </p>
-              <p className="text-sm text-advist-gray900">
-                {t('settings.mail.testDesc', 'Envoyez un email de test pour vérifier la configuration')}
-              </p>
+            <div className="flex items-center gap-3 mb-4">
+              <Mail size={20} className="text-advist-gray900" />
+              <h2 className="text-lg font-semibold text-advist-gray900">
+                {t('settings.mail.smtpConfig', 'Configuration SMTP')}
+              </h2>
             </div>
-            <Button
-              variant="outline"
-              onClick={() => setShowTestModal(true)}
-              leftIcon={<Mail size={16} />}
-            >
-              {t('settings.mail.sendTest', 'Envoyer un test')}
+            <p className="text-sm text-advist-gray900 mb-6">
+              {t(
+                'settings.mail.smtpDesc',
+                "Configurez le serveur SMTP pour l'envoi des emails de notification"
+              )}
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <Input
+                label={t('settings.mail.host', 'Serveur SMTP')}
+                value={smtpConfig.host}
+                onChange={(e) => setSmtpConfig({ ...smtpConfig, host: e.target.value })}
+                placeholder="smtp.example.com"
+              />
+              <Input
+                label={t('settings.mail.port', 'Port')}
+                value={smtpConfig.port}
+                onChange={(e) => setSmtpConfig({ ...smtpConfig, port: e.target.value })}
+                placeholder="587"
+              />
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                {t('settings.mail.encryption', 'Chiffrement')}
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                {encryptionOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() =>
+                      setSmtpConfig({ ...smtpConfig, encryption: option.value as any })
+                    }
+                    className={`p-3 rounded-xl border-2 text-left transition-all ${
+                      smtpConfig.encryption === option.value
+                        ? 'border-advist-dark bg-advist-dark/5'
+                        : 'border-advist-bg hover:border-advist-blue-light'
+                    }`}
+                  >
+                    <p
+                      className={`font-medium text-sm ${
+                        smtpConfig.encryption === option.value
+                          ? 'text-advist-gray900'
+                          : 'text-advist-gray900'
+                      }`}
+                    >
+                      {option.label}
+                    </p>
+                    <p className="text-xs text-advist-blue-light">{option.description}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4 mt-4">
+              <Input
+                label={t('settings.mail.username', "Nom d'utilisateur")}
+                value={smtpConfig.username}
+                onChange={(e) => setSmtpConfig({ ...smtpConfig, username: e.target.value })}
+                placeholder="user@example.com"
+              />
+              <div className="relative">
+                <Input
+                  label={t('settings.mail.password', 'Mot de passe')}
+                  type={showPassword ? 'text' : 'password'}
+                  value={smtpConfig.password}
+                  onChange={(e) => setSmtpConfig({ ...smtpConfig, password: e.target.value })}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-9 text-advist-blue-light hover:text-advist-gray900"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+          </Card>
+
+          {/* Sender Configuration */}
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Upload size={20} className="text-advist-gray900" />
+              <h2 className="text-lg font-semibold text-advist-gray900">
+                {t('settings.mail.senderConfig', "Paramètres d'envoi")}
+              </h2>
+            </div>
+            <p className="text-sm text-advist-gray900 mb-6">
+              {t(
+                'settings.mail.senderDesc',
+                "Configurez les informations de l'expéditeur pour tous les emails sortants"
+              )}
+            </p>
+
+            <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <Input
+                  label={t('settings.mail.fromName', "Nom de l'expéditeur")}
+                  value={smtpConfig.from_name}
+                  onChange={(e) => setSmtpConfig({ ...smtpConfig, from_name: e.target.value })}
+                  placeholder="ADVIST"
+                />
+                <Input
+                  label={t('settings.mail.fromEmail', "Email de l'expéditeur")}
+                  type="email"
+                  value={smtpConfig.from_email}
+                  onChange={(e) => setSmtpConfig({ ...smtpConfig, from_email: e.target.value })}
+                  placeholder="notifications@advist.com"
+                />
+              </div>
+              <Input
+                label={t('settings.mail.replyTo', 'Email de réponse (Reply-To)')}
+                type="email"
+                value={smtpConfig.reply_to}
+                onChange={(e) => setSmtpConfig({ ...smtpConfig, reply_to: e.target.value })}
+                placeholder="support@advist.com"
+              />
+            </div>
+
+            {/* Test Email Button */}
+            <div className="mt-6 p-4 bg-advist-bg/30 rounded-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-advist-gray900">
+                    {t('settings.mail.testConnection', 'Tester la connexion')}
+                  </p>
+                  <p className="text-sm text-advist-gray900">
+                    {t(
+                      'settings.mail.testDesc',
+                      'Envoyez un email de test pour vérifier la configuration'
+                    )}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowTestModal(true)}
+                  leftIcon={<Mail size={16} />}
+                >
+                  {t('settings.mail.sendTest', 'Envoyer un test')}
+                </Button>
+              </div>
+            </div>
+          </Card>
+
+          {/* Save Button for Config tab */}
+          <div className="flex justify-end">
+            <Button leftIcon={<Save size={16} />}>
+              {t('settings.mail.save', 'Enregistrer la configuration')}
             </Button>
           </div>
-        </div>
-      </Card>
-
-      {/* Save Button for Config tab */}
-      <div className="flex justify-end">
-        <Button leftIcon={<Save size={16} />}>
-          {t('settings.mail.save', 'Enregistrer la configuration')}
-        </Button>
-      </div>
         </>
       )}
 
@@ -2334,18 +2724,80 @@ const MailSettings: React.FC = () => {
               </h2>
             </div>
             <p className="text-sm text-advist-gray900 mb-6">
-              {t('settings.mail.templatesDesc', 'Activez ou désactivez les types de notifications par email')}
+              {t(
+                'settings.mail.templatesDesc',
+                'Activez ou désactivez les types de notifications par email'
+              )}
             </p>
 
             <div className="space-y-3">
               {[
-                { key: 'welcome', label: t('settings.mail.template.welcome', 'Email de bienvenue'), description: t('settings.mail.template.welcomeDesc', 'Envoyé aux nouveaux utilisateurs lors de leur inscription'), icon: UserPlus },
-                { key: 'password_reset', label: t('settings.mail.template.passwordReset', 'Réinitialisation de mot de passe'), description: t('settings.mail.template.passwordResetDesc', 'Envoyé lors des demandes de réinitialisation'), icon: Key },
-                { key: 'document_shared', label: t('settings.mail.template.documentShared', 'Document partagé'), description: t('settings.mail.template.documentSharedDesc', "Notifie les utilisateurs lorsqu'un document leur est partagé"), icon: FileText },
-                { key: 'workflow_notification', label: t('settings.mail.template.workflow', 'Notification de workflow'), description: t('settings.mail.template.workflowDesc', "Alertes pour les étapes de validation en attente"), icon: GitBranch },
-                { key: 'signature_request', label: t('settings.mail.template.signature', 'Demande de signature'), description: t('settings.mail.template.signatureDesc', 'Envoyé lorsqu\'une signature est requise'), icon: MessageSquare },
-                { key: 'weekly_digest', label: t('settings.mail.template.digest', 'Résumé hebdomadaire'), description: t('settings.mail.template.digestDesc', "Récapitulatif de l'activité de la semaine"), icon: Mail },
-                { key: 'external_invitation', label: t('settings.mail.template.external', 'Invitation externe'), description: t('settings.mail.template.externalDesc', 'Invitation par lien sécurisé pour utilisateurs externes (consultation, annotation, signature)'), icon: ExternalLink },
+                {
+                  key: 'welcome',
+                  label: t('settings.mail.template.welcome', 'Email de bienvenue'),
+                  description: t(
+                    'settings.mail.template.welcomeDesc',
+                    'Envoyé aux nouveaux utilisateurs lors de leur inscription'
+                  ),
+                  icon: UserPlus,
+                },
+                {
+                  key: 'password_reset',
+                  label: t(
+                    'settings.mail.template.passwordReset',
+                    'Réinitialisation de mot de passe'
+                  ),
+                  description: t(
+                    'settings.mail.template.passwordResetDesc',
+                    'Envoyé lors des demandes de réinitialisation'
+                  ),
+                  icon: Key,
+                },
+                {
+                  key: 'document_shared',
+                  label: t('settings.mail.template.documentShared', 'Document partagé'),
+                  description: t(
+                    'settings.mail.template.documentSharedDesc',
+                    "Notifie les utilisateurs lorsqu'un document leur est partagé"
+                  ),
+                  icon: FileText,
+                },
+                {
+                  key: 'workflow_notification',
+                  label: t('settings.mail.template.workflow', 'Notification de workflow'),
+                  description: t(
+                    'settings.mail.template.workflowDesc',
+                    'Alertes pour les étapes de validation en attente'
+                  ),
+                  icon: GitBranch,
+                },
+                {
+                  key: 'signature_request',
+                  label: t('settings.mail.template.signature', 'Demande de signature'),
+                  description: t(
+                    'settings.mail.template.signatureDesc',
+                    "Envoyé lorsqu'une signature est requise"
+                  ),
+                  icon: MessageSquare,
+                },
+                {
+                  key: 'weekly_digest',
+                  label: t('settings.mail.template.digest', 'Résumé hebdomadaire'),
+                  description: t(
+                    'settings.mail.template.digestDesc',
+                    "Récapitulatif de l'activité de la semaine"
+                  ),
+                  icon: Mail,
+                },
+                {
+                  key: 'external_invitation',
+                  label: t('settings.mail.template.external', 'Invitation externe'),
+                  description: t(
+                    'settings.mail.template.externalDesc',
+                    'Invitation par lien sécurisé pour utilisateurs externes (consultation, annotation, signature)'
+                  ),
+                  icon: ExternalLink,
+                },
               ].map((template) => (
                 <div
                   key={template.key}
@@ -2376,7 +2828,9 @@ const MailSettings: React.FC = () => {
                       <input
                         type="checkbox"
                         checked={(emailTemplates as any)[template.key]}
-                        onChange={(e) => setEmailTemplates({ ...emailTemplates, [template.key]: e.target.checked })}
+                        onChange={(e) =>
+                          setEmailTemplates({ ...emailTemplates, [template.key]: e.target.checked })
+                        }
                         className="sr-only peer"
                       />
                       <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-gold rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -2399,16 +2853,19 @@ const MailSettings: React.FC = () => {
                     {t('settings.mail.externalInterface', 'Interface Utilisateur Externe')}
                   </h2>
                   <p className="text-sm text-advist-gray900">
-                    {t('settings.mail.externalInterfaceDesc', 'Consultez l\'interface que vos utilisateurs externes voient lors de la réception d\'un document')}
+                    {t(
+                      'settings.mail.externalInterfaceDesc',
+                      "Consultez l'interface que vos utilisateurs externes voient lors de la réception d'un document"
+                    )}
                   </p>
                 </div>
               </div>
               <Button
-                onClick={() => window.location.href = '/external?from=settings'}
+                onClick={() => (window.location.href = '/external?from=settings')}
                 leftIcon={<ExternalLink size={16} />}
                 className="bg-advist-dark hover:bg-advist-dark"
               >
-                {t('settings.mail.viewExternalInterface', 'Voir l\'interface')}
+                {t('settings.mail.viewExternalInterface', "Voir l'interface")}
               </Button>
             </div>
           </Card>
@@ -2441,7 +2898,10 @@ const MailSettings: React.FC = () => {
                     {t('settings.mail.testSuccess', 'Email envoyé avec succès')}
                   </p>
                   <p className="text-sm text-advist-success">
-                    {t('settings.mail.testSuccessDesc', 'La configuration SMTP fonctionne correctement')}
+                    {t(
+                      'settings.mail.testSuccessDesc',
+                      'La configuration SMTP fonctionne correctement'
+                    )}
                   </p>
                 </div>
               </div>
@@ -2466,9 +2926,11 @@ const MailSettings: React.FC = () => {
 
           <div className="p-3 bg-advist-bg/30 rounded-xl">
             <p className="text-sm text-advist-gray900">
-              <strong>{t('settings.mail.currentConfig', 'Configuration actuelle')}:</strong><br />
+              <strong>{t('settings.mail.currentConfig', 'Configuration actuelle')}:</strong>
+              <br />
               {smtpConfig.host}:{smtpConfig.port} ({smtpConfig.encryption.toUpperCase()})<br />
-              {t('settings.mail.from', 'De')}: {smtpConfig.from_name} &lt;{smtpConfig.from_email}&gt;
+              {t('settings.mail.from', 'De')}: {smtpConfig.from_name} &lt;{smtpConfig.from_email}
+              &gt;
             </p>
           </div>
 
@@ -2479,9 +2941,13 @@ const MailSettings: React.FC = () => {
             <Button
               onClick={handleTestEmail}
               disabled={isTesting}
-              leftIcon={isTesting ? <RefreshCw size={16} className="animate-spin" /> : <Mail size={16} />}
+              leftIcon={
+                isTesting ? <RefreshCw size={16} className="animate-spin" /> : <Mail size={16} />
+              }
             >
-              {isTesting ? t('settings.mail.sending', 'Envoi en cours...') : t('settings.mail.send', 'Envoyer')}
+              {isTesting
+                ? t('settings.mail.sending', 'Envoi en cours...')
+                : t('settings.mail.send', 'Envoyer')}
             </Button>
           </div>
         </div>
@@ -2494,7 +2960,12 @@ const MailSettings: React.FC = () => {
           setShowTemplateModal(false);
           setSelectedTemplate(null);
         }}
-        title={selectedTemplate ? htmlTemplates[selectedTemplate]?.subject || t('settings.mail.templatePreview', 'Aperçu du template') : t('settings.mail.templatePreview', 'Aperçu du template')}
+        title={
+          selectedTemplate
+            ? htmlTemplates[selectedTemplate]?.subject ||
+              t('settings.mail.templatePreview', 'Aperçu du template')
+            : t('settings.mail.templatePreview', 'Aperçu du template')
+        }
         size="lg"
       >
         <div className="space-y-4">
@@ -2504,13 +2975,19 @@ const MailSettings: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-advist-gray900">
-                    {t('settings.mail.subject', 'Sujet')}: {htmlTemplates[selectedTemplate]?.subject}
+                    {t('settings.mail.subject', 'Sujet')}:{' '}
+                    {htmlTemplates[selectedTemplate]?.subject}
                   </p>
                   <p className="text-xs text-advist-blue-light mt-1">
-                    {t('settings.mail.variablesInfo', 'Les variables comme {{user_name}} seront remplacées par les vraies valeurs lors de l\'envoi')}
+                    {t(
+                      'settings.mail.variablesInfo',
+                      "Les variables comme {{user_name}} seront remplacées par les vraies valeurs lors de l'envoi"
+                    )}
                   </p>
                 </div>
-                <Badge variant="secondary" size="sm">HTML</Badge>
+                <Badge variant="secondary" size="sm">
+                  HTML
+                </Badge>
               </div>
             </div>
           )}
@@ -2519,7 +2996,9 @@ const MailSettings: React.FC = () => {
           {selectedTemplate && htmlTemplates[selectedTemplate] && (
             <div className="border border-advist-bg rounded-xl overflow-hidden">
               <div className="bg-advist-dark text-white px-4 py-2 flex items-center justify-between">
-                <span className="text-sm">{t('settings.mail.emailPreview', 'Aperçu de l\'email')}</span>
+                <span className="text-sm">
+                  {t('settings.mail.emailPreview', "Aperçu de l'email")}
+                </span>
                 <div className="flex gap-2">
                   <div className="w-3 h-3 rounded-full bg-advist-error"></div>
                   <div className="w-3 h-3 rounded-full bg-advist-gold"></div>
@@ -2544,74 +3023,162 @@ const MailSettings: React.FC = () => {
               <div className="flex flex-wrap gap-2">
                 {selectedTemplate === 'welcome' && (
                   <>
-                    <Badge variant="outline" size="sm">{'{{user_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{user_email}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{organization_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{login_url}}'}</Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{user_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{user_email}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{organization_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{login_url}}'}
+                    </Badge>
                   </>
                 )}
                 {selectedTemplate === 'password_reset' && (
                   <>
-                    <Badge variant="outline" size="sm">{'{{user_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{reset_url}}'}</Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{user_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{reset_url}}'}
+                    </Badge>
                   </>
                 )}
                 {selectedTemplate === 'document_shared' && (
                   <>
-                    <Badge variant="outline" size="sm">{'{{user_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{shared_by}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_type}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_size}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{share_date}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_url}}'}</Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{user_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{shared_by}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_type}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_size}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{share_date}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_url}}'}
+                    </Badge>
                   </>
                 )}
                 {selectedTemplate === 'workflow_notification' && (
                   <>
-                    <Badge variant="outline" size="sm">{'{{user_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{workflow_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{requester_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{current_step}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{approve_url}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{reject_url}}'}</Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{user_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{workflow_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{requester_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{current_step}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{approve_url}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{reject_url}}'}
+                    </Badge>
                   </>
                 )}
                 {selectedTemplate === 'signature_request' && (
                   <>
-                    <Badge variant="outline" size="sm">{'{{user_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{requester_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_type}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{page_count}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{deadline}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{signature_url}}'}</Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{user_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{requester_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_type}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{page_count}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{deadline}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{signature_url}}'}
+                    </Badge>
                   </>
                 )}
                 {selectedTemplate === 'weekly_digest' && (
                   <>
-                    <Badge variant="outline" size="sm">{'{{user_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{week_start}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{week_end}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{documents_count}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{signatures_count}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{workflows_completed}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{pending_actions}}'}</Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{user_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{week_start}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{week_end}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{documents_count}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{signatures_count}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{workflows_completed}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{pending_actions}}'}
+                    </Badge>
                   </>
                 )}
                 {selectedTemplate === 'external_invitation' && (
                   <>
-                    <Badge variant="outline" size="sm">{'{{inviter_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{organization_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_name}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{document_type}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{permission_view}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{permission_annotate}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{permission_sign}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{expiration_date}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{expiration_time}}'}</Badge>
-                    <Badge variant="outline" size="sm">{'{{secure_link}}'}</Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{inviter_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{organization_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_name}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{document_type}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{permission_view}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{permission_annotate}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{permission_sign}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{expiration_date}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{expiration_time}}'}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {'{{secure_link}}'}
+                    </Badge>
                   </>
                 )}
               </div>
@@ -2625,7 +3192,6 @@ const MailSettings: React.FC = () => {
           </div>
         </div>
       </Modal>
-
     </>
   );
 };
@@ -2680,10 +3246,26 @@ const DataExportSettings: React.FC = () => {
   };
 
   const statusLabels: Record<string, { label: string; color: string; icon: any }> = {
-    pending: { label: t('settings.export.pending', 'En attente'), color: 'bg-advist-surface-dark text-advist-gray900', icon: Clock },
-    processing: { label: t('settings.export.processing', 'En cours'), color: 'bg-advist-gold-light text-advist-gray900', icon: RefreshCw },
-    completed: { label: t('settings.export.completed', 'Terminé'), color: 'bg-green-50 text-advist-success', icon: Check },
-    failed: { label: t('settings.export.failed', 'Échoué'), color: 'bg-advist-gold-light text-advist-error', icon: AlertTriangle },
+    pending: {
+      label: t('settings.export.pending', 'En attente'),
+      color: 'bg-advist-surface-dark text-advist-gray900',
+      icon: Clock,
+    },
+    processing: {
+      label: t('settings.export.processing', 'En cours'),
+      color: 'bg-advist-gold-light text-advist-gray900',
+      icon: RefreshCw,
+    },
+    completed: {
+      label: t('settings.export.completed', 'Terminé'),
+      color: 'bg-green-50 text-advist-success',
+      icon: Check,
+    },
+    failed: {
+      label: t('settings.export.failed', 'Échoué'),
+      color: 'bg-advist-gold-light text-advist-error',
+      icon: AlertTriangle,
+    },
   };
 
   return (
@@ -2699,7 +3281,10 @@ const DataExportSettings: React.FC = () => {
               {t('settings.export.dataPortability', 'Portabilité des données')}
             </h3>
             <p className="text-sm text-advist-gray900 mt-1">
-              {t('settings.export.portabilityDesc', 'Conformément au RGPD, vous pouvez exporter toutes vos données dans un format structuré et couramment utilisé.')}
+              {t(
+                'settings.export.portabilityDesc',
+                'Conformément au RGPD, vous pouvez exporter toutes vos données dans un format structuré et couramment utilisé.'
+              )}
             </p>
           </div>
         </div>
@@ -2710,7 +3295,9 @@ const DataExportSettings: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Download size={20} className="text-advist-gray900" />
-            <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.export.requestExport', 'Demander un export')}</h2>
+            <h2 className="text-lg font-semibold text-advist-gray900">
+              {t('settings.export.requestExport', 'Demander un export')}
+            </h2>
           </div>
           <Button onClick={() => setShowExportModal(true)} leftIcon={<FileArchive size={16} />}>
             {t('settings.export.newExport', 'Nouvel export')}
@@ -2718,27 +3305,56 @@ const DataExportSettings: React.FC = () => {
         </div>
 
         <p className="text-sm text-advist-gray900 mb-4">
-          {t('settings.export.exportDesc', "Exportez vos données d'organisation pour archivage ou migration. Les exports sont disponibles pendant 7 jours.")}
+          {t(
+            'settings.export.exportDesc',
+            "Exportez vos données d'organisation pour archivage ou migration. Les exports sont disponibles pendant 7 jours."
+          )}
         </p>
 
         {/* What's included */}
         <div className="grid md:grid-cols-2 gap-4 p-4 bg-advist-bg/30 rounded-xl">
           <div>
-            <h4 className="font-medium text-advist-gray900 mb-2">{t('settings.export.includedData', 'Données incluses')}</h4>
+            <h4 className="font-medium text-advist-gray900 mb-2">
+              {t('settings.export.includedData', 'Données incluses')}
+            </h4>
             <ul className="space-y-1 text-sm text-advist-gray900">
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.export.allDocuments', 'Tous les documents')}</li>
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.export.allVersions', 'Historique des versions')}</li>
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.export.metadata', 'Métadonnées')}</li>
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.export.auditLogs', "Journaux d'audit")}</li>
-              <li className="flex items-center gap-2"><Check size={14} className="text-advist-success" /> {t('settings.export.signatures', 'Certificats de signature')}</li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.export.allDocuments', 'Tous les documents')}
+              </li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.export.allVersions', 'Historique des versions')}
+              </li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.export.metadata', 'Métadonnées')}
+              </li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.export.auditLogs', "Journaux d'audit")}
+              </li>
+              <li className="flex items-center gap-2">
+                <Check size={14} className="text-advist-success" />{' '}
+                {t('settings.export.signatures', 'Certificats de signature')}
+              </li>
             </ul>
           </div>
           <div>
-            <h4 className="font-medium text-advist-gray900 mb-2">{t('settings.export.formats', 'Formats disponibles')}</h4>
+            <h4 className="font-medium text-advist-gray900 mb-2">
+              {t('settings.export.formats', 'Formats disponibles')}
+            </h4>
             <ul className="space-y-1 text-sm text-advist-gray900">
-              <li className="flex items-center gap-2"><FileArchive size={14} className="text-advist-gray900" /> ZIP (documents + métadonnées JSON)</li>
-              <li className="flex items-center gap-2"><FileText size={14} className="text-advist-gray900" /> JSON (métadonnées uniquement)</li>
-              <li className="flex items-center gap-2"><FileText size={14} className="text-advist-gray900" /> XML (métadonnées uniquement)</li>
+              <li className="flex items-center gap-2">
+                <FileArchive size={14} className="text-advist-gray900" /> ZIP (documents +
+                métadonnées JSON)
+              </li>
+              <li className="flex items-center gap-2">
+                <FileText size={14} className="text-advist-gray900" /> JSON (métadonnées uniquement)
+              </li>
+              <li className="flex items-center gap-2">
+                <FileText size={14} className="text-advist-gray900" /> XML (métadonnées uniquement)
+              </li>
             </ul>
           </div>
         </div>
@@ -2748,7 +3364,9 @@ const DataExportSettings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Clock size={20} className="text-advist-gray900" />
-          <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.export.history', 'Historique des exports')}</h2>
+          <h2 className="text-lg font-semibold text-advist-gray900">
+            {t('settings.export.history', 'Historique des exports')}
+          </h2>
         </div>
 
         <div className="space-y-3">
@@ -2757,16 +3375,20 @@ const DataExportSettings: React.FC = () => {
             const StatusIcon = status.icon;
 
             return (
-              <div key={exportReq.id} className="flex items-center justify-between p-4 border border-advist-bg rounded-xl">
+              <div
+                key={exportReq.id}
+                className="flex items-center justify-between p-4 border border-advist-bg rounded-xl"
+              >
                 <div className="flex items-center gap-4">
                   <div className={`p-2 rounded-xl ${status.color}`}>
-                    <StatusIcon size={20} className={exportReq.status === 'processing' ? 'animate-spin' : ''} />
+                    <StatusIcon
+                      size={20}
+                      className={exportReq.status === 'processing' ? 'animate-spin' : ''}
+                    />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-advist-gray900">
-                        Export #{exportReq.id}
-                      </p>
+                      <p className="font-medium text-advist-gray900">Export #{exportReq.id}</p>
                       <Badge className={status.color} size="sm">
                         {status.label}
                       </Badge>
@@ -2775,17 +3397,19 @@ const DataExportSettings: React.FC = () => {
                       </Badge>
                     </div>
                     <p className="text-sm text-advist-gray900">
-                      {t('settings.export.requested', 'Demandé le')} {new Date(exportReq.created_at).toLocaleDateString('fr-FR', {
+                      {t('settings.export.requested', 'Demandé le')}{' '}
+                      {new Date(exportReq.created_at).toLocaleDateString('fr-FR', {
                         day: '2-digit',
                         month: 'short',
                         hour: '2-digit',
-                        minute: '2-digit'
+                        minute: '2-digit',
                       })}
                       {exportReq.file_size && ` • ${formatFileSize(exportReq.file_size)}`}
                     </p>
                     {exportReq.expires_at && exportReq.status === 'completed' && (
                       <p className="text-xs text-advist-gold-dark">
-                        {t('settings.export.expiresOn', 'Expire le')} {new Date(exportReq.expires_at).toLocaleDateString('fr-FR')}
+                        {t('settings.export.expiresOn', 'Expire le')}{' '}
+                        {new Date(exportReq.expires_at).toLocaleDateString('fr-FR')}
                       </p>
                     )}
                   </div>
@@ -2832,12 +3456,21 @@ const DataExportSettings: React.FC = () => {
                       : 'border-advist-bg hover:border-advist-blue-light'
                   }`}
                 >
-                  <FileArchive size={20} className={`mx-auto mb-1 ${
-                    exportOptions.format === format ? 'text-advist-gray900' : 'text-advist-blue-light'
-                  }`} />
-                  <span className={`text-sm font-medium ${
-                    exportOptions.format === format ? 'text-advist-gray900' : 'text-advist-gray900'
-                  }`}>
+                  <FileArchive
+                    size={20}
+                    className={`mx-auto mb-1 ${
+                      exportOptions.format === format
+                        ? 'text-advist-gray900'
+                        : 'text-advist-blue-light'
+                    }`}
+                  />
+                  <span
+                    className={`text-sm font-medium ${
+                      exportOptions.format === format
+                        ? 'text-advist-gray900'
+                        : 'text-advist-gray900'
+                    }`}
+                  >
                     {format.toUpperCase()}
                   </span>
                 </button>
@@ -2851,19 +3484,46 @@ const DataExportSettings: React.FC = () => {
               {t('settings.export.options', 'Options')}
             </label>
             {[
-              { key: 'include_documents', label: t('settings.export.includeDocuments', 'Inclure les documents') },
-              { key: 'include_versions', label: t('settings.export.includeVersions', 'Inclure les versions') },
-              { key: 'include_metadata', label: t('settings.export.includeMetadata', 'Inclure les métadonnées') },
-              { key: 'include_audit_logs', label: t('settings.export.includeAuditLogs', "Inclure les journaux d'audit") },
-              { key: 'include_signatures', label: t('settings.export.includeSignatures', 'Inclure les certificats de signature') },
+              {
+                key: 'include_documents',
+                label: t('settings.export.includeDocuments', 'Inclure les documents'),
+              },
+              {
+                key: 'include_versions',
+                label: t('settings.export.includeVersions', 'Inclure les versions'),
+              },
+              {
+                key: 'include_metadata',
+                label: t('settings.export.includeMetadata', 'Inclure les métadonnées'),
+              },
+              {
+                key: 'include_audit_logs',
+                label: t('settings.export.includeAuditLogs', "Inclure les journaux d'audit"),
+              },
+              {
+                key: 'include_signatures',
+                label: t(
+                  'settings.export.includeSignatures',
+                  'Inclure les certificats de signature'
+                ),
+              },
             ].map((option) => (
-              <label key={option.key} className="flex items-center gap-3 p-3 bg-advist-bg/30 rounded-xl cursor-pointer">
+              <label
+                key={option.key}
+                className="flex items-center gap-3 p-3 bg-advist-bg/30 rounded-xl cursor-pointer"
+              >
                 <input
                   type="checkbox"
                   checked={(exportOptions as any)[option.key]}
-                  onChange={(e) => setExportOptions({ ...exportOptions, [option.key]: e.target.checked })}
+                  onChange={(e) =>
+                    setExportOptions({ ...exportOptions, [option.key]: e.target.checked })
+                  }
                   className="rounded border-advist-border text-advist-gray900 focus:ring-advist-gold"
-                  disabled={option.key !== 'include_documents' && option.key !== 'include_versions' && exportOptions.format !== 'zip'}
+                  disabled={
+                    option.key !== 'include_documents' &&
+                    option.key !== 'include_versions' &&
+                    exportOptions.format !== 'zip'
+                  }
                 />
                 <span className="text-sm text-advist-gray900">{option.label}</span>
               </label>
@@ -2873,7 +3533,10 @@ const DataExportSettings: React.FC = () => {
           {/* Warning */}
           <div className="p-3 bg-advist-gold-light rounded-xl border border-advist-gold">
             <p className="text-sm text-advist-gold-dark">
-              {t('settings.export.warning', "L'export peut prendre plusieurs minutes selon la quantité de données. Vous recevrez une notification lorsqu'il sera prêt.")}
+              {t(
+                'settings.export.warning',
+                "L'export peut prendre plusieurs minutes selon la quantité de données. Vous recevrez une notification lorsqu'il sera prêt."
+              )}
             </p>
           </div>
 

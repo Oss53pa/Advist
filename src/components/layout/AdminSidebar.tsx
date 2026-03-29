@@ -10,7 +10,6 @@ import {
   Bell,
   ChevronLeft,
   ChevronRight,
-  Shield,
   Building2,
   History,
   BarChart3,
@@ -43,7 +42,7 @@ const adminNavItems: NavItem[] = [
     id: 'dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
-    path: '/admin'
+    path: '/admin',
   },
   {
     id: 'users',
@@ -56,38 +55,48 @@ const adminNavItems: NavItem[] = [
     id: 'organization',
     label: 'Organisation',
     icon: Building2,
-    path: '/admin/organization'
+    path: '/admin/organization',
   },
   {
     id: 'iso27001',
     label: 'ISO 27001',
     icon: ShieldCheck,
     children: [
-      { id: 'iso-dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/admin/iso27001' },
+      {
+        id: 'iso-dashboard',
+        label: 'Tableau de bord',
+        icon: LayoutDashboard,
+        path: '/admin/iso27001',
+      },
       { id: 'iso-soa', label: 'Déclaration (SoA)', icon: FileCheck, path: '/admin/iso27001/soa' },
       { id: 'iso-risks', label: 'Risques', icon: AlertTriangle, path: '/admin/iso27001/risks' },
       { id: 'iso-audits', label: 'Audits', icon: ClipboardCheck, path: '/admin/iso27001/audits' },
-      { id: 'iso-objectives', label: 'Objectifs', icon: Target, path: '/admin/iso27001/objectives' },
+      {
+        id: 'iso-objectives',
+        label: 'Objectifs',
+        icon: Target,
+        path: '/admin/iso27001/objectives',
+      },
       { id: 'iso-policies', label: 'Politiques', icon: FileText, path: '/admin/iso27001/policies' },
-    ]
+    ],
   },
   {
     id: 'archives',
     label: 'Archives',
     icon: Archive,
-    path: '/admin/archives'
+    path: '/admin/archives',
   },
   {
     id: 'audit',
     label: 'Audit Trail',
     icon: History,
-    path: '/admin/audit'
+    path: '/admin/audit',
   },
   {
     id: 'analytics',
     label: 'Reporting',
     icon: BarChart3,
-    path: '/admin/analytics'
+    path: '/admin/analytics',
   },
 ];
 
@@ -103,27 +112,27 @@ const bottomNavItems: NavItem[] = [
     id: 'settings',
     label: 'Paramètres',
     icon: Settings,
-    path: '/admin/settings'
+    path: '/admin/settings',
   },
 ];
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggle }) => {
   const location = useLocation();
-  const { theme: planTheme, Icon: PlanIcon } = usePlanTheme();
+  const { theme: planTheme } = usePlanTheme();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleExpand = (id: string) => {
-    setExpandedItems(prev =>
-      prev.includes(id)
-        ? prev.filter(item => item !== id)
-        : [...prev, id]
+    setExpandedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
   const isItemActive = (item: NavItem): boolean => {
     if (item.path && location.pathname === item.path) return true;
     if (item.children) {
-      return item.children.some(child => child.path && location.pathname.startsWith(child.path?.split('?')[0] || ''));
+      return item.children.some(
+        (child) => child.path && location.pathname.startsWith(child.path?.split('?')[0] || '')
+      );
     }
     return false;
   };
@@ -139,18 +148,21 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggl
       `}
     >
       {/* Header with Logo - couleur du plan */}
-      <div className={`
+      <div
+        className={`
         h-16 flex items-center border-b border-advist-border
         ${isCollapsed ? 'justify-center px-3' : 'justify-between px-5'}
-      `}>
+      `}
+      >
         <div className="flex items-center gap-3">
-          <div className={`w-9 h-9 ${planTheme.bgGradient} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg`}>
-            <PlanIcon size={18} className={planTheme.textOnBg} />
-          </div>
-          {!isCollapsed && (
+          {isCollapsed ? (
+            <span className="font-decorative text-xl text-advist-gray900">A</span>
+          ) : (
             <div>
               <span className="font-decorative text-xl text-advist-gray900 block">Advist</span>
-              <span className={`text-[10px] ${planTheme.text} uppercase tracking-wider`}>Admin</span>
+              <span className={`text-[10px] ${planTheme.text} uppercase tracking-wider`}>
+                Admin
+              </span>
             </div>
           )}
         </div>
@@ -235,15 +247,18 @@ const AdminNavMenuItem: React.FC<{
           }}
           className={`
             w-full flex items-center justify-center p-3 rounded-xl transition-all duration-300
-            ${isActive
-              ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-              : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+            ${
+              isActive
+                ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+                : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
             }
           `}
         >
           <Icon size={20} />
           {item.badge && (
-            <span className={`absolute -top-1 -right-1 w-5 h-5 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}>
+            <span
+              className={`absolute -top-1 -right-1 w-5 h-5 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
+            >
               {item.badge > 9 ? '9+' : item.badge}
             </span>
           )}
@@ -270,25 +285,30 @@ const AdminNavMenuItem: React.FC<{
           onClick={onToggle}
           className={`
             w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-300
-            ${isActive
-              ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-              : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+            ${
+              isActive
+                ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+                : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
             }
           `}
         >
           <Icon size={18} />
           <span className="flex-1 font-medium text-sm">{item.label}</span>
           {item.badge && (
-            <span className={`
+            <span
+              className={`
               px-1.5 py-0.5 text-[10px] font-bold rounded-full
               ${isActive ? 'bg-white/20 text-white' : `${planTheme.bgMedium} ${planTheme.text}`}
-            `}>
+            `}
+            >
               {item.badge}
             </span>
           )}
           {item.hasAdd && (
             <button
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
               className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-white/10' : 'hover:bg-advist-border'}`}
             >
               <Plus size={14} />
@@ -305,7 +325,8 @@ const AdminNavMenuItem: React.FC<{
           <div className={`ml-4 mt-1 pl-4 border-l-2 ${planTheme.border} space-y-1`}>
             {item.children?.map((child) => {
               const ChildIcon = child.icon;
-              const childActive = child.path && location.pathname.startsWith(child.path.split('?')[0]);
+              const childActive =
+                child.path && location.pathname.startsWith(child.path.split('?')[0]);
 
               return (
                 <NavLink
@@ -313,16 +334,19 @@ const AdminNavMenuItem: React.FC<{
                   to={child.path || '#'}
                   className={`
                     flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
-                    ${childActive
-                      ? `${planTheme.bgLight} text-advist-gray900 font-medium`
-                      : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+                    ${
+                      childActive
+                        ? `${planTheme.bgLight} text-advist-gray900 font-medium`
+                        : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
                     }
                   `}
                 >
                   <ChildIcon size={16} />
                   <span className="flex-1 text-sm">{child.label}</span>
                   {child.badge && (
-                    <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${planTheme.bgMedium} ${planTheme.text}`}>
+                    <span
+                      className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${planTheme.bgMedium} ${planTheme.text}`}
+                    >
                       {child.badge}
                     </span>
                   )}
@@ -341,25 +365,30 @@ const AdminNavMenuItem: React.FC<{
       to={item.path || '#'}
       className={`
         flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-        ${isActive
-          ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-          : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+        ${
+          isActive
+            ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+            : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
         }
       `}
     >
       <Icon size={18} />
       <span className="flex-1 font-medium text-sm">{item.label}</span>
       {item.badge && (
-        <span className={`
+        <span
+          className={`
           px-1.5 py-0.5 text-[10px] font-bold rounded-full
           ${isActive ? 'bg-white/20 text-white' : `${planTheme.bgMedium} ${planTheme.text}`}
-        `}>
+        `}
+        >
           {item.badge}
         </span>
       )}
       {item.hasAdd && (
         <button
-          onClick={(e) => { e.stopPropagation(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
           className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-white/10' : 'hover:bg-advist-border'}`}
         >
           <Plus size={14} />

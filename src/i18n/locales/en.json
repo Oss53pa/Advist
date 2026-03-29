@@ -157,7 +157,7 @@
     "demoMode": "Demo Mode",
     "demoInfo": "Credentials are pre-filled.",
     "register": {
-      "guarantee": "30-day money-back guarantee",
+      "guarantee": "1 month free trial - Right of withdrawal",
       "createAccount": "Create your ADVIST account",
       "adminDescription": "As an administrator, you will manage your organization's users",
       "step1Title": "Your information",
@@ -180,11 +180,11 @@
       "cityOptional": "City (optional)",
       "companyInfo": "Organization information",
       "choosePlan": "Choose your plan",
-      "securePayment": "Secure payment - Money-back guarantee",
+      "securePayment": "Secure payment - Right of withdrawal",
       "popular": "Popular",
       "perMonth": "/month",
-      "guaranteeText": "Money-back guarantee",
-      "guaranteeDesc": "30 days to try risk-free. Secure payment.",
+      "guaranteeText": "1 month free trial",
+      "guaranteeDesc": "Right of withdrawal included. No commitment.",
       "createPassword": "Create your password",
       "passwordMinChars": "Min. 8 characters",
       "passwordHelperText": "Min. 8 characters, 1 uppercase, 1 number",
@@ -198,7 +198,7 @@
       "monthlyTotal": "Estimated monthly total",
       "afterTrial": "After the free trial period",
       "custom": "Custom",
-      "fullRefund": "30-day guarantee - Full refund",
+      "fullRefund": "1 month free trial - Right of withdrawal",
       "termsAccept": "I accept the",
       "termsOfUse": "Terms of Use",
       "and": "and the",
@@ -446,26 +446,25 @@
       },
       "business": {
         "name": "Business",
-        "description": "For growing companies",
+        "description": "For SMEs",
         "features": [
-          "Unlimited users",
-          "100 GB storage",
-          "Advanced workflows",
-          "Electronic signatures",
-          "Priority support",
-          "API access"
+          "1-5 emitters",
+          "50 documents/month",
+          "Simple signature",
+          "Unlimited external signers",
+          "Email support"
         ]
       },
       "enterprise": {
         "name": "Enterprise",
         "description": "For large organizations",
         "features": [
-          "Everything in Business +",
-          "Unlimited storage",
-          "SSO/SAML",
-          "Advanced audit",
-          "Guaranteed SLA",
-          "Dedicated support"
+          "Everything unlimited",
+          "Advanced signature (eIDAS)",
+          "OHADA compliance",
+          "REST API & SSO/SAML",
+          "Priority support",
+          "SLA 99.9%"
         ]
       }
     },

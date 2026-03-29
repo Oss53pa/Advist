@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { sanitizeHtml } from '../../utils/sanitize';
 import {
   ArrowLeft,
   Calendar,
   Clock,
   Eye,
-  Share2,
   Bookmark,
   ThumbsUp,
-  MessageCircle,
   ChevronRight,
   Scale,
   Zap,
@@ -18,13 +16,6 @@ import {
   Lock,
   TrendingUp,
   BookOpen,
-  CheckCircle,
-  AlertTriangle,
-  Lightbulb,
-  FileText,
-  Users,
-  Globe,
-  Award,
   ArrowRight,
   Copy,
   Check,
@@ -42,7 +33,7 @@ const blogAuthors = [
     role: 'Experte Juridique OHADA',
     avatar: 'AD',
     color: 'bg-green-500',
-    bio: 'Docteure en droit des affaires, spécialisée dans le droit OHADA et la transformation digitale des entreprises africaines. 15 ans d\'expérience en conseil juridique.',
+    bio: "Docteure en droit des affaires, spécialisée dans le droit OHADA et la transformation digitale des entreprises africaines. 15 ans d'expérience en conseil juridique.",
     linkedin: 'https://linkedin.com/in/aminata-diallo',
   },
   {
@@ -51,7 +42,7 @@ const blogAuthors = [
     role: 'Directeur Produit',
     avatar: 'MK',
     color: 'bg-primary-600',
-    bio: 'Expert en gestion de produits SaaS avec plus de 10 ans d\'expérience dans la digitalisation des processus documentaires.',
+    bio: "Expert en gestion de produits SaaS avec plus de 10 ans d'expérience dans la digitalisation des processus documentaires.",
     linkedin: 'https://linkedin.com/in/marc-kouassi',
   },
   {
@@ -80,8 +71,9 @@ const fullArticles: Record<string, any> = {
     id: 1,
     slug: 'signature-electronique-valeur-juridique-afrique',
     title: 'La signature électronique a-t-elle une valeur juridique en Afrique ?',
-    subtitle: 'Guide complet sur le cadre légal dans l\'espace OHADA',
-    excerpt: 'Découvrez le cadre légal de la signature électronique dans l\'espace OHADA et comment elle est reconnue dans 17 pays africains.',
+    subtitle: "Guide complet sur le cadre légal dans l'espace OHADA",
+    excerpt:
+      "Découvrez le cadre légal de la signature électronique dans l'espace OHADA et comment elle est reconnue dans 17 pays africains.",
     category: 'juridique',
     categoryLabel: 'Juridique',
     published_at: '2024-12-15',
@@ -396,7 +388,7 @@ La transformation digitale de vos processus documentaires est un investissement 
 
 ---
 
-*Prêt à digitaliser vos processus ? Découvrez comment Advist peut vous accompagner avec un essai gratuit de 14 jours.*
+*Prêt à digitaliser vos processus ? Découvrez comment Advist peut vous accompagner avec un essai gratuit d'1 mois.*
     `,
     relatedArticles: [
       'roi-gestion-documentaire-digitale',
@@ -425,9 +417,9 @@ La transformation digitale de vos processus documentaires est un investissement 
     tags: ['eIDAS', 'Europe', 'Réglementation', 'Conformité'],
     tableOfContents: [
       { id: 'introduction', title: 'Introduction' },
-      { id: 'eidas-2', title: 'Qu\'est-ce que eIDAS 2.0 ?' },
+      { id: 'eidas-2', title: "Qu'est-ce que eIDAS 2.0 ?" },
       { id: 'nouveautes', title: 'Les principales nouveautés' },
-      { id: 'portefeuille', title: 'Le portefeuille d\'identité européen' },
+      { id: 'portefeuille', title: "Le portefeuille d'identité européen" },
       { id: 'impact', title: 'Impact pour les entreprises' },
       { id: 'preparation', title: 'Comment se préparer' },
       { id: 'calendrier', title: 'Calendrier de mise en œuvre' },
@@ -618,10 +610,10 @@ L'heure est à la préparation : ne laissez pas ces échéances vous surprendre.
     author: blogAuthors[3],
     tags: ['Tutoriel', 'Parapheur', 'Guide', 'Formation'],
     tableOfContents: [
-      { id: 'introduction', title: 'Qu\'est-ce qu\'un parapheur électronique ?' },
+      { id: 'introduction', title: "Qu'est-ce qu'un parapheur électronique ?" },
       { id: 'creation', title: 'Créer un parapheur' },
       { id: 'circuit', title: 'Configurer le circuit de validation' },
-      { id: 'suivi', title: 'Suivre l\'avancement' },
+      { id: 'suivi', title: "Suivre l'avancement" },
       { id: 'signature', title: 'Signer et valider' },
       { id: 'astuces', title: 'Astuces avancées' },
       { id: 'faq', title: 'FAQ' },
@@ -852,7 +844,7 @@ Les documents sont automatiquement archivés dans votre espace Advist avec toute
     slug: 'securite-documents-sensibles-entreprise',
     title: 'Comment protéger vos documents sensibles : les meilleures pratiques',
     subtitle: 'Guide de sécurité pour la gestion documentaire',
-    excerpt: 'Chiffrement, contrôle d\'accès, audit trail... Découvrez les stratégies essentielles.',
+    excerpt: "Chiffrement, contrôle d'accès, audit trail... Découvrez les stratégies essentielles.",
     category: 'securite',
     categoryLabel: 'Sécurité',
     published_at: '2024-11-28',
@@ -1037,8 +1029,8 @@ Configurez des alertes pour :
     id: 6,
     slug: 'roi-gestion-documentaire-digitale',
     title: 'Calculer le ROI de votre transformation documentaire digitale',
-    subtitle: 'Méthodes et outils pour mesurer l\'impact réel',
-    excerpt: 'Méthodes et outils pour mesurer l\'impact réel de la dématérialisation.',
+    subtitle: "Méthodes et outils pour mesurer l'impact réel",
+    excerpt: "Méthodes et outils pour mesurer l'impact réel de la dématérialisation.",
     category: 'productivite',
     categoryLabel: 'Productivité',
     published_at: '2024-11-25',
@@ -1144,16 +1136,16 @@ Avant de calculer les économies, il faut connaître vos **coûts de gestion doc
 
 **Gains annuels =**
 - Économies papier + impression
-- \+ Économies stockage
-- \+ Économies postales
-- \+ Gains de productivité (heures × coût horaire)
-- \+ Réduction des erreurs
+- + Économies stockage
+- + Économies postales
+- + Gains de productivité (heures × coût horaire)
+- + Réduction des erreurs
 
 **Coûts du projet =**
 - Licence logicielle (annuelle ou amortie)
-- \+ Intégration et paramétrage
-- \+ Formation des utilisateurs
-- \+ Maintenance et support
+- + Intégration et paramétrage
+- + Formation des utilisateurs
+- + Maintenance et support
 
 ### Période de retour sur investissement
 
@@ -1247,8 +1239,8 @@ Utilisez notre calculateur en ligne pour estimer votre ROI personnalisé :
     id: 7,
     slug: 'archivage-electronique-normes-nf-z42-013',
     title: 'Archivage électronique : comprendre la norme NF Z42-013',
-    subtitle: 'Guide de conformité pour l\'archivage probant',
-    excerpt: 'Tout savoir sur la norme française d\'archivage électronique.',
+    subtitle: "Guide de conformité pour l'archivage probant",
+    excerpt: "Tout savoir sur la norme française d'archivage électronique.",
     category: 'conformite',
     categoryLabel: 'Conformité',
     published_at: '2024-11-20',
@@ -1262,7 +1254,7 @@ Utilisez notre calculateur en ligne pour estimer votre ROI personnalisé :
     author: blogAuthors[2],
     tags: ['Archivage', 'Norme', 'NF Z42-013', 'France'],
     tableOfContents: [
-      { id: 'introduction', title: 'Qu\'est-ce que la NF Z42-013 ?' },
+      { id: 'introduction', title: "Qu'est-ce que la NF Z42-013 ?" },
       { id: 'exigences', title: 'Exigences de la norme' },
       { id: 'mise-en-oeuvre', title: 'Mise en œuvre pratique' },
       { id: 'certification', title: 'Certification et audit' },
@@ -1492,7 +1484,7 @@ Vous recevez une notification push. Touchez pour ouvrir directement le document.
     author: blogAuthors[1],
     tags: ['API', 'Développeur', 'Intégration', 'Technique'],
     tableOfContents: [
-      { id: 'introduction', title: 'Vue d\'ensemble de l\'API' },
+      { id: 'introduction', title: "Vue d'ensemble de l'API" },
       { id: 'authentification', title: 'Authentification' },
       { id: 'endpoints', title: 'Endpoints principaux' },
       { id: 'webhooks', title: 'Webhooks' },
@@ -1674,8 +1666,14 @@ createDocument();
 };
 
 // Illustration component for articles
-const ArticleIllustration: React.FC<{ gradient: string; icon: any; title: string }> = ({ gradient, icon: Icon, title }) => (
-  <div className={`relative w-full h-64 md:h-96 bg-gradient-to-br ${gradient} rounded-2xl overflow-hidden`}>
+const ArticleIllustration: React.FC<{ gradient: string; icon: any; title: string }> = ({
+  gradient,
+  icon: Icon,
+  title,
+}) => (
+  <div
+    className={`relative w-full h-64 md:h-96 bg-gradient-to-br ${gradient} rounded-2xl overflow-hidden`}
+  >
     {/* Background patterns */}
     <div className="absolute inset-0">
       <div className="absolute top-10 left-10 w-32 h-32 border-2 border-white/20 rounded-full" />
@@ -1690,7 +1688,7 @@ const ArticleIllustration: React.FC<{ gradient: string; icon: any; title: string
       <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid)" />
@@ -1716,7 +1714,6 @@ const ArticleIllustration: React.FC<{ gradient: string; icon: any; title: string
 
 export const BlogArticlePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
@@ -1783,22 +1780,40 @@ export const BlogArticlePage: React.FC = () => {
               <span className="font-decorative text-2xl font-bold text-primary-900">Advist</span>
             </Link>
             <nav className="hidden md:flex items-center gap-1">
-              <Link to="/#features" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#features"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Fonctionnalités
               </Link>
-              <Link to="/#how-it-works" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#how-it-works"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Comment ça marche
               </Link>
-              <Link to="/#demo" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#demo"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Démo
               </Link>
-              <Link to="/#pricing" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#pricing"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Tarifs
               </Link>
-              <Link to="/blog" className="px-4 py-2 text-sm font-medium text-primary-900 bg-primary-100 rounded-lg">
+              <Link
+                to="/blog"
+                className="px-4 py-2 text-sm font-medium text-primary-900 bg-primary-100 rounded-lg"
+              >
                 Blog
               </Link>
-              <Link to="/#contact" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#contact"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Contact
               </Link>
             </nav>
@@ -1849,7 +1864,9 @@ export const BlogArticlePage: React.FC = () => {
         {/* Header */}
         <header className="mb-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className={`px-3 py-1.5 bg-gradient-to-r ${article.gradient} text-white text-xs font-semibold rounded-full`}>
+            <span
+              className={`px-3 py-1.5 bg-gradient-to-r ${article.gradient} text-white text-xs font-semibold rounded-full`}
+            >
               {article.categoryLabel}
             </span>
             <span className="text-sm text-primary-500 flex items-center gap-1">
@@ -1862,15 +1879,15 @@ export const BlogArticlePage: React.FC = () => {
             {article.title}
           </h1>
 
-          {article.subtitle && (
-            <p className="text-xl text-primary-600 mb-6">{article.subtitle}</p>
-          )}
+          {article.subtitle && <p className="text-xl text-primary-600 mb-6">{article.subtitle}</p>}
 
           {/* Author and meta */}
           <div className="flex flex-wrap items-center gap-6 pb-6 border-b border-primary-100">
             {article.author && (
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 ${article.author.color} rounded-full flex items-center justify-center text-white font-bold`}>
+                <div
+                  className={`w-12 h-12 ${article.author.color} rounded-full flex items-center justify-center text-white font-bold`}
+                >
                   {article.author.avatar}
                 </div>
                 <div>
@@ -1933,7 +1950,21 @@ export const BlogArticlePage: React.FC = () => {
         {/* Article Body */}
         <div className="prose prose-lg prose-primary max-w-none">
           <div
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content.replace(/\n/g, '<br>').replace(/## (.*?) \{#(.*?)\}/g, '<h2 id="$2">$1</h2>').replace(/### (.*)/g, '<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>').replace(/^- (.*)/gm, '<li>$1</li>').replace(/^> (.*)/gm, '<blockquote>$1</blockquote>').replace(/\| (.*) \|/g, '<tr><td>$1</td></tr>')) }}
+            dangerouslySetInnerHTML={{
+              __html: sanitizeHtml(
+                article.content
+                  .replace(/\n/g, '<br>')
+                  .replace(/## (.*?) \{#(.*?)\}/g, '<h2 id="$2">$1</h2>')
+                  .replace(/### (.*)/g, '<h3>$1</h3>')
+                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                  .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                  .replace(/`([^`]+)`/g, '<code>$1</code>')
+                  .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+                  .replace(/^- (.*)/gm, '<li>$1</li>')
+                  .replace(/^> (.*)/gm, '<blockquote>$1</blockquote>')
+                  .replace(/\| (.*) \|/g, '<tr><td>$1</td></tr>')
+              ),
+            }}
             className="[&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-primary-900 [&>h2]:mt-12 [&>h2]:mb-6 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-primary-800 [&>h3]:mt-8 [&>h3]:mb-4 [&>p]:text-primary-700 [&>p]:leading-relaxed [&>p]:mb-4 [&>blockquote]:border-l-4 [&>blockquote]:border-primary-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-primary-600 [&>blockquote]:my-6 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-4 [&>li]:text-primary-700 [&>li]:mb-2 [&>code]:bg-primary-100 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm [&>code]:text-primary-800 [&>a]:text-green-600 [&>a]:underline [&>a]:hover:text-green-700"
           />
         </div>
@@ -1960,7 +1991,9 @@ export const BlogArticlePage: React.FC = () => {
             <button
               onClick={() => setLiked(!liked)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${
-                liked ? 'bg-green-100 text-green-700' : 'bg-white text-primary-600 hover:bg-primary-100'
+                liked
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-white text-primary-600 hover:bg-primary-100'
               }`}
             >
               <ThumbsUp className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
@@ -1969,7 +2002,9 @@ export const BlogArticlePage: React.FC = () => {
             <button
               onClick={() => setBookmarked(!bookmarked)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${
-                bookmarked ? 'bg-yellow-100 text-yellow-700' : 'bg-white text-primary-600 hover:bg-primary-100'
+                bookmarked
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : 'bg-white text-primary-600 hover:bg-primary-100'
               }`}
             >
               <Bookmark className={`w-5 h-5 ${bookmarked ? 'fill-current' : ''}`} />
@@ -2016,7 +2051,9 @@ export const BlogArticlePage: React.FC = () => {
         {article.author && (
           <div className="mt-10 p-6 bg-gradient-to-br from-primary-50 to-white rounded-2xl border border-primary-100">
             <div className="flex items-start gap-4">
-              <div className={`w-16 h-16 ${article.author.color} rounded-xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0`}>
+              <div
+                className={`w-16 h-16 ${article.author.color} rounded-xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0`}
+              >
                 {article.author.avatar}
               </div>
               <div>
@@ -2058,11 +2095,15 @@ export const BlogArticlePage: React.FC = () => {
                       </div>
                     </div>
                     <div className="p-4">
-                      <span className="text-xs font-semibold text-green-600">{relatedArticle.categoryLabel}</span>
+                      <span className="text-xs font-semibold text-green-600">
+                        {relatedArticle.categoryLabel}
+                      </span>
                       <h4 className="font-bold text-primary-900 mt-2 line-clamp-2 group-hover:text-green-700 transition-colors">
                         {relatedArticle.title}
                       </h4>
-                      <span className="text-xs text-primary-500 mt-2 block">{relatedArticle.read_time}</span>
+                      <span className="text-xs text-primary-500 mt-2 block">
+                        {relatedArticle.read_time}
+                      </span>
                     </div>
                   </Link>
                 );
@@ -2075,7 +2116,8 @@ export const BlogArticlePage: React.FC = () => {
         <div className="mt-16 p-8 bg-gradient-to-br from-primary-900 to-primary-800 rounded-2xl text-center text-white">
           <h3 className="text-2xl font-bold mb-4">Prêt à digitaliser vos processus ?</h3>
           <p className="text-primary-200 mb-6 max-w-lg mx-auto">
-            Découvrez comment Advist peut transformer votre gestion documentaire avec un essai gratuit de 14 jours.
+            Découvrez comment Advist peut transformer votre gestion documentaire avec un essai
+            gratuit d'1 mois.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -2106,10 +2148,16 @@ export const BlogArticlePage: React.FC = () => {
               © 2025 Advist by Atlas Studio. Tous droits réservés.
             </p>
             <div className="flex items-center gap-6">
-              <Link to="/legal/privacy" className="text-sm text-primary-400 hover:text-white transition-colors">
+              <Link
+                to="/legal/privacy"
+                className="text-sm text-primary-400 hover:text-white transition-colors"
+              >
                 Confidentialité
               </Link>
-              <Link to="/legal/cgu" className="text-sm text-primary-400 hover:text-white transition-colors">
+              <Link
+                to="/legal/cgu"
+                className="text-sm text-primary-400 hover:text-white transition-colors"
+              >
                 CGU
               </Link>
             </div>

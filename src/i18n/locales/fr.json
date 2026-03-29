@@ -166,7 +166,7 @@
     "demoMode": "Mode Démo",
     "demoInfo": "Les identifiants sont pré-remplis.",
     "register": {
-      "guarantee": "Garantie 30 jours satisfait ou remboursé",
+      "guarantee": "1 mois d'essai gratuit - Droit de rétractation",
       "createAccount": "Créer votre compte ADVIST",
       "adminDescription": "En tant qu'administrateur, vous gérerez les utilisateurs de votre organisation",
       "step1Title": "Vos informations",
@@ -189,11 +189,11 @@
       "cityOptional": "Ville (optionnel)",
       "companyInfo": "Informations sur votre organisation",
       "choosePlan": "Choisissez votre plan",
-      "securePayment": "Paiement sécurisé - Satisfait ou remboursé",
+      "securePayment": "Paiement sécurisé - Droit de rétractation",
       "popular": "Populaire",
       "perMonth": "/mois",
-      "guaranteeText": "Garantie satisfait ou remboursé",
-      "guaranteeDesc": "30 jours pour essayer sans risque. Paiement sécurisé.",
+      "guaranteeText": "1 mois d'essai gratuit",
+      "guaranteeDesc": "Droit de rétractation inclus. Sans engagement.",
       "createPassword": "Créez votre mot de passe",
       "passwordMinChars": "Min. 8 caractères",
       "passwordHelperText": "Min. 8 caractères, 1 majuscule, 1 chiffre",
@@ -294,24 +294,23 @@
           "name": "Business",
           "description": "PME",
           "features": [
-            "50 utilisateurs",
-            "250 Go stockage",
-            "15 000 documents",
-            "1 500 signatures/mois",
-            "SSO/SAML",
-            "Assistant IA"
+            "1 a 5 emetteurs",
+            "50 documents/mois",
+            "Signature simple",
+            "Externes illimites",
+            "Support email"
           ]
         },
         "enterprise": {
-          "name": "Enterprise",
+          "name": "Entreprise",
           "description": "Grandes entreprises",
           "features": [
-            "Utilisateurs illimités",
-            "Stockage illimite",
-            "Documents illimites",
-            "Signatures illimitees",
-            "White label",
-            "Manager dedie"
+            "Tout illimite",
+            "Signature avancee (eIDAS)",
+            "Conformite OHADA",
+            "API REST & SSO/SAML",
+            "Support prioritaire",
+            "SLA 99,9%"
           ]
         }
       },

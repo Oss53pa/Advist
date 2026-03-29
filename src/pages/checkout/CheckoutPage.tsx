@@ -142,12 +142,11 @@ export const CheckoutPage: React.FC = () => {
 
   // Payment status polling
   const {
-    status: paymentStatus,
     isPolling,
     error: pollingError,
     elapsedTime,
   } = usePaymentStatus(checkoutToken, {
-    onSuccess: (status) => {
+    onSuccess: (_status) => {
       navigate('/register/success', {
         state: {
           email: checkoutState?.email,
@@ -187,9 +186,9 @@ export const CheckoutPage: React.FC = () => {
         checkoutState.billing_cycle || 'monthly'
       );
       setTotalBreakdown(total);
-    } catch (err) {
+    } catch {
       // Fallback calculation
-      const basePrice = checkoutState.plan_code === 'business' ? 59000 : 149000;
+      const basePrice = checkoutState.plan_code === 'business' ? 25000 : 150000;
       const { subtotal, taxAmount, total } = checkoutService.calculateLocalTotal(basePrice);
       setTotalBreakdown({
         plan_code: checkoutState.plan_code,
@@ -217,7 +216,7 @@ export const CheckoutPage: React.FC = () => {
   const formatExpiry = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     if (v.length >= 2) {
-      return `${v.substring(0, 2)  }/${  v.substring(2, 4)}`;
+      return `${v.substring(0, 2)}/${v.substring(2, 4)}`;
     }
     return v;
   };
@@ -306,7 +305,8 @@ export const CheckoutPage: React.FC = () => {
                 </div>
 
                 <p className="text-sm text-advist-text-muted">
-                  Temps ecoule: {Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toString().padStart(2, '0')}
+                  Temps ecoule: {Math.floor(elapsedTime / 60)}:
+                  {(elapsedTime % 60).toString().padStart(2, '0')}
                 </p>
 
                 {pollingError && (
@@ -363,9 +363,7 @@ export const CheckoutPage: React.FC = () => {
             {/* Payment Form */}
             <div className="lg:col-span-2">
               <Card padding="lg">
-                <h2 className="text-xl font-semibold text-advist-gray900 mb-6">
-                  Mode de paiement
-                </h2>
+                <h2 className="text-xl font-semibold text-advist-gray900 mb-6">Mode de paiement</h2>
 
                 {/* Payment Type Selector */}
                 <div className="grid grid-cols-2 gap-3 mb-6">
@@ -378,14 +376,25 @@ export const CheckoutPage: React.FC = () => {
                         : 'border-advist-border hover:border-advist-gold/50'
                     }`}
                   >
-                    <Smartphone size={24} className={paymentType === 'mobile_money' ? 'text-advist-gold' : 'text-advist-text-muted'} />
+                    <Smartphone
+                      size={24}
+                      className={
+                        paymentType === 'mobile_money'
+                          ? 'text-advist-gold'
+                          : 'text-advist-text-muted'
+                      }
+                    />
                     <div className="text-left">
-                      <p className={`font-medium ${paymentType === 'mobile_money' ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}>
+                      <p
+                        className={`font-medium ${paymentType === 'mobile_money' ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}
+                      >
                         Mobile Money
                       </p>
                       <p className="text-xs text-advist-text-muted">Orange, MTN, Wave...</p>
                     </div>
-                    {paymentType === 'mobile_money' && <Check size={18} className="text-advist-gold ml-auto" />}
+                    {paymentType === 'mobile_money' && (
+                      <Check size={18} className="text-advist-gold ml-auto" />
+                    )}
                   </button>
 
                   <button
@@ -397,14 +406,23 @@ export const CheckoutPage: React.FC = () => {
                         : 'border-advist-border hover:border-advist-gold/50'
                     }`}
                   >
-                    <CreditCard size={24} className={paymentType === 'card' ? 'text-advist-gold' : 'text-advist-text-muted'} />
+                    <CreditCard
+                      size={24}
+                      className={
+                        paymentType === 'card' ? 'text-advist-gold' : 'text-advist-text-muted'
+                      }
+                    />
                     <div className="text-left">
-                      <p className={`font-medium ${paymentType === 'card' ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}>
+                      <p
+                        className={`font-medium ${paymentType === 'card' ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}
+                      >
                         Carte bancaire
                       </p>
                       <p className="text-xs text-advist-text-muted">Visa, Mastercard</p>
                     </div>
-                    {paymentType === 'card' && <Check size={18} className="text-advist-gold ml-auto" />}
+                    {paymentType === 'card' && (
+                      <Check size={18} className="text-advist-gold ml-auto" />
+                    )}
                   </button>
                 </div>
 
@@ -435,7 +453,10 @@ export const CheckoutPage: React.FC = () => {
                           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg">
                             {currentCountry?.flag}
                           </span>
-                          <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-advist-text-muted" />
+                          <ChevronDown
+                            size={18}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-advist-text-muted"
+                          />
                         </div>
                       </div>
 
@@ -456,13 +477,19 @@ export const CheckoutPage: React.FC = () => {
                                   : 'border-advist-border hover:border-advist-gold/50'
                               }`}
                             >
-                              <div className={`w-10 h-10 ${provider.color} rounded-full flex items-center justify-center text-white text-lg`}>
+                              <div
+                                className={`w-10 h-10 ${provider.color} rounded-full flex items-center justify-center text-white text-lg`}
+                              >
                                 {provider.logo}
                               </div>
-                              <span className={`font-medium ${selectedProvider === provider.id ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}>
+                              <span
+                                className={`font-medium ${selectedProvider === provider.id ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}
+                              >
                                 {provider.name}
                               </span>
-                              {selectedProvider === provider.id && <Check size={16} className="text-advist-gold ml-auto" />}
+                              {selectedProvider === provider.id && (
+                                <Check size={16} className="text-advist-gold ml-auto" />
+                              )}
                             </button>
                           ))}
                         </div>
@@ -510,7 +537,10 @@ export const CheckoutPage: React.FC = () => {
                             className="w-full px-4 py-3 pl-12 border border-advist-border rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-gold/30 focus:border-advist-gold"
                             required
                           />
-                          <CreditCard size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-advist-text-muted" />
+                          <CreditCard
+                            size={18}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-advist-text-muted"
+                          />
                         </div>
                       </div>
 
@@ -536,7 +566,9 @@ export const CheckoutPage: React.FC = () => {
                           <input
                             type="text"
                             value={cardCvc}
-                            onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                            onChange={(e) =>
+                              setCardCvc(e.target.value.replace(/\D/g, '').slice(0, 4))
+                            }
                             maxLength={4}
                             placeholder="123"
                             className="w-full px-4 py-3 border border-advist-border rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-gold/30 focus:border-advist-gold"
@@ -579,7 +611,11 @@ export const CheckoutPage: React.FC = () => {
                   <Button
                     type="submit"
                     className="w-full py-4"
-                    disabled={isProcessing || (paymentType === 'mobile_money' && !selectedProvider) || isLoadingTotal}
+                    disabled={
+                      isProcessing ||
+                      (paymentType === 'mobile_money' && !selectedProvider) ||
+                      isLoadingTotal
+                    }
                   >
                     {isProcessing ? (
                       <>
@@ -589,7 +625,10 @@ export const CheckoutPage: React.FC = () => {
                     ) : (
                       <>
                         <Shield size={18} className="mr-2" />
-                        Payer {totalBreakdown ? checkoutService.formatAmount(totalBreakdown.total) : '...'}
+                        Payer{' '}
+                        {totalBreakdown
+                          ? checkoutService.formatAmount(totalBreakdown.total)
+                          : '...'}
                       </>
                     )}
                   </Button>
@@ -606,7 +645,9 @@ export const CheckoutPage: React.FC = () => {
 
                 {/* Organization Info */}
                 <div className="p-4 bg-advist-surface-dark rounded-xl mb-4">
-                  <p className="font-medium text-advist-gray900">{checkoutState.organization_name}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {checkoutState.organization_name}
+                  </p>
                   <p className="text-sm text-advist-text-secondary">{checkoutState.email}</p>
                 </div>
 
@@ -629,27 +670,31 @@ export const CheckoutPage: React.FC = () => {
                   <div className="py-4 flex justify-center">
                     <Loader2 size={24} className="animate-spin text-advist-gold" />
                   </div>
-                ) : totalBreakdown && (
-                  <div className="border-t border-advist-border pt-4 mt-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-advist-text-secondary">Sous-total</span>
-                      <span className="text-advist-gray900">
-                        {checkoutService.formatAmount(totalBreakdown.subtotal)}
-                      </span>
+                ) : (
+                  totalBreakdown && (
+                    <div className="border-t border-advist-border pt-4 mt-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-advist-text-secondary">Sous-total</span>
+                        <span className="text-advist-gray900">
+                          {checkoutService.formatAmount(totalBreakdown.subtotal)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-advist-text-secondary">
+                          TVA ({totalBreakdown.tax_rate}%)
+                        </span>
+                        <span className="text-advist-gray900">
+                          {checkoutService.formatAmount(totalBreakdown.tax_amount)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center pt-3 border-t border-advist-border">
+                        <span className="font-semibold text-advist-gray900">Total</span>
+                        <span className="text-xl font-bold text-advist-gold">
+                          {checkoutService.formatAmount(totalBreakdown.total)}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-advist-text-secondary">TVA ({totalBreakdown.tax_rate}%)</span>
-                      <span className="text-advist-gray900">
-                        {checkoutService.formatAmount(totalBreakdown.tax_amount)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center pt-3 border-t border-advist-border">
-                      <span className="font-semibold text-advist-gray900">Total</span>
-                      <span className="text-xl font-bold text-advist-gold">
-                        {checkoutService.formatAmount(totalBreakdown.total)}
-                      </span>
-                    </div>
-                  </div>
+                  )
                 )}
 
                 {/* Guarantee */}
@@ -657,8 +702,10 @@ export const CheckoutPage: React.FC = () => {
                   <div className="flex items-start gap-3">
                     <Check size={18} className="text-green-600 mt-0.5" />
                     <div>
-                      <p className="font-medium text-green-800">Garantie satisfait ou rembourse</p>
-                      <p className="text-sm text-green-600">30 jours pour essayer sans risque</p>
+                      <p className="font-medium text-green-800">1 mois d'essai gratuit</p>
+                      <p className="text-sm text-green-600">
+                        Droit de retractation inclus. Sans engagement.
+                      </p>
                     </div>
                   </div>
                 </div>

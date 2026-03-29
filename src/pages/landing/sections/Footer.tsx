@@ -1,15 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Linkedin,
-  Twitter,
-  ArrowUpRight,
-  Shield,
-} from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Twitter, ArrowUpRight, Shield } from 'lucide-react';
 
 const SOCIAL_LINKS = [
   { icon: Linkedin, href: 'https://linkedin.com/company/advist', label: 'LinkedIn' },
@@ -30,7 +22,7 @@ export const Footer: React.FC = () => {
 
   const RESOURCE_LINKS = [
     { label: t('footer.resources.documentation', 'Documentation'), href: '/docs' },
-    { label: t('footer.resources.helpCenter', 'Centre d\'aide'), href: '/help' },
+    { label: t('footer.resources.helpCenter', "Centre d'aide"), href: '/help' },
     { label: t('footer.resources.blog', 'Blog'), href: '/blog' },
     { label: t('footer.resources.status', 'Statut'), href: '/status', external: true },
   ];
@@ -49,23 +41,29 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand column */}
           <div className="col-span-2">
-            <Link to="/" className="inline-flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                <span className="font-decorative text-xl text-gray-900">A</span>
-              </div>
+            <Link to="/" className="inline-flex items-center mb-6">
               <span className="font-decorative text-2xl text-white">Advist</span>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-xs">
-              {t('footer.description', 'La plateforme tout-en-un pour digitaliser vos circuits de validation et signer electroniquement en toute securite.')}
+              {t(
+                'footer.description',
+                'La plateforme tout-en-un pour digitaliser vos circuits de validation et signer electroniquement en toute securite.'
+              )}
             </p>
 
             {/* Contact info */}
             <div className="space-y-3 mb-6">
-              <a href="mailto:contact@advist.com" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors">
+              <a
+                href="mailto:contact@advist.com"
+                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors"
+              >
                 <Mail className="w-4 h-4" />
                 <span className="text-sm">contact@advist.com</span>
               </a>
-              <a href="tel:+2250102030405" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors">
+              <a
+                href="tel:+2250102030405"
+                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors"
+              >
                 <Phone className="w-4 h-4" />
                 <span className="text-sm">+225 01 02 03 04 05</span>
               </a>
@@ -94,16 +92,24 @@ export const Footer: React.FC = () => {
 
           {/* Links columns */}
           <div>
-            <h4 className="font-semibold text-white mb-4">{t('footer.sections.product', 'Produit')}</h4>
+            <h4 className="font-semibold text-white mb-4">
+              {t('footer.sections.product', 'Produit')}
+            </h4>
             <ul className="space-y-3">
               {PRODUCT_LINKS.map((link, i) => (
                 <li key={i}>
                   {link.href.startsWith('#') ? (
-                    <a href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                    <a
+                      href={link.href}
+                      className="text-sm text-gray-400 hover:text-white transition-colors"
+                    >
                       {link.label}
                     </a>
                   ) : (
-                    <Link to={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                    <Link
+                      to={link.href}
+                      className="text-sm text-gray-400 hover:text-white transition-colors"
+                    >
                       {link.label}
                     </Link>
                   )}
@@ -113,7 +119,9 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">{t('footer.sections.resources', 'Ressources')}</h4>
+            <h4 className="font-semibold text-white mb-4">
+              {t('footer.sections.resources', 'Ressources')}
+            </h4>
             <ul className="space-y-3">
               {RESOURCE_LINKS.map((link, i) => (
                 <li key={i}>
@@ -136,7 +144,10 @@ export const Footer: React.FC = () => {
             <ul className="space-y-3">
               {LEGAL_LINKS.map((link, i) => (
                 <li key={i}>
-                  <Link to={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link
+                    to={link.href}
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -165,7 +176,10 @@ export const Footer: React.FC = () => {
               {/* Certifications */}
               <div className="flex items-center gap-3">
                 {['ISO 27001', 'eIDAS', 'RGPD', 'OHADA'].map((cert, i) => (
-                  <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md">
+                  <div
+                    key={i}
+                    className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md"
+                  >
                     <Shield className="w-3 h-3 text-emerald-500" />
                     <span className="text-xs text-gray-400">{cert}</span>
                   </div>

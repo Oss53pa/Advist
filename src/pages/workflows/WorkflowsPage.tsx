@@ -1,6 +1,5 @@
 ﻿import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
   GitBranch,
@@ -8,8 +7,6 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  Play,
-  Pause,
   MoreVertical,
   FileText,
   Users,
@@ -20,31 +17,26 @@ import {
   GitMerge,
   Settings,
   History,
-  ChevronRight,
   ArrowRight,
   ArrowRightLeft,
   RefreshCw,
   Ban,
   Filter,
-  Search,
   Eye,
   Edit2,
-  Copy,
   Trash2,
-  X,
   Tag,
   PenTool,
-  Shield,
-  Building2,
   Save,
-  ArrowDown,
 } from 'lucide-react';
-import { Card, CardHeader, Button, Badge, StatusBadge, Avatar, AvatarGroup, Modal, Input } from '../../components/ui';
+import { Card, Button, Badge, AvatarGroup, Modal, Input } from '../../components/ui';
 import { WorkflowEditor, type WorkflowStep } from '../../components/workflows/WorkflowEditor';
-import { ConditionalRules, type ConditionalRule } from '../../components/workflows/ConditionalRules';
+import {
+  ConditionalRules,
+  type ConditionalRule,
+} from '../../components/workflows/ConditionalRules';
 import { AddValidatorModal } from '../../components/workflows/AddValidatorModal';
-import { workflowsService } from '../../services';
-import type { Task, WorkflowInstance } from '../../types';
+import { UpgradeGate } from '../../components/subscription/UpgradeGate';
 
 export const WorkflowsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -70,9 +62,7 @@ export const WorkflowsPage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">{t('workflows.title')}</h1>
-          <p className="text-advist-gray900/80 mt-1">
-            {t('workflows.subtitle')}
-          </p>
+          <p className="text-advist-gray900/80 mt-1">{t('workflows.subtitle')}</p>
         </div>
         <Button leftIcon={<Plus size={18} />} onClick={handleNewTemplate}>
           {t('workflows.newTemplate')}
@@ -113,7 +103,12 @@ export const WorkflowsPage: React.FC = () => {
       {/* Content */}
       {activeTab === 'tasks' && <MyTasksSection basePath={basePath} />}
       {activeTab === 'instances' && <WorkflowInstancesSection basePath={basePath} />}
-      {activeTab === 'templates' && <WorkflowTemplatesSection onEditTemplate={handleEditTemplate} onNewTemplate={handleNewTemplate} />}
+      {activeTab === 'templates' && (
+        <WorkflowTemplatesSection
+          onEditTemplate={handleEditTemplate}
+          onNewTemplate={handleNewTemplate}
+        />
+      )}
 
       {/* New/Edit Template Modal */}
       <NewWorkflowTemplateModal
@@ -144,7 +139,7 @@ const MyTasksSection: React.FC<{ basePath: string }> = ({ basePath }) => {
         id: 1,
         is_fast_track: true,
         fast_track_reason: 'Urgence client',
-        signature_mode: 'sequential'
+        signature_mode: 'sequential',
       },
       deadline: '2024-11-29T18:00:00',
       assignedBy: { name: 'Marie Dupont' },
@@ -231,7 +226,9 @@ const MyTasksSection: React.FC<{ basePath: string }> = ({ basePath }) => {
                     <div className="flex items-center gap-3 mt-2">
                       {task.parallelSigners.map((signer: any, idx: number) => (
                         <div key={idx} className="flex items-center gap-1">
-                          <div className={`w-2 h-2 rounded-full ${signer.signed ? 'bg-advist-red' : 'bg-advist-surface-dark'}`} />
+                          <div
+                            className={`w-2 h-2 rounded-full ${signer.signed ? 'bg-advist-red' : 'bg-advist-surface-dark'}`}
+                          />
                           <span className="text-xs text-advist-gray900/80">{signer.name}</span>
                         </div>
                       ))}
@@ -310,10 +307,10 @@ const MyTasksSection: React.FC<{ basePath: string }> = ({ basePath }) => {
         <Card>
           <div className="text-center py-12">
             <CheckCircle size={48} className="mx-auto text-advist-gray900 mb-4" />
-            <h3 className="text-lg font-medium text-advist-gray900">{t('dashboard.allCaughtUp')}</h3>
-            <p className="text-advist-gray900/80 mt-1">
-              {t('workflows.noTasksPending')}
-            </p>
+            <h3 className="text-lg font-medium text-advist-gray900">
+              {t('dashboard.allCaughtUp')}
+            </h3>
+            <p className="text-advist-gray900/80 mt-1">{t('workflows.noTasksPending')}</p>
           </div>
         </Card>
       )}
@@ -376,7 +373,10 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
       signature_mode: 'parallel',
       template_version: 2,
       can_recall: true,
-      assignees: [{ name: 'Jean Durand', status: 'pending' }, { name: 'Alice Martin', status: 'pending' }],
+      assignees: [
+        { name: 'Jean Durand', status: 'pending' },
+        { name: 'Alice Martin', status: 'pending' },
+      ],
     },
     {
       id: 3,
@@ -426,9 +426,8 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
     },
   ];
 
-  const filteredInstances = filterStatus === 'all'
-    ? instances
-    : instances.filter(i => i.status === filterStatus);
+  const filteredInstances =
+    filterStatus === 'all' ? instances : instances.filter((i) => i.status === filterStatus);
 
   const handleRecall = (instance: any) => {
     setSelectedInstance(instance);
@@ -445,12 +444,14 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
     setShowAddValidatorModal(true);
   };
 
-  const getStatusBadge = (status: string, is_fast_track: boolean, refusal_reason?: string) => {
+  const getStatusBadge = (status: string, is_fast_track: boolean, _refusal_reason?: string) => {
     switch (status) {
       case 'in_progress':
         return (
           <div className="flex items-center gap-2">
-            <Badge variant="blue" size="sm">{t('workflows.statusInProgress')}</Badge>
+            <Badge variant="blue" size="sm">
+              {t('workflows.statusInProgress')}
+            </Badge>
             {is_fast_track && (
               <Badge variant="warning" size="sm">
                 <Zap size={10} className="mr-1" />
@@ -460,21 +461,43 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
           </div>
         );
       case 'pending':
-        return <Badge variant="gray" size="sm">{t('workflows.statusPending')}</Badge>;
+        return (
+          <Badge variant="gray" size="sm">
+            {t('workflows.statusPending')}
+          </Badge>
+        );
       case 'completed':
-        return <Badge variant="green" size="sm">{t('workflows.statusCompleted')}</Badge>;
+        return (
+          <Badge variant="green" size="sm">
+            {t('workflows.statusCompleted')}
+          </Badge>
+        );
       case 'rejected':
-        return <Badge variant="red" size="sm">{t('workflows.statusRejected')}</Badge>;
+        return (
+          <Badge variant="red" size="sm">
+            {t('workflows.statusRejected')}
+          </Badge>
+        );
       case 'recalled':
-        return <Badge variant="yellow" size="sm">{t('workflows.statusRecalled')}</Badge>;
+        return (
+          <Badge variant="yellow" size="sm">
+            {t('workflows.statusRecalled')}
+          </Badge>
+        );
       case 'signature_refused':
         return (
           <div className="flex flex-col gap-1">
-            <Badge variant="red" size="sm">{t('workflows.statusSignatureRefused')}</Badge>
+            <Badge variant="red" size="sm">
+              {t('workflows.statusSignatureRefused')}
+            </Badge>
           </div>
         );
       default:
-        return <Badge variant="gray" size="sm">{status}</Badge>;
+        return (
+          <Badge variant="gray" size="sm">
+            {status}
+          </Badge>
+        );
     }
   };
 
@@ -538,9 +561,7 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
                       v{instance.template_version}
                     </Badge>
                   </div>
-                  <p className="text-sm text-advist-gray900/80">
-                    {instance.document.title}
-                  </p>
+                  <p className="text-sm text-advist-gray900/80">{instance.document.title}</p>
                 </div>
               </div>
 
@@ -548,7 +569,10 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
               <div className="mt-4">
                 <div className="flex items-center justify-between text-sm mb-1">
                   <span className="text-advist-gray900/80">
-                    {t('workflows.stepProgress', { current: instance.current_step, total: instance.total_steps })}
+                    {t('workflows.stepProgress', {
+                      current: instance.current_step,
+                      total: instance.total_steps,
+                    })}
                   </span>
                   <div className="flex items-center gap-2">
                     {/* v2: Signature mode indicator */}
@@ -569,10 +593,10 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
                       instance.status === 'completed'
                         ? 'bg-advist-red'
                         : instance.status === 'rejected' || instance.status === 'signature_refused'
-                        ? 'bg-advist-bg0'
-                        : instance.status === 'recalled'
-                        ? 'bg-advist-red/100'
-                        : 'bg-advist-bg0'
+                          ? 'bg-advist-bg0'
+                          : instance.status === 'recalled'
+                            ? 'bg-advist-red/100'
+                            : 'bg-advist-bg0'
                     }`}
                     style={{
                       width: `${(instance.current_step / instance.total_steps) * 100}%`,
@@ -600,12 +624,13 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
               <div className="flex items-center gap-4 mt-3">
                 {getStatusBadge(instance.status, instance.is_fast_track, instance.refusal_reason)}
                 <span className="text-sm text-advist-blue-light">
-                  {t('workflows.startedOn')} {new Date(instance.started_at).toLocaleDateString('fr-FR')}
+                  {t('workflows.startedOn')}{' '}
+                  {new Date(instance.started_at).toLocaleDateString('fr-FR')}
                 </span>
                 <div className="flex items-center gap-2">
                   <Users size={14} className="text-advist-blue-light" />
                   <AvatarGroup
-                    users={instance.assignees.map(a => ({ name: a.name }))}
+                    users={instance.assignees.map((a) => ({ name: a.name }))}
                     max={3}
                     size="xs"
                   />
@@ -679,14 +704,25 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
           isOpen={showAddValidatorModal}
           onClose={() => setShowAddValidatorModal(false)}
           workflowId={selectedInstance.id}
-          currentSteps={selectedInstance.assignees?.map((a: any, idx: number) => ({
-            id: `step-${idx + 1}`,
-            order: idx + 1,
-            name: `Étape ${idx + 1}`,
-            type: 'validation' as const,
-            status: a.status === 'approved' ? 'completed' as const : a.status === 'pending' ? 'pending' as const : 'in_progress' as const,
-            assignee: { id: idx + 1, name: a.name, email: `${a.name.toLowerCase().replace(' ', '.')}@example.com` },
-          })) || []}
+          currentSteps={
+            selectedInstance.assignees?.map((a: any, idx: number) => ({
+              id: `step-${idx + 1}`,
+              order: idx + 1,
+              name: `Étape ${idx + 1}`,
+              type: 'validation' as const,
+              status:
+                a.status === 'approved'
+                  ? ('completed' as const)
+                  : a.status === 'pending'
+                    ? ('pending' as const)
+                    : ('in_progress' as const),
+              assignee: {
+                id: idx + 1,
+                name: a.name,
+                email: `${a.name.toLowerCase().replace(' ', '.')}@example.com`,
+              },
+            })) || []
+          }
           onValidatorAdded={() => {
             setShowAddValidatorModal(false);
           }}
@@ -716,7 +752,12 @@ const WorkflowTemplatesSection: React.FC<{
       isActive: true,
       version: 3,
       versionHistory: [
-        { version: 3, date: '2024-11-20', by: 'Jean Dupont', changes: 'Ajout etape validation juridique' },
+        {
+          version: 3,
+          date: '2024-11-20',
+          by: 'Jean Dupont',
+          changes: 'Ajout etape validation juridique',
+        },
         { version: 2, date: '2024-10-15', by: 'Marie Martin', changes: 'Modification delais' },
         { version: 1, date: '2024-09-01', by: 'Jean Dupont', changes: 'Creation initiale' },
       ],
@@ -730,7 +771,7 @@ const WorkflowTemplatesSection: React.FC<{
     {
       id: 2,
       name: 'Approbation budget',
-      description: 'Circuit d\'approbation pour les budgets',
+      description: "Circuit d'approbation pour les budgets",
       steps: 3,
       usageCount: 23,
       isActive: true,
@@ -739,9 +780,7 @@ const WorkflowTemplatesSection: React.FC<{
         { version: 2, date: '2024-11-01', by: 'Pierre Bernard', changes: 'Ajout seuils' },
         { version: 1, date: '2024-08-15', by: 'Jean Dupont', changes: 'Creation initiale' },
       ],
-      conditionalRules: [
-        { condition: 'Budget > 500 000 €', action: 'Escalade DG' },
-      ],
+      conditionalRules: [{ condition: 'Budget > 500 000 €', action: 'Escalade DG' }],
       fastTrackEnabled: false,
       parallelSignatureEnabled: false,
     },
@@ -791,9 +830,7 @@ const WorkflowTemplatesSection: React.FC<{
             </div>
           </div>
           <h3 className="font-semibold text-advist-gray900">{template.name}</h3>
-          <p className="text-sm text-advist-gray900/80 mt-1 line-clamp-2">
-            {template.description}
-          </p>
+          <p className="text-sm text-advist-gray900/80 mt-1 line-clamp-2">{template.description}</p>
 
           {/* v2: Features badges */}
           <div className="flex flex-wrap gap-1 mt-3">
@@ -906,7 +943,7 @@ const DelegateModal: React.FC<{
   ];
 
   const handleDelegate = () => {
-    console.log('Delegating to:', selectedUser, 'Reason:', reason);
+    console.info('Delegating to:', selectedUser, 'Reason:', reason);
     onClose();
   };
 
@@ -915,8 +952,12 @@ const DelegateModal: React.FC<{
       <div className="space-y-4">
         {task && (
           <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-            <p className="text-sm text-advist-gray900/80">{t('documents.document')}: {task.document?.title}</p>
-            <p className="text-sm text-advist-gray900/80">{t('workflows.step')}: {task.step?.name}</p>
+            <p className="text-sm text-advist-gray900/80">
+              {t('documents.document')}: {task.document?.title}
+            </p>
+            <p className="text-sm text-advist-gray900/80">
+              {t('workflows.step')}: {task.step?.name}
+            </p>
           </div>
         )}
 
@@ -952,7 +993,9 @@ const DelegateModal: React.FC<{
         </div>
 
         <div className="flex justify-end gap-2 pt-4 border-t border-advist-border">
-          <Button variant="outline" onClick={onClose}>{t('common.cancel')}</Button>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.cancel')}
+          </Button>
           <Button onClick={handleDelegate} disabled={!selectedUser || !reason}>
             <UserPlus size={16} className="mr-2" />
             {t('workflows.delegate')}
@@ -973,7 +1016,7 @@ const RecallWorkflowModal: React.FC<{
   const [reason, setReason] = useState('');
 
   const handleRecall = () => {
-    console.log('Recalling workflow:', instance?.id, 'Reason:', reason);
+    console.info('Recalling workflow:', instance?.id, 'Reason:', reason);
     onClose();
   };
 
@@ -985,16 +1028,16 @@ const RecallWorkflowModal: React.FC<{
             <AlertTriangle size={20} className="text-advist-gray900 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-advist-gray900">{t('common.warning')}</p>
-              <p className="text-sm text-advist-gray900 mt-1">
-                {t('workflows.recallWarning')}
-              </p>
+              <p className="text-sm text-advist-gray900 mt-1">{t('workflows.recallWarning')}</p>
             </div>
           </div>
         </div>
 
         {instance && (
           <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-            <p className="text-sm text-advist-gray900/80">{t('documents.document')}: {instance.document?.title}</p>
+            <p className="text-sm text-advist-gray900/80">
+              {t('documents.document')}: {instance.document?.title}
+            </p>
             <p className="text-sm text-advist-gray900/80">Workflow: {instance.template?.name}</p>
             <p className="text-sm text-advist-gray900/80">
               Progression: {t('workflows.step')} {instance.current_step}/{instance.total_steps}
@@ -1017,7 +1060,9 @@ const RecallWorkflowModal: React.FC<{
         </div>
 
         <div className="flex justify-end gap-2 pt-4 border-t border-advist-border">
-          <Button variant="outline" onClick={onClose}>{t('common.cancel')}</Button>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.cancel')}
+          </Button>
           <Button variant="warning" onClick={handleRecall} disabled={!reason}>
             <RotateCcw size={16} className="mr-2" />
             {t('workflows.recall')}
@@ -1038,7 +1083,9 @@ const ReassignModal: React.FC<{
   const [selectedStep, setSelectedStep] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
   const [reason, setReason] = useState('');
-  const [reassignType, setReassignType] = useState<'delegation' | 'emergency' | 'departure'>('emergency');
+  const [reassignType, setReassignType] = useState<'delegation' | 'emergency' | 'departure'>(
+    'emergency'
+  );
 
   const users = [
     { id: 1, name: 'Marie Martin', department: 'Direction' },
@@ -1047,7 +1094,13 @@ const ReassignModal: React.FC<{
   ];
 
   const handleReassign = () => {
-    console.log('Reassigning:', { instance: instance?.id, step: selectedStep, user: selectedUser, reason, type: reassignType });
+    console.info('Reassigning:', {
+      instance: instance?.id,
+      step: selectedStep,
+      user: selectedUser,
+      reason,
+      type: reassignType,
+    });
     onClose();
   };
 
@@ -1129,7 +1182,9 @@ const ReassignModal: React.FC<{
         </div>
 
         <div className="flex justify-end gap-2 pt-4 border-t border-advist-border">
-          <Button variant="outline" onClick={onClose}>{t('common.cancel')}</Button>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.cancel')}
+          </Button>
           <Button onClick={handleReassign} disabled={!selectedStep || !selectedUser || !reason}>
             <RefreshCw size={16} className="mr-2" />
             {t('workflows.reassign')}
@@ -1151,7 +1206,7 @@ const RefuseSignatureModal: React.FC<{
   const [isDefinitive, setIsDefinitive] = useState(false);
 
   const handleRefuse = () => {
-    console.log('Refusing signature:', { task: task?.id, reason, isDefinitive });
+    console.info('Refusing signature:', { task: task?.id, reason, isDefinitive });
     onClose();
   };
 
@@ -1160,7 +1215,9 @@ const RefuseSignatureModal: React.FC<{
       <div className="space-y-4">
         {task && (
           <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-            <p className="text-sm text-advist-gray900/80">{t('documents.document')}: {task.document?.title}</p>
+            <p className="text-sm text-advist-gray900/80">
+              {t('documents.document')}: {task.document?.title}
+            </p>
           </div>
         )}
 
@@ -1199,10 +1256,18 @@ const RefuseSignatureModal: React.FC<{
         </div>
 
         <div className="flex justify-end gap-2 pt-4 border-t border-advist-border">
-          <Button variant="outline" onClick={onClose}>{t('common.cancel')}</Button>
-          <Button variant={isDefinitive ? 'danger' : 'outline'} onClick={handleRefuse} disabled={!reason}>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.cancel')}
+          </Button>
+          <Button
+            variant={isDefinitive ? 'danger' : 'outline'}
+            onClick={handleRefuse}
+            disabled={!reason}
+          >
             <Ban size={16} className="mr-2" />
-            {isDefinitive ? t('signatures.refuseDefinitively') : t('signatures.rejectAndRequestChanges')}
+            {isDefinitive
+              ? t('signatures.refuseDefinitively')
+              : t('signatures.rejectAndRequestChanges')}
           </Button>
         </div>
       </div>
@@ -1220,18 +1285,22 @@ const VersionHistoryModal: React.FC<{
   if (!template) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`${t('workflows.versionHistory')} - ${template.name}`}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`${t('workflows.versionHistory')} - ${template.name}`}
+    >
       <div className="space-y-4">
-        <p className="text-sm text-advist-gray900/80">
-          {t('workflows.versionHistoryInfo')}
-        </p>
+        <p className="text-sm text-advist-gray900/80">{t('workflows.versionHistoryInfo')}</p>
 
         <div className="space-y-3">
           {template.versionHistory?.map((version: any, index: number) => (
             <div
               key={version.version}
               className={`p-4 rounded-xl border ${
-                index === 0 ? 'border-advist-dark bg-advist-surface-dark/30' : 'border-advist-border'
+                index === 0
+                  ? 'border-advist-dark bg-advist-surface-dark/30'
+                  : 'border-advist-border'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -1240,7 +1309,9 @@ const VersionHistoryModal: React.FC<{
                     Version {version.version}
                   </Badge>
                   {index === 0 && (
-                    <Badge variant="green" size="sm">{t('common.current')}</Badge>
+                    <Badge variant="green" size="sm">
+                      {t('common.current')}
+                    </Badge>
                   )}
                 </div>
                 <span className="text-sm text-advist-blue-light">
@@ -1248,13 +1319,17 @@ const VersionHistoryModal: React.FC<{
                 </span>
               </div>
               <p className="text-sm text-advist-gray900">{version.changes}</p>
-              <p className="text-xs text-advist-blue-light mt-1">{t('common.by')} {version.by}</p>
+              <p className="text-xs text-advist-blue-light mt-1">
+                {t('common.by')} {version.by}
+              </p>
             </div>
           ))}
         </div>
 
         <div className="flex justify-end pt-4 border-t border-advist-border">
-          <Button variant="outline" onClick={onClose}>{t('common.close')}</Button>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.close')}
+          </Button>
         </div>
       </div>
     </Modal>
@@ -1271,10 +1346,16 @@ const ConditionalRulesModal: React.FC<{
   if (!template) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Regles conditionnelles - ${template.name}`} size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Regles conditionnelles - ${template.name}`}
+      size="lg"
+    >
       <div className="space-y-4">
         <p className="text-sm text-advist-gray900/80">
-          Les regles conditionnelles permettent d'adapter automatiquement le workflow selon le contenu du document.
+          Les regles conditionnelles permettent d'adapter automatiquement le workflow selon le
+          contenu du document.
         </p>
 
         {template.conditionalRules?.length > 0 ? (
@@ -1288,7 +1369,9 @@ const ConditionalRulesModal: React.FC<{
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-advist-gray900">Si</span>
-                      <Badge variant="blue" size="sm">{rule.condition}</Badge>
+                      <Badge variant="blue" size="sm">
+                        {rule.condition}
+                      </Badge>
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       <ArrowRight size={14} className="text-advist-blue-light" />
@@ -1299,7 +1382,11 @@ const ConditionalRulesModal: React.FC<{
                     <Button variant="ghost" size="sm">
                       <Edit2 size={14} />
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-advist-gray900/70 hover:bg-advist-bg">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-advist-gray900/70 hover:bg-advist-bg"
+                    >
                       <Trash2 size={14} />
                     </Button>
                   </div>
@@ -1320,18 +1407,32 @@ const ConditionalRulesModal: React.FC<{
         </Button>
 
         <div className="p-4 bg-advist-surface-dark/30 rounded-xl">
-          <h4 className="font-medium text-advist-gray900 mb-2">{t('workflows.conditionTypesAvailable')}</h4>
+          <h4 className="font-medium text-advist-gray900 mb-2">
+            {t('workflows.conditionTypesAvailable')}
+          </h4>
           <ul className="text-sm text-advist-gray900/80 space-y-1">
-            <li>• <strong>Montant:</strong> Si montant {'>'} X</li>
-            <li>• <strong>{t('workflows.confidentiality')}</strong> {t('workflows.ifConfidential')}</li>
-            <li>• <strong>{t('workflows.documentType')}</strong> {t('workflows.ifContractInvoice')}</li>
-            <li>• <strong>{t('workflows.department')}</strong> {t('workflows.byDepartment')}</li>
-            <li>• <strong>{t('workflows.metadata')}</strong> {t('workflows.byCustomField')}</li>
+            <li>
+              • <strong>Montant:</strong> Si montant {'>'} X
+            </li>
+            <li>
+              • <strong>{t('workflows.confidentiality')}</strong> {t('workflows.ifConfidential')}
+            </li>
+            <li>
+              • <strong>{t('workflows.documentType')}</strong> {t('workflows.ifContractInvoice')}
+            </li>
+            <li>
+              • <strong>{t('workflows.department')}</strong> {t('workflows.byDepartment')}
+            </li>
+            <li>
+              • <strong>{t('workflows.metadata')}</strong> {t('workflows.byCustomField')}
+            </li>
           </ul>
         </div>
 
         <div className="flex justify-end gap-2 pt-4 border-t border-advist-border">
-          <Button variant="outline" onClick={onClose}>{t('common.close')}</Button>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.close')}
+          </Button>
           <Button>{t('common.save')}</Button>
         </div>
       </div>
@@ -1356,32 +1457,38 @@ const NewWorkflowTemplateModal: React.FC<{
   template?: any;
 }> = ({ isOpen, onClose, template }) => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'info' | 'steps' | 'rules' | 'metadata' | 'settings'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'steps' | 'rules' | 'metadata' | 'settings'>(
+    'info'
+  );
 
   // Template state
   const [templateName, setTemplateName] = useState(template?.name || '');
   const [templateDescription, setTemplateDescription] = useState(template?.description || '');
   const [steps, setSteps] = useState<WorkflowStep[]>(template?.steps || []);
-  const [rules, setRules] = useState<ConditionalRule[]>(template?.conditionalRules?.map((r: any, i: number) => ({
-    id: `rule_${i}`,
-    name: r.condition,
-    isActive: true,
-    priority: i + 1,
-    condition: { type: 'amount', operator: 'greater_than', value: 100000 },
-    action: { type: 'add_step', config: { stepName: r.action } },
-  })) || []);
+  const [rules, setRules] = useState<ConditionalRule[]>(
+    template?.conditionalRules?.map((r: any, i: number) => ({
+      id: `rule_${i}`,
+      name: r.condition,
+      isActive: true,
+      priority: i + 1,
+      condition: { type: 'amount', operator: 'greater_than', value: 100000 },
+      action: { type: 'add_step', config: { stepName: r.action } },
+    })) || []
+  );
   const [metadataFields, setMetadataFields] = useState<MetadataField[]>([]);
 
   // Settings state
   const [fastTrackEnabled, setFastTrackEnabled] = useState(template?.fastTrackEnabled || false);
-  const [parallelSignatureEnabled, setParallelSignatureEnabled] = useState(template?.parallelSignatureEnabled || false);
+  const [parallelSignatureEnabled, setParallelSignatureEnabled] = useState(
+    template?.parallelSignatureEnabled || false
+  );
   const [requireParaphAllPages, setRequireParaphAllPages] = useState(false);
   const [defaultDeadlineDays, setDefaultDeadlineDays] = useState(3);
   const [notifyOnCompletion, setNotifyOnCompletion] = useState(true);
   const [allowDelegation, setAllowDelegation] = useState(true);
 
   const handleSave = () => {
-    console.log('Saving template:', {
+    console.info('Saving template:', {
       name: templateName,
       description: templateDescription,
       steps,
@@ -1410,11 +1517,11 @@ const NewWorkflowTemplateModal: React.FC<{
   };
 
   const updateMetadataField = (id: string, updates: Partial<MetadataField>) => {
-    setMetadataFields(metadataFields.map(f => f.id === id ? { ...f, ...updates } : f));
+    setMetadataFields(metadataFields.map((f) => (f.id === id ? { ...f, ...updates } : f)));
   };
 
   const removeMetadataField = (id: string) => {
-    setMetadataFields(metadataFields.filter(f => f.id !== id));
+    setMetadataFields(metadataFields.filter((f) => f.id !== id));
   };
 
   const tabs = [
@@ -1429,7 +1536,9 @@ const NewWorkflowTemplateModal: React.FC<{
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={template ? `${t('common.edit')}: ${template.name}` : t('workflows.newWorkflowTemplate')}
+      title={
+        template ? `${t('common.edit')}: ${template.name}` : t('workflows.newWorkflowTemplate')
+      }
       size="xl"
     >
       <div className="flex flex-col h-[70vh]">
@@ -1491,14 +1600,16 @@ const NewWorkflowTemplateModal: React.FC<{
               </div>
 
               <div className="p-4 bg-advist-bg rounded-xl">
-                <h4 className="font-medium text-advist-gray900/80 mb-3">{t('workflows.workflowPreview')}</h4>
+                <h4 className="font-medium text-advist-gray900/80 mb-3">
+                  {t('workflows.workflowPreview')}
+                </h4>
                 <div className="flex items-center gap-2 flex-wrap">
                   <div className="px-3 py-1.5 bg-green-50 text-advist-success rounded-full text-sm flex items-center gap-1">
                     <Zap size={14} />
                     {t('workflows.start')}
                   </div>
                   {steps.length > 0 ? (
-                    steps.map((step, index) => (
+                    steps.map((step, _index) => (
                       <React.Fragment key={step.id}>
                         <ArrowRight size={16} className="text-advist-blue-light" />
                         <div className="px-3 py-1.5 bg-white border border-advist-bg rounded-full text-sm">
@@ -1530,24 +1641,21 @@ const NewWorkflowTemplateModal: React.FC<{
               <div className="p-3 bg-advist-gold-light rounded-xl text-sm text-advist-gray900">
                 <strong>{t('common.tip')}</strong> {t('workflows.defineValidatorsTip')}
               </div>
-              <WorkflowEditor
-                steps={steps}
-                onChange={setSteps}
-              />
+              <WorkflowEditor steps={steps} onChange={setSteps} />
             </div>
           )}
 
           {/* Rules Tab */}
           {activeTab === 'rules' && (
-            <div className="space-y-4">
-              <div className="p-3 bg-advist-surface-dark rounded-xl text-sm text-advist-gray900">
-                <strong>{t('workflows.conditionalRules')}</strong> {t('workflows.adaptWorkflowTip')}
+            <UpgradeGate feature="conditionalRules">
+              <div className="space-y-4">
+                <div className="p-3 bg-advist-surface-dark rounded-xl text-sm text-advist-gray900">
+                  <strong>{t('workflows.conditionalRules')}</strong>{' '}
+                  {t('workflows.adaptWorkflowTip')}
+                </div>
+                <ConditionalRules rules={rules} onChange={setRules} />
               </div>
-              <ConditionalRules
-                rules={rules}
-                onChange={setRules}
-              />
-            </div>
+            </UpgradeGate>
           )}
 
           {/* Metadata Tab */}
@@ -1566,7 +1674,9 @@ const NewWorkflowTemplateModal: React.FC<{
                           <Input
                             label={t('workflows.fieldName')}
                             value={field.name}
-                            onChange={(e) => updateMetadataField(field.id, { name: e.target.value })}
+                            onChange={(e) =>
+                              updateMetadataField(field.id, { name: e.target.value })
+                            }
                             placeholder={t('workflows.fieldNamePlaceholder')}
                           />
                           <div>
@@ -1575,7 +1685,11 @@ const NewWorkflowTemplateModal: React.FC<{
                             </label>
                             <select
                               value={field.type}
-                              onChange={(e) => updateMetadataField(field.id, { type: e.target.value as MetadataField['type'] })}
+                              onChange={(e) =>
+                                updateMetadataField(field.id, {
+                                  type: e.target.value as MetadataField['type'],
+                                })
+                              }
                               className="w-full px-3 py-2 border border-advist-bg rounded-xl focus:ring-2 focus:ring-advist-gold"
                             >
                               <option value="text">{t('workflows.fieldTypeText')}</option>
@@ -1591,10 +1705,15 @@ const NewWorkflowTemplateModal: React.FC<{
                                 type="checkbox"
                                 id={`required_${field.id}`}
                                 checked={field.required}
-                                onChange={(e) => updateMetadataField(field.id, { required: e.target.checked })}
+                                onChange={(e) =>
+                                  updateMetadataField(field.id, { required: e.target.checked })
+                                }
                                 className="w-4 h-4 rounded border-advist-bg text-advist-gray900/80"
                               />
-                              <label htmlFor={`required_${field.id}`} className="text-sm text-advist-gray900/80">
+                              <label
+                                htmlFor={`required_${field.id}`}
+                                className="text-sm text-advist-gray900/80"
+                              >
                                 {t('common.required')}
                               </label>
                             </div>
@@ -1613,9 +1732,14 @@ const NewWorkflowTemplateModal: React.FC<{
                           <Input
                             label={t('workflows.optionsLabel')}
                             value={field.options?.join(', ') || ''}
-                            onChange={(e) => updateMetadataField(field.id, {
-                              options: e.target.value.split(',').map(o => o.trim()).filter(Boolean)
-                            })}
+                            onChange={(e) =>
+                              updateMetadataField(field.id, {
+                                options: e.target.value
+                                  .split(',')
+                                  .map((o) => o.trim())
+                                  .filter(Boolean),
+                              })
+                            }
                             placeholder={t('workflows.optionsPlaceholder')}
                           />
                         </div>
@@ -1626,7 +1750,9 @@ const NewWorkflowTemplateModal: React.FC<{
               ) : (
                 <Card className="p-8 text-center">
                   <Tag size={40} className="mx-auto text-advist-blue-light mb-3" />
-                  <h4 className="font-medium text-advist-gray900/80">{t('workflows.noMetadata')}</h4>
+                  <h4 className="font-medium text-advist-gray900/80">
+                    {t('workflows.noMetadata')}
+                  </h4>
                   <p className="text-sm text-advist-blue-light mt-1 mb-4">
                     {t('workflows.addCustomFieldsInfo')}
                   </p>
@@ -1651,7 +1777,9 @@ const NewWorkflowTemplateModal: React.FC<{
                       <Zap size={20} className="text-advist-gold-dark" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-advist-gray900/80">{t('workflows.fastTrackMode')}</h4>
+                      <h4 className="font-medium text-advist-gray900/80">
+                        {t('workflows.fastTrackMode')}
+                      </h4>
                       <p className="text-sm text-advist-blue-light mt-1">
                         {t('workflows.fastTrackDescription')}
                       </p>
@@ -1677,7 +1805,9 @@ const NewWorkflowTemplateModal: React.FC<{
                       <ArrowRightLeft size={20} className="text-advist-gray900" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-advist-gray900/80">{t('workflows.parallelSignature')}</h4>
+                      <h4 className="font-medium text-advist-gray900/80">
+                        {t('workflows.parallelSignature')}
+                      </h4>
                       <p className="text-sm text-advist-blue-light mt-1">
                         {t('workflows.parallelSignatureDescription')}
                       </p>
@@ -1703,7 +1833,9 @@ const NewWorkflowTemplateModal: React.FC<{
                       <PenTool size={20} className="text-advist-gold-dark" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-advist-gray900/80">{t('workflows.requiredParaph')}</h4>
+                      <h4 className="font-medium text-advist-gray900/80">
+                        {t('workflows.requiredParaph')}
+                      </h4>
                       <p className="text-sm text-advist-blue-light mt-1">
                         {t('workflows.requiredParaphDescription')}
                       </p>
@@ -1766,7 +1898,11 @@ const NewWorkflowTemplateModal: React.FC<{
         {/* Footer */}
         <div className="flex justify-between items-center pt-4 border-t border-advist-border flex-shrink-0 px-4 pb-4">
           <div className="text-sm text-advist-blue-light">
-            {t('workflows.footerSummary', { steps: steps.length, rules: rules.length, fields: metadataFields.length })}
+            {t('workflows.footerSummary', {
+              steps: steps.length,
+              rules: rules.length,
+              fields: metadataFields.length,
+            })}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>

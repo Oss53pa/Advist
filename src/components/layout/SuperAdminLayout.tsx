@@ -56,7 +56,7 @@ const navigation: NavItem[] = [
       { name: 'Abonnés', href: '/superadmin/marketing/subscribers', icon: UserPlus },
       { name: 'Calendrier', href: '/superadmin/marketing/calendar', icon: Calendar },
       { name: 'Analytics', href: '/superadmin/marketing/analytics', icon: BarChart3 },
-    ]
+    ],
   },
   { name: 'Landing Page', href: '/superadmin/landing-page', icon: Layout },
   { name: 'Grille Tarifaire', href: '/superadmin/pricing', icon: Tag },
@@ -79,8 +79,8 @@ export const SuperAdminLayout: React.FC = () => {
   const [expandedMenus, setExpandedMenus] = React.useState<string[]>(() => {
     // Auto-expand menus if current path matches a subitem
     const expanded: string[] = [];
-    navigation.forEach(item => {
-      if (item.subItems?.some(sub => location.pathname.startsWith(sub.href))) {
+    navigation.forEach((item) => {
+      if (item.subItems?.some((sub) => location.pathname.startsWith(sub.href))) {
         expanded.push(item.name);
       }
     });
@@ -88,10 +88,8 @@ export const SuperAdminLayout: React.FC = () => {
   });
 
   const toggleMenu = (menuName: string) => {
-    setExpandedMenus(prev =>
-      prev.includes(menuName)
-        ? prev.filter(name => name !== menuName)
-        : [...prev, menuName]
+    setExpandedMenus((prev) =>
+      prev.includes(menuName) ? prev.filter((name) => name !== menuName) : [...prev, menuName]
     );
   };
 
@@ -117,7 +115,10 @@ export const SuperAdminLayout: React.FC = () => {
       </a>
 
       {/* Top Bar - Navy */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-advist-navy via-primary-800 to-advist-navy border-b border-white/10 z-50 shadow-lg print:hidden" role="banner">
+      <header
+        className="fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-advist-navy via-primary-800 to-advist-navy border-b border-white/10 z-50 shadow-lg print:hidden"
+        role="banner"
+      >
         <div className="flex items-center justify-between h-full px-4 lg:px-6">
           {/* Mobile menu button */}
           <button
@@ -131,15 +132,10 @@ export const SuperAdminLayout: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center gap-4">
             <Link to="/superadmin" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-advist-gold to-primary-500 rounded-xl flex items-center justify-center shadow-lg shadow-advist-gold/30">
-                <Shield size={22} className="text-white" />
-              </div>
-              <div className="hidden sm:block">
-                <span className="font-decorative text-2xl text-white">Advist</span>
-                <span className="ml-2 px-2 py-0.5 bg-gradient-to-r from-advist-gold to-primary-500 text-white text-xs font-bold rounded-lg shadow-sm">
-                  SUPER ADMIN
-                </span>
-              </div>
+              <span className="font-decorative text-2xl text-white">Advist</span>
+              <span className="hidden sm:inline ml-2 px-2 py-0.5 bg-gradient-to-r from-advist-gold to-primary-500 text-white text-xs font-bold rounded-lg shadow-sm">
+                SUPER ADMIN
+              </span>
             </Link>
           </div>
 
@@ -161,7 +157,10 @@ export const SuperAdminLayout: React.FC = () => {
               aria-label={t('accessibility.notifications', 'Notifications')}
             >
               <Bell size={20} aria-hidden="true" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-advist-gold rounded-full shadow-lg shadow-advist-gold/50" aria-hidden="true" />
+              <span
+                className="absolute top-1 right-1 w-2 h-2 bg-advist-gold rounded-full shadow-lg shadow-advist-gold/50"
+                aria-hidden="true"
+              />
               <span className="sr-only">{t('notifications.unread', 'Notifications non lues')}</span>
             </button>
 
@@ -182,7 +181,7 @@ export const SuperAdminLayout: React.FC = () => {
                 aria-haspopup="true"
                 aria-label={t('accessibility.userMenu', 'Menu utilisateur')}
               >
-                <Avatar name={`${user?.first_name  } ${  user?.last_name}`} size="sm" />
+                <Avatar name={`${user?.first_name} ${user?.last_name}`} size="sm" />
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium text-white">
                     {user?.first_name} {user?.last_name}
@@ -232,10 +231,16 @@ export const SuperAdminLayout: React.FC = () => {
         `}
         role="complementary"
       >
-        <nav id="main-navigation" className="p-4 space-y-1" aria-label={t('accessibility.skipToNavigation', 'Navigation principale')}>
+        <nav
+          id="main-navigation"
+          className="p-4 space-y-1"
+          aria-label={t('accessibility.skipToNavigation', 'Navigation principale')}
+        >
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
-            const isSubItemActive = item.subItems?.some(sub => location.pathname.startsWith(sub.href));
+            const isSubItemActive = item.subItems?.some((sub) =>
+              location.pathname.startsWith(sub.href)
+            );
             const isExpanded = expandedMenus.includes(item.name);
             const hasSubItems = item.subItems && item.subItems.length > 0;
 
@@ -335,7 +340,11 @@ export const SuperAdminLayout: React.FC = () => {
       </aside>
 
       {/* Main content */}
-      <main id="main-content" className="lg:ml-64 pt-16 min-h-screen print:ml-0 print:pt-0" role="main">
+      <main
+        id="main-content"
+        className="lg:ml-64 pt-16 min-h-screen print:ml-0 print:pt-0"
+        role="main"
+      >
         <Outlet />
       </main>
     </div>

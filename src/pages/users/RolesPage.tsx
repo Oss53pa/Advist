@@ -7,8 +7,6 @@ import {
   Trash2,
   Copy,
   Users,
-  Check,
-  X,
   ChevronDown,
   ChevronRight,
   Lock,
@@ -16,12 +14,10 @@ import {
   GitBranch,
   PenTool,
   Settings,
-  Eye,
-  Download,
-  Upload,
   Archive,
 } from 'lucide-react';
-import { Button, Card, Modal, Input, Badge } from '../../components/ui';
+import { Button, Card, Modal, Input } from '../../components/ui';
+import { UpgradeGate } from '../../components/subscription/UpgradeGate';
 
 // Permission categories
 const PERMISSION_CATEGORIES = {
@@ -29,14 +25,46 @@ const PERMISSION_CATEGORIES = {
     label: 'Documents',
     icon: FileText,
     permissions: [
-      { key: 'documents.view', label: 'Voir les documents', description: 'Accéder et lire les documents' },
-      { key: 'documents.create', label: 'Créer des documents', description: 'Importer ou créer de nouveaux documents' },
-      { key: 'documents.edit', label: 'Modifier les documents', description: 'Modifier les métadonnées et contenu' },
-      { key: 'documents.delete', label: 'Supprimer les documents', description: 'Supprimer définitivement les documents' },
-      { key: 'documents.share', label: 'Partager les documents', description: 'Partager avec d\'autres utilisateurs' },
-      { key: 'documents.export', label: 'Exporter les documents', description: 'Télécharger les documents' },
-      { key: 'documents.annotate', label: 'Annoter les documents', description: 'Ajouter des annotations et commentaires' },
-      { key: 'documents.versions', label: 'Gérer les versions', description: 'Voir et restaurer les versions' },
+      {
+        key: 'documents.view',
+        label: 'Voir les documents',
+        description: 'Accéder et lire les documents',
+      },
+      {
+        key: 'documents.create',
+        label: 'Créer des documents',
+        description: 'Importer ou créer de nouveaux documents',
+      },
+      {
+        key: 'documents.edit',
+        label: 'Modifier les documents',
+        description: 'Modifier les métadonnées et contenu',
+      },
+      {
+        key: 'documents.delete',
+        label: 'Supprimer les documents',
+        description: 'Supprimer définitivement les documents',
+      },
+      {
+        key: 'documents.share',
+        label: 'Partager les documents',
+        description: "Partager avec d'autres utilisateurs",
+      },
+      {
+        key: 'documents.export',
+        label: 'Exporter les documents',
+        description: 'Télécharger les documents',
+      },
+      {
+        key: 'documents.annotate',
+        label: 'Annoter les documents',
+        description: 'Ajouter des annotations et commentaires',
+      },
+      {
+        key: 'documents.versions',
+        label: 'Gérer les versions',
+        description: 'Voir et restaurer les versions',
+      },
     ],
   },
   workflows: {
@@ -44,55 +72,147 @@ const PERMISSION_CATEGORIES = {
     icon: GitBranch,
     permissions: [
       { key: 'workflows.view', label: 'Voir les workflows', description: 'Accéder aux workflows' },
-      { key: 'workflows.create', label: 'Créer des workflows', description: 'Créer de nouveaux templates de workflow' },
-      { key: 'workflows.edit', label: 'Modifier les workflows', description: 'Modifier les templates existants' },
-      { key: 'workflows.delete', label: 'Supprimer les workflows', description: 'Supprimer des workflows' },
-      { key: 'workflows.launch', label: 'Lancer des workflows', description: 'Démarrer un workflow sur un document' },
-      { key: 'workflows.cancel', label: 'Annuler des workflows', description: 'Annuler un workflow en cours' },
-      { key: 'workflows.reassign', label: 'Réassigner des tâches', description: 'Déléguer des tâches à d\'autres' },
+      {
+        key: 'workflows.create',
+        label: 'Créer des workflows',
+        description: 'Créer de nouveaux templates de workflow',
+      },
+      {
+        key: 'workflows.edit',
+        label: 'Modifier les workflows',
+        description: 'Modifier les templates existants',
+      },
+      {
+        key: 'workflows.delete',
+        label: 'Supprimer les workflows',
+        description: 'Supprimer des workflows',
+      },
+      {
+        key: 'workflows.launch',
+        label: 'Lancer des workflows',
+        description: 'Démarrer un workflow sur un document',
+      },
+      {
+        key: 'workflows.cancel',
+        label: 'Annuler des workflows',
+        description: 'Annuler un workflow en cours',
+      },
+      {
+        key: 'workflows.reassign',
+        label: 'Réassigner des tâches',
+        description: "Déléguer des tâches à d'autres",
+      },
     ],
   },
   signatures: {
     label: 'Signatures',
     icon: PenTool,
     permissions: [
-      { key: 'signatures.view', label: 'Voir les signatures', description: 'Voir les demandes de signature' },
-      { key: 'signatures.sign', label: 'Signer', description: 'Apposer sa signature sur les documents' },
-      { key: 'signatures.request', label: 'Demander des signatures', description: 'Créer des demandes de signature' },
-      { key: 'signatures.manage', label: 'Gérer les signatures', description: 'Administrer toutes les signatures' },
-      { key: 'signatures.certificates', label: 'Voir les certificats', description: 'Accéder aux certificats de signature' },
+      {
+        key: 'signatures.view',
+        label: 'Voir les signatures',
+        description: 'Voir les demandes de signature',
+      },
+      {
+        key: 'signatures.sign',
+        label: 'Signer',
+        description: 'Apposer sa signature sur les documents',
+      },
+      {
+        key: 'signatures.request',
+        label: 'Demander des signatures',
+        description: 'Créer des demandes de signature',
+      },
+      {
+        key: 'signatures.manage',
+        label: 'Gérer les signatures',
+        description: 'Administrer toutes les signatures',
+      },
+      {
+        key: 'signatures.certificates',
+        label: 'Voir les certificats',
+        description: 'Accéder aux certificats de signature',
+      },
     ],
   },
   users: {
     label: 'Utilisateurs',
     icon: Users,
     permissions: [
-      { key: 'users.view', label: 'Voir les utilisateurs', description: 'Voir la liste des utilisateurs' },
-      { key: 'users.create', label: 'Créer des utilisateurs', description: 'Ajouter de nouveaux utilisateurs' },
-      { key: 'users.edit', label: 'Modifier les utilisateurs', description: 'Modifier les profils utilisateur' },
-      { key: 'users.delete', label: 'Désactiver les utilisateurs', description: 'Désactiver ou supprimer des comptes' },
-      { key: 'users.roles', label: 'Gérer les rôles', description: 'Attribuer des rôles aux utilisateurs' },
+      {
+        key: 'users.view',
+        label: 'Voir les utilisateurs',
+        description: 'Voir la liste des utilisateurs',
+      },
+      {
+        key: 'users.create',
+        label: 'Créer des utilisateurs',
+        description: 'Ajouter de nouveaux utilisateurs',
+      },
+      {
+        key: 'users.edit',
+        label: 'Modifier les utilisateurs',
+        description: 'Modifier les profils utilisateur',
+      },
+      {
+        key: 'users.delete',
+        label: 'Désactiver les utilisateurs',
+        description: 'Désactiver ou supprimer des comptes',
+      },
+      {
+        key: 'users.roles',
+        label: 'Gérer les rôles',
+        description: 'Attribuer des rôles aux utilisateurs',
+      },
     ],
   },
   admin: {
     label: 'Administration',
     icon: Settings,
     permissions: [
-      { key: 'admin.settings', label: 'Paramètres', description: 'Accéder aux paramètres de l\'organisation' },
-      { key: 'admin.billing', label: 'Facturation', description: 'Gérer l\'abonnement et la facturation' },
-      { key: 'admin.audit', label: 'Journal d\'audit', description: 'Voir les logs d\'activité' },
-      { key: 'admin.export', label: 'Export données', description: 'Exporter les données de l\'organisation' },
-      { key: 'admin.integrations', label: 'Intégrations', description: 'Configurer les intégrations tierces' },
+      {
+        key: 'admin.settings',
+        label: 'Paramètres',
+        description: "Accéder aux paramètres de l'organisation",
+      },
+      {
+        key: 'admin.billing',
+        label: 'Facturation',
+        description: "Gérer l'abonnement et la facturation",
+      },
+      { key: 'admin.audit', label: "Journal d'audit", description: "Voir les logs d'activité" },
+      {
+        key: 'admin.export',
+        label: 'Export données',
+        description: "Exporter les données de l'organisation",
+      },
+      {
+        key: 'admin.integrations',
+        label: 'Intégrations',
+        description: 'Configurer les intégrations tierces',
+      },
     ],
   },
   archives: {
     label: 'Archives',
     icon: Archive,
     permissions: [
-      { key: 'archives.view', label: 'Voir les archives', description: 'Accéder aux documents archivés' },
+      {
+        key: 'archives.view',
+        label: 'Voir les archives',
+        description: 'Accéder aux documents archivés',
+      },
       { key: 'archives.archive', label: 'Archiver', description: 'Archiver des documents' },
-      { key: 'archives.restore', label: 'Restaurer', description: 'Restaurer des documents archivés' },
-      { key: 'archives.delete', label: 'Purger', description: 'Supprimer définitivement des archives' },
+      {
+        key: 'archives.restore',
+        label: 'Restaurer',
+        description: 'Restaurer des documents archivés',
+      },
+      {
+        key: 'archives.delete',
+        label: 'Purger',
+        description: 'Supprimer définitivement des archives',
+      },
     ],
   },
 };
@@ -106,8 +226,9 @@ const DEFAULT_ROLES = [
     color: '#F59E0B',
     isSystem: true,
     usersCount: 2,
-    permissions: Object.values(PERMISSION_CATEGORIES)
-      .flatMap((cat) => cat.permissions.map((p) => p.key)),
+    permissions: Object.values(PERMISSION_CATEGORIES).flatMap((cat) =>
+      cat.permissions.map((p) => p.key)
+    ),
   },
   {
     id: 2,
@@ -117,11 +238,22 @@ const DEFAULT_ROLES = [
     isSystem: true,
     usersCount: 5,
     permissions: [
-      'documents.view', 'documents.create', 'documents.edit', 'documents.share', 'documents.export', 'documents.annotate',
-      'workflows.view', 'workflows.create', 'workflows.launch', 'workflows.reassign',
-      'signatures.view', 'signatures.sign', 'signatures.request',
+      'documents.view',
+      'documents.create',
+      'documents.edit',
+      'documents.share',
+      'documents.export',
+      'documents.annotate',
+      'workflows.view',
+      'workflows.create',
+      'workflows.launch',
+      'workflows.reassign',
+      'signatures.view',
+      'signatures.sign',
+      'signatures.request',
       'users.view',
-      'archives.view', 'archives.archive',
+      'archives.view',
+      'archives.archive',
     ],
   },
   {
@@ -132,9 +264,12 @@ const DEFAULT_ROLES = [
     isSystem: true,
     usersCount: 8,
     permissions: [
-      'documents.view', 'documents.annotate', 'documents.export',
+      'documents.view',
+      'documents.annotate',
+      'documents.export',
       'workflows.view',
-      'signatures.view', 'signatures.sign',
+      'signatures.view',
+      'signatures.sign',
       'archives.view',
     ],
   },
@@ -146,9 +281,13 @@ const DEFAULT_ROLES = [
     isSystem: true,
     usersCount: 25,
     permissions: [
-      'documents.view', 'documents.create', 'documents.export',
-      'workflows.view', 'workflows.launch',
-      'signatures.view', 'signatures.sign',
+      'documents.view',
+      'documents.create',
+      'documents.export',
+      'workflows.view',
+      'workflows.launch',
+      'signatures.view',
+      'signatures.sign',
     ],
   },
   {
@@ -159,10 +298,18 @@ const DEFAULT_ROLES = [
     isSystem: false,
     usersCount: 4,
     permissions: [
-      'documents.view', 'documents.create', 'documents.edit', 'documents.export', 'documents.annotate',
-      'workflows.view', 'workflows.launch',
-      'signatures.view', 'signatures.sign', 'signatures.request',
-      'archives.view', 'archives.archive',
+      'documents.view',
+      'documents.create',
+      'documents.edit',
+      'documents.export',
+      'documents.annotate',
+      'workflows.view',
+      'workflows.launch',
+      'signatures.view',
+      'signatures.sign',
+      'signatures.request',
+      'archives.view',
+      'archives.archive',
     ],
   },
 ];
@@ -183,7 +330,9 @@ export const RolesPage: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(Object.keys(PERMISSION_CATEGORIES));
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(
+    Object.keys(PERMISSION_CATEGORIES)
+  );
 
   const toggleCategory = (category: string) => {
     setExpandedCategories((prev) =>
@@ -214,179 +363,187 @@ export const RolesPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-advist-gray900">
-            {t('roles.title', 'Rôles & Permissions')}
-          </h1>
-          <p className="text-advist-gray900 mt-1">
-            {t('roles.subtitle', 'Gérez les rôles et leurs permissions')}
-          </p>
+    <UpgradeGate feature="rbac">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-advist-gray900">
+              {t('roles.title', 'Rôles & Permissions')}
+            </h1>
+            <p className="text-advist-gray900 mt-1">
+              {t('roles.subtitle', 'Gérez les rôles et leurs permissions')}
+            </p>
+          </div>
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus size={16} className="mr-2" />
+            {t('roles.create', 'Nouveau rôle')}
+          </Button>
         </div>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <Plus size={16} className="mr-2" />
-          {t('roles.create', 'Nouveau rôle')}
-        </Button>
-      </div>
 
-      {/* Roles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {roles.map((role) => (
-          <Card key={role.id} className="p-5 hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ backgroundColor: `${role.color}20` }}
-                >
-                  <Shield size={20} style={{ color: role.color }} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-advist-gray900">{role.name}</h3>
-                    {role.isSystem && (
-                      <Lock size={12} className="text-advist-blue-light" title="Rôle système" />
-                    )}
-                  </div>
-                  <p className="text-xs text-advist-blue-light">{role.usersCount} utilisateur(s)</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => handleDuplicateRole(role)}
-                  className="p-1.5 rounded hover:bg-advist-bg"
-                  title="Dupliquer"
-                >
-                  <Copy size={14} className="text-advist-gray900" />
-                </button>
-                <button
-                  onClick={() => handleEditRole(role)}
-                  className="p-1.5 rounded hover:bg-advist-bg"
-                  title="Modifier"
-                >
-                  <Edit2 size={14} className="text-advist-gray900" />
-                </button>
-                {!role.isSystem && (
-                  <button
-                    onClick={() => handleDeleteRole(role.id)}
-                    className="p-1.5 rounded hover:bg-advist-gold-light"
-                    title="Supprimer"
+        {/* Roles Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {roles.map((role) => (
+            <Card key={role.id} className="p-5 hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ backgroundColor: `${role.color}20` }}
                   >
-                    <Trash2 size={14} className="text-advist-error" />
+                    <Shield size={20} style={{ color: role.color }} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-advist-gray900">{role.name}</h3>
+                      {role.isSystem && (
+                        <Lock size={12} className="text-advist-blue-light" title="Rôle système" />
+                      )}
+                    </div>
+                    <p className="text-xs text-advist-blue-light">
+                      {role.usersCount} utilisateur(s)
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleDuplicateRole(role)}
+                    className="p-1.5 rounded hover:bg-advist-bg"
+                    title="Dupliquer"
+                  >
+                    <Copy size={14} className="text-advist-gray900" />
                   </button>
-                )}
-              </div>
-            </div>
-
-            <p className="text-sm text-advist-gray900 mb-4">{role.description}</p>
-
-            <div className="border-t border-advist-bg pt-4">
-              <p className="text-xs text-advist-blue-light mb-2">
-                {role.permissions.length} permission(s) actives
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {Object.entries(PERMISSION_CATEGORIES).slice(0, 4).map(([key, cat]) => {
-                  const count = role.permissions.filter((p) => p.startsWith(key)).length;
-                  const total = cat.permissions.length;
-                  if (count === 0) return null;
-                  return (
-                    <span
-                      key={key}
-                      className="px-2 py-0.5 bg-advist-bg text-advist-gray900 text-xs rounded"
+                  <button
+                    onClick={() => handleEditRole(role)}
+                    className="p-1.5 rounded hover:bg-advist-bg"
+                    title="Modifier"
+                  >
+                    <Edit2 size={14} className="text-advist-gray900" />
+                  </button>
+                  {!role.isSystem && (
+                    <button
+                      onClick={() => handleDeleteRole(role.id)}
+                      className="p-1.5 rounded hover:bg-advist-gold-light"
+                      title="Supprimer"
                     >
-                      {cat.label}: {count}/{total}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      {/* Permissions Reference */}
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold text-advist-gray900 mb-4">
-          {t('roles.permissionsReference', 'Référence des permissions')}
-        </h2>
-
-        <div className="space-y-4">
-          {Object.entries(PERMISSION_CATEGORIES).map(([key, category]) => {
-            const Icon = category.icon;
-            const isExpanded = expandedCategories.includes(key);
-
-            return (
-              <div key={key} className="border border-advist-bg rounded-xl overflow-hidden">
-                <button
-                  onClick={() => toggleCategory(key)}
-                  className="w-full flex items-center justify-between p-4 bg-advist-bg hover:bg-advist-bg transition-all duration-240"
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon size={20} className="text-advist-gray900" />
-                    <span className="font-medium text-advist-gray900">{category.label}</span>
-                    <span className="text-xs text-advist-blue-light">
-                      ({category.permissions.length} permissions)
-                    </span>
-                  </div>
-                  {isExpanded ? (
-                    <ChevronDown size={16} className="text-advist-blue-light" />
-                  ) : (
-                    <ChevronRight size={16} className="text-advist-blue-light" />
+                      <Trash2 size={14} className="text-advist-error" />
+                    </button>
                   )}
-                </button>
-
-                {isExpanded && (
-                  <div className="p-4 divide-y divide-advist-bg">
-                    {category.permissions.map((permission) => (
-                      <div key={permission.key} className="py-3 first:pt-0 last:pb-0">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-advist-gray900">{permission.label}</p>
-                            <p className="text-sm text-advist-blue-light">{permission.description}</p>
-                          </div>
-                          <code className="px-2 py-1 bg-advist-bg text-xs text-advist-gray900 rounded">
-                            {permission.key}
-                          </code>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                </div>
               </div>
-            );
-          })}
+
+              <p className="text-sm text-advist-gray900 mb-4">{role.description}</p>
+
+              <div className="border-t border-advist-bg pt-4">
+                <p className="text-xs text-advist-blue-light mb-2">
+                  {role.permissions.length} permission(s) actives
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {Object.entries(PERMISSION_CATEGORIES)
+                    .slice(0, 4)
+                    .map(([key, cat]) => {
+                      const count = role.permissions.filter((p) => p.startsWith(key)).length;
+                      const total = cat.permissions.length;
+                      if (count === 0) return null;
+                      return (
+                        <span
+                          key={key}
+                          className="px-2 py-0.5 bg-advist-bg text-advist-gray900 text-xs rounded"
+                        >
+                          {cat.label}: {count}/{total}
+                        </span>
+                      );
+                    })}
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
-      </Card>
 
-      {/* Create Role Modal */}
-      <RoleFormModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSave={(role) => {
-          setRoles((prev) => [...prev, { ...role, id: Date.now() }]);
-          setShowCreateModal(false);
-        }}
-      />
+        {/* Permissions Reference */}
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-advist-gray900 mb-4">
+            {t('roles.permissionsReference', 'Référence des permissions')}
+          </h2>
 
-      {/* Edit Role Modal */}
-      {selectedRole && (
+          <div className="space-y-4">
+            {Object.entries(PERMISSION_CATEGORIES).map(([key, category]) => {
+              const Icon = category.icon;
+              const isExpanded = expandedCategories.includes(key);
+
+              return (
+                <div key={key} className="border border-advist-bg rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => toggleCategory(key)}
+                    className="w-full flex items-center justify-between p-4 bg-advist-bg hover:bg-advist-bg transition-all duration-240"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon size={20} className="text-advist-gray900" />
+                      <span className="font-medium text-advist-gray900">{category.label}</span>
+                      <span className="text-xs text-advist-blue-light">
+                        ({category.permissions.length} permissions)
+                      </span>
+                    </div>
+                    {isExpanded ? (
+                      <ChevronDown size={16} className="text-advist-blue-light" />
+                    ) : (
+                      <ChevronRight size={16} className="text-advist-blue-light" />
+                    )}
+                  </button>
+
+                  {isExpanded && (
+                    <div className="p-4 divide-y divide-advist-bg">
+                      {category.permissions.map((permission) => (
+                        <div key={permission.key} className="py-3 first:pt-0 last:pb-0">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-advist-gray900">{permission.label}</p>
+                              <p className="text-sm text-advist-blue-light">
+                                {permission.description}
+                              </p>
+                            </div>
+                            <code className="px-2 py-1 bg-advist-bg text-xs text-advist-gray900 rounded">
+                              {permission.key}
+                            </code>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        {/* Create Role Modal */}
         <RoleFormModal
-          isOpen={showEditModal}
-          onClose={() => {
-            setShowEditModal(false);
-            setSelectedRole(null);
-          }}
-          role={selectedRole}
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
           onSave={(role) => {
-            setRoles((prev) => prev.map((r) => (r.id === role.id ? role : r)));
-            setShowEditModal(false);
-            setSelectedRole(null);
+            setRoles((prev) => [...prev, { ...role, id: Date.now() }]);
+            setShowCreateModal(false);
           }}
         />
-      )}
-    </div>
+
+        {/* Edit Role Modal */}
+        {selectedRole && (
+          <RoleFormModal
+            isOpen={showEditModal}
+            onClose={() => {
+              setShowEditModal(false);
+              setSelectedRole(null);
+            }}
+            role={selectedRole}
+            onSave={(role) => {
+              setRoles((prev) => prev.map((r) => (r.id === role.id ? role : r)));
+              setShowEditModal(false);
+              setSelectedRole(null);
+            }}
+          />
+        )}
+      </div>
+    </UpgradeGate>
   );
 };
 
@@ -446,7 +603,18 @@ const RoleFormModal: React.FC<{
     onSave(formData as Role);
   };
 
-  const COLORS = ['#F59E0B', '#EA580C', '#CA8A04', '#16A34A', '#059669', '#0891B2', '#2563EB', '#7C3AED', '#C026D3', '#6B7280'];
+  const COLORS = [
+    '#F59E0B',
+    '#EA580C',
+    '#CA8A04',
+    '#16A34A',
+    '#059669',
+    '#0891B2',
+    '#2563EB',
+    '#7C3AED',
+    '#C026D3',
+    '#6B7280',
+  ];
 
   return (
     <Modal
@@ -559,8 +727,12 @@ const RoleFormModal: React.FC<{
                             className="w-4 h-4 mt-0.5 rounded border-advist-bg text-advist-gray900"
                           />
                           <div>
-                            <p className="text-sm font-medium text-advist-gray900">{permission.label}</p>
-                            <p className="text-xs text-advist-blue-light">{permission.description}</p>
+                            <p className="text-sm font-medium text-advist-gray900">
+                              {permission.label}
+                            </p>
+                            <p className="text-xs text-advist-blue-light">
+                              {permission.description}
+                            </p>
                           </div>
                         </label>
                       ))}

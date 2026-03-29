@@ -6,12 +6,13 @@ import React, { ReactNode } from 'react';
 import { Lock, Zap, ArrowRight } from 'lucide-react';
 import { useTenantStore, PlanType, TenantFeatures, getPlanInfo } from '../../stores/tenantStore';
 import { Link } from 'react-router-dom';
-import { PLAN_THEME, PLAN_ICONS, getPlanTheme, getPlanIcon } from '../../hooks/usePlanTheme';
+import { getPlanTheme, getPlanIcon } from '../../hooks/usePlanTheme';
 
 // Ré-exporter pour compatibilité
 export { PLAN_THEME as PLAN_COLORS, PLAN_ICONS } from '../../hooks/usePlanTheme';
 
 // Mapping des fonctionnalités vers le plan minimum requis
+// Aligné sur la spécification commerciale
 const FEATURE_MIN_PLAN: Record<keyof TenantFeatures, PlanType> = {
   // Documents
   documentVersioning: 'business',
@@ -20,58 +21,65 @@ const FEATURE_MIN_PLAN: Record<keyof TenantFeatures, PlanType> = {
   trackChanges: 'business',
   bulkImport: 'business',
   cloudIntegration: 'business',
-  documentTemplates: 'business',
+  documentTemplates: 'enterprise', // Templates de workflow = Enterprise
   ocrRecognition: 'business',
 
   // Workflows
   basicWorkflows: 'business',
   advancedWorkflows: 'business',
-  conditionalRules: 'business',
+  conditionalRules: 'enterprise', // Circuits conditionnels = Enterprise
   parallelSignatures: 'business',
-  workflowTemplates: 'business',
-  workflowAnalytics: 'business',
+  workflowTemplates: 'enterprise', // Templates de workflow = Enterprise
+  workflowAnalytics: 'enterprise', // Tableau de bord analytique = Enterprise
 
   // Signatures
   simpleSignature: 'business',
-  advancedSignature: 'business',
-  qualifiedSignature: 'business',
-  ohadaCompliance: 'business',
-  signatureCertificates: 'business',
+  advancedSignature: 'enterprise', // eIDAS = Enterprise
+  qualifiedSignature: 'enterprise', // Horodatage qualifié = Enterprise
+  ohadaCompliance: 'enterprise', // Conformité OHADA = Enterprise
+  signatureCertificates: 'enterprise', // Certificats = Enterprise
   biometricSignature: 'enterprise',
 
   // Sécurité
-  ssoEnabled: 'business',
+  ssoEnabled: 'enterprise', // SSO/SAML = Enterprise
   twoFactorAuth: 'business',
   ipRestriction: 'enterprise',
   auditLogs: 'business',
-  advancedAuditLogs: 'business',
+  advancedAuditLogs: 'enterprise',
   dataExport: 'business',
   dataEncryption: 'business',
 
   // Intégrations
-  apiAccess: 'business',
-  webhooks: 'business',
-  zapierIntegration: 'business',
+  apiAccess: 'enterprise', // API REST = Enterprise
+  webhooks: 'enterprise',
+  zapierIntegration: 'enterprise',
   customIntegrations: 'enterprise',
+
+  // External system integrations
+  advancedCloudSync: 'enterprise',
+  erpIntegration: 'enterprise',
+  crmIntegration: 'enterprise',
+  workflowTriggers: 'enterprise',
+  contractGeneration: 'enterprise',
 
   // Projets
   basicProjects: 'business',
-  advancedProjects: 'business',
-  projectAnalytics: 'business',
+  advancedProjects: 'enterprise',
+  projectAnalytics: 'enterprise',
 
   // Rapports
   basicReports: 'business',
-  advancedReports: 'business',
+  advancedReports: 'enterprise',
   reportsExport: 'business',
 
   // Autres
-  offlineMode: 'business',
-  customBranding: 'business',
+  offlineMode: 'enterprise',
+  customBranding: 'enterprise',
   whiteLabel: 'enterprise',
-  prioritySupport: 'business',
+  prioritySupport: 'enterprise', // Support prioritaire = Enterprise
   dedicatedManager: 'enterprise',
-  customReports: 'business',
-  aiAssistant: 'business',
+  customReports: 'enterprise',
+  aiAssistant: 'enterprise',
 };
 
 // Labels des fonctionnalités en français
@@ -107,6 +115,11 @@ export const FEATURE_LABELS: Record<keyof TenantFeatures, string> = {
   webhooks: 'Webhooks',
   zapierIntegration: 'Intégration Zapier',
   customIntegrations: 'Intégrations personnalisées',
+  advancedCloudSync: 'Synchronisation cloud avancée',
+  erpIntegration: 'Intégration ERP (Sage/SAP)',
+  crmIntegration: 'Intégration CRM (Salesforce)',
+  workflowTriggers: 'Déclencheurs de workflow externes',
+  contractGeneration: 'Génération de contrats',
   basicProjects: 'Projets basiques',
   advancedProjects: 'Projets avancés',
   projectAnalytics: 'Analytics projets',
@@ -165,7 +178,9 @@ export const FeatureGuard: React.FC<FeatureGuardProps> = ({
       <div className={`relative opacity-50 pointer-events-none ${className}`}>
         {children}
         <div className="absolute top-2 right-2">
-          <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${requiredTheme.badge}`}>
+          <div
+            className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${requiredTheme.badge}`}
+          >
             <Lock size={10} />
             <span>{requiredPlanInfo.name}</span>
           </div>
@@ -176,7 +191,9 @@ export const FeatureGuard: React.FC<FeatureGuardProps> = ({
 
   if (mode === 'replace') {
     return (
-      <div className={`rounded-xl border-2 border-dashed ${requiredTheme.border} ${requiredTheme.bgLight} p-6 ${className}`}>
+      <div
+        className={`rounded-xl border-2 border-dashed ${requiredTheme.border} ${requiredTheme.bgLight} p-6 ${className}`}
+      >
         <div className="flex flex-col items-center text-center gap-4">
           <div className={`p-3 rounded-full ${requiredTheme.bgMedium}`}>
             <Lock className={`w-6 h-6 ${requiredTheme.text}`} />
@@ -206,39 +223,46 @@ export const FeatureGuard: React.FC<FeatureGuardProps> = ({
   // Mode overlay (défaut)
   return (
     <div className={`relative ${className}`}>
-      <div className="opacity-20 pointer-events-none blur-[2px] grayscale">
-        {children}
-      </div>
-      <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-b from-white/80 via-white/90 to-white/80 backdrop-blur-sm rounded-xl border-2 border-dashed ${requiredTheme.borderLight}`}>
+      <div className="opacity-20 pointer-events-none blur-[2px] grayscale">{children}</div>
+      <div
+        className={`absolute inset-0 flex items-center justify-center bg-gradient-to-b from-white/80 via-white/90 to-white/80 backdrop-blur-sm rounded-xl border-2 border-dashed ${requiredTheme.borderLight}`}
+      >
         <div className="flex flex-col items-center text-center gap-4 p-6 max-w-sm">
           {/* Badge plan actuel */}
-          <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${currentTheme.badge}`}>
+          <div
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${currentTheme.badge}`}
+          >
             <span>Votre plan :</span>
             <span className="font-bold">{currentPlanInfo.name}</span>
           </div>
 
           {/* Icône cadenas avec plan requis */}
           <div className="relative">
-            <div className={`p-4 rounded-2xl ${requiredTheme.bgLight} shadow-lg border-2 ${requiredTheme.border}`}>
+            <div
+              className={`p-4 rounded-2xl ${requiredTheme.bgLight} shadow-lg border-2 ${requiredTheme.border}`}
+            >
               <Lock className={`w-6 h-6 ${requiredTheme.text}`} />
             </div>
-            <div className={`absolute -bottom-2 -right-2 p-1.5 rounded-full ${requiredTheme.bg} shadow-md`}>
+            <div
+              className={`absolute -bottom-2 -right-2 p-1.5 rounded-full ${requiredTheme.bg} shadow-md`}
+            >
               <RequiredIcon size={12} className={requiredTheme.textOnBg} />
             </div>
           </div>
 
           {/* Nom fonctionnalité et plan requis */}
           <div className="space-y-1">
-            <p className="text-base font-semibold text-primary-900">
-              {featureLabel}
-            </p>
+            <p className="text-base font-semibold text-primary-900">{featureLabel}</p>
             <p className="text-sm text-primary-500">
-              Non disponible avec le plan <span className={`font-medium ${currentTheme.text}`}>{currentPlanInfo.name}</span>
+              Non disponible avec le plan{' '}
+              <span className={`font-medium ${currentTheme.text}`}>{currentPlanInfo.name}</span>
             </p>
           </div>
 
           {/* Plan requis */}
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${requiredTheme.bgLight} border ${requiredTheme.border}`}>
+          <div
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl ${requiredTheme.bgLight} border ${requiredTheme.border}`}
+          >
             <RequiredIcon size={16} className={requiredTheme.text} />
             <span className={`text-sm font-medium ${requiredTheme.text}`}>
               Disponible à partir du plan {requiredPlanInfo.name}
@@ -296,7 +320,9 @@ export const PlanRequiredBadge: React.FC<{
   const Icon = getPlanIcon(requiredPlan);
 
   return (
-    <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${planTheme.badge} ${className}`}>
+    <div
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${planTheme.badge} ${className}`}
+    >
       <Icon size={10} />
       <span>{planInfo.name}</span>
     </div>
@@ -326,7 +352,9 @@ export const CurrentPlanIndicator: React.FC<{
   const s = sizes[size];
 
   return (
-    <div className={`inline-flex items-center gap-1.5 ${s.padding} rounded-full font-medium ${theme.badge} ${className}`}>
+    <div
+      className={`inline-flex items-center gap-1.5 ${s.padding} rounded-full font-medium ${theme.badge} ${className}`}
+    >
       <Icon size={s.icon} />
       {showName && <span className={s.text}>{planInfo.name}</span>}
     </div>

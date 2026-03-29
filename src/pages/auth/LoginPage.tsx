@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { Mail, Lock, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Button, Input, Card } from '../../components/ui';
 import { useAuthStore } from '../../store';
 
@@ -59,13 +59,14 @@ export const LoginPage: React.FC = () => {
 
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-advist-navy to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-advist-dark/20">
-              <Zap className="w-6 h-6 text-advist-gold" />
-            </div>
-            <h1 className="font-decorative text-3xl bg-gradient-to-r from-advist-navy to-primary-600 bg-clip-text text-transparent">Advist</h1>
+          <div className="mb-4">
+            <h1 className="font-decorative text-3xl bg-gradient-to-r from-advist-navy to-primary-600 bg-clip-text text-transparent">
+              Advist
+            </h1>
           </div>
-          <p className="text-advist-text-secondary">{t('landing.hero.subtitle', 'Gestion Documentaire')}</p>
+          <p className="text-advist-text-secondary">
+            {t('landing.hero.subtitle', 'Gestion Documentaire')}
+          </p>
         </div>
 
         <Card padding="lg">
@@ -134,7 +135,10 @@ export const LoginPage: React.FC = () => {
 
           <div className="mt-6 text-center">
             <span className="text-advist-text-secondary">{t('auth.noAccount')}</span>{' '}
-            <Link to="/register" className="text-advist-gold font-semibold hover:text-advist-gold-dark transition-colors">
+            <Link
+              to="/register"
+              className="text-advist-gold font-semibold hover:text-advist-gold-dark transition-colors"
+            >
               {t('auth.register')}
             </Link>
           </div>

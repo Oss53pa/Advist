@@ -30,7 +30,9 @@ export const FeaturesSection: React.FC = () => {
 
       <div className="relative max-w-7xl mx-auto px-6">
         {/* Header */}
-        <div className={`text-center mb-20 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`text-center mb-20 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full mb-6">
             <Sparkles className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-medium text-gray-500">Fonctionnalites</span>
@@ -38,9 +40,7 @@ export const FeaturesSection: React.FC = () => {
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
             Tout ce dont vous avez
             <br />
-            <span className="text-gray-400">
-              besoin pour reussir
-            </span>
+            <span className="text-gray-400">besoin pour reussir</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             Une plateforme complete pour digitaliser et automatiser vos processus documentaires
@@ -68,10 +68,12 @@ export const FeaturesSection: React.FC = () => {
 
                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
                   Centralisez tous
-                  <br />vos documents
+                  <br />
+                  vos documents
                 </h3>
                 <p className="text-lg text-gray-500 max-w-md">
-                  Versioning automatique, recherche full-text, OCR integre et organisation intelligente de vos fichiers.
+                  Versioning automatique, recherche full-text, OCR integre et organisation
+                  intelligente de vos fichiers.
                 </p>
               </div>
 
@@ -80,7 +82,9 @@ export const FeaturesSection: React.FC = () => {
                 <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10">
                     <Search className="w-4 h-4 text-gray-500" />
-                    <span className="text-sm text-gray-500">Rechercher dans 2,456 documents...</span>
+                    <span className="text-sm text-gray-500">
+                      Rechercher dans 2,456 documents...
+                    </span>
                   </div>
                   <div className="p-4 space-y-3">
                     {[
@@ -88,7 +92,11 @@ export const FeaturesSection: React.FC = () => {
                       { name: 'Facture_Q4_2024.xlsx', status: 'En revision' },
                       { name: 'NDA_Confidentiel.pdf', status: 'A signer' },
                     ].map((doc, i) => (
-                      <div key={i} className={`flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer ${hoveredCard === 0 ? 'animate-fade-in' : ''}`} style={{ animationDelay: `${i * 100}ms` }}>
+                      <div
+                        key={i}
+                        className={`flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer ${hoveredCard === 0 ? 'animate-fade-in' : ''}`}
+                        style={{ animationDelay: `${i * 100}ms` }}
+                      >
                         <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
                           <FileText className="w-5 h-5 text-white/50" />
                         </div>
@@ -106,7 +114,10 @@ export const FeaturesSection: React.FC = () => {
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mt-6">
                 {['Versioning auto', 'OCR integre', 'Full-text search', 'Tags'].map((tag, i) => (
-                  <span key={i} className="px-3 py-1.5 bg-white/10 rounded-full text-xs font-medium text-gray-400">
+                  <span
+                    key={i}
+                    className="px-3 py-1.5 bg-white/10 rounded-full text-xs font-medium text-gray-400"
+                  >
                     {tag}
                   </span>
                 ))}
@@ -135,12 +146,16 @@ export const FeaturesSection: React.FC = () => {
               <div className="mt-6 flex items-center gap-2">
                 {['Finance', 'Legal', 'CEO'].map((step, i) => (
                   <React.Fragment key={i}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                      i < 2 ? 'bg-gray-900 text-white' : 'bg-gray-300 text-gray-500'
-                    }`}>
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                        i < 2 ? 'bg-gray-900 text-white' : 'bg-gray-300 text-gray-500'
+                      }`}
+                    >
                       {i < 2 ? <Check className="w-4 h-4" /> : i + 1}
                     </div>
-                    {i < 2 && <div className={`w-8 h-0.5 ${i < 1 ? 'bg-gray-900' : 'bg-gray-300'}`} />}
+                    {i < 2 && (
+                      <div className={`w-8 h-0.5 ${i < 1 ? 'bg-gray-900' : 'bg-gray-300'}`} />
+                    )}
                   </React.Fragment>
                 ))}
               </div>
@@ -218,7 +233,7 @@ export const FeaturesSection: React.FC = () => {
           >
             <div className="absolute top-4 right-4">
               <span className="px-2 py-1 bg-white/10 rounded-full text-xs font-bold text-white/60">
-                NOUVEAU
+                À VENIR
               </span>
             </div>
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[200px]">
@@ -226,7 +241,7 @@ export const FeaturesSection: React.FC = () => {
                 <Smartphone className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold text-white mb-1">Application mobile</h3>
-              <p className="text-sm text-gray-500">iOS & Android, mode hors-ligne</p>
+              <p className="text-sm text-gray-500">iOS & Android - Bientôt disponible</p>
 
               <div className="flex gap-2 mt-auto pt-4">
                 <div className="flex-1 h-8 bg-white/10 rounded-lg flex items-center justify-center">
@@ -264,7 +279,9 @@ export const FeaturesSection: React.FC = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className={`mt-16 text-center transition-all duration-700 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`mt-16 text-center transition-all duration-700 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
           <Link to="/register">
             <button className="group inline-flex items-center gap-3 px-8 py-4 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all hover:shadow-xl">
               Decouvrir toutes les fonctionnalites

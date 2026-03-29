@@ -103,11 +103,11 @@ export interface TenantFeatures {
   customIntegrations: boolean;
 
   // External system integrations
-  advancedCloudSync: boolean;    // Bidirectional cloud sync (M365/Google)
-  erpIntegration: boolean;       // Sage/SAP integration
-  crmIntegration: boolean;       // Salesforce integration
-  workflowTriggers: boolean;     // External workflow triggers
-  contractGeneration: boolean;   // Contract generation from CRM
+  advancedCloudSync: boolean; // Bidirectional cloud sync (M365/Google)
+  erpIntegration: boolean; // Sage/SAP integration
+  crmIntegration: boolean; // Salesforce integration
+  workflowTriggers: boolean; // External workflow triggers
+  contractGeneration: boolean; // Contract generation from CRM
 
   // Project features
   basicProjects: boolean;
@@ -147,81 +147,83 @@ export interface TenantSettings {
 /**
  * PLAN FEATURES - Fonctionnalités par plan
  *
- * BUSINESS (Populaire) : Fonctionnalités avancées pour PME - 50 utilisateurs
- * ENTERPRISE : Toutes les fonctionnalités + sur mesure - Illimité
+ * BUSINESS : 25 000 FCFA/mois par émetteur (1-5 émetteurs), 50 docs/mois
+ * ENTERPRISE : 150 000 FCFA/mois forfait, tout illimité
+ *
+ * Aligné sur la spécification commerciale — la spec prime toujours.
  */
 const PLAN_FEATURES: Record<PlanType, TenantFeatures> = {
-  // BUSINESS - Plan populaire pour PME (59 000 FCFA/mois)
+  // BUSINESS - 25 000 FCFA/mois par utilisateur émetteur
   business: {
-    // Documents - Avancé
+    // Documents - Base
     documentVersioning: true,
     documentAnnotations: true,
     documentComparison: true,
     trackChanges: true,
     bulkImport: true,
     cloudIntegration: true,
-    documentTemplates: true, // Illimité
+    documentTemplates: false, // Enterprise only (templates de workflow)
     ocrRecognition: true,
 
-    // Workflows - Avancé
+    // Workflows - Base (pas de conditionnels, pas de templates)
     basicWorkflows: true,
     advancedWorkflows: true,
-    conditionalRules: true,
+    conditionalRules: false, // Enterprise only
     parallelSignatures: true,
-    workflowTemplates: true, // Illimité
-    workflowAnalytics: true,
+    workflowTemplates: false, // Enterprise only
+    workflowAnalytics: false, // Enterprise only (tableau de bord analytique)
 
-    // Signatures - Avancé + Qualifié
+    // Signatures - Simple uniquement
     simpleSignature: true,
-    advancedSignature: true,
-    qualifiedSignature: true,
-    ohadaCompliance: true,
-    signatureCertificates: true,
+    advancedSignature: false, // Enterprise only (eIDAS)
+    qualifiedSignature: false, // Enterprise only (horodatage qualifié)
+    ohadaCompliance: false, // Enterprise only
+    signatureCertificates: false, // Enterprise only
     biometricSignature: false,
 
-    // Sécurité - Avancé avec SSO
-    ssoEnabled: true, // SSO/SAML (remonté du Enterprise)
+    // Sécurité - Base
+    ssoEnabled: false, // Enterprise only (SSO/SAML)
     twoFactorAuth: true,
     ipRestriction: false,
-    auditLogs: true, // 2 ans (amélioré)
-    advancedAuditLogs: true,
+    auditLogs: true,
+    advancedAuditLogs: false,
     dataExport: true,
     dataEncryption: true,
 
-    // Intégrations - Complet
-    apiAccess: true, // Illimité
-    webhooks: true,
-    zapierIntegration: true,
+    // Intégrations - Base (pas d'API)
+    apiAccess: false, // Enterprise only
+    webhooks: false,
+    zapierIntegration: false,
     customIntegrations: false,
 
-    // External system integrations - Avancé
-    advancedCloudSync: true,
-    erpIntegration: true, // Sage/SAP
-    crmIntegration: true, // Salesforce
-    workflowTriggers: true,
+    // External system integrations - Non
+    advancedCloudSync: false,
+    erpIntegration: false,
+    crmIntegration: false,
+    workflowTriggers: false,
     contractGeneration: false,
 
-    // Projets - Avancé (100 projets max)
+    // Projets - Base
     basicProjects: true,
-    advancedProjects: true,
-    projectAnalytics: true,
+    advancedProjects: false,
+    projectAnalytics: false,
 
-    // Rapports - Avancé
+    // Rapports - Base
     basicReports: true,
-    advancedReports: true,
+    advancedReports: false,
     reportsExport: true,
 
-    // Autres - Branding basique + IA
-    offlineMode: true,
-    customBranding: true, // Logo uniquement
+    // Autres
+    offlineMode: false,
+    customBranding: false,
     whiteLabel: false,
-    prioritySupport: true, // Support téléphonique
+    prioritySupport: false, // Enterprise only
     dedicatedManager: false,
-    customReports: true,
-    aiAssistant: true, // IA résumés, extraction
+    customReports: false,
+    aiAssistant: false,
   },
 
-  // ENTERPRISE - Tout inclus + sur mesure (149 000 FCFA/mois)
+  // ENTERPRISE - 150 000 FCFA/mois forfait, tout illimité
   enterprise: {
     // Documents - Tout
     documentVersioning: true,
@@ -241,7 +243,7 @@ const PLAN_FEATURES: Record<PlanType, TenantFeatures> = {
     workflowTemplates: true,
     workflowAnalytics: true,
 
-    // Signatures - Tout incluant biométrique
+    // Signatures - Tout
     simpleSignature: true,
     advancedSignature: true,
     qualifiedSignature: true,
@@ -252,8 +254,8 @@ const PLAN_FEATURES: Record<PlanType, TenantFeatures> = {
     // Sécurité - Tout
     ssoEnabled: true,
     twoFactorAuth: true,
-    ipRestriction: true, // Restrictions IP/Géo
-    auditLogs: true, // 5 ans (archives légales)
+    ipRestriction: true,
+    auditLogs: true,
     advancedAuditLogs: true,
     dataExport: true,
     dataEncryption: true,
@@ -271,7 +273,7 @@ const PLAN_FEATURES: Record<PlanType, TenantFeatures> = {
     workflowTriggers: true,
     contractGeneration: true,
 
-    // Projets - Tout (illimité)
+    // Projets - Tout
     basicProjects: true,
     advancedProjects: true,
     projectAnalytics: true,
@@ -283,26 +285,29 @@ const PLAN_FEATURES: Record<PlanType, TenantFeatures> = {
 
     // Autres - Tout
     offlineMode: true,
-    customBranding: true, // Branding complet
+    customBranding: true,
     whiteLabel: true,
     prioritySupport: true,
-    dedicatedManager: true, // 24/7
+    dedicatedManager: true,
     customReports: true,
-    aiAssistant: true, // IA complète (génération)
+    aiAssistant: true,
   },
 };
 
 /**
  * PLAN QUOTAS - Limites par plan
+ *
+ * Business: 1-5 émetteurs, 50 docs/mois, externes illimités
+ * Enterprise: tout illimité
  */
 const PLAN_QUOTAS: Record<PlanType, Partial<TenantQuotas>> = {
   business: {
-    maxUsers: 50,
-    maxStorage: 250, // 250 GB
-    maxDocuments: 15000,
-    maxWorkflows: 100,
-    maxSignaturesMonth: 1500, // 1 500 signatures/mois (amélioré)
-    maxProjects: 100, // 100 projets max (changé de illimité)
+    maxUsers: 5, // 1 à 5 utilisateurs émetteurs (spec)
+    maxStorage: 10, // 10 GB
+    maxDocuments: 50, // 50 documents/mois (spec)
+    maxWorkflows: 10,
+    maxSignaturesMonth: 50,
+    maxProjects: 5,
   },
   enterprise: {
     maxUsers: -1, // Illimité
@@ -317,7 +322,7 @@ const PLAN_QUOTAS: Record<PlanType, Partial<TenantQuotas>> = {
 /**
  * TRIAL DURATION - Durée de la période d'essai
  */
-const TRIAL_DURATION_DAYS = 14;
+const TRIAL_DURATION_DAYS = 30;
 const GRACE_PERIOD_DAYS = 7;
 
 interface TenantState {
@@ -337,8 +342,21 @@ interface TenantState {
 
   // Feature & Quota checks
   checkFeature: (feature: keyof TenantFeatures) => boolean;
-  checkQuota: (quota: keyof TenantQuotas) => { allowed: boolean; current: number; max: number; percentage: number };
-  incrementQuota: (quota: 'currentUsers' | 'currentStorage' | 'currentDocuments' | 'currentWorkflows' | 'currentSignaturesMonth', amount?: number) => void;
+  checkQuota: (quota: keyof TenantQuotas) => {
+    allowed: boolean;
+    current: number;
+    max: number;
+    percentage: number;
+  };
+  incrementQuota: (
+    quota:
+      | 'currentUsers'
+      | 'currentStorage'
+      | 'currentDocuments'
+      | 'currentWorkflows'
+      | 'currentSignaturesMonth',
+    amount?: number
+  ) => void;
 
   // Subscription checks
   isTrialExpired: () => boolean;
@@ -617,11 +635,7 @@ export const useTenantStore = create<TenantState>()(
 /**
  * Helper to create a new tenant with trial
  */
-export const createTenant = (
-  name: string,
-  slug: string,
-  plan: PlanType = 'business'
-): Tenant => {
+export const createTenant = (name: string, slug: string, plan: PlanType = 'business'): Tenant => {
   const planQuotas = PLAN_QUOTAS[plan];
   const planFeatures = PLAN_FEATURES[plan];
   const now = new Date();
@@ -676,73 +690,78 @@ export const createTenant = (
  * Helper to get plan display info
  */
 export const getPlanInfo = (plan: PlanType) => {
-  const info: Record<PlanType, {
-    name: string;
-    description: string;
-    price: string;
-    priceYearly?: string;
-    period: string;
-    popular: boolean;
-    color: string;
-    features: string[];
-    limits: {
-      users: string;
-      storage: string;
-      documents: string;
-      signatures: string;
-      workflows: string;
-      projects: string;
-      auditLogs: string;
-    };
-    requiresLicense?: boolean;
-  }> = {
+  const info: Record<
+    PlanType,
+    {
+      name: string;
+      description: string;
+      price: string;
+      priceYearly?: string;
+      period: string;
+      popular: boolean;
+      color: string;
+      features: string[];
+      limits: {
+        users: string;
+        storage: string;
+        documents: string;
+        signatures: string;
+        workflows: string;
+        projects: string;
+        auditLogs: string;
+      };
+      requiresLicense?: boolean;
+    }
+  > = {
     business: {
       name: 'Business',
       description: 'PME',
-      price: '59 000',
-      priceYearly: '590 000',
-      period: 'FCFA/mois',
+      price: '25 000',
+      priceYearly: '20 000',
+      period: 'FCFA/mois/émetteur',
       popular: true,
       color: 'purple',
       features: [
-        '50 utilisateurs',
-        '250 Go stockage',
-        '15 000 documents',
-        '1 500 signatures/mois',
-        'Signatures qualifiées',
-        'SSO (SAML/OAuth)',
-        'API illimitée + Webhooks',
-        'Assistant IA',
-        'Support téléphonique',
+        '1 à 5 utilisateurs émetteurs',
+        '50 documents/mois',
+        'Externes illimités',
+        'Signature simple',
+        'Workflows configurables',
+        'Validation séquentielle & parallèle',
+        'Annotations & commentaires',
+        'Export dossier PDF',
+        'Support email',
       ],
       limits: {
-        users: '50',
-        storage: '250 Go',
-        documents: '15 000',
-        signatures: '1 500/mois',
-        workflows: '100',
-        projects: '100',
-        auditLogs: '2 ans',
+        users: '1 à 5 émetteurs',
+        storage: '10 Go',
+        documents: '50/mois',
+        signatures: '50/mois',
+        workflows: '10',
+        projects: '5',
+        auditLogs: '1 an',
       },
     },
     enterprise: {
-      name: 'Enterprise',
+      name: 'Entreprise',
       description: 'Grandes entreprises',
-      price: '149 000',
-      priceYearly: 'Sur devis',
+      price: '150 000',
+      priceYearly: '120 000',
       period: 'FCFA/mois',
       popular: false,
       color: 'gold',
       features: [
         'Tout illimité',
-        'Signatures biométriques',
-        'Restrictions IP/Géo',
-        'White label complet',
-        'Intégrations personnalisées',
-        'IA complète (génération)',
-        'Manager dédié 24/7',
-        'Formation sur site',
-        'SLA 99.9%',
+        'Signature avancée (eIDAS)',
+        'Cachet électronique',
+        'Horodatage qualifié',
+        'Circuits conditionnels',
+        'Templates de workflow',
+        'Multi-départements & RBAC',
+        'Conformité OHADA',
+        'API REST & SSO/SAML',
+        'Support prioritaire & formation',
+        'SLA 99,9%',
       ],
       limits: {
         users: 'Illimité',
@@ -751,7 +770,7 @@ export const getPlanInfo = (plan: PlanType) => {
         signatures: 'Illimité',
         workflows: 'Illimité',
         projects: 'Illimité',
-        auditLogs: '5 ans',
+        auditLogs: '10 ans',
       },
       requiresLicense: true,
     },

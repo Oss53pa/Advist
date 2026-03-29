@@ -13,9 +13,6 @@ import {
   ArrowRight,
   Shield,
   Zap,
-  Users,
-  HardDrive,
-  Star,
   Phone,
   Mail,
   Building2,
@@ -41,9 +38,9 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
           icon: Clock,
           iconColor: 'text-primary-900',
           bgColor: 'bg-primary-50',
-          title: 'Votre période d\'essai est terminée',
+          title: "Votre période d'essai est terminée",
           description:
-            'Votre essai gratuit de 14 jours a expiré. Pour continuer à utiliser ADVIST et accéder à vos documents, veuillez souscrire à un abonnement.',
+            "Votre essai gratuit d'1 mois a expiré. Pour continuer à utiliser ADVIST et accéder à vos documents, veuillez souscrire à un abonnement.",
           showPlans: true,
         };
       case 'subscription_expired':
@@ -53,7 +50,7 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
           bgColor: 'bg-red-50',
           title: 'Votre abonnement a expiré',
           description:
-            'Votre abonnement ADVIST n\'est plus actif. Renouvelez-le maintenant pour retrouver l\'accès à tous vos documents et workflows.',
+            "Votre abonnement ADVIST n'est plus actif. Renouvelez-le maintenant pour retrouver l'accès à tous vos documents et workflows.",
           showPlans: true,
         };
       case 'suspended':
@@ -73,7 +70,7 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
           bgColor: 'bg-primary-50',
           title: 'Abonnement annulé',
           description:
-            'Votre abonnement a été annulé. Vous pouvez le réactiver à tout moment pour retrouver l\'accès à vos données.',
+            "Votre abonnement a été annulé. Vous pouvez le réactiver à tout moment pour retrouver l'accès à vos données.",
           showPlans: true,
         };
       default:
@@ -96,7 +93,9 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
       <div className="max-w-4xl w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className={`w-20 h-20 ${content.bgColor} rounded-full flex items-center justify-center mx-auto mb-6`}>
+          <div
+            className={`w-20 h-20 ${content.bgColor} rounded-full flex items-center justify-center mx-auto mb-6`}
+          >
             <content.icon className={`w-10 h-10 ${content.iconColor}`} />
           </div>
           <h1 className="text-3xl font-bold text-primary-900 mb-3">{content.title}</h1>
@@ -215,9 +214,7 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
         {/* Contact support for suspended */}
         {reason === 'suspended' && (
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <h2 className="text-xl font-semibold text-primary-900 mb-4">
-              Besoin d'aide ?
-            </h2>
+            <h2 className="text-xl font-semibold text-primary-900 mb-4">Besoin d'aide ?</h2>
             <p className="text-primary-600 mb-6">
               Notre équipe support est disponible pour vous aider à résoudre ce problème.
             </p>
@@ -237,9 +234,7 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
         {/* Features reminder */}
         {content.showPlans && (
           <div className="mt-8 text-center">
-            <p className="text-sm text-primary-500 mb-4">
-              Tous les plans incluent :
-            </p>
+            <p className="text-sm text-primary-500 mb-4">Tous les plans incluent :</p>
             <div className="flex flex-wrap justify-center gap-4">
               {[
                 { icon: Shield, label: 'Sécurité ISO 27001' },

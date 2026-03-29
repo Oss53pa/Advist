@@ -4,7 +4,7 @@
  */
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTenantStore, createTenant, TenantFeatures } from '../stores/tenantStore';
+import { useTenantStore, TenantFeatures } from '../stores/tenantStore';
 import { useAuthStore } from '../store/authStore';
 import {
   getSubscriptionInfo,
@@ -31,38 +31,33 @@ export interface SubscriptionGuardResult {
  * Se synchronise avec le backend pour les features et quotas
  */
 export const useSubscriptionGuard = (): SubscriptionGuardResult => {
-  const {
-    currentTenant,
-    canAccessApp,
-    getDaysRemaining,
-    shouldShowUpgradePrompt,
-    setTenant,
-  } = useTenantStore();
+  const { currentTenant, canAccessApp, getDaysRemaining, shouldShowUpgradePrompt, setTenant } =
+    useTenantStore();
 
   const { user, isAuthenticated } = useAuthStore();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [apiError, setApiError] = useState<boolean>(false);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
   // Function to fetch subscription from API and update tenant store
-  const fetchSubscriptionFromAPI = useCallback(async (forceRefresh = false) => {
-    if (!isAuthenticated) return;
+  const fetchSubscriptionFromAPI = useCallback(
+    async (forceRefresh = false) => {
+      if (!isAuthenticated) return;
 
-    try {
-      const subscriptionInfo = await getSubscriptionInfo(forceRefresh);
+      try {
+        const subscriptionInfo = await getSubscriptionInfo(forceRefresh);
 
-      // Update tenant store with data from API
-      const tenantFromAPI = mapSubscriptionToTenant(subscriptionInfo, user);
-      setTenant(tenantFromAPI);
-      setApiError(false);
-    } catch (error) {
-      console.warn('Failed to fetch subscription from API, using local data:', error);
-      setApiError(true);
-      // Fallback to local tenant creation if API fails
-      createLocalTenant();
-    }
-  }, [isAuthenticated, user, setTenant]);
+        // Update tenant store with data from API
+        const tenantFromAPI = mapSubscriptionToTenant(subscriptionInfo, user);
+        setTenant(tenantFromAPI);
+      } catch (error) {
+        console.warn('Failed to fetch subscription from API, using local data:', error);
+        // Fallback to local tenant creation if API fails
+        createLocalTenant();
+      }
+    },
+    [isAuthenticated, user, setTenant]
+  );
 
   // Create local tenant as fallback
   const createLocalTenant = useCallback(() => {
@@ -77,15 +72,18 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
         plan: org.subscription_plan || 'business',
         status: org.is_active ? 'active' : 'suspended',
         quotas: {
-          maxUsers: org.quotas?.max_users || 50,
+          maxUsers: org.quotas?.max_users || (org.subscription_plan === 'enterprise' ? -1 : 5),
           currentUsers: org.quotas?.current_users || 1,
-          maxStorage: org.quotas?.max_storage_gb || 100,
+          maxStorage:
+            org.quotas?.max_storage_gb || (org.subscription_plan === 'enterprise' ? -1 : 10),
           currentStorage: org.quotas?.current_storage_gb || 0,
-          maxDocuments: org.quotas?.max_documents || 10000,
+          maxDocuments:
+            org.quotas?.max_documents || (org.subscription_plan === 'enterprise' ? -1 : 50),
           currentDocuments: org.quotas?.current_documents || 0,
-          maxWorkflows: org.quotas?.max_active_workflows || 50,
+          maxWorkflows:
+            org.quotas?.max_active_workflows || (org.subscription_plan === 'enterprise' ? -1 : 10),
           currentWorkflows: org.quotas?.current_active_workflows || 0,
-          maxSignaturesMonth: 500,
+          maxSignaturesMonth: org.subscription_plan === 'enterprise' ? -1 : 50,
           currentSignaturesMonth: 0,
         },
         features: mapPlanToFeatures(org.subscription_plan || 'business', org.ohada_compliant),
@@ -256,7 +254,8 @@ export const useFeatureCheck = (
   }
 
   // Use server result if available, otherwise local check
-  const hasFeature = serverResult !== null ? serverResult : checkFeature(feature as keyof TenantFeatures);
+  const hasFeature =
+    serverResult !== null ? serverResult : checkFeature(feature as keyof TenantFeatures);
 
   return {
     hasFeature,
@@ -270,7 +269,12 @@ export const useFeatureCheck = (
  * Avec validation optionnelle côté serveur
  */
 export const useQuotaCheck = (
-  quotaKey: 'currentUsers' | 'currentDocuments' | 'currentSignaturesMonth' | 'currentStorage' | 'currentWorkflows',
+  quotaKey:
+    | 'currentUsers'
+    | 'currentDocuments'
+    | 'currentSignaturesMonth'
+    | 'currentStorage'
+    | 'currentWorkflows',
   validateWithServer = false
 ) => {
   const { currentTenant, checkQuota } = useTenantStore();
@@ -334,10 +338,6 @@ export const useQuotaCheck = (
 
 // Helper: Map subscription info from API to tenant format
 function mapSubscriptionToTenant(subscription: SubscriptionInfo, user: any) {
-  const daysRemaining = subscription.currentPeriodEnd
-    ? Math.ceil((new Date(subscription.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-    : 0;
-
   return {
     id: subscription.tenantId,
     name: user?.organization?.name || 'Organization',
@@ -371,48 +371,69 @@ function mapSubscriptionToTenant(subscription: SubscriptionInfo, user: any) {
 }
 
 // Helper: Map plan to features (fallback when API unavailable)
-function mapPlanToFeatures(plan: string, ohadaCompliant?: boolean): TenantFeatures {
+// Aligné sur la spécification commerciale — Business = fonctions de base uniquement
+function mapPlanToFeatures(plan: string, _ohadaCompliant?: boolean): TenantFeatures {
   const isEnterprise = plan === 'enterprise';
 
   return {
+    // Documents
     documentVersioning: true,
     documentAnnotations: true,
     documentComparison: true,
     trackChanges: true,
     bulkImport: true,
     cloudIntegration: true,
-    documentTemplates: true,
+    documentTemplates: isEnterprise, // Enterprise only
     ocrRecognition: true,
+    // Workflows
     basicWorkflows: true,
     advancedWorkflows: true,
-    conditionalRules: true,
+    conditionalRules: isEnterprise, // Enterprise only
     parallelSignatures: true,
-    workflowTemplates: true,
-    workflowAnalytics: true,
+    workflowTemplates: isEnterprise, // Enterprise only
+    workflowAnalytics: isEnterprise, // Enterprise only
+    // Signatures
     simpleSignature: true,
-    advancedSignature: true,
-    qualifiedSignature: true,
-    ohadaCompliance: ohadaCompliant || true,
-    signatureCertificates: true,
+    advancedSignature: isEnterprise, // Enterprise only (eIDAS)
+    qualifiedSignature: isEnterprise, // Enterprise only
+    ohadaCompliance: isEnterprise, // Enterprise only
+    signatureCertificates: isEnterprise, // Enterprise only
     biometricSignature: isEnterprise,
-    ssoEnabled: true,
+    // Sécurité
+    ssoEnabled: isEnterprise, // Enterprise only (SSO/SAML)
     twoFactorAuth: true,
     ipRestriction: isEnterprise,
     auditLogs: true,
-    advancedAuditLogs: true,
+    advancedAuditLogs: isEnterprise,
     dataExport: true,
     dataEncryption: true,
-    apiAccess: true,
-    webhooks: true,
-    zapierIntegration: true,
+    // Intégrations
+    apiAccess: isEnterprise, // Enterprise only
+    webhooks: isEnterprise,
+    zapierIntegration: isEnterprise,
     customIntegrations: isEnterprise,
-    offlineMode: true,
-    customBranding: true,
+    // External system integrations
+    advancedCloudSync: isEnterprise,
+    erpIntegration: isEnterprise,
+    crmIntegration: isEnterprise,
+    workflowTriggers: isEnterprise,
+    contractGeneration: isEnterprise,
+    // Projets
+    basicProjects: true,
+    advancedProjects: isEnterprise,
+    projectAnalytics: isEnterprise,
+    // Rapports
+    basicReports: true,
+    advancedReports: isEnterprise,
+    reportsExport: true,
+    // Autres
+    offlineMode: isEnterprise,
+    customBranding: isEnterprise,
     whiteLabel: isEnterprise,
-    prioritySupport: true,
+    prioritySupport: isEnterprise, // Enterprise only
     dedicatedManager: isEnterprise,
-    customReports: true,
-    aiAssistant: true,
+    customReports: isEnterprise,
+    aiAssistant: isEnterprise,
   };
 }
 
