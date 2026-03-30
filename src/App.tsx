@@ -12,6 +12,7 @@ import { useSubscriptionGuard } from './hooks/useSubscriptionGuard';
 // Pages d'auth chargées immédiatement (small bundles)
 import { LoginPage, RegisterPage, ProfileSelectPage } from './pages';
 import { RegisterSuccessPage } from './pages/auth/RegisterSuccessPage';
+const ExternalAuthPage = lazy(() => import('./pages/auth/ExternalAuthPage'));
 import { CheckoutPage } from './pages/checkout';
 
 // LandingPage lazy loaded (large bundle)
@@ -67,14 +68,28 @@ const UserSupportPage = lazy(() => import('./pages/user/SupportPage'));
 
 // Lazy loading des pages marketing
 const MarketingPage = lazy(() => import('./pages/superadmin/marketing/MarketingPage'));
-const MarketingPublicationsPage = lazy(() => import('./pages/superadmin/marketing/MarketingPublicationsPage'));
-const MarketingCalendarPage = lazy(() => import('./pages/superadmin/marketing/MarketingCalendarPage'));
-const MarketingTemplatesPage = lazy(() => import('./pages/superadmin/marketing/MarketingTemplatesPage'));
-const MarketingAccountsPage = lazy(() => import('./pages/superadmin/marketing/MarketingAccountsPage'));
-const MarketingAnalyticsPage = lazy(() => import('./pages/superadmin/marketing/MarketingAnalyticsPage'));
+const MarketingPublicationsPage = lazy(
+  () => import('./pages/superadmin/marketing/MarketingPublicationsPage')
+);
+const MarketingCalendarPage = lazy(
+  () => import('./pages/superadmin/marketing/MarketingCalendarPage')
+);
+const MarketingTemplatesPage = lazy(
+  () => import('./pages/superadmin/marketing/MarketingTemplatesPage')
+);
+const MarketingAccountsPage = lazy(
+  () => import('./pages/superadmin/marketing/MarketingAccountsPage')
+);
+const MarketingAnalyticsPage = lazy(
+  () => import('./pages/superadmin/marketing/MarketingAnalyticsPage')
+);
 const MarketingBlogPage = lazy(() => import('./pages/superadmin/marketing/MarketingBlogPage'));
-const MarketingSubscribersPage = lazy(() => import('./pages/superadmin/marketing/MarketingSubscribersPage'));
-const MarketingNewslettersPage = lazy(() => import('./pages/superadmin/marketing/MarketingNewslettersPage'));
+const MarketingSubscribersPage = lazy(
+  () => import('./pages/superadmin/marketing/MarketingSubscribersPage')
+);
+const MarketingNewslettersPage = lazy(
+  () => import('./pages/superadmin/marketing/MarketingNewslettersPage')
+);
 
 // Lazy loading des pages billing Client
 const ClientBillingPage = lazy(() => import('./pages/billing/ClientBillingPage'));
@@ -193,194 +208,199 @@ function App() {
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
               <Routes>
-              {/* Public landing page */}
-              <Route path="/" element={<LandingPage />} />
+                {/* Public landing page */}
+                <Route path="/" element={<LandingPage />} />
 
-              {/* Auth routes */}
-              <Route
-                path="/login"
-                element={
-                  <PublicRoute>
-                    <LoginPage />
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path="/register"
-                element={<RegisterPage />}
-              />
-              <Route
-                path="/register/success"
-                element={
-                  <PublicRoute>
-                    <RegisterSuccessPage />
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path="/checkout"
-                element={
-                  <ProtectedRoute>
-                    <CheckoutPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Auth routes */}
+                <Route
+                  path="/login"
+                  element={
+                    <PublicRoute>
+                      <LoginPage />
+                    </PublicRoute>
+                  }
+                />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route
+                  path="/auth"
+                  element={
+                    <Suspense fallback={<div />}>
+                      <ExternalAuthPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="/register/success"
+                  element={
+                    <PublicRoute>
+                      <RegisterSuccessPage />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/checkout"
+                  element={
+                    <ProtectedRoute>
+                      <CheckoutPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Profile Selection */}
-              <Route path="/select-profile" element={<ProfileSelectPage />} />
+                {/* Profile Selection */}
+                <Route path="/select-profile" element={<ProfileSelectPage />} />
 
-              {/* External User Interface (no auth required) */}
-              <Route path="/external/:token" element={<ExternalUserPage />} />
-              <Route path="/external" element={<ExternalUserPage />} />
+                {/* External User Interface (no auth required) */}
+                <Route path="/external/:token" element={<ExternalUserPage />} />
+                <Route path="/external" element={<ExternalUserPage />} />
 
-              {/* Public Validation Report (shareable, no auth required) */}
-              <Route path="/reports/validation/:reportId" element={<ValidationReportPage />} />
+                {/* Public Validation Report (shareable, no auth required) */}
+                <Route path="/reports/validation/:reportId" element={<ValidationReportPage />} />
 
-              {/* Legal Pages */}
-              <Route path="/legal/:type" element={<LegalPage />} />
+                {/* Legal Pages */}
+                <Route path="/legal/:type" element={<LegalPage />} />
 
-              {/* Resource Pages */}
-              <Route path="/docs" element={<ResourcePage />} />
-              <Route path="/help" element={<ResourcePage />} />
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/blog/:slug" element={<BlogArticlePage />} />
-              <Route path="/status" element={<ResourcePage />} />
-              <Route path="/integrations" element={<ResourcePage />} />
-              <Route path="/api-docs" element={<ResourcePage />} />
+                {/* Resource Pages */}
+                <Route path="/docs" element={<ResourcePage />} />
+                <Route path="/help" element={<ResourcePage />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<BlogArticlePage />} />
+                <Route path="/status" element={<ResourcePage />} />
+                <Route path="/integrations" element={<ResourcePage />} />
+                <Route path="/api-docs" element={<ResourcePage />} />
 
-              {/* Subscription/License Routes */}
-              <Route
-                path="/activate-license"
-                element={
-                  <ProtectedRoute>
-                    <ActivateLicensePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/subscription-blocked" element={<SubscriptionBlockedPage />} />
+                {/* Subscription/License Routes */}
+                <Route
+                  path="/activate-license"
+                  element={
+                    <ProtectedRoute>
+                      <ActivateLicensePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/subscription-blocked" element={<SubscriptionBlockedPage />} />
 
-              {/* User Interface Routes */}
-              <Route
-                path="/user"
-                element={
-                  <SubscriptionProtectedRoute>
-                    <ErrorBoundary>
-                      <UserLayout />
-                    </ErrorBoundary>
-                  </SubscriptionProtectedRoute>
-                }
-              >
-                <Route index element={<UserDashboard />} />
-                <Route path="documents" element={<DocumentsPage />} />
-                <Route path="documents/:id" element={<DocumentDetailPage />} />
-                <Route path="workflows" element={<WorkflowsPage />} />
-                <Route path="workflows/:id" element={<WorkflowsPage />} />
-                <Route path="signatures" element={<SignaturesPage />} />
-                <Route path="signatures/:id" element={<SignDocumentPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="calendar" element={<CalendarPage />} />
-                <Route path="billing" element={<ClientBillingPage />} />
-                <Route path="projects" element={<ProjectsPage />} />
-                <Route path="projects/:id" element={<ProjectDetailPage />} />
-                <Route path="analytics/reports" element={<ExecutiveReportPage />} />
-                <Route path="analytics/benchmark" element={<ExecutiveReportPage />} />
-                <Route path="analytics/roi" element={<ExecutiveReportPage />} />
-                <Route path="analytics/best-practices" element={<ExecutiveReportPage />} />
-                <Route path="support" element={<UserSupportPage />} />
-              </Route>
+                {/* User Interface Routes */}
+                <Route
+                  path="/user"
+                  element={
+                    <SubscriptionProtectedRoute>
+                      <ErrorBoundary>
+                        <UserLayout />
+                      </ErrorBoundary>
+                    </SubscriptionProtectedRoute>
+                  }
+                >
+                  <Route index element={<UserDashboard />} />
+                  <Route path="documents" element={<DocumentsPage />} />
+                  <Route path="documents/:id" element={<DocumentDetailPage />} />
+                  <Route path="workflows" element={<WorkflowsPage />} />
+                  <Route path="workflows/:id" element={<WorkflowsPage />} />
+                  <Route path="signatures" element={<SignaturesPage />} />
+                  <Route path="signatures/:id" element={<SignDocumentPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                  <Route path="profile" element={<ProfilePage />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="calendar" element={<CalendarPage />} />
+                  <Route path="billing" element={<ClientBillingPage />} />
+                  <Route path="projects" element={<ProjectsPage />} />
+                  <Route path="projects/:id" element={<ProjectDetailPage />} />
+                  <Route path="analytics/reports" element={<ExecutiveReportPage />} />
+                  <Route path="analytics/benchmark" element={<ExecutiveReportPage />} />
+                  <Route path="analytics/roi" element={<ExecutiveReportPage />} />
+                  <Route path="analytics/best-practices" element={<ExecutiveReportPage />} />
+                  <Route path="support" element={<UserSupportPage />} />
+                </Route>
 
-              {/* Admin Interface Routes */}
-              <Route
-                path="/admin"
-                element={
-                  <SubscriptionProtectedRoute>
-                    <ErrorBoundary>
-                      <AdminLayout />
-                    </ErrorBoundary>
-                  </SubscriptionProtectedRoute>
-                }
-              >
-                <Route index element={<AdminDashboard />} />
-                <Route path="documents" element={<DocumentsPage />} />
-                <Route path="documents/:id" element={<DocumentDetailPage />} />
-                <Route path="workflows" element={<WorkflowsPage />} />
-                <Route path="workflows/:id" element={<WorkflowsPage />} />
-                <Route path="signatures" element={<SignaturesPage />} />
-                <Route path="signatures/:id" element={<SignDocumentPage />} />
-                <Route path="users" element={<UsersPage />} />
-                <Route path="roles" element={<RolesPage />} />
-                <Route path="organization" element={<OrganizationPage />} />
-                <Route path="archives" element={<ArchivesPage />} />
-                <Route path="audit" element={<AuditPage />} />
-                <Route path="analytics" element={<AnalyticsPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="calendar" element={<CalendarPage />} />
-                <Route path="billing" element={<ClientBillingPage />} />
-                <Route path="projects" element={<ProjectsPage />} />
-                <Route path="projects/:id" element={<ProjectDetailPage />} />
-                <Route path="analytics/reports" element={<ExecutiveReportPage />} />
-                <Route path="analytics/benchmark" element={<ExecutiveReportPage />} />
-                <Route path="analytics/roi" element={<ExecutiveReportPage />} />
-                <Route path="analytics/best-practices" element={<ExecutiveReportPage />} />
-                <Route path="support" element={<UserSupportPage />} />
-              </Route>
+                {/* Admin Interface Routes */}
+                <Route
+                  path="/admin"
+                  element={
+                    <SubscriptionProtectedRoute>
+                      <ErrorBoundary>
+                        <AdminLayout />
+                      </ErrorBoundary>
+                    </SubscriptionProtectedRoute>
+                  }
+                >
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="documents" element={<DocumentsPage />} />
+                  <Route path="documents/:id" element={<DocumentDetailPage />} />
+                  <Route path="workflows" element={<WorkflowsPage />} />
+                  <Route path="workflows/:id" element={<WorkflowsPage />} />
+                  <Route path="signatures" element={<SignaturesPage />} />
+                  <Route path="signatures/:id" element={<SignDocumentPage />} />
+                  <Route path="users" element={<UsersPage />} />
+                  <Route path="roles" element={<RolesPage />} />
+                  <Route path="organization" element={<OrganizationPage />} />
+                  <Route path="archives" element={<ArchivesPage />} />
+                  <Route path="audit" element={<AuditPage />} />
+                  <Route path="analytics" element={<AnalyticsPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                  <Route path="profile" element={<ProfilePage />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="calendar" element={<CalendarPage />} />
+                  <Route path="billing" element={<ClientBillingPage />} />
+                  <Route path="projects" element={<ProjectsPage />} />
+                  <Route path="projects/:id" element={<ProjectDetailPage />} />
+                  <Route path="analytics/reports" element={<ExecutiveReportPage />} />
+                  <Route path="analytics/benchmark" element={<ExecutiveReportPage />} />
+                  <Route path="analytics/roi" element={<ExecutiveReportPage />} />
+                  <Route path="analytics/best-practices" element={<ExecutiveReportPage />} />
+                  <Route path="support" element={<UserSupportPage />} />
+                </Route>
 
-              {/* Super Admin Interface Routes */}
-              <Route
-                path="/superadmin"
-                element={
-                  <SuperAdminRoute>
-                    <ErrorBoundary>
-                      <SuperAdminLayout />
-                    </ErrorBoundary>
-                  </SuperAdminRoute>
-                }
-              >
-                <Route index element={<SuperAdminDashboard />} />
-                <Route path="tenants" element={<TenantsPage />} />
-                <Route path="tenants/new" element={<TenantsPage />} />
-                <Route path="users" element={<SuperAdminUsersPage />} />
-                <Route path="analytics" element={<SuperAdminAnalyticsPage />} />
-                <Route path="system" element={<SuperAdminSystemPage />} />
-                <Route path="security" element={<SuperAdminSecurityPage />} />
-                <Route path="logs" element={<SuperAdminLogsPage />} />
-                <Route path="alerts" element={<SuperAdminAlertsPage />} />
-                <Route path="landing-page" element={<LandingPageEditorPage />} />
-                <Route path="pricing" element={<PricingEditorPage />} />
-                <Route path="addons" element={<AddonEditorPage />} />
-                <Route path="settings" element={<SuperAdminSettingsPage />} />
-                {/* Billing Routes */}
-                <Route path="billing" element={<BillingDashboard />} />
-                <Route path="billing/subscriptions" element={<SubscriptionsPage />} />
-                <Route path="billing/invoices" element={<InvoicesPage />} />
-                <Route path="billing/payments" element={<InvoicesPage />} />
-                <Route path="billing/plans" element={<SubscriptionsPage />} />
-                <Route path="billing/settings" element={<PaymentSettingsPage />} />
-                {/* Support */}
-                <Route path="support" element={<SuperAdminSupportPage />} />
-                {/* Marketing */}
-                <Route path="marketing" element={<MarketingPage />} />
-                <Route path="marketing/posts" element={<MarketingPublicationsPage />} />
-                <Route path="marketing/posts/new" element={<MarketingPublicationsPage />} />
-                <Route path="marketing/calendar" element={<MarketingCalendarPage />} />
-                <Route path="marketing/templates" element={<MarketingTemplatesPage />} />
-                <Route path="marketing/accounts" element={<MarketingAccountsPage />} />
-                <Route path="marketing/analytics" element={<MarketingAnalyticsPage />} />
-                <Route path="marketing/blog" element={<MarketingBlogPage />} />
-                <Route path="marketing/subscribers" element={<MarketingSubscribersPage />} />
-                <Route path="marketing/newsletters" element={<MarketingNewslettersPage />} />
-              </Route>
+                {/* Super Admin Interface Routes */}
+                <Route
+                  path="/superadmin"
+                  element={
+                    <SuperAdminRoute>
+                      <ErrorBoundary>
+                        <SuperAdminLayout />
+                      </ErrorBoundary>
+                    </SuperAdminRoute>
+                  }
+                >
+                  <Route index element={<SuperAdminDashboard />} />
+                  <Route path="tenants" element={<TenantsPage />} />
+                  <Route path="tenants/new" element={<TenantsPage />} />
+                  <Route path="users" element={<SuperAdminUsersPage />} />
+                  <Route path="analytics" element={<SuperAdminAnalyticsPage />} />
+                  <Route path="system" element={<SuperAdminSystemPage />} />
+                  <Route path="security" element={<SuperAdminSecurityPage />} />
+                  <Route path="logs" element={<SuperAdminLogsPage />} />
+                  <Route path="alerts" element={<SuperAdminAlertsPage />} />
+                  <Route path="landing-page" element={<LandingPageEditorPage />} />
+                  <Route path="pricing" element={<PricingEditorPage />} />
+                  <Route path="addons" element={<AddonEditorPage />} />
+                  <Route path="settings" element={<SuperAdminSettingsPage />} />
+                  {/* Billing Routes */}
+                  <Route path="billing" element={<BillingDashboard />} />
+                  <Route path="billing/subscriptions" element={<SubscriptionsPage />} />
+                  <Route path="billing/invoices" element={<InvoicesPage />} />
+                  <Route path="billing/payments" element={<InvoicesPage />} />
+                  <Route path="billing/plans" element={<SubscriptionsPage />} />
+                  <Route path="billing/settings" element={<PaymentSettingsPage />} />
+                  {/* Support */}
+                  <Route path="support" element={<SuperAdminSupportPage />} />
+                  {/* Marketing */}
+                  <Route path="marketing" element={<MarketingPage />} />
+                  <Route path="marketing/posts" element={<MarketingPublicationsPage />} />
+                  <Route path="marketing/posts/new" element={<MarketingPublicationsPage />} />
+                  <Route path="marketing/calendar" element={<MarketingCalendarPage />} />
+                  <Route path="marketing/templates" element={<MarketingTemplatesPage />} />
+                  <Route path="marketing/accounts" element={<MarketingAccountsPage />} />
+                  <Route path="marketing/analytics" element={<MarketingAnalyticsPage />} />
+                  <Route path="marketing/blog" element={<MarketingBlogPage />} />
+                  <Route path="marketing/subscribers" element={<MarketingSubscribersPage />} />
+                  <Route path="marketing/newsletters" element={<MarketingNewslettersPage />} />
+                </Route>
 
-              {/* Legacy /app routes - redirect to /user */}
-              <Route path="/app" element={<Navigate to="/user" replace />} />
-              <Route path="/app/*" element={<Navigate to="/user" replace />} />
+                {/* Legacy /app routes - redirect to /user */}
+                <Route path="/app" element={<Navigate to="/user" replace />} />
+                <Route path="/app/*" element={<Navigate to="/user" replace />} />
 
-              {/* Catch all - redirect to home */}
-              <Route path="*" element={<Navigate to="/" replace />} />
+                {/* Catch all - redirect to home */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>
           </BrowserRouter>
