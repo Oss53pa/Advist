@@ -4,7 +4,6 @@ import { publicBlogApi } from '../../services/marketing';
 import type { BlogPost } from '../../types';
 import {
   Search,
-  Calendar,
   Eye,
   Clock,
   ArrowRight,
@@ -15,19 +14,17 @@ import {
   GraduationCap,
   Lock,
   TrendingUp,
-  Filter,
   ChevronLeft,
   ChevronRight,
   Star,
   Users,
   FileText,
   Sparkles,
-  Tag,
 } from 'lucide-react';
 
 // Categories
 const blogCategories = [
-  { id: 'all', label: 'Tous les articles', icon: BookOpen, color: 'bg-primary-600' },
+  { id: 'all', label: 'Tous les articles', icon: BookOpen, color: 'bg-[#C8A961]' },
   { id: 'juridique', label: 'Juridique', icon: Scale, color: 'bg-green-600' },
   { id: 'productivite', label: 'Productivité', icon: Zap, color: 'bg-blue-600' },
   { id: 'conformite', label: 'Conformité', icon: ShieldCheck, color: 'bg-orange-600' },
@@ -37,10 +34,28 @@ const blogCategories = [
 
 // Authors
 const blogAuthors = [
-  { id: 1, name: 'Dr. Aminata Diallo', role: 'Experte Juridique OHADA', avatar: 'AD', color: 'bg-green-500' },
-  { id: 2, name: 'Marc Kouassi', role: 'Directeur Produit', avatar: 'MK', color: 'bg-primary-600' },
-  { id: 3, name: 'Sophie Mensah', role: 'Consultante Conformité', avatar: 'SM', color: 'bg-orange-500' },
-  { id: 4, name: 'Jean-Pierre Ndiaye', role: 'Expert Digitalisation', avatar: 'JN', color: 'bg-purple-500' },
+  {
+    id: 1,
+    name: 'Dr. Aminata Diallo',
+    role: 'Experte Juridique OHADA',
+    avatar: 'AD',
+    color: 'bg-green-500',
+  },
+  { id: 2, name: 'Marc Kouassi', role: 'Directeur Produit', avatar: 'MK', color: 'bg-[#C8A961]' },
+  {
+    id: 3,
+    name: 'Sophie Mensah',
+    role: 'Consultante Conformité',
+    avatar: 'SM',
+    color: 'bg-orange-500',
+  },
+  {
+    id: 4,
+    name: 'Jean-Pierre Ndiaye',
+    role: 'Expert Digitalisation',
+    avatar: 'JN',
+    color: 'bg-purple-500',
+  },
 ];
 
 // Mock blog posts
@@ -49,7 +64,8 @@ const mockBlogPosts = [
     id: 1,
     slug: 'signature-electronique-valeur-juridique-afrique',
     title: 'La signature électronique a-t-elle une valeur juridique en Afrique ?',
-    excerpt: 'Découvrez le cadre légal de la signature électronique dans l\'espace OHADA et comment elle est reconnue dans 17 pays africains. Guide complet sur la conformité et les bonnes pratiques pour sécuriser vos transactions.',
+    excerpt:
+      "Découvrez le cadre légal de la signature électronique dans l'espace OHADA et comment elle est reconnue dans 17 pays africains. Guide complet sur la conformité et les bonnes pratiques pour sécuriser vos transactions.",
     content: '',
     category: 'juridique',
     categoryLabel: 'Juridique',
@@ -66,7 +82,8 @@ const mockBlogPosts = [
     id: 2,
     slug: 'digitaliser-processus-validation-entreprise',
     title: '5 étapes pour digitaliser vos processus de validation documentaire',
-    excerpt: 'Transformez vos workflows papier en circuits de validation numériques efficaces. Réduisez vos délais de traitement de 70% grâce à l\'automatisation intelligente.',
+    excerpt:
+      "Transformez vos workflows papier en circuits de validation numériques efficaces. Réduisez vos délais de traitement de 70% grâce à l'automatisation intelligente.",
     content: '',
     category: 'productivite',
     categoryLabel: 'Productivité',
@@ -83,7 +100,8 @@ const mockBlogPosts = [
     id: 3,
     slug: 'conformite-eidas-entreprises-internationales',
     title: 'Conformité eIDAS 2.0 : ce que les entreprises doivent savoir en 2025',
-    excerpt: 'Le règlement européen eIDAS évolue avec des changements majeurs. Anticipez les nouvelles exigences et assurez la conformité de vos signatures électroniques.',
+    excerpt:
+      'Le règlement européen eIDAS évolue avec des changements majeurs. Anticipez les nouvelles exigences et assurez la conformité de vos signatures électroniques.',
     content: '',
     category: 'conformite',
     categoryLabel: 'Conformité',
@@ -100,7 +118,8 @@ const mockBlogPosts = [
     id: 4,
     slug: 'guide-complet-parapheur-electronique',
     title: 'Guide complet : Maîtriser le parapheur électronique en 10 minutes',
-    excerpt: 'Apprenez à créer, gérer et suivre vos circuits de validation comme un pro. Tutoriel pas à pas avec captures d\'écran et astuces d\'experts.',
+    excerpt:
+      "Apprenez à créer, gérer et suivre vos circuits de validation comme un pro. Tutoriel pas à pas avec captures d'écran et astuces d'experts.",
     content: '',
     category: 'tutoriel',
     categoryLabel: 'Tutoriel',
@@ -117,7 +136,8 @@ const mockBlogPosts = [
     id: 5,
     slug: 'securite-documents-sensibles-entreprise',
     title: 'Comment protéger vos documents sensibles : les meilleures pratiques',
-    excerpt: 'Chiffrement, contrôle d\'accès, audit trail... Découvrez les stratégies essentielles pour garantir la sécurité de vos documents confidentiels.',
+    excerpt:
+      "Chiffrement, contrôle d'accès, audit trail... Découvrez les stratégies essentielles pour garantir la sécurité de vos documents confidentiels.",
     content: '',
     category: 'securite',
     categoryLabel: 'Sécurité',
@@ -134,7 +154,8 @@ const mockBlogPosts = [
     id: 6,
     slug: 'roi-gestion-documentaire-digitale',
     title: 'Calculer le ROI de votre transformation documentaire digitale',
-    excerpt: 'Méthodes et outils pour mesurer l\'impact réel de la dématérialisation sur votre entreprise. Études de cas et calculateur gratuit inclus.',
+    excerpt:
+      "Méthodes et outils pour mesurer l'impact réel de la dématérialisation sur votre entreprise. Études de cas et calculateur gratuit inclus.",
     content: '',
     category: 'productivite',
     categoryLabel: 'Productivité',
@@ -151,7 +172,8 @@ const mockBlogPosts = [
     id: 7,
     slug: 'archivage-electronique-normes-nf-z42-013',
     title: 'Archivage électronique : comprendre la norme NF Z42-013',
-    excerpt: 'Tout savoir sur la norme française d\'archivage électronique et comment l\'implémenter dans votre organisation pour garantir l\'intégrité de vos documents.',
+    excerpt:
+      "Tout savoir sur la norme française d'archivage électronique et comment l'implémenter dans votre organisation pour garantir l'intégrité de vos documents.",
     content: '',
     category: 'conformite',
     categoryLabel: 'Conformité',
@@ -168,7 +190,8 @@ const mockBlogPosts = [
     id: 8,
     slug: 'signature-electronique-mobile-bonnes-pratiques',
     title: 'Signature électronique sur mobile : guide des bonnes pratiques',
-    excerpt: 'Comment signer des documents en toute sécurité depuis votre smartphone. Conseils pratiques et pièges à éviter pour une expérience mobile optimale.',
+    excerpt:
+      'Comment signer des documents en toute sécurité depuis votre smartphone. Conseils pratiques et pièges à éviter pour une expérience mobile optimale.',
     content: '',
     category: 'tutoriel',
     categoryLabel: 'Tutoriel',
@@ -185,7 +208,8 @@ const mockBlogPosts = [
     id: 9,
     slug: 'integration-api-signature-electronique',
     title: 'Intégrer une API de signature électronique : guide technique',
-    excerpt: 'Documentation technique complète pour intégrer Advist dans vos applications. Exemples de code, webhooks et bonnes pratiques d\'intégration.',
+    excerpt:
+      "Documentation technique complète pour intégrer Advist dans vos applications. Exemples de code, webhooks et bonnes pratiques d'intégration.",
     content: '',
     category: 'tutoriel',
     categoryLabel: 'Tutoriel',
@@ -231,7 +255,8 @@ export const BlogPage: React.FC = () => {
   // Filter posts
   const filteredPosts = displayPosts.filter((post: any) => {
     const matchesCategory = activeCategory === 'all' || post.category === activeCategory;
-    const matchesSearch = !searchQuery ||
+    const matchesSearch =
+      !searchQuery ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -259,42 +284,60 @@ export const BlogPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-50 via-white to-primary-50">
+    <div className="min-h-screen bg-[#0A0A0B]">
       {/* Header */}
-      <header className="bg-white border-b border-primary-100 sticky top-0 z-50">
+      <header className="bg-[#0A0A0B]/90 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
-              <span className="font-decorative text-2xl font-bold text-primary-900">Advist</span>
+              <span className="font-decorative text-2xl font-light text-white">Advist</span>
             </Link>
             <nav className="hidden md:flex items-center gap-1">
-              <Link to="/#features" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#features"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+              >
                 Fonctionnalités
               </Link>
-              <Link to="/#how-it-works" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#how-it-works"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+              >
                 Comment ça marche
               </Link>
-              <Link to="/#demo" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#demo"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+              >
                 Démo
               </Link>
-              <Link to="/#pricing" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#pricing"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+              >
                 Tarifs
               </Link>
-              <Link to="/blog" className="px-4 py-2 text-sm font-medium text-primary-900 bg-primary-100 rounded-lg">
+              <Link
+                to="/blog"
+                className="px-4 py-2 text-sm font-medium text-[#C8A961] bg-[#C8A961]/10 rounded-lg"
+              >
                 Blog
               </Link>
-              <Link to="/#contact" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#contact"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+              >
                 Contact
               </Link>
             </nav>
             <div className="flex items-center gap-3">
               <Link to="/select-profile">
-                <button className="px-4 py-2 text-sm font-medium text-primary-700 hover:text-primary-900 transition-colors">
+                <button className="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors">
                   Connexion
                 </button>
               </Link>
               <Link to="/register">
-                <button className="px-4 py-2 bg-primary-900 text-white text-sm font-medium rounded-lg hover:bg-primary-800 transition-colors">
+                <button className="px-4 py-2 bg-[#C8A961] text-[#0A0A0B] text-sm font-medium rounded-lg hover:bg-[#C8A961]/90 transition-colors">
                   Essai gratuit
                 </button>
               </Link>
@@ -305,28 +348,28 @@ export const BlogPage: React.FC = () => {
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900" />
+        <div className="absolute inset-0 bg-[#0F0F11]" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]" />
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full mb-6">
-            <Sparkles className="w-4 h-4 text-primary-300" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-[#C8A961]" />
             <span className="text-sm font-medium text-white">Centre de Ressources Advist</span>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Blog & <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-300 to-primary-400">Actualités</span>
+          <h1 className="text-4xl md:text-6xl font-light text-white mb-6">
+            Blog & <span className="text-[#C8A961]">Actualités</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-primary-200 max-w-2xl mx-auto mb-10">
-            Guides pratiques, analyses d'experts et actualités sur la gestion documentaire,
-            la signature électronique et la transformation digitale en Afrique
+          <p className="text-lg md:text-xl text-white/40 max-w-2xl mx-auto mb-10">
+            Guides pratiques, analyses d'experts et actualités sur la gestion documentaire, la
+            signature électronique et la transformation digitale en Afrique
           </p>
 
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
               <input
                 type="text"
                 placeholder="Rechercher un article, un sujet..."
@@ -335,7 +378,7 @@ export const BlogPage: React.FC = () => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl text-primary-900 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-xl"
+                className="w-full pl-12 pr-4 py-4 bg-[#1A1A1D] border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#C8A961]/30 shadow-xl"
               />
             </div>
           </div>
@@ -344,18 +387,18 @@ export const BlogPage: React.FC = () => {
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="flex items-center gap-2 text-white/80">
               <FileText className="w-5 h-5" />
-              <span className="font-semibold">50+</span>
-              <span className="text-primary-300">Articles</span>
+              <span className="font-medium">50+</span>
+              <span className="text-white/40">Articles</span>
             </div>
             <div className="flex items-center gap-2 text-white/80">
               <Eye className="w-5 h-5" />
-              <span className="font-semibold">125K</span>
-              <span className="text-primary-300">Lecteurs/mois</span>
+              <span className="font-medium">125K</span>
+              <span className="text-white/40">Lecteurs/mois</span>
             </div>
             <div className="flex items-center gap-2 text-white/80">
               <Users className="w-5 h-5" />
-              <span className="font-semibold">12</span>
-              <span className="text-primary-300">Experts</span>
+              <span className="font-medium">12</span>
+              <span className="text-white/40">Experts</span>
             </div>
           </div>
         </div>
@@ -374,8 +417,8 @@ export const BlogPage: React.FC = () => {
                   onClick={() => handleCategoryChange(cat.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
                     activeCategory === cat.id
-                      ? 'bg-primary-900 text-white shadow-lg shadow-primary-900/20'
-                      : 'bg-white text-primary-600 hover:bg-primary-50 border border-primary-200'
+                      ? 'bg-[#C8A961] text-[#0A0A0B] shadow-lg shadow-[#C8A961]/20'
+                      : 'bg-white/5 text-white/60 hover:bg-white/10 border border-white/10'
                   }`}
                 >
                   <IconCat className="w-4 h-4" />
@@ -388,9 +431,11 @@ export const BlogPage: React.FC = () => {
           {/* Featured Article */}
           {featuredPost && activeCategory === 'all' && !searchQuery && currentPage === 1 && (
             <div className="mb-12">
-              <article className="group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl border border-primary-100 transition-all duration-500">
+              <article className="group relative bg-[#1A1A1D] rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl border border-white/5 transition-all duration-500">
                 <div className="grid grid-cols-1 lg:grid-cols-2">
-                  <div className={`relative h-64 lg:h-auto bg-gradient-to-br ${(featuredPost as any).gradient || 'from-green-500 to-emerald-600'} overflow-hidden`}>
+                  <div
+                    className={`relative h-64 lg:h-auto bg-gradient-to-br ${(featuredPost as any).gradient || 'from-green-500 to-emerald-600'} overflow-hidden`}
+                  >
                     <div className="absolute inset-0">
                       <div className="absolute top-10 left-10 w-32 h-32 border-2 border-white/20 rounded-full" />
                       <div className="absolute bottom-10 right-10 w-48 h-48 border-2 border-white/20 rounded-full" />
@@ -398,8 +443,8 @@ export const BlogPage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
                     <div className="absolute top-6 left-6 flex items-center gap-2">
-                      <span className="px-4 py-2 bg-white text-primary-900 text-xs font-bold rounded-full shadow-lg flex items-center gap-2">
-                        <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                      <span className="px-4 py-2 bg-[#C8A961] text-[#0A0A0B] text-xs font-medium rounded-full shadow-lg flex items-center gap-2">
+                        <Star className="w-3.5 h-3.5" />
                         Article vedette
                       </span>
                     </div>
@@ -418,38 +463,47 @@ export const BlogPage: React.FC = () => {
 
                   <div className="p-8 lg:p-12 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-4">
-                      <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full">
+                      <span className="px-3 py-1 bg-[#C8A961]/10 text-[#C8A961] text-xs font-medium rounded-full">
                         {(featuredPost as any).categoryLabel}
                       </span>
-                      <span className="text-sm text-primary-400 flex items-center gap-1">
+                      <span className="text-sm text-white/30 flex items-center gap-1">
                         <Clock className="w-4 h-4" />
                         {(featuredPost as any).read_time}
                       </span>
                     </div>
 
-                    <h2 className="text-2xl lg:text-3xl font-bold text-primary-900 mb-4 group-hover:text-green-700 transition-colors">
+                    <h2 className="text-2xl lg:text-3xl font-light text-white mb-4 group-hover:text-[#C8A961] transition-colors">
                       {(featuredPost as any).title}
                     </h2>
 
-                    <p className="text-primary-600 mb-6 leading-relaxed">
+                    <p className="text-white/40 mb-6 leading-relaxed">
                       {(featuredPost as any).excerpt}
                     </p>
 
                     {(featuredPost as any).author && (
                       <div className="flex items-center gap-3 mb-6">
-                        <div className={`w-10 h-10 ${(featuredPost as any).author.color} rounded-full flex items-center justify-center text-white font-bold text-sm`}>
+                        <div
+                          className={`w-10 h-10 ${(featuredPost as any).author.color} rounded-full flex items-center justify-center text-white font-bold text-sm`}
+                        >
                           {(featuredPost as any).author.avatar}
                         </div>
                         <div>
-                          <p className="font-semibold text-primary-900 text-sm">{(featuredPost as any).author.name}</p>
-                          <p className="text-xs text-primary-500">{(featuredPost as any).author.role}</p>
+                          <p className="font-medium text-white text-sm">
+                            {(featuredPost as any).author.name}
+                          </p>
+                          <p className="text-xs text-white/40">
+                            {(featuredPost as any).author.role}
+                          </p>
                         </div>
-                        <span className="ml-auto text-sm text-primary-400">
-                          {new Date((featuredPost as any).published_at).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })}
+                        <span className="ml-auto text-sm text-white/30">
+                          {new Date((featuredPost as any).published_at).toLocaleDateString(
+                            'fr-FR',
+                            {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                            }
+                          )}
                         </span>
                       </div>
                     )}
@@ -457,7 +511,10 @@ export const BlogPage: React.FC = () => {
                     {(featuredPost as any).tags && (
                       <div className="flex flex-wrap gap-2 mb-6">
                         {(featuredPost as any).tags.slice(0, 4).map((tag: string, i: number) => (
-                          <span key={i} className="px-2 py-1 bg-primary-50 text-primary-600 text-xs font-medium rounded-full">
+                          <span
+                            key={i}
+                            className="px-2 py-1 bg-white/5 text-white/60 text-xs font-medium rounded-full"
+                          >
                             #{tag}
                           </span>
                         ))}
@@ -466,7 +523,7 @@ export const BlogPage: React.FC = () => {
 
                     <Link
                       to={`/blog/${(featuredPost as any).slug}`}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-primary-900 text-white rounded-xl font-semibold hover:bg-primary-800 transition-all w-fit group/btn"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-[#C8A961] text-[#0A0A0B] rounded-xl font-medium hover:bg-[#C8A961]/90 transition-all w-fit group/btn"
                     >
                       Lire l'article
                       <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
@@ -479,14 +536,20 @@ export const BlogPage: React.FC = () => {
 
           {/* Results info */}
           <div className="flex items-center justify-between mb-8">
-            <p className="text-primary-600">
-              <span className="font-semibold text-primary-900">{filteredPosts.length}</span> article{filteredPosts.length > 1 ? 's' : ''} trouvé{filteredPosts.length > 1 ? 's' : ''}
-              {searchQuery && <span> pour "<span className="font-medium">{searchQuery}</span>"</span>}
+            <p className="text-white/40">
+              <span className="font-medium text-white">{filteredPosts.length}</span> article
+              {filteredPosts.length > 1 ? 's' : ''} trouvé{filteredPosts.length > 1 ? 's' : ''}
+              {searchQuery && (
+                <span>
+                  {' '}
+                  pour "<span className="font-medium">{searchQuery}</span>"
+                </span>
+              )}
             </p>
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="text-sm text-primary-600 hover:text-primary-900 font-medium"
+                className="text-sm text-white/40 hover:text-[#C8A961] font-medium"
               >
                 Effacer la recherche
               </button>
@@ -497,13 +560,16 @@ export const BlogPage: React.FC = () => {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-white rounded-2xl overflow-hidden border border-primary-100 animate-pulse">
-                  <div className="h-48 bg-primary-100" />
+                <div
+                  key={i}
+                  className="bg-[#1A1A1D] rounded-2xl overflow-hidden border border-white/5 animate-pulse"
+                >
+                  <div className="h-48 bg-white/5" />
                   <div className="p-6">
-                    <div className="h-4 bg-primary-100 rounded w-1/4 mb-4" />
-                    <div className="h-6 bg-primary-100 rounded w-3/4 mb-2" />
-                    <div className="h-4 bg-primary-100 rounded w-full mb-4" />
-                    <div className="h-4 bg-primary-100 rounded w-2/3" />
+                    <div className="h-4 bg-white/5 rounded w-1/4 mb-4" />
+                    <div className="h-6 bg-white/5 rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-white/5 rounded w-full mb-4" />
+                    <div className="h-4 bg-white/5 rounded w-2/3" />
                   </div>
                 </div>
               ))}
@@ -515,9 +581,11 @@ export const BlogPage: React.FC = () => {
                 return (
                   <article
                     key={post.id}
-                    className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-primary-100 hover:border-primary-200 transition-all duration-500"
+                    className="group bg-[#1A1A1D] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-white/5 hover:border-white/10 transition-all duration-500"
                   >
-                    <div className={`relative h-48 bg-gradient-to-br ${post.gradient || 'from-primary-100 to-primary-200'} overflow-hidden`}>
+                    <div
+                      className={`relative h-48 bg-gradient-to-br ${post.gradient || 'from-white/5 to-white/10'} overflow-hidden`}
+                    >
                       <div className="absolute inset-0 opacity-20">
                         <div className="absolute top-4 left-4 w-16 h-16 border-2 border-white rounded-full" />
                         <div className="absolute bottom-4 right-4 w-24 h-24 border-2 border-white rounded-full" />
@@ -527,7 +595,7 @@ export const BlogPage: React.FC = () => {
                           <IconComp className="w-8 h-8 text-white" />
                         </div>
                       </div>
-                      <span className="absolute top-4 left-4 px-3 py-1.5 bg-white/95 text-xs font-semibold text-primary-800 rounded-full">
+                      <span className="absolute top-4 left-4 px-3 py-1.5 bg-[#1A1A1D]/90 text-xs font-medium text-white/80 rounded-full border border-white/10">
                         {post.categoryLabel || post.category}
                       </span>
                       <span className="absolute top-4 right-4 px-3 py-1.5 bg-black/30 backdrop-blur-sm text-xs font-medium text-white rounded-full">
@@ -538,13 +606,15 @@ export const BlogPage: React.FC = () => {
                     <div className="p-6">
                       <div className="flex items-center gap-3 mb-4">
                         {post.author && (
-                          <div className={`w-8 h-8 ${post.author.color} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
+                          <div
+                            className={`w-8 h-8 ${post.author.color} rounded-full flex items-center justify-center text-white text-xs font-bold`}
+                          >
                             {post.author.avatar}
                           </div>
                         )}
                         <div className="flex-1">
-                          <p className="text-xs font-medium text-primary-900">{post.author?.name}</p>
-                          <p className="text-xs text-primary-400">
+                          <p className="text-xs font-medium text-white">{post.author?.name}</p>
+                          <p className="text-xs text-white/30">
                             {new Date(post.published_at).toLocaleDateString('fr-FR', {
                               day: 'numeric',
                               month: 'short',
@@ -552,24 +622,25 @@ export const BlogPage: React.FC = () => {
                             })}
                           </p>
                         </div>
-                        <span className="text-xs text-primary-400 flex items-center gap-1">
+                        <span className="text-xs text-white/30 flex items-center gap-1">
                           <Eye className="w-3 h-3" />
                           {post.views_count?.toLocaleString()}
                         </span>
                       </div>
 
-                      <h3 className="text-lg font-bold text-primary-900 mb-3 group-hover:text-green-700 transition-colors line-clamp-2">
+                      <h3 className="text-lg font-medium text-white mb-3 group-hover:text-[#C8A961] transition-colors line-clamp-2">
                         {post.title}
                       </h3>
 
-                      <p className="text-primary-600 text-sm line-clamp-2 mb-4">
-                        {post.excerpt}
-                      </p>
+                      <p className="text-white/40 text-sm line-clamp-2 mb-4">{post.excerpt}</p>
 
                       {post.tags && (
                         <div className="flex flex-wrap gap-1 mb-4">
                           {post.tags.slice(0, 3).map((tag: string, i: number) => (
-                            <span key={i} className="px-2 py-0.5 bg-primary-50 text-primary-500 text-xs rounded-full">
+                            <span
+                              key={i}
+                              className="px-2 py-0.5 bg-white/5 text-white/40 text-xs rounded-full"
+                            >
                               #{tag}
                             </span>
                           ))}
@@ -578,7 +649,7 @@ export const BlogPage: React.FC = () => {
 
                       <Link
                         to={`/blog/${post.slug}`}
-                        className="inline-flex items-center gap-2 text-sm font-semibold text-primary-900 hover:text-green-600 transition-colors"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-[#C8A961] hover:text-[#C8A961]/80 transition-colors"
                       >
                         Lire l'article
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -590,17 +661,19 @@ export const BlogPage: React.FC = () => {
             </div>
           ) : (
             <div className="text-center py-16">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-primary-400" />
+              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-white/30" />
               </div>
-              <h3 className="text-xl font-semibold text-primary-900 mb-2">Aucun article trouvé</h3>
-              <p className="text-primary-600 mb-6">Essayez avec d'autres mots-clés ou explorez nos catégories</p>
+              <h3 className="text-xl font-medium text-white mb-2">Aucun article trouvé</h3>
+              <p className="text-white/40 mb-6">
+                Essayez avec d'autres mots-clés ou explorez nos catégories
+              </p>
               <button
                 onClick={() => {
                   setSearchQuery('');
                   setActiveCategory('all');
                 }}
-                className="px-6 py-3 bg-primary-900 text-white rounded-xl font-medium hover:bg-primary-800 transition-colors"
+                className="px-6 py-3 bg-[#C8A961] text-[#0A0A0B] rounded-xl font-medium hover:bg-[#C8A961]/90 transition-colors"
               >
                 Voir tous les articles
               </button>
@@ -611,9 +684,9 @@ export const BlogPage: React.FC = () => {
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-12">
               <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg border border-primary-200 text-primary-600 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-lg border border-white/10 text-white/60 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -624,8 +697,8 @@ export const BlogPage: React.FC = () => {
                   onClick={() => setCurrentPage(page)}
                   className={`w-10 h-10 rounded-lg font-medium transition-colors ${
                     currentPage === page
-                      ? 'bg-primary-900 text-white'
-                      : 'text-primary-600 hover:bg-primary-50'
+                      ? 'bg-[#C8A961] text-[#0A0A0B]'
+                      : 'text-white/60 hover:bg-white/5'
                   }`}
                 >
                   {page}
@@ -633,9 +706,9 @@ export const BlogPage: React.FC = () => {
               ))}
 
               <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg border border-primary-200 text-primary-600 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-lg border border-white/10 text-white/60 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -645,23 +718,23 @@ export const BlogPage: React.FC = () => {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-16 bg-gradient-to-r from-primary-900 to-primary-800">
+      <section className="py-16 bg-[#0F0F11]">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+          <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
             Restez informé des dernières actualités
           </h2>
-          <p className="text-primary-200 mb-8">
+          <p className="text-white/40 mb-8">
             Recevez nos meilleurs articles et guides directement dans votre boîte mail
           </p>
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Votre email"
-              className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#C8A961]/30"
             />
             <button
               type="submit"
-              className="px-6 py-3 bg-white text-primary-900 font-semibold rounded-xl hover:bg-primary-50 transition-colors"
+              className="px-6 py-3 bg-[#C8A961] text-[#0A0A0B] font-medium rounded-xl hover:bg-[#C8A961]/90 transition-colors"
             >
               S'abonner
             </button>
@@ -670,20 +743,26 @@ export const BlogPage: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-primary-900 py-8 border-t border-primary-800">
+      <footer className="bg-[#0A0A0B] py-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <Link to="/" className="font-decorative text-xl font-bold text-white">
+            <Link to="/" className="font-decorative text-xl font-light text-white">
               Advist
             </Link>
-            <p className="text-primary-400 text-sm">
+            <p className="text-white/30 text-sm">
               © 2025 Advist by Atlas Studio. Tous droits réservés.
             </p>
             <div className="flex items-center gap-6">
-              <Link to="/legal/privacy" className="text-sm text-primary-400 hover:text-white transition-colors">
+              <Link
+                to="/legal/privacy"
+                className="text-sm text-white/30 hover:text-[#C8A961] transition-colors"
+              >
                 Confidentialité
               </Link>
-              <Link to="/legal/cgu" className="text-sm text-primary-400 hover:text-white transition-colors">
+              <Link
+                to="/legal/cgu"
+                className="text-sm text-white/30 hover:text-[#C8A961] transition-colors"
+              >
                 CGU
               </Link>
             </div>

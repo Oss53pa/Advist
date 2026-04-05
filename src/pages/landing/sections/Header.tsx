@@ -103,7 +103,7 @@ export const Header: React.FC = () => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm'
+            ? 'bg-[#0A0A0B]/90 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20'
             : 'bg-transparent'
         }`}
       >
@@ -111,22 +111,14 @@ export const Header: React.FC = () => {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center group">
-              <span
-                className={`font-decorative text-2xl lg:text-3xl transition-colors duration-300 ${
-                  isScrolled ? 'text-gray-900' : 'text-white'
-                }`}
-              >
+              <span className="font-decorative text-2xl lg:text-3xl text-white transition-colors duration-300">
                 Advist
               </span>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center">
-              <div
-                className={`flex items-center gap-1 p-1.5 rounded-full transition-all duration-300 ${
-                  isScrolled ? 'bg-gray-100' : 'bg-white/5 backdrop-blur-lg border border-white/10'
-                }`}
-              >
+              <div className="flex items-center gap-1 p-1.5 rounded-full bg-white/5 backdrop-blur-lg border border-white/10">
                 {NAV_ITEMS.map((item) => {
                   const isActive = activeSection === item.href.replace('#', '');
                   const isProph3t = item.href === '#proph3t';
@@ -137,27 +129,21 @@ export const Header: React.FC = () => {
                       href={item.href}
                       className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                         isActive
-                          ? isScrolled
-                            ? 'bg-white text-gray-900 shadow-sm'
-                            : 'bg-white/20 text-white'
-                          : isScrolled
-                            ? 'text-gray-600 hover:text-gray-900 hover:bg-white/80'
-                            : 'text-white/70 hover:text-white hover:bg-white/10'
+                          ? 'bg-[#C8A961]/20 text-[#C8A961]'
+                          : 'text-white/70 hover:text-white hover:bg-white/10'
                       }`}
                     >
                       <span className="flex items-center gap-1.5">
                         {isProph3t ? (
                           <>
-                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                            <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent font-semibold">
-                              {item.label}
-                            </span>
+                            <Sparkles className="w-3.5 h-3.5 text-[#C8A961]" />
+                            <span className="text-[#C8A961] font-semibold">{item.label}</span>
                           </>
                         ) : (
                           item.label
                         )}
                         {item.isNew && !isProph3t && (
-                          <span className="px-1.5 py-0.5 text-[10px] font-bold bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full">
+                          <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#C8A961] text-[#0A0A0B] rounded-full">
                             NEW
                           </span>
                         )}
@@ -172,12 +158,8 @@ export const Header: React.FC = () => {
                     onClick={() => setIsMoreOpen(!isMoreOpen)}
                     className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                       MORE_ITEMS.some((item) => activeSection === item.href.replace('#', ''))
-                        ? isScrolled
-                          ? 'bg-white text-gray-900 shadow-sm'
-                          : 'bg-white/20 text-white'
-                        : isScrolled
-                          ? 'text-gray-600 hover:text-gray-900 hover:bg-white/80'
-                          : 'text-white/70 hover:text-white hover:bg-white/10'
+                        ? 'bg-[#C8A961]/20 text-[#C8A961]'
+                        : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
                     Plus
@@ -188,7 +170,7 @@ export const Header: React.FC = () => {
 
                   {/* Dropdown menu */}
                   <div
-                    className={`absolute top-full right-0 mt-2 w-64 py-2 bg-white rounded-2xl shadow-xl border border-gray-100 transition-all duration-200 ${
+                    className={`absolute top-full right-0 mt-2 w-64 py-2 bg-[#1A1A1D] rounded-2xl shadow-xl border border-white/10 transition-all duration-200 ${
                       isMoreOpen
                         ? 'opacity-100 translate-y-0 pointer-events-auto'
                         : 'opacity-0 -translate-y-2 pointer-events-none'
@@ -203,24 +185,24 @@ export const Header: React.FC = () => {
                           key={item.href}
                           href={item.href}
                           onClick={() => setIsMoreOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
-                            isActive ? 'bg-gray-50' : ''
+                          className={`flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors ${
+                            isActive ? 'bg-white/5' : ''
                           }`}
                         >
                           <div
                             className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                              isActive ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'
+                              isActive ? 'bg-[#C8A961] text-[#0A0A0B]' : 'bg-white/10 text-white/60'
                             }`}
                           >
                             <Icon className="w-5 h-5" />
                           </div>
                           <div>
                             <p
-                              className={`text-sm font-medium ${isActive ? 'text-gray-900' : 'text-gray-700'}`}
+                              className={`text-sm font-medium ${isActive ? 'text-[#C8A961]' : 'text-white/80'}`}
                             >
                               {item.label}
                             </p>
-                            <p className="text-xs text-gray-400">{item.desc}</p>
+                            <p className="text-xs text-white/40">{item.desc}</p>
                           </div>
                         </a>
                       );
@@ -235,25 +217,13 @@ export const Header: React.FC = () => {
               <LanguageSwitcher />
 
               <Link to="/select-profile">
-                <button
-                  className={`px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 ${
-                    isScrolled
-                      ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                      : 'text-white/80 hover:text-white hover:bg-white/10'
-                  }`}
-                >
+                <button className="px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 text-white/80 hover:text-white hover:bg-white/10">
                   {t('auth.login', 'Connexion')}
                 </button>
               </Link>
 
               <Link to="/register">
-                <button
-                  className={`group relative px-5 py-2.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 ${
-                    isScrolled
-                      ? 'bg-gray-900 text-white hover:bg-gray-800'
-                      : 'bg-white text-gray-900 hover:bg-gray-100'
-                  }`}
-                >
+                <button className="group relative px-5 py-2.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 bg-[#C8A961] text-[#0A0A0B] hover:bg-[#D4B872]">
                   <span className="relative z-10 flex items-center gap-2">
                     {t('landingNav.freeTrial', 'Essai gratuit')}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -264,9 +234,7 @@ export const Header: React.FC = () => {
 
             {/* Mobile menu button */}
             <button
-              className={`lg:hidden p-2.5 rounded-xl transition-all duration-300 ${
-                isScrolled ? 'text-gray-900 hover:bg-gray-100' : 'text-white hover:bg-white/10'
-              }`}
+              className="lg:hidden p-2.5 rounded-xl transition-all duration-300 text-white hover:bg-white/10"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Toggle menu"
             >
@@ -290,7 +258,7 @@ export const Header: React.FC = () => {
 
         {/* Menu panel */}
         <div
-          className={`absolute top-0 right-0 w-full max-w-sm h-full bg-white shadow-2xl transition-transform duration-300 overflow-y-auto ${
+          className={`absolute top-0 right-0 w-full max-w-sm h-full bg-[#0A0A0B] shadow-2xl transition-transform duration-300 overflow-y-auto ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
@@ -299,15 +267,15 @@ export const Header: React.FC = () => {
             <div className="flex justify-end mb-6">
               <button
                 onClick={() => setIsMenuOpen(false)}
-                className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-xl hover:bg-white/10 transition-colors"
               >
-                <X className="w-6 h-6 text-gray-600" />
+                <X className="w-6 h-6 text-white/60" />
               </button>
             </div>
 
             {/* Main navigation links */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#C8A961]/60 uppercase tracking-wider mb-3">
                 Navigation
               </p>
               <nav className="space-y-1">
@@ -322,35 +290,35 @@ export const Header: React.FC = () => {
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
                       className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                        isActive ? 'bg-gray-100' : 'hover:bg-gray-50'
+                        isActive ? 'bg-[#C8A961]/10' : 'hover:bg-white/5'
                       }`}
                     >
                       <div
                         className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                           isProph3t
-                            ? 'bg-gradient-to-br from-amber-500 to-orange-500'
+                            ? 'bg-[#C8A961]'
                             : isActive
-                              ? 'bg-gray-900 text-white'
-                              : 'bg-gray-100'
+                              ? 'bg-[#C8A961] text-[#0A0A0B]'
+                              : 'bg-white/10'
                         }`}
                       >
                         <Icon
-                          className={`w-5 h-5 ${isProph3t || isActive ? 'text-white' : 'text-gray-600'}`}
+                          className={`w-5 h-5 ${isProph3t || isActive ? 'text-[#0A0A0B]' : 'text-white/60'}`}
                         />
                       </div>
                       <span
                         className={`font-medium ${
                           isProph3t
-                            ? 'bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent'
+                            ? 'text-[#C8A961]'
                             : isActive
-                              ? 'text-gray-900'
-                              : 'text-gray-700'
+                              ? 'text-[#C8A961]'
+                              : 'text-white/80'
                         }`}
                       >
                         {item.label}
                       </span>
                       {item.isNew && (
-                        <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full">
+                        <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-[#C8A961] text-[#0A0A0B] rounded-full">
                           NEW
                         </span>
                       )}
@@ -362,7 +330,7 @@ export const Header: React.FC = () => {
 
             {/* More sections */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#C8A961]/60 uppercase tracking-wider mb-3">
                 Découvrir
               </p>
               <nav className="space-y-1">
@@ -376,23 +344,25 @@ export const Header: React.FC = () => {
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
                       className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                        isActive ? 'bg-gray-100' : 'hover:bg-gray-50'
+                        isActive ? 'bg-[#C8A961]/10' : 'hover:bg-white/5'
                       }`}
                     >
                       <div
                         className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          isActive ? 'bg-gray-900 text-white' : 'bg-gray-100'
+                          isActive ? 'bg-[#C8A961] text-[#0A0A0B]' : 'bg-white/10'
                         }`}
                       >
-                        <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-600'}`} />
+                        <Icon
+                          className={`w-5 h-5 ${isActive ? 'text-[#0A0A0B]' : 'text-white/60'}`}
+                        />
                       </div>
                       <div>
                         <p
-                          className={`font-medium ${isActive ? 'text-gray-900' : 'text-gray-700'}`}
+                          className={`font-medium ${isActive ? 'text-[#C8A961]' : 'text-white/80'}`}
                         >
                           {item.label}
                         </p>
-                        <p className="text-xs text-gray-400">{item.desc}</p>
+                        <p className="text-xs text-white/40">{item.desc}</p>
                       </div>
                     </a>
                   );
@@ -401,14 +371,14 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Action buttons */}
-            <div className="space-y-3 pt-4 border-t border-gray-100">
+            <div className="space-y-3 pt-4 border-t border-white/10">
               <Link to="/select-profile" className="block" onClick={() => setIsMenuOpen(false)}>
-                <button className="w-full py-3.5 text-gray-700 font-medium border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+                <button className="w-full py-3.5 text-white/80 font-medium border border-white/20 rounded-xl hover:bg-white/5 transition-colors">
                   {t('auth.login', 'Connexion')}
                 </button>
               </Link>
               <Link to="/register" className="block" onClick={() => setIsMenuOpen(false)}>
-                <button className="w-full py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
+                <button className="w-full py-3.5 bg-[#C8A961] text-[#0A0A0B] font-semibold rounded-xl hover:bg-[#D4B872] transition-colors flex items-center justify-center gap-2">
                   {t('landingNav.freeTrial', 'Essai gratuit')}
                   <ArrowRight className="w-4 h-4" />
                 </button>
@@ -416,7 +386,7 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Language switcher */}
-            <div className="mt-6 pt-6 border-t border-gray-100">
+            <div className="mt-6 pt-6 border-t border-white/10">
               <LanguageSwitcher variant="inline" />
             </div>
           </div>

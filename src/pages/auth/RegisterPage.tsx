@@ -263,22 +263,20 @@ export const RegisterPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-advist-gold/5">
+    <div className="min-h-screen bg-[#0A0A0B]">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-advist-border shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0B]/90 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-3 group">
               <div className="w-10 h-10 bg-gradient-to-br from-advist-navy to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-advist-dark/20 group-hover:shadow-advist-dark/40 transition-all">
                 <Sparkles className="w-5 h-5 text-advist-gold" />
               </div>
-              <span className="font-decorative text-2xl bg-gradient-to-r from-advist-navy to-primary-600 bg-clip-text text-transparent">
-                Advist
-              </span>
+              <span className="font-decorative text-2xl text-[#C8A961]">Advist</span>
             </Link>
             <Link
               to="/"
-              className="flex items-center gap-2 px-4 py-2 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-dark/5 rounded-xl transition-all"
+              className="flex items-center gap-2 px-4 py-2 text-white/40 hover:text-white hover:bg-white/5 rounded-xl transition-all"
             >
               <ArrowLeft size={18} />
               <span className="hidden sm:inline">{t('auth.register.backToHome')}</span>
@@ -291,14 +289,14 @@ export const RegisterPage: React.FC = () => {
         <div className="max-w-3xl mx-auto">
           {/* Essai gratuit badge */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-advist-gold/10 text-advist-gold rounded-full mb-4 border border-advist-gold/20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#C8A961]/10 text-[#C8A961] rounded-full mb-4 border border-[#C8A961]/20">
               <Shield size={18} />
               <span className="font-semibold">{t('auth.register.guarantee')}</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-advist-gray900 mb-2">
+            <h1 className="text-3xl md:text-4xl font-light text-white mb-2">
               {t('auth.register.createAccount')}
             </h1>
-            <p className="text-advist-text-secondary">{t('auth.register.adminDescription')}</p>
+            <p className="text-white/40">{t('auth.register.adminDescription')}</p>
           </div>
 
           {/* Progress Steps */}
@@ -312,14 +310,14 @@ export const RegisterPage: React.FC = () => {
                         ? 'bg-gradient-to-br from-green-500 to-green-600 text-white shadow-green-500/30'
                         : currentStep === step.number
                           ? 'bg-gradient-to-br from-advist-gold to-primary-500 text-white shadow-advist-gold/30'
-                          : 'bg-advist-surface-dark text-advist-text-muted shadow-none'
+                          : 'bg-white/5 text-white/30 shadow-none'
                     }`}
                   >
                     {currentStep > step.number ? <Check size={24} /> : <step.icon size={20} />}
                   </div>
                   <span
                     className={`mt-2 text-sm font-medium ${
-                      currentStep >= step.number ? 'text-advist-gray900' : 'text-advist-text-muted'
+                      currentStep >= step.number ? 'text-white' : 'text-white/30'
                     }`}
                   >
                     {step.title}
@@ -330,7 +328,7 @@ export const RegisterPage: React.FC = () => {
                     className={`w-20 sm:w-32 h-1 mx-2 rounded-full transition-all ${
                       currentStep > step.number
                         ? 'bg-gradient-to-r from-green-500 to-green-400'
-                        : 'bg-advist-border'
+                        : 'bg-white/10'
                     }`}
                   />
                 )}
@@ -342,7 +340,7 @@ export const RegisterPage: React.FC = () => {
           {error && (
             <div className="mb-6 p-4 bg-advist-gold-light border border-advist-gold rounded-xl text-advist-error">
               {error}
-              <button onClick={() => setError(null)} className="float-right font-bold">
+              <button onClick={() => setError(null)} className="float-right font-medium">
                 &times;
               </button>
             </div>
@@ -350,16 +348,16 @@ export const RegisterPage: React.FC = () => {
 
           {/* Step 1: Personal Information */}
           {currentStep === 1 && (
-            <Card padding="lg">
+            <Card padding="lg" className="!bg-[#1A1A1D] !border !border-white/5">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-advist-dark/10 rounded-xl flex items-center justify-center">
-                  <User className="w-5 h-5 text-advist-gray900" />
+                <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
+                  <User className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-advist-gray900">
+                  <h2 className="text-xl font-medium text-white">
                     {t('auth.register.step1Title')}
                   </h2>
-                  <p className="text-sm text-advist-gray900/60">{t('auth.register.adminRole')}</p>
+                  <p className="text-sm text-white/60">{t('auth.register.adminRole')}</p>
                 </div>
               </div>
 
@@ -407,9 +405,9 @@ export const RegisterPage: React.FC = () => {
                 </div>
               </form>
 
-              <div className="mt-6 pt-6 border-t border-advist-border text-center">
-                <span className="text-advist-gray900/70">{t('auth.hasAccount')}</span>{' '}
-                <Link to="/login" className="text-advist-gray900 font-medium hover:underline">
+              <div className="mt-6 pt-6 border-t border-white/10 text-center">
+                <span className="text-white/40">{t('auth.hasAccount')}</span>{' '}
+                <Link to="/login" className="text-[#C8A961] font-medium hover:underline">
                   {t('auth.login')}
                 </Link>
               </div>
@@ -418,16 +416,16 @@ export const RegisterPage: React.FC = () => {
 
           {/* Step 2: Company Information */}
           {currentStep === 2 && (
-            <Card padding="lg">
+            <Card padding="lg" className="!bg-[#1A1A1D] !border !border-white/5">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-advist-dark/10 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-advist-gray900" />
+                <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-advist-gray900">
+                  <h2 className="text-xl font-medium text-white">
                     {t('auth.register.step2Title')}
                   </h2>
-                  <p className="text-sm text-advist-gray900/60">{t('auth.register.companyInfo')}</p>
+                  <p className="text-sm text-white/60">{t('auth.register.companyInfo')}</p>
                 </div>
               </div>
 
@@ -441,7 +439,7 @@ export const RegisterPage: React.FC = () => {
                 />
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     {t('auth.register.companySize')}
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -450,8 +448,8 @@ export const RegisterPage: React.FC = () => {
                         key={size}
                         className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all ${
                           step2Form.watch('organization_size') === size
-                            ? 'border-advist-dark bg-advist-dark/5'
-                            : 'border-advist-border hover:border-advist-dark/30'
+                            ? 'border-[#C8A961] bg-[#C8A961]/10'
+                            : 'border-white/10 hover:border-white/20'
                         }`}
                       >
                         <input
@@ -460,8 +458,8 @@ export const RegisterPage: React.FC = () => {
                           className="sr-only"
                           {...step2Form.register('organization_size')}
                         />
-                        <Users size={16} className="text-advist-gray900/60" />
-                        <span className="text-sm font-medium text-advist-gray900">{size}</span>
+                        <Users size={16} className="text-white/60" />
+                        <span className="text-sm font-medium text-white">{size}</span>
                       </label>
                     ))}
                   </div>
@@ -473,11 +471,11 @@ export const RegisterPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     {t('auth.register.industry')}
                   </label>
                   <select
-                    className="w-full px-4 py-3 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold border border-transparent"
+                    className="w-full px-4 py-3 bg-white/5 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#C8A961] border border-white/10"
                     {...step2Form.register('industry')}
                   >
                     <option value="">{t('auth.register.selectIndustry')}</option>
@@ -496,11 +494,11 @@ export const RegisterPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    <label className="block text-sm font-medium text-white mb-2">
                       {t('auth.register.country')}
                     </label>
                     <select
-                      className="w-full px-4 py-3 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold border border-transparent"
+                      className="w-full px-4 py-3 bg-white/5 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#C8A961] border border-white/10"
                       {...step2Form.register('country')}
                     >
                       <option value="">{t('auth.register.selectCountry')}</option>
@@ -540,18 +538,16 @@ export const RegisterPage: React.FC = () => {
 
           {/* Step 3: Plan Selection & Password */}
           {currentStep === 3 && (
-            <Card padding="lg">
+            <Card padding="lg" className="!bg-[#1A1A1D] !border !border-white/5">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-advist-dark/10 rounded-xl flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-advist-gray900" />
+                <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-advist-gray900">
+                  <h2 className="text-xl font-medium text-white">
                     {t('auth.register.choosePlan')}
                   </h2>
-                  <p className="text-sm text-advist-gray900/60">
-                    {t('auth.register.securePayment')}
-                  </p>
+                  <p className="text-sm text-white/60">{t('auth.register.securePayment')}</p>
                 </div>
               </div>
 
@@ -563,8 +559,8 @@ export const RegisterPage: React.FC = () => {
                       key={plan.id}
                       className={`relative flex flex-col p-5 rounded-2xl border-2 cursor-pointer transition-all ${
                         selectedPlan === plan.id
-                          ? 'border-advist-gold bg-advist-gold/5 shadow-xl shadow-advist-gold/20'
-                          : 'border-advist-border hover:border-advist-gold/50 hover:shadow-lg'
+                          ? 'border-[#C8A961] bg-[#C8A961]/5 shadow-xl shadow-[#C8A961]/20'
+                          : 'border-white/10 hover:border-[#C8A961]/50 hover:shadow-lg'
                       }`}
                     >
                       <input
@@ -574,22 +570,19 @@ export const RegisterPage: React.FC = () => {
                         {...step3Form.register('plan')}
                       />
                       {plan.popular && (
-                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-advist-gold to-primary-500 text-white text-xs font-bold rounded-full shadow-lg shadow-advist-gold/30">
+                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-[#C8A961] to-[#C8A961]/70 text-[#0A0A0B] text-xs font-medium rounded-full shadow-lg shadow-[#C8A961]/30">
                           {t('auth.register.popular')}
                         </span>
                       )}
                       <div className="flex items-baseline gap-1 mb-2">
-                        <span className="text-2xl font-bold text-advist-gray900">{plan.price}</span>
-                        <span className="text-advist-gray900/60">{plan.period}</span>
+                        <span className="text-2xl font-bold text-white">{plan.price}</span>
+                        <span className="text-white/60">{plan.period}</span>
                       </div>
-                      <h3 className="font-semibold text-advist-gray900">{plan.name}</h3>
-                      <p className="text-sm text-advist-gray900/60 mb-4">{plan.description}</p>
+                      <h3 className="font-medium text-white">{plan.name}</h3>
+                      <p className="text-sm text-white/60 mb-4">{plan.description}</p>
                       <ul className="space-y-2 mt-auto">
                         {plan.features.map((feature, i) => (
-                          <li
-                            key={i}
-                            className="flex items-center gap-2 text-sm text-advist-gray900"
-                          >
+                          <li key={i} className="flex items-center gap-2 text-sm text-white">
                             <Check size={14} className="text-advist-success flex-shrink-0" />
                             {feature}
                           </li>
@@ -609,8 +602,8 @@ export const RegisterPage: React.FC = () => {
                   <div
                     className={`relative rounded-2xl border-2 transition-all overflow-hidden ${
                       includeIAOption
-                        ? 'border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg shadow-amber-100'
-                        : 'border-gray-200 hover:border-amber-300 bg-white'
+                        ? 'border-amber-400 bg-gradient-to-br from-amber-500/10 to-orange-500/10 shadow-lg shadow-amber-500/10'
+                        : 'border-white/10 hover:border-amber-300/50 bg-[#1A1A1D]'
                     }`}
                   >
                     <label className="flex cursor-pointer">
@@ -620,7 +613,7 @@ export const RegisterPage: React.FC = () => {
                             className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                               includeIAOption
                                 ? 'bg-gradient-to-br from-amber-500 to-orange-600'
-                                : 'bg-gray-100'
+                                : 'bg-white/5'
                             }`}
                           >
                             <Sparkles
@@ -629,22 +622,17 @@ export const RegisterPage: React.FC = () => {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-semibold text-advist-gray900">
+                              <h4 className="font-medium text-white">
                                 {t('auth.register.iaOption')}
                               </h4>
-                              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                              <span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 text-xs font-medium rounded-full">
                                 {t('auth.register.option')}
                               </span>
                             </div>
-                            <p className="text-sm text-advist-gray900/60 mb-3">
-                              {iaAddonInfo.description}
-                            </p>
+                            <p className="text-sm text-white/60 mb-3">{iaAddonInfo.description}</p>
                             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                               {iaAddonInfo.features.map((feature, i) => (
-                                <li
-                                  key={i}
-                                  className="flex items-center gap-2 text-sm text-advist-gray900"
-                                >
+                                <li key={i} className="flex items-center gap-2 text-sm text-white">
                                   <Check size={14} className="text-amber-500 flex-shrink-0" />
                                   {feature}
                                 </li>
@@ -653,26 +641,24 @@ export const RegisterPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="w-48 p-5 bg-gradient-to-br from-gray-50 to-gray-100 border-l border-gray-200 flex flex-col items-center justify-center">
+                      <div className="w-48 p-5 bg-white/5 border-l border-white/10 flex flex-col items-center justify-center">
                         <div className="text-center mb-3">
-                          <span className="text-2xl font-bold text-advist-gray900">
+                          <span className="text-2xl font-bold text-white">
                             {new Intl.NumberFormat('fr-FR').format(
                               iaAddonInfo.pricing[selectedPlan as 'business' | 'enterprise']
                             )}
                           </span>
-                          <span className="text-sm text-advist-gray900/60 ml-1">
-                            {iaAddonInfo.currency}
-                          </span>
-                          <p className="text-xs text-advist-gray900/50">/mois</p>
+                          <span className="text-sm text-white/60 ml-1">{iaAddonInfo.currency}</span>
+                          <p className="text-xs text-white/50">/mois</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <input
                             type="checkbox"
                             checked={includeIAOption}
                             onChange={(e) => setIncludeIAOption(e.target.checked)}
-                            className="w-5 h-5 rounded border-gray-300 text-amber-500 focus:ring-amber-500"
+                            className="w-5 h-5 rounded border-white/10 bg-white/5 text-amber-500 focus:ring-amber-500"
                           />
-                          <span className="text-sm font-medium text-advist-gray900">
+                          <span className="text-sm font-medium text-white">
                             {includeIAOption
                               ? t('auth.register.included')
                               : t('auth.register.addOption')}
@@ -688,7 +674,7 @@ export const RegisterPage: React.FC = () => {
                   </div>
                 )}
 
-                <div className="bg-green-50 border border-advist-success rounded-xl p-4 flex items-start gap-3">
+                <div className="bg-green-500/10 border border-advist-success rounded-xl p-4 flex items-start gap-3">
                   <Shield className="w-5 h-5 text-advist-success flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-advist-success">
@@ -700,10 +686,8 @@ export const RegisterPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="border-t border-advist-border pt-6 space-y-4">
-                  <h3 className="font-semibold text-advist-gray900">
-                    {t('auth.register.createPassword')}
-                  </h3>
+                <div className="border-t border-white/10 pt-6 space-y-4">
+                  <h3 className="font-medium text-white">{t('auth.register.createPassword')}</h3>
 
                   <Input
                     label={t('auth.password')}
@@ -736,43 +720,41 @@ export const RegisterPage: React.FC = () => {
 
                 {/* Account Summary */}
                 {step1Data && step2Data && (
-                  <div className="border-t border-advist-border pt-6">
-                    <h3 className="font-semibold text-advist-gray900 mb-4 flex items-center gap-2">
+                  <div className="border-t border-white/10 pt-6">
+                    <h3 className="font-medium text-white mb-4 flex items-center gap-2">
                       <CreditCard size={18} />
                       {t('auth.register.accountSummary')}
                     </h3>
-                    <div className="bg-gradient-to-br from-advist-bg to-gray-50 rounded-2xl p-5 space-y-4">
+                    <div className="bg-white/5 rounded-2xl p-5 space-y-4">
                       {/* Personal Info */}
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 bg-advist-dark/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <User size={18} className="text-advist-gray900" />
+                        <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <User size={18} className="text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-advist-text-secondary mb-0.5">
+                          <p className="text-xs text-white/40 mb-0.5">
                             {t('auth.register.administrator')}
                           </p>
-                          <p className="font-medium text-advist-gray900 truncate">
+                          <p className="font-medium text-white truncate">
                             {step1Data.first_name} {step1Data.last_name}
                           </p>
-                          <p className="text-sm text-advist-text-secondary truncate">
-                            {step1Data.email}
-                          </p>
+                          <p className="text-sm text-white/40 truncate">{step1Data.email}</p>
                         </div>
                       </div>
 
                       {/* Organization */}
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 bg-advist-dark/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <Building2 size={18} className="text-advist-gray900" />
+                        <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <Building2 size={18} className="text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-advist-text-secondary mb-0.5">
+                          <p className="text-xs text-white/40 mb-0.5">
                             {t('auth.register.organizationLabel')}
                           </p>
-                          <p className="font-medium text-advist-gray900 truncate">
+                          <p className="font-medium text-white truncate">
                             {step2Data.organization_name}
                           </p>
-                          <p className="text-sm text-advist-text-secondary">
+                          <p className="text-sm text-white/40">
                             {step2Data.organization_size} {t('auth.register.employees')} •{' '}
                             {industries.find((i) => i.value === step2Data.industry)?.label ||
                               step2Data.industry}
@@ -781,7 +763,7 @@ export const RegisterPage: React.FC = () => {
                       </div>
 
                       {/* Plan Selection */}
-                      <div className="border-t border-advist-border/50 pt-4">
+                      <div className="border-t border-white/10/50 pt-4">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <div
@@ -796,18 +778,18 @@ export const RegisterPage: React.FC = () => {
                               <Sparkles size={14} className="text-white" />
                             </div>
                             <div>
-                              <p className="font-medium text-advist-gray900">
+                              <p className="font-medium text-white">
                                 {t('auth.register.planLabel')}{' '}
                                 {plans.find((p) => p.id === selectedPlan)?.name}
                               </p>
-                              <p className="text-xs text-advist-text-secondary">
+                              <p className="text-xs text-white/40">
                                 {plans.find((p) => p.id === selectedPlan)?.description}
                               </p>
                             </div>
                           </div>
-                          <p className="font-semibold text-advist-gray900">
+                          <p className="font-medium text-white">
                             {plans.find((p) => p.id === selectedPlan)?.price}
-                            <span className="text-xs font-normal text-advist-text-secondary">
+                            <span className="text-xs font-normal text-white/40">
                               {plans.find((p) => p.id === selectedPlan)?.period}
                             </span>
                           </p>
@@ -816,16 +798,16 @@ export const RegisterPage: React.FC = () => {
                         {/* IA Option if selected */}
                         {includeIAOption &&
                           (selectedPlan === 'business' || selectedPlan === 'enterprise') && (
-                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-advist-border/50">
+                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-white/10/50">
                               <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
                                   <Sparkles size={14} className="text-white" />
                                 </div>
                                 <div>
-                                  <p className="font-medium text-advist-gray900">
+                                  <p className="font-medium text-white">
                                     {t('auth.register.iaOption')}
                                   </p>
-                                  <p className="text-xs text-advist-text-secondary">
+                                  <p className="text-xs text-white/40">
                                     {t('auth.register.aiOptionLabel')}
                                   </p>
                                 </div>
@@ -836,9 +818,7 @@ export const RegisterPage: React.FC = () => {
                                   iaAddonInfo.pricing[selectedPlan as 'business' | 'enterprise']
                                 )}{' '}
                                 {iaAddonInfo.currency}
-                                <span className="text-xs font-normal text-advist-text-secondary">
-                                  /mois
-                                </span>
+                                <span className="text-xs font-normal text-white/40">/mois</span>
                               </p>
                             </div>
                           )}
@@ -880,7 +860,7 @@ export const RegisterPage: React.FC = () => {
                       </div>
 
                       {/* Guarantee reminder */}
-                      <div className="flex items-center gap-2 text-sm text-advist-success bg-green-50 rounded-lg px-3 py-2">
+                      <div className="flex items-center gap-2 text-sm text-advist-success bg-green-500/10 rounded-lg px-3 py-2">
                         <Shield size={16} />
                         <span>{t('auth.register.fullRefund')}</span>
                       </div>
@@ -892,16 +872,16 @@ export const RegisterPage: React.FC = () => {
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="mt-1 w-5 h-5 rounded border-advist-border text-advist-gray900 focus:ring-advist-gold"
+                    className="mt-1 w-5 h-5 rounded border-white/10 bg-white/5 text-[#C8A961] focus:ring-[#C8A961]"
                     {...step3Form.register('acceptTerms')}
                   />
-                  <span className="text-sm text-advist-gray900">
+                  <span className="text-sm text-white">
                     {t('auth.register.termsAccept')}{' '}
-                    <a href="#" className="text-advist-gray900 font-medium underline">
+                    <a href="#" className="text-[#C8A961] font-medium underline">
                       {t('auth.register.termsOfUse')}
                     </a>{' '}
                     {t('auth.register.and')}{' '}
-                    <a href="#" className="text-advist-gray900 font-medium underline">
+                    <a href="#" className="text-[#C8A961] font-medium underline">
                       {t('auth.register.privacyPolicy')}
                     </a>
                   </span>
@@ -928,7 +908,7 @@ export const RegisterPage: React.FC = () => {
           )}
 
           {/* Security note */}
-          <div className="mt-6 flex items-center justify-center gap-2 text-sm text-advist-gray900/50">
+          <div className="mt-6 flex items-center justify-center gap-2 text-sm text-white/40">
             <Shield size={16} />
             <span>{t('auth.register.dataProtected')}</span>
           </div>

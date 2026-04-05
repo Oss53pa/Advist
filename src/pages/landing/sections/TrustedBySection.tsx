@@ -1,43 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { publicLandingApi, type TrustedCompany } from '../../../services/landingConfig';
 
-const companies = [
-  { name: 'Orange' },
-  { name: 'Ecobank' },
-  { name: 'NSIA' },
-  { name: 'Societe Generale' },
-  { name: 'Total Energies' },
-  { name: 'MTN' },
-  { name: 'UBA' },
-  { name: 'BSIC' },
-  { name: 'Orabank' },
-  { name: 'BIAO' },
+const fallbackCompanies: TrustedCompany[] = [
+  { name: 'Orange', logo_url: '' },
+  { name: 'Ecobank', logo_url: '' },
+  { name: 'NSIA', logo_url: '' },
+  { name: 'Societe Generale', logo_url: '' },
+  { name: 'Total Energies', logo_url: '' },
+  { name: 'MTN', logo_url: '' },
+  { name: 'UBA', logo_url: '' },
+  { name: 'BSIC', logo_url: '' },
+  { name: 'Orabank', logo_url: '' },
+  { name: 'BIAO', logo_url: '' },
 ];
 
 export const TrustedBySection: React.FC = () => {
+  const [companies, setCompanies] = useState<TrustedCompany[]>(fallbackCompanies);
+
+  useEffect(() => {
+    publicLandingApi
+      .getConfig()
+      .then((config) => {
+        if (config.trusted_companies && config.trusted_companies.length > 0) {
+          setCompanies(config.trusted_companies);
+        }
+      })
+      .catch(() => {
+        // Keep fallback
+      });
+  }, []);
+
   return (
-    <section id="trusted" className="py-20 bg-white border-b border-gray-100 overflow-hidden">
+    <section id="trusted" className="py-20 bg-[#0A0A0B] border-b border-white/5 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        <p className="text-center text-sm text-gray-400 font-medium mb-10 tracking-wider uppercase">
+        <p className="text-center text-sm text-white/40 font-medium mb-10 tracking-wider uppercase">
           +2,500 entreprises nous font confiance
         </p>
 
         {/* Infinite scroll logos */}
         <div className="relative">
           {/* Gradient masks */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10" />
+          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0A0A0B] to-transparent z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0A0A0B] to-transparent z-10" />
 
           {/* Scrolling container */}
           <div className="flex animate-scroll-infinite gap-12">
             {[...companies, ...companies, ...companies].map((company, i) => (
               <div
                 key={i}
-                className="flex items-center gap-4 px-8 py-4 bg-gray-50 rounded-2xl flex-shrink-0 hover:bg-gray-100 transition-colors group"
+                className="flex items-center gap-4 px-8 py-4 bg-white/5 rounded-2xl flex-shrink-0 hover:bg-white/10 transition-colors group border border-white/5"
               >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg group-hover:bg-gray-300 transition-colors">
-                  {company.name.charAt(0)}
-                </div>
-                <span className="font-semibold text-gray-600 whitespace-nowrap">{company.name}</span>
+                {company.logo_url ? (
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-white/10 overflow-hidden p-1.5">
+                    <img
+                      src={company.logo_url}
+                      alt={company.name}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#C8A961]/10 text-[#C8A961] font-bold text-lg group-hover:bg-[#C8A961]/20 transition-colors">
+                    {company.name.charAt(0)}
+                  </div>
+                )}
+                <span className="font-medium text-white/60 whitespace-nowrap">{company.name}</span>
               </div>
             ))}
           </div>
@@ -46,14 +72,18 @@ export const TrustedBySection: React.FC = () => {
         {/* Stats row */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { value: '2,500+', label: 'Entreprises' },
-            { value: '2M+', label: 'Documents/mois' },
-            { value: '99.9%', label: 'Uptime SLA' },
-            { value: '4.9/5', label: 'Satisfaction' },
+            { value: '500+', label: 'ENTREPRISES' },
+            { value: '17', label: 'PAYS OHADA' },
+            { value: '100%', label: 'CONFORMITÉ' },
+            { value: '99.9%', label: 'DISPONIBILITÉ' },
           ].map((stat, i) => (
             <div key={i} className="text-center">
-              <p className="text-3xl md:text-4xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm text-gray-400 mt-1">{stat.label}</p>
+              <p className="text-3xl md:text-4xl font-medium text-[#C8A961] tracking-tight">
+                {stat.value}
+              </p>
+              <p className="text-[11px] text-white/40 mt-2 tracking-[0.2em] font-normal uppercase">
+                {stat.label}
+              </p>
             </div>
           ))}
         </div>

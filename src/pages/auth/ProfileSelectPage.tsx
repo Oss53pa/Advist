@@ -1,12 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-  Users,
-  Shield,
-  ChevronRight,
-  Sparkles,
-} from 'lucide-react';
+import { Users, Shield, ChevronRight, Sparkles } from 'lucide-react';
 import { useAuthStore } from '../../store';
 
 interface ProfileCardProps {
@@ -36,31 +31,35 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       onClick={onClick}
       className={`
         relative group w-full max-w-md p-8 rounded-3xl text-left
-        bg-white border border-advist-border
-        hover:border-advist-gold hover:shadow-2xl hover:shadow-advist-gold/20
-        shadow-xl
+        bg-[#1A1A1D] border border-white/5
+        hover:border-[#C8A961] hover:shadow-2xl hover:shadow-[#C8A961]/20
+        shadow-xl shadow-black/20
         transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02]
         overflow-hidden
       `}
     >
       {/* Background gradient on hover */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${accentColor} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${accentColor} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+      />
 
       {/* Icon */}
-      <div className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${bgColor} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+      <div
+        className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${bgColor} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+      >
         {icon}
       </div>
 
       {/* Title */}
-      <h3 className="relative text-2xl font-bold text-advist-gray900 mb-2">{title}</h3>
+      <h3 className="relative text-2xl font-light text-white mb-2">{title}</h3>
 
       {/* Description */}
-      <p className="relative text-advist-text-secondary mb-6">{description}</p>
+      <p className="relative text-white/40 mb-6">{description}</p>
 
       {/* Features */}
       <ul className="relative space-y-3 mb-8">
         {features.map((feature, index) => (
-          <li key={index} className="flex items-center gap-3 text-advist-gray900">
+          <li key={index} className="flex items-center gap-3 text-white/80">
             <div className="w-5 h-5 rounded-full bg-advist-gold/20 flex items-center justify-center">
               <div className="w-2 h-2 rounded-full bg-advist-gold" />
             </div>
@@ -70,7 +69,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       </ul>
 
       {/* CTA */}
-      <div className="relative flex items-center gap-2 text-advist-gray900 font-bold group-hover:text-advist-gold group-hover:gap-4 transition-all duration-300">
+      <div className="relative flex items-center gap-2 text-white font-medium group-hover:text-[#C8A961] group-hover:gap-4 transition-all duration-300">
         {accessLabel}
         <ChevronRight className="w-5 h-5" />
       </div>
@@ -108,20 +107,23 @@ export const ProfileSelectPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-advist-gold/5">
+    <div className="min-h-screen bg-[#0A0A0B]">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-advist-border shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0B]/90 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/')}>
+            <div
+              className="flex items-center gap-3 group cursor-pointer"
+              onClick={() => navigate('/')}
+            >
               <div className="w-10 h-10 bg-gradient-to-br from-advist-navy to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-advist-dark/20 group-hover:shadow-advist-dark/40 transition-all">
                 <Sparkles className="w-5 h-5 text-advist-gold" />
               </div>
-              <span className="font-decorative text-2xl bg-gradient-to-r from-advist-navy to-primary-600 bg-clip-text text-transparent">Advist</span>
+              <span className="font-decorative text-2xl text-[#C8A961]">Advist</span>
             </div>
             <button
               onClick={() => navigate('/')}
-              className="px-4 py-2 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-dark/5 rounded-xl transition-all duration-300 font-medium"
+              className="px-4 py-2 text-white/40 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300 font-medium"
             >
               {t('auth.profileSelect.backToHome')}
             </button>
@@ -134,10 +136,10 @@ export const ProfileSelectPage: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           {/* Title */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-advist-gray900 mb-4">
+            <h1 className="text-4xl md:text-5xl font-light text-white mb-4">
               {t('auth.profileSelect.chooseProfile')}
             </h1>
-            <p className="text-lg text-advist-text-secondary max-w-2xl mx-auto">
+            <p className="text-lg text-white/40 max-w-2xl mx-auto">
               {t('auth.profileSelect.selectAccessType')}
             </p>
           </div>
@@ -183,11 +185,11 @@ export const ProfileSelectPage: React.FC = () => {
 
           {/* Additional Info */}
           <div className="mt-16 text-center">
-            <p className="text-sm text-advist-text-secondary">
+            <p className="text-sm text-white/40">
               {t('auth.profileSelect.noAccount')}{' '}
               <button
                 onClick={() => navigate('/register')}
-                className="text-advist-gold font-semibold hover:text-advist-gold-dark transition-colors"
+                className="text-[#C8A961] font-medium hover:text-[#C8A961]/80 transition-colors"
               >
                 {t('auth.profileSelect.createAccount')}
               </button>
@@ -197,9 +199,9 @@ export const ProfileSelectPage: React.FC = () => {
       </main>
 
       {/* Decorative Elements */}
-      <div className="fixed bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-advist-navy/10 to-transparent rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
-      <div className="fixed top-1/4 right-0 w-96 h-96 bg-advist-gold/10 rounded-full blur-3xl translate-x-1/3" />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-advist-gold/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-[#C8A961]/10 to-transparent rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
+      <div className="fixed top-1/4 right-0 w-96 h-96 bg-[#C8A961]/5 rounded-full blur-3xl translate-x-1/3" />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-[#C8A961]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
     </div>
   );
 };

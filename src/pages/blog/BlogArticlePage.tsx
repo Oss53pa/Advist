@@ -1726,13 +1726,13 @@ export const BlogArticlePage: React.FC = () => {
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-primary-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-primary-900 mb-4">Article non trouvé</h1>
-          <p className="text-primary-600 mb-6">L'article que vous recherchez n'existe pas.</p>
+          <h1 className="text-2xl font-light text-white mb-4">Article non trouvé</h1>
+          <p className="text-white/40 mb-6">L'article que vous recherchez n'existe pas.</p>
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary-900 text-white rounded-xl font-medium hover:bg-primary-800 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C8A961] text-[#0A0A0B] rounded-xl font-medium hover:bg-[#C8A961]/90 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             Retour au blog
@@ -1771,60 +1771,60 @@ export const BlogArticlePage: React.FC = () => {
     .slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0A0A0B]">
       {/* Header */}
-      <header className="bg-white border-b border-primary-100 sticky top-0 z-50">
+      <header className="bg-[#0A0A0B]/90 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
-              <span className="font-decorative text-2xl font-bold text-primary-900">Advist</span>
+              <span className="font-decorative text-2xl font-light text-white">Advist</span>
             </Link>
             <nav className="hidden md:flex items-center gap-1">
               <Link
                 to="/#features"
-                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
               >
                 Fonctionnalités
               </Link>
               <Link
                 to="/#how-it-works"
-                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
               >
                 Comment ça marche
               </Link>
               <Link
                 to="/#demo"
-                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
               >
                 Démo
               </Link>
               <Link
                 to="/#pricing"
-                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
               >
                 Tarifs
               </Link>
               <Link
                 to="/blog"
-                className="px-4 py-2 text-sm font-medium text-primary-900 bg-primary-100 rounded-lg"
+                className="px-4 py-2 text-sm font-medium text-[#C8A961] bg-[#C8A961]/10 rounded-lg"
               >
                 Blog
               </Link>
               <Link
                 to="/#contact"
-                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+                className="px-4 py-2 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-all"
               >
                 Contact
               </Link>
             </nav>
             <div className="flex items-center gap-3">
               <Link to="/select-profile">
-                <button className="px-4 py-2 text-sm font-medium text-primary-700 hover:text-primary-900 transition-colors">
+                <button className="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors">
                   Connexion
                 </button>
               </Link>
               <Link to="/register">
-                <button className="px-4 py-2 bg-primary-900 text-white text-sm font-medium rounded-lg hover:bg-primary-800 transition-colors">
+                <button className="px-4 py-2 bg-[#C8A961] text-[#0A0A0B] text-sm font-medium rounded-lg hover:bg-[#C8A961]/90 transition-colors">
                   Essai gratuit
                 </button>
               </Link>
@@ -1834,18 +1834,18 @@ export const BlogArticlePage: React.FC = () => {
       </header>
 
       {/* Breadcrumb */}
-      <div className="bg-primary-50 border-b border-primary-100">
+      <div className="bg-white/5 border-b border-white/10">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <nav className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-primary-500 hover:text-primary-700 transition-colors">
+            <Link to="/" className="text-white/40 hover:text-[#C8A961] transition-colors">
               Accueil
             </Link>
-            <ChevronRight className="w-4 h-4 text-primary-400" />
-            <Link to="/blog" className="text-primary-500 hover:text-primary-700 transition-colors">
+            <ChevronRight className="w-4 h-4 text-white/20" />
+            <Link to="/blog" className="text-white/40 hover:text-[#C8A961] transition-colors">
               Blog
             </Link>
-            <ChevronRight className="w-4 h-4 text-primary-400" />
-            <span className="text-primary-900 font-medium truncate max-w-xs">{article.title}</span>
+            <ChevronRight className="w-4 h-4 text-white/20" />
+            <span className="text-white font-medium truncate max-w-xs">{article.title}</span>
           </nav>
         </div>
       </div>
@@ -1855,7 +1855,7 @@ export const BlogArticlePage: React.FC = () => {
         {/* Back link */}
         <Link
           to="/blog"
-          className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-900 font-medium mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-white/40 hover:text-[#C8A961] font-medium mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour au blog
@@ -1869,20 +1869,20 @@ export const BlogArticlePage: React.FC = () => {
             >
               {article.categoryLabel}
             </span>
-            <span className="text-sm text-primary-500 flex items-center gap-1">
+            <span className="text-sm text-white/40 flex items-center gap-1">
               <Clock className="w-4 h-4" />
               {article.read_time} de lecture
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-900 mb-4 leading-tight">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 leading-tight">
             {article.title}
           </h1>
 
-          {article.subtitle && <p className="text-xl text-primary-600 mb-6">{article.subtitle}</p>}
+          {article.subtitle && <p className="text-xl text-white/40 mb-6">{article.subtitle}</p>}
 
           {/* Author and meta */}
-          <div className="flex flex-wrap items-center gap-6 pb-6 border-b border-primary-100">
+          <div className="flex flex-wrap items-center gap-6 pb-6 border-b border-white/10">
             {article.author && (
               <div className="flex items-center gap-3">
                 <div
@@ -1891,12 +1891,12 @@ export const BlogArticlePage: React.FC = () => {
                   {article.author.avatar}
                 </div>
                 <div>
-                  <p className="font-semibold text-primary-900">{article.author.name}</p>
-                  <p className="text-sm text-primary-500">{article.author.role}</p>
+                  <p className="font-medium text-white">{article.author.name}</p>
+                  <p className="text-sm text-white/40">{article.author.role}</p>
                 </div>
               </div>
             )}
-            <div className="flex items-center gap-4 text-sm text-primary-500">
+            <div className="flex items-center gap-4 text-sm text-white/40">
               <span className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
                 {new Date(article.published_at).toLocaleDateString('fr-FR', {
@@ -1924,8 +1924,8 @@ export const BlogArticlePage: React.FC = () => {
 
         {/* Table of Contents */}
         {article.tableOfContents && (
-          <nav className="mb-10 p-6 bg-primary-50 rounded-2xl">
-            <h3 className="font-bold text-primary-900 mb-4 flex items-center gap-2">
+          <nav className="mb-10 p-6 bg-white/5 rounded-2xl border border-white/10">
+            <h3 className="font-medium text-white mb-4 flex items-center gap-2">
               <BookOpen className="w-5 h-5" />
               Sommaire
             </h3>
@@ -1934,9 +1934,9 @@ export const BlogArticlePage: React.FC = () => {
                 <li key={item.id}>
                   <a
                     href={`#${item.id}`}
-                    className="flex items-center gap-3 text-primary-600 hover:text-primary-900 transition-colors"
+                    className="flex items-center gap-3 text-white/40 hover:text-[#C8A961] transition-colors"
                   >
-                    <span className="w-6 h-6 bg-primary-200 rounded-full flex items-center justify-center text-xs font-semibold text-primary-700">
+                    <span className="w-6 h-6 bg-white/10 rounded-full flex items-center justify-center text-xs font-medium text-white/60">
                       {index + 1}
                     </span>
                     {item.title}
@@ -1965,18 +1965,18 @@ export const BlogArticlePage: React.FC = () => {
                   .replace(/\| (.*) \|/g, '<tr><td>$1</td></tr>')
               ),
             }}
-            className="[&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-primary-900 [&>h2]:mt-12 [&>h2]:mb-6 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-primary-800 [&>h3]:mt-8 [&>h3]:mb-4 [&>p]:text-primary-700 [&>p]:leading-relaxed [&>p]:mb-4 [&>blockquote]:border-l-4 [&>blockquote]:border-primary-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-primary-600 [&>blockquote]:my-6 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-4 [&>li]:text-primary-700 [&>li]:mb-2 [&>code]:bg-primary-100 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm [&>code]:text-primary-800 [&>a]:text-green-600 [&>a]:underline [&>a]:hover:text-green-700"
+            className="[&>h2]:text-2xl [&>h2]:font-light [&>h2]:text-white [&>h2]:mt-12 [&>h2]:mb-6 [&>h3]:text-xl [&>h3]:font-medium [&>h3]:text-white/80 [&>h3]:mt-8 [&>h3]:mb-4 [&>p]:text-white/60 [&>p]:leading-relaxed [&>p]:mb-4 [&>blockquote]:border-l-4 [&>blockquote]:border-[#C8A961]/40 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-white/40 [&>blockquote]:my-6 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-4 [&>li]:text-white/60 [&>li]:mb-2 [&>code]:bg-white/10 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm [&>code]:text-white/80 [&>a]:text-[#C8A961] [&>a]:underline [&>a]:hover:text-[#C8A961]/80"
           />
         </div>
 
         {/* Tags */}
         {article.tags && (
-          <div className="mt-10 pt-6 border-t border-primary-100">
+          <div className="mt-10 pt-6 border-t border-white/10">
             <div className="flex flex-wrap gap-2">
               {article.tags.map((tag: string, i: number) => (
                 <span
                   key={i}
-                  className="px-3 py-1.5 bg-primary-100 text-primary-700 text-sm font-medium rounded-full"
+                  className="px-3 py-1.5 bg-white/5 text-white/60 text-sm font-medium rounded-full"
                 >
                   #{tag}
                 </span>
@@ -1986,14 +1986,14 @@ export const BlogArticlePage: React.FC = () => {
         )}
 
         {/* Actions */}
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 p-6 bg-primary-50 rounded-2xl">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 p-6 bg-white/5 rounded-2xl border border-white/10">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setLiked(!liked)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${
                 liked
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-white text-primary-600 hover:bg-primary-100'
+                  ? 'bg-green-500/10 text-green-400'
+                  : 'bg-white/5 text-white/60 hover:bg-white/10'
               }`}
             >
               <ThumbsUp className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
@@ -2003,8 +2003,8 @@ export const BlogArticlePage: React.FC = () => {
               onClick={() => setBookmarked(!bookmarked)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${
                 bookmarked
-                  ? 'bg-yellow-100 text-yellow-700'
-                  : 'bg-white text-primary-600 hover:bg-primary-100'
+                  ? 'bg-[#C8A961]/10 text-[#C8A961]'
+                  : 'bg-white/5 text-white/60 hover:bg-white/10'
               }`}
             >
               <Bookmark className={`w-5 h-5 ${bookmarked ? 'fill-current' : ''}`} />
@@ -2013,43 +2013,43 @@ export const BlogArticlePage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-primary-600 mr-2">Partager :</span>
+            <span className="text-sm text-white/40 mr-2">Partager :</span>
             <button
               onClick={() => handleShare('linkedin')}
-              className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-600 hover:bg-primary-100 transition-colors"
+              className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/60 hover:bg-white/10 transition-colors"
             >
               <Linkedin className="w-5 h-5" />
             </button>
             <button
               onClick={() => handleShare('twitter')}
-              className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-600 hover:bg-primary-100 transition-colors"
+              className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/60 hover:bg-white/10 transition-colors"
             >
               <Twitter className="w-5 h-5" />
             </button>
             <button
               onClick={() => handleShare('facebook')}
-              className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-600 hover:bg-primary-100 transition-colors"
+              className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/60 hover:bg-white/10 transition-colors"
             >
               <Facebook className="w-5 h-5" />
             </button>
             <button
               onClick={() => handleShare('email')}
-              className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-600 hover:bg-primary-100 transition-colors"
+              className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/60 hover:bg-white/10 transition-colors"
             >
               <Mail className="w-5 h-5" />
             </button>
             <button
               onClick={handleCopyLink}
-              className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-600 hover:bg-primary-100 transition-colors"
+              className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/60 hover:bg-white/10 transition-colors"
             >
-              {copied ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+              {copied ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
         {/* Author Bio */}
         {article.author && (
-          <div className="mt-10 p-6 bg-gradient-to-br from-primary-50 to-white rounded-2xl border border-primary-100">
+          <div className="mt-10 p-6 bg-[#1A1A1D] rounded-2xl border border-white/5">
             <div className="flex items-start gap-4">
               <div
                 className={`w-16 h-16 ${article.author.color} rounded-xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0`}
@@ -2057,15 +2057,15 @@ export const BlogArticlePage: React.FC = () => {
                 {article.author.avatar}
               </div>
               <div>
-                <h4 className="font-bold text-primary-900 mb-1">{article.author.name}</h4>
-                <p className="text-sm text-primary-600 mb-3">{article.author.role}</p>
-                <p className="text-primary-700 text-sm leading-relaxed">{article.author.bio}</p>
+                <h4 className="font-medium text-white mb-1">{article.author.name}</h4>
+                <p className="text-sm text-white/40 mb-3">{article.author.role}</p>
+                <p className="text-white/60 text-sm leading-relaxed">{article.author.bio}</p>
                 {article.author.linkedin && (
                   <a
                     href={article.author.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-primary-600 hover:text-primary-900 transition-colors"
+                    className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-[#C8A961] hover:text-[#C8A961]/80 transition-colors"
                   >
                     <Linkedin className="w-4 h-4" />
                     Suivre sur LinkedIn
@@ -2079,7 +2079,7 @@ export const BlogArticlePage: React.FC = () => {
         {/* Related Articles */}
         {relatedArticles && relatedArticles.length > 0 && (
           <div className="mt-16">
-            <h3 className="text-2xl font-bold text-primary-900 mb-8">Articles similaires</h3>
+            <h3 className="text-2xl font-light text-white mb-8">Articles similaires</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedArticles.map((relatedArticle: any) => {
                 const RelatedIcon = relatedArticle.icon;
@@ -2087,7 +2087,7 @@ export const BlogArticlePage: React.FC = () => {
                   <Link
                     key={relatedArticle.id}
                     to={`/blog/${relatedArticle.slug}`}
-                    className="group bg-white rounded-2xl overflow-hidden border border-primary-100 hover:border-primary-200 hover:shadow-xl transition-all duration-300"
+                    className="group bg-[#1A1A1D] rounded-2xl overflow-hidden border border-white/5 hover:border-white/10 hover:shadow-xl transition-all duration-300"
                   >
                     <div className={`relative h-32 bg-gradient-to-br ${relatedArticle.gradient}`}>
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -2095,13 +2095,13 @@ export const BlogArticlePage: React.FC = () => {
                       </div>
                     </div>
                     <div className="p-4">
-                      <span className="text-xs font-semibold text-green-600">
+                      <span className="text-xs font-medium text-[#C8A961]">
                         {relatedArticle.categoryLabel}
                       </span>
-                      <h4 className="font-bold text-primary-900 mt-2 line-clamp-2 group-hover:text-green-700 transition-colors">
+                      <h4 className="font-medium text-white mt-2 line-clamp-2 group-hover:text-[#C8A961] transition-colors">
                         {relatedArticle.title}
                       </h4>
-                      <span className="text-xs text-primary-500 mt-2 block">
+                      <span className="text-xs text-white/40 mt-2 block">
                         {relatedArticle.read_time}
                       </span>
                     </div>
@@ -2113,23 +2113,23 @@ export const BlogArticlePage: React.FC = () => {
         )}
 
         {/* CTA */}
-        <div className="mt-16 p-8 bg-gradient-to-br from-primary-900 to-primary-800 rounded-2xl text-center text-white">
-          <h3 className="text-2xl font-bold mb-4">Prêt à digitaliser vos processus ?</h3>
-          <p className="text-primary-200 mb-6 max-w-lg mx-auto">
+        <div className="mt-16 p-8 bg-[#0F0F11] rounded-2xl text-center text-white border border-white/5">
+          <h3 className="text-2xl font-light mb-4">Prêt à digitaliser vos processus ?</h3>
+          <p className="text-white/40 mb-6 max-w-lg mx-auto">
             Découvrez comment Advist peut transformer votre gestion documentaire avec un essai
             gratuit d'1 mois.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/register"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-primary-900 rounded-xl font-semibold hover:bg-primary-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#C8A961] text-[#0A0A0B] rounded-xl font-medium hover:bg-[#C8A961]/90 transition-colors"
             >
               Essai gratuit
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               to="/#demo"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-white/30 text-white rounded-xl font-semibold hover:bg-white/10 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-white/10 text-white/80 rounded-xl font-medium hover:bg-white/5 transition-colors"
             >
               Voir la démo
             </Link>
@@ -2138,25 +2138,25 @@ export const BlogArticlePage: React.FC = () => {
       </article>
 
       {/* Footer */}
-      <footer className="bg-primary-900 py-8 border-t border-primary-800">
+      <footer className="bg-[#0A0A0B] py-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <Link to="/" className="font-decorative text-xl font-bold text-white">
+            <Link to="/" className="font-decorative text-xl font-light text-white">
               Advist
             </Link>
-            <p className="text-primary-400 text-sm">
+            <p className="text-white/30 text-sm">
               © 2025 Advist by Atlas Studio. Tous droits réservés.
             </p>
             <div className="flex items-center gap-6">
               <Link
                 to="/legal/privacy"
-                className="text-sm text-primary-400 hover:text-white transition-colors"
+                className="text-sm text-white/30 hover:text-[#C8A961] transition-colors"
               >
                 Confidentialité
               </Link>
               <Link
                 to="/legal/cgu"
-                className="text-sm text-primary-400 hover:text-white transition-colors"
+                className="text-sm text-white/30 hover:text-[#C8A961] transition-colors"
               >
                 CGU
               </Link>

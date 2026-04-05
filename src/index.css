@@ -25,6 +25,11 @@
     --color-primary: #171717;
     --color-primary-rgb: 23 23 23;
 
+    /* Gold accent */
+    --color-gold: #c8a961;
+    --color-gold-light: #d4b872;
+    --color-gold-dark: #b89a52;
+
     /* Texte */
     --color-text-primary: #171717;
     --color-text-secondary: #737373;

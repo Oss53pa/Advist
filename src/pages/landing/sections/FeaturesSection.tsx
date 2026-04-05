@@ -21,11 +21,11 @@ export const FeaturesSection: React.FC = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   return (
-    <section ref={ref} id="features" className="py-32 bg-white relative overflow-hidden">
+    <section ref={ref} id="features" className="py-32 bg-[#0F0F11] relative overflow-hidden">
       {/* Subtle background */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#C8A961]/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#C8A961]/10 to-transparent" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6">
@@ -33,16 +33,16 @@ export const FeaturesSection: React.FC = () => {
         <div
           className={`text-center mb-20 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full mb-6">
-            <Sparkles className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-500">Fonctionnalites</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#C8A961]/10 border border-[#C8A961]/20 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-[#C8A961]" />
+            <span className="text-sm font-medium text-[#C8A961]">Fonctionnalites</span>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-6 tracking-tight">
             Tout ce dont vous avez
             <br />
-            <span className="text-gray-400">besoin pour reussir</span>
+            <span className="text-[#C8A961]">besoin pour reussir</span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-base text-white/40 font-light max-w-2xl mx-auto">
             Une plateforme complete pour digitaliser et automatiser vos processus documentaires
           </p>
         </div>
@@ -57,21 +57,21 @@ export const FeaturesSection: React.FC = () => {
             onMouseEnter={() => setHoveredCard(0)}
             onMouseLeave={() => setHoveredCard(null)}
           >
-            <div className="absolute inset-0 bg-gray-950" />
+            <div className="absolute inset-0 bg-[#1A1A1D]" />
 
             <div className="relative p-8 md:p-12 h-full flex flex-col justify-between min-h-[500px]">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur rounded-full mb-6">
-                  <FileText className="w-4 h-4 text-white/70" />
-                  <span className="text-sm font-medium text-white/70">Gestion documentaire</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#C8A961]/10 backdrop-blur rounded-full mb-6">
+                  <FileText className="w-4 h-4 text-[#C8A961]" />
+                  <span className="text-sm font-medium text-[#C8A961]">Gestion documentaire</span>
                 </div>
 
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                <h3 className="text-2xl md:text-3xl font-light text-white mb-4">
                   Centralisez tous
                   <br />
                   vos documents
                 </h3>
-                <p className="text-lg text-gray-500 max-w-md">
+                <p className="text-lg text-white/40 max-w-md">
                   Versioning automatique, recherche full-text, OCR integre et organisation
                   intelligente de vos fichiers.
                 </p>
@@ -81,8 +81,8 @@ export const FeaturesSection: React.FC = () => {
               <div className="mt-8">
                 <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10">
-                    <Search className="w-4 h-4 text-gray-500" />
-                    <span className="text-sm text-gray-500">
+                    <Search className="w-4 h-4 text-white/30" />
+                    <span className="text-sm text-white/30">
                       Rechercher dans 2,456 documents...
                     </span>
                   </div>
@@ -97,14 +97,14 @@ export const FeaturesSection: React.FC = () => {
                         className={`flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer ${hoveredCard === 0 ? 'animate-fade-in' : ''}`}
                         style={{ animationDelay: `${i * 100}ms` }}
                       >
-                        <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                          <FileText className="w-5 h-5 text-white/50" />
+                        <div className="w-10 h-10 bg-[#C8A961]/10 rounded-lg flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-[#C8A961]/50" />
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-medium text-white/90">{doc.name}</p>
-                          <p className="text-xs text-gray-600">Modifie il y a 2h</p>
+                          <p className="text-xs text-white/30">Modifie il y a 2h</p>
                         </div>
-                        <div className="w-2 h-2 bg-white/30 rounded-full" />
+                        <div className="w-2 h-2 bg-[#C8A961]/30 rounded-full" />
                       </div>
                     ))}
                   </div>
@@ -116,7 +116,7 @@ export const FeaturesSection: React.FC = () => {
                 {['Versioning auto', 'OCR integre', 'Full-text search', 'Tags'].map((tag, i) => (
                   <span
                     key={i}
-                    className="px-3 py-1.5 bg-white/10 rounded-full text-xs font-medium text-gray-400"
+                    className="px-3 py-1.5 bg-[#C8A961]/10 rounded-full text-xs font-medium text-[#C8A961]/70"
                   >
                     {tag}
                   </span>
@@ -127,18 +127,18 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Workflows Card */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-gray-100 transition-all duration-700 delay-100 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1A1A1D] transition-all duration-700 delay-100 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
             onMouseEnter={() => setHoveredCard(1)}
             onMouseLeave={() => setHoveredCard(null)}
           >
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[280px]">
-              <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
-                <GitBranch className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-[#C8A961] rounded-xl flex items-center justify-center mb-4">
+                <GitBranch className="w-6 h-6 text-[#0A0A0B]" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Workflows sur mesure</h3>
-              <p className="text-sm text-gray-500 mb-auto">
+              <h3 className="text-lg font-medium text-white mb-2">Workflows sur mesure</h3>
+              <p className="text-sm text-white/40 mb-auto">
                 Creez des circuits de validation multi-niveaux avec conditions et delegations.
               </p>
 
@@ -148,13 +148,13 @@ export const FeaturesSection: React.FC = () => {
                   <React.Fragment key={i}>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                        i < 2 ? 'bg-gray-900 text-white' : 'bg-gray-300 text-gray-500'
+                        i < 2 ? 'bg-[#C8A961] text-[#0A0A0B]' : 'bg-white/10 text-white/40'
                       }`}
                     >
                       {i < 2 ? <Check className="w-4 h-4" /> : i + 1}
                     </div>
                     {i < 2 && (
-                      <div className={`w-8 h-0.5 ${i < 1 ? 'bg-gray-900' : 'bg-gray-300'}`} />
+                      <div className={`w-8 h-0.5 ${i < 1 ? 'bg-[#C8A961]' : 'bg-white/20'}`} />
                     )}
                   </React.Fragment>
                 ))}
@@ -164,16 +164,16 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Signature Card */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-gray-950 transition-all duration-700 delay-200 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#0A0A0B] border border-[#C8A961]/10 transition-all duration-700 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[280px]">
-              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-4">
-                <PenTool className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-[#C8A961]/10 rounded-xl flex items-center justify-center mb-4">
+                <PenTool className="w-6 h-6 text-[#C8A961]" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Signature electronique</h3>
-              <p className="text-sm text-gray-500 mb-auto">
+              <h3 className="text-lg font-medium text-white mb-2">Signature electronique</h3>
+              <p className="text-sm text-white/40 mb-auto">
                 Signez legalement avec valeur juridique, horodatage qualifie et certificat eIDAS.
               </p>
 
@@ -183,15 +183,15 @@ export const FeaturesSection: React.FC = () => {
                   <path
                     d="M10,30 Q30,10 50,25 T90,20 T130,30 T170,25"
                     fill="none"
-                    stroke="rgba(255,255,255,0.4)"
+                    stroke="rgba(200,169,97,0.4)"
                     strokeWidth="2"
                     strokeLinecap="round"
                     className="animate-draw"
                   />
                 </svg>
                 <div className="flex items-center gap-2 mt-2">
-                  <Lock className="w-3 h-3 text-white/40" />
-                  <span className="text-xs text-white/40">Certifie eIDAS</span>
+                  <Lock className="w-3 h-3 text-[#C8A961]/40" />
+                  <span className="text-xs text-[#C8A961]/40">Certifie eIDAS</span>
                 </div>
               </div>
             </div>
@@ -199,25 +199,25 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Stats Row */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-gray-100 transition-all duration-700 delay-300 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1A1A1D] transition-all duration-700 delay-300 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[200px]">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-[#C8A961] rounded-xl flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-[#0A0A0B]" />
                 </div>
-                <TrendingUp className="w-6 h-6 text-gray-400" />
+                <TrendingUp className="w-6 h-6 text-[#C8A961]/40" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">Analytics temps reel</h3>
-              <p className="text-sm text-gray-500 mb-auto">KPIs et tableaux de bord</p>
+              <h3 className="text-lg font-medium text-white mb-1">Analytics temps reel</h3>
+              <p className="text-sm text-white/40 mb-auto">KPIs et tableaux de bord</p>
 
               <div className="flex items-end gap-1 h-16 mt-4">
                 {[40, 65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 80].map((h, i) => (
                   <div
                     key={i}
-                    className="flex-1 bg-gray-300 rounded-t transition-all duration-500 group-hover:bg-gray-900"
+                    className="flex-1 bg-[#C8A961]/20 rounded-t transition-all duration-500 group-hover:bg-[#C8A961]/40"
                     style={{ height: `${h}%` }}
                   />
                 ))}
@@ -227,21 +227,21 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Mobile App Card */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-gray-950 transition-all duration-700 delay-400 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#0A0A0B] border border-white/5 transition-all duration-700 delay-400 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             <div className="absolute top-4 right-4">
-              <span className="px-2 py-1 bg-white/10 rounded-full text-xs font-bold text-white/60">
+              <span className="px-2 py-1 bg-[#C8A961]/10 rounded-full text-xs font-medium text-[#C8A961]">
                 À VENIR
               </span>
             </div>
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[200px]">
               <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-4">
-                <Smartphone className="w-6 h-6 text-white" />
+                <Smartphone className="w-6 h-6 text-white/70" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-1">Application mobile</h3>
-              <p className="text-sm text-gray-500">iOS & Android - Bientôt disponible</p>
+              <h3 className="text-lg font-medium text-white mb-1">Application mobile</h3>
+              <p className="text-sm text-white/40">iOS & Android - Bientôt disponible</p>
 
               <div className="flex gap-2 mt-auto pt-4">
                 <div className="flex-1 h-8 bg-white/10 rounded-lg flex items-center justify-center">
@@ -256,20 +256,23 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Security Card */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-gray-100 transition-all duration-700 delay-500 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1A1A1D] transition-all duration-700 delay-500 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[200px]">
-              <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-[#C8A961] rounded-xl flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-[#0A0A0B]" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">Securite maximale</h3>
-              <p className="text-sm text-gray-500">Chiffrement AES-256, detection fraude IA</p>
+              <h3 className="text-lg font-medium text-white mb-1">Securite maximale</h3>
+              <p className="text-sm text-white/40">Chiffrement AES-256, detection fraude IA</p>
 
               <div className="flex flex-wrap gap-2 mt-auto pt-4">
                 {['AES-256', 'ISO 27001', 'RGPD'].map((badge, i) => (
-                  <span key={i} className="px-2 py-1 bg-gray-200 rounded text-xs text-gray-600">
+                  <span
+                    key={i}
+                    className="px-2 py-1 bg-[#C8A961]/10 rounded text-xs text-[#C8A961]/70"
+                  >
                     {badge}
                   </span>
                 ))}
@@ -283,7 +286,7 @@ export const FeaturesSection: React.FC = () => {
           className={`mt-16 text-center transition-all duration-700 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <Link to="/register">
-            <button className="group inline-flex items-center gap-3 px-8 py-4 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all hover:shadow-xl">
+            <button className="group inline-flex items-center gap-3 px-7 py-3.5 bg-[#C8A961] text-[#0A0A0B] text-sm font-medium rounded-full hover:bg-[#D4B872] transition-all hover:shadow-[0_0_40px_8px_rgba(200,169,97,0.15)]">
               Decouvrir toutes les fonctionnalites
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>

@@ -7,23 +7,21 @@ export const PricingSection: React.FC = () => {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section ref={ref} id="pricing" className="py-32 bg-gray-50 relative overflow-hidden">
+    <section ref={ref} id="pricing" className="py-32 bg-[#0F0F11] relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6">
         {/* Header */}
         <div
           className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 mb-6">
-            <Zap className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-500">Tarifs transparents</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#C8A961]/10 rounded-full border border-[#C8A961]/20 mb-6">
+            <Zap className="w-4 h-4 text-[#C8A961]" />
+            <span className="text-sm font-medium text-[#C8A961]">Tarifs transparents</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Choisissez votre plan
-          </h2>
-          <p className="text-xl text-gray-400 mb-2">
+          <h2 className="text-3xl md:text-4xl font-light text-white mb-4">Choisissez votre plan</h2>
+          <p className="text-base text-white/40 font-light mb-2">
             1 mois d'essai gratuit sur tous les plans. Droit de retractation inclus.
           </p>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-white/30">
             Signataires et validateurs externes illimites sur tous les plans.
           </p>
         </div>
@@ -32,13 +30,13 @@ export const PricingSection: React.FC = () => {
         <div className="grid md:grid-cols-2 max-w-5xl mx-auto gap-6 lg:gap-8">
           {/* Business Plan */}
           <div
-            className={`relative rounded-3xl bg-gray-900 text-white shadow-2xl shadow-gray-900/10 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            className={`relative rounded-3xl bg-[#1A1A1D] border border-[#C8A961]/20 shadow-2xl shadow-[#C8A961]/5 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Popular badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-              <div className="flex items-center gap-1.5 px-4 py-1.5 bg-white rounded-full shadow-lg">
-                <Star className="w-4 h-4 text-gray-900 fill-gray-900" />
-                <span className="text-sm font-bold text-gray-900">Plus populaire</span>
+              <div className="flex items-center gap-1.5 px-4 py-1.5 bg-[#C8A961] rounded-full shadow-lg">
+                <Star className="w-4 h-4 text-[#0A0A0B] fill-[#0A0A0B]" />
+                <span className="text-sm font-medium text-[#0A0A0B]">Plus populaire</span>
               </div>
             </div>
 
@@ -46,34 +44,34 @@ export const PricingSection: React.FC = () => {
               {/* Plan header */}
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Building2 className="w-5 h-5 text-white/60" />
-                  <h3 className="text-xl font-bold text-white">Business</h3>
+                  <Building2 className="w-5 h-5 text-[#C8A961]/60" />
+                  <h3 className="text-lg font-medium text-white">Business</h3>
                 </div>
-                <p className="text-sm text-gray-400">PME, directions juridiques, services achats</p>
+                <p className="text-sm text-white/40">PME, directions juridiques, services achats</p>
               </div>
 
               {/* Price */}
               <div className="mb-2">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-white">25 000</span>
-                  <span className="text-sm text-gray-400">FCFA/mois</span>
+                  <span className="text-3xl font-medium text-[#C8A961]">25 000</span>
+                  <span className="text-sm text-white/40">FCFA/mois</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-white/30 mt-1">
                   ~38 € · par utilisateur emetteur · signataires illimites
                 </p>
               </div>
 
               {/* DocuSign comparison */}
               <div className="mb-6 px-3 py-2 bg-white/5 rounded-xl border border-white/10">
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-white/40">
                   DocuSign Standard = 45 $/mois/utilisateur.{' '}
-                  <span className="text-white font-semibold">ADVIST = 2x moins cher</span>, concu
+                  <span className="text-[#C8A961] font-medium">ADVIST = 2x moins cher</span>, concu
                   pour l'Afrique.
                 </p>
               </div>
 
               {/* Section title */}
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              <p className="text-xs font-medium text-[#C8A961]/60 uppercase tracking-wider mb-3">
                 Workflow documentaire complet
               </p>
 
@@ -99,10 +97,10 @@ export const PricingSection: React.FC = () => {
                   'Support email',
                 ].map((feature, j) => (
                   <li key={j} className="flex items-start gap-2">
-                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-white/10">
-                      <Check className="w-2.5 h-2.5 text-white" />
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-[#C8A961]/10">
+                      <Check className="w-2.5 h-2.5 text-[#C8A961]" />
                     </div>
-                    <span className="text-xs text-gray-300">{feature}</span>
+                    <span className="text-xs text-white/50">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -110,18 +108,18 @@ export const PricingSection: React.FC = () => {
               {/* Add-ons */}
               <div className="mb-6 space-y-2">
                 <div className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg">
-                  <span className="text-xs text-gray-400">Emetteur supplementaire</span>
-                  <span className="text-xs font-semibold text-white">15 000 FCFA/mois</span>
+                  <span className="text-xs text-white/40">Emetteur supplementaire</span>
+                  <span className="text-xs font-medium text-[#C8A961]">15 000 FCFA/mois</span>
                 </div>
                 <div className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg">
-                  <span className="text-xs text-gray-400">Pack 100 documents suppl.</span>
-                  <span className="text-xs font-semibold text-white">10 000 FCFA/mois</span>
+                  <span className="text-xs text-white/40">Pack 100 documents suppl.</span>
+                  <span className="text-xs font-medium text-[#C8A961]">10 000 FCFA/mois</span>
                 </div>
               </div>
 
               {/* CTA */}
               <Link to="/register">
-                <button className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 group bg-white text-gray-900 hover:bg-gray-100">
+                <button className="w-full py-3.5 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 group bg-[#C8A961] text-[#0A0A0B] hover:bg-[#D4B872]">
                   Commencer l'essai gratuit
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -131,13 +129,13 @@ export const PricingSection: React.FC = () => {
 
           {/* Entreprise Plan */}
           <div
-            className={`relative rounded-3xl bg-white border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-500 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            className={`relative rounded-3xl bg-[#1A1A1D] border border-white/10 hover:border-[#C8A961]/20 hover:shadow-lg transition-all duration-500 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Premium badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-              <div className="flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full shadow-lg">
-                <Shield className="w-4 h-4 text-white" />
-                <span className="text-sm font-bold text-white">Premium</span>
+              <div className="flex items-center gap-1.5 px-4 py-1.5 bg-white/10 border border-white/20 rounded-full shadow-lg">
+                <Shield className="w-4 h-4 text-[#C8A961]" />
+                <span className="text-sm font-medium text-[#C8A961]">Premium</span>
               </div>
             </div>
 
@@ -145,34 +143,34 @@ export const PricingSection: React.FC = () => {
               {/* Plan header */}
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Shield className="w-5 h-5 text-gray-400" />
-                  <h3 className="text-xl font-bold text-gray-900">Entreprise</h3>
+                  <Shield className="w-5 h-5 text-white/40" />
+                  <h3 className="text-lg font-medium text-white">Entreprise</h3>
                 </div>
-                <p className="text-sm text-gray-400">Grands comptes, groupes, administrations</p>
+                <p className="text-sm text-white/40">Grands comptes, groupes, administrations</p>
               </div>
 
               {/* Price */}
               <div className="mb-2">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-gray-900">150 000</span>
-                  <span className="text-sm text-gray-400">FCFA/mois</span>
+                  <span className="text-3xl font-medium text-white">150 000</span>
+                  <span className="text-sm text-white/40">FCFA/mois</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-white/30 mt-1">
                   ~230 € · utilisateurs illimites · documents illimites
                 </p>
               </div>
 
               {/* DocuSign comparison */}
-              <div className="mb-6 px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                <p className="text-xs text-gray-500">
+              <div className="mb-6 px-3 py-2 bg-white/5 rounded-xl border border-white/10">
+                <p className="text-xs text-white/40">
                   DocuSign Business Pro = 40 $/mois/utilisateur.{' '}
-                  <span className="text-gray-900 font-semibold">ADVIST Entreprise : prix fixe</span>
-                  , pas de surprise.
+                  <span className="text-white font-medium">ADVIST Entreprise : prix fixe</span>, pas
+                  de surprise.
                 </p>
               </div>
 
               {/* Section title */}
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
                 Tout Business, plus :
               </p>
 
@@ -200,25 +198,25 @@ export const PricingSection: React.FC = () => {
                   'SLA 99.5%',
                 ].map((feature, j) => (
                   <li key={j} className="flex items-start gap-2">
-                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-gray-100">
-                      <Check className="w-2.5 h-2.5 text-gray-700" />
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-white/10">
+                      <Check className="w-2.5 h-2.5 text-white/70" />
                     </div>
-                    <span className="text-xs text-gray-500">{feature}</span>
+                    <span className="text-xs text-white/40">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               {/* Add-on */}
               <div className="mb-6">
-                <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
-                  <span className="text-xs text-gray-400">Multi-filiales (5+ entites)</span>
-                  <span className="text-xs font-semibold text-gray-700">Sur devis</span>
+                <div className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg">
+                  <span className="text-xs text-white/40">Multi-filiales (5+ entites)</span>
+                  <span className="text-xs font-medium text-white/70">Sur devis</span>
                 </div>
               </div>
 
               {/* CTA */}
               <Link to="/contact">
-                <button className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 group bg-gray-900 text-white hover:bg-gray-800">
+                <button className="w-full py-3.5 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 group bg-white/10 text-white hover:bg-white/15 border border-white/10">
                   Nous contacter
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -231,14 +229,14 @@ export const PricingSection: React.FC = () => {
         <div
           className={`mt-20 max-w-4xl mx-auto transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <h3 className="text-2xl font-bold text-gray-900 text-center mb-10">
+          <h3 className="text-xl font-normal text-white text-center mb-10">
             Pourquoi ADVIST vs DocuSign en Afrique ?
           </h3>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Ce que DocuSign ne fait pas */}
-            <div className="p-6 bg-white rounded-2xl border border-gray-200">
-              <p className="text-sm font-semibold text-red-500 uppercase tracking-wider mb-4">
+            <div className="p-6 bg-[#1A1A1D] rounded-2xl border border-white/10">
+              <p className="text-sm font-medium text-red-400 uppercase tracking-wider mb-4">
                 Ce que DocuSign ne fait pas
               </p>
               <ul className="space-y-3">
@@ -252,15 +250,15 @@ export const PricingSection: React.FC = () => {
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <X className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-600">{item}</span>
+                    <span className="text-sm text-white/50">{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* L'avantage ADVIST */}
-            <div className="p-6 bg-gray-900 rounded-2xl">
-              <p className="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-4">
+            <div className="p-6 bg-[#C8A961]/5 rounded-2xl border border-[#C8A961]/20">
+              <p className="text-sm font-medium text-[#C8A961] uppercase tracking-wider mb-4">
                 L'avantage ADVIST
               </p>
               <ul className="space-y-3">
@@ -273,8 +271,8 @@ export const PricingSection: React.FC = () => {
                   '2 a 3x moins cher que DocuSign',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-300">{item}</span>
+                    <Check className="w-4 h-4 text-[#C8A961] flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-white/60">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -286,22 +284,20 @@ export const PricingSection: React.FC = () => {
         <div
           className={`mt-16 text-center transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex flex-col items-center gap-3 p-6 bg-white rounded-2xl border border-gray-200">
+          <div className="inline-flex flex-col items-center gap-3 p-6 bg-[#1A1A1D] rounded-2xl border border-white/10">
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-gray-400" />
-              <span className="text-sm font-semibold text-gray-900">Bientot disponible</span>
+              <Clock className="w-5 h-5 text-[#C8A961]/60" />
+              <span className="text-sm font-medium text-white">Bientot disponible</span>
             </div>
             <div className="flex flex-wrap justify-center gap-3 text-xs">
-              <span className="px-3 py-1.5 bg-gray-100 rounded-full text-gray-600">
+              <span className="px-3 py-1.5 bg-white/5 rounded-full text-white/50">
                 Signature qualifiee (QES)
               </span>
-              <span className="px-3 py-1.5 bg-gray-100 rounded-full text-gray-600">
+              <span className="px-3 py-1.5 bg-white/5 rounded-full text-white/50">
                 Integration Mobile Money
               </span>
-              <span className="px-3 py-1.5 bg-gray-100 rounded-full text-gray-600">
-                PWA offline
-              </span>
-              <span className="px-3 py-1.5 bg-gray-100 rounded-full text-gray-600">
+              <span className="px-3 py-1.5 bg-white/5 rounded-full text-white/50">PWA offline</span>
+              <span className="px-3 py-1.5 bg-white/5 rounded-full text-white/50">
                 Collaboration temps reel
               </span>
             </div>

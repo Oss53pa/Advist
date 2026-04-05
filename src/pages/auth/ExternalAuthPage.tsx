@@ -82,23 +82,24 @@ export default function ExternalAuthPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#f8fafc',
+        background: '#0A0A0B',
       }}
     >
       <div style={{ maxWidth: 400, width: '100%', padding: 24, textAlign: 'center' }}>
         <div
           style={{
-            background: '#fff',
+            background: '#1A1A1D',
             borderRadius: 16,
             padding: 40,
-            boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+            border: '1px solid rgba(255,255,255,0.05)',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
           }}
         >
           <div
             style={{
               width: 64,
               height: 64,
-              background: '#059669',
+              background: '#C8A961',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
@@ -106,25 +107,29 @@ export default function ExternalAuthPage() {
               margin: '0 auto 16px',
             }}
           >
-            <span style={{ color: '#fff', fontSize: 28, fontWeight: 700 }}>A</span>
+            <span style={{ color: '#0A0A0B', fontSize: 28, fontWeight: 300 }}>A</span>
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111', marginBottom: 8 }}>Advist</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 300, color: '#C8A961', marginBottom: 8 }}>
+            Advist
+          </h1>
 
           {status === 'loading' && (
             <div>
-              <p style={{ color: '#666', fontSize: 14, marginBottom: 16 }}>Connexion en cours...</p>
+              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, marginBottom: 16 }}>
+                Connexion en cours...
+              </p>
               <div
                 style={{
                   width: 32,
                   height: 32,
-                  border: '3px solid #e5e7eb',
-                  borderTopColor: '#059669',
+                  border: '3px solid rgba(255,255,255,0.1)',
+                  borderTopColor: '#C8A961',
                   borderRadius: '50%',
                   animation: 'spin 1s linear infinite',
                   margin: '0 auto',
                 }}
               />
-              <p style={{ color: '#999', fontSize: 12, marginTop: 16 }}>
+              <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, marginTop: 16 }}>
                 Validation de votre session Atlas Studio
               </p>
               <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -136,17 +141,19 @@ export default function ExternalAuthPage() {
               <p style={{ color: '#ef4444', fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
                 Connexion impossible
               </p>
-              <p style={{ color: '#666', fontSize: 13, marginBottom: 24 }}>{errorMessage}</p>
+              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 }}>
+                {errorMessage}
+              </p>
               <a
                 href="https://atlas-studio.org/portal"
                 style={{
                   display: 'inline-block',
-                  background: '#059669',
-                  color: '#fff',
+                  background: '#C8A961',
+                  color: '#0A0A0B',
                   padding: '10px 24px',
                   borderRadius: 8,
                   textDecoration: 'none',
-                  fontWeight: 700,
+                  fontWeight: 500,
                   fontSize: 13,
                 }}
               >

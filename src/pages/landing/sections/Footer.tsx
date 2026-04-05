@@ -35,16 +35,16 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer id="contact" className="bg-gray-900">
+    <footer id="contact" className="bg-[#0A0A0B]">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand column */}
           <div className="col-span-2">
             <Link to="/" className="inline-flex items-center mb-6">
-              <span className="font-decorative text-2xl text-white">Advist</span>
+              <span className="font-decorative text-2xl text-[#C8A961]">Advist</span>
             </Link>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-xs">
+            <p className="text-white/40 text-sm leading-relaxed mb-6 max-w-xs">
               {t(
                 'footer.description',
                 'La plateforme tout-en-un pour digitaliser vos circuits de validation et signer electroniquement en toute securite.'
@@ -55,19 +55,19 @@ export const Footer: React.FC = () => {
             <div className="space-y-3 mb-6">
               <a
                 href="mailto:contact@advist.com"
-                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors"
+                className="flex items-center gap-3 text-white/40 hover:text-[#C8A961] transition-colors"
               >
                 <Mail className="w-4 h-4" />
                 <span className="text-sm">contact@advist.com</span>
               </a>
               <a
                 href="tel:+2250102030405"
-                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors"
+                className="flex items-center gap-3 text-white/40 hover:text-[#C8A961] transition-colors"
               >
                 <Phone className="w-4 h-4" />
                 <span className="text-sm">+225 01 02 03 04 05</span>
               </a>
-              <div className="flex items-center gap-3 text-gray-400">
+              <div className="flex items-center gap-3 text-white/40">
                 <MapPin className="w-4 h-4" />
                 <span className="text-sm">Abidjan, Cote d'Ivoire</span>
               </div>
@@ -82,9 +82,9 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center transition-colors group"
+                  className="w-10 h-10 bg-white/5 hover:bg-[#C8A961]/10 rounded-xl flex items-center justify-center transition-colors group"
                 >
-                  <social.icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                  <social.icon className="w-5 h-5 text-white/40 group-hover:text-[#C8A961] transition-colors" />
                 </a>
               ))}
             </div>
@@ -92,7 +92,7 @@ export const Footer: React.FC = () => {
 
           {/* Links columns */}
           <div>
-            <h4 className="font-semibold text-white mb-4">
+            <h4 className="font-medium text-[#C8A961] mb-4">
               {t('footer.sections.product', 'Produit')}
             </h4>
             <ul className="space-y-3">
@@ -101,14 +101,14 @@ export const Footer: React.FC = () => {
                   {link.href.startsWith('#') ? (
                     <a
                       href={link.href}
-                      className="text-sm text-gray-400 hover:text-white transition-colors"
+                      className="text-sm text-white/40 hover:text-[#C8A961] transition-colors"
                     >
                       {link.label}
                     </a>
                   ) : (
                     <Link
                       to={link.href}
-                      className="text-sm text-gray-400 hover:text-white transition-colors"
+                      className="text-sm text-white/40 hover:text-[#C8A961] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -119,7 +119,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">
+            <h4 className="font-medium text-[#C8A961] mb-4">
               {t('footer.sections.resources', 'Ressources')}
             </h4>
             <ul className="space-y-3">
@@ -129,7 +129,7 @@ export const Footer: React.FC = () => {
                     href={link.href}
                     target={(link as any).external ? '_blank' : undefined}
                     rel={(link as any).external ? 'noopener noreferrer' : undefined}
-                    className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1 text-sm text-white/40 hover:text-[#C8A961] transition-colors"
                   >
                     {link.label}
                     {(link as any).external && <ArrowUpRight className="w-3 h-3" />}
@@ -140,13 +140,13 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">Legal</h4>
+            <h4 className="font-medium text-[#C8A961] mb-4">Legal</h4>
             <ul className="space-y-3">
               {LEGAL_LINKS.map((link, i) => (
                 <li key={i}>
                   <Link
                     to={link.href}
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                    className="text-sm text-white/40 hover:text-[#C8A961] transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -162,13 +162,13 @@ export const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-              <p className="text-sm text-gray-500">
-                © {currentYear} <span className="font-decorative">Advist</span> by{' '}
+              <p className="text-sm text-white/30">
+                © {currentYear} <span className="font-decorative text-[#C8A961]">Advist</span> by{' '}
                 <a
                   href="https://atlas-studio.org"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-decorative hover:text-white transition-colors"
+                  className="font-decorative text-[#C8A961]/60 hover:text-[#C8A961] transition-colors"
                 >
                   Atlas Studio
                 </a>
@@ -180,27 +180,36 @@ export const Footer: React.FC = () => {
                     key={i}
                     className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md"
                   >
-                    <Shield className="w-3 h-3 text-emerald-500" />
-                    <span className="text-xs text-gray-400">{cert}</span>
+                    <Shield className="w-3 h-3 text-[#C8A961]/50" />
+                    <span className="text-xs text-white/40">{cert}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="text-xs text-gray-600 text-center md:text-right">
-              <span className="font-semibold text-gray-500">ADVIST</span>
-              <span className="mx-2">-</span>
-              <span>Approval</span>
-              <span className="mx-1">·</span>
-              <span>Documentation</span>
-              <span className="mx-1">·</span>
-              <span>Validation</span>
-              <span className="mx-1">·</span>
-              <span>Integration</span>
-              <span className="mx-1">·</span>
-              <span>Signature</span>
-              <span className="mx-1">·</span>
-              <span>Tracking</span>
+            <div className="text-center md:text-right">
+              <div className="text-xs text-white/40">
+                <span className="font-medium text-[#C8A961]">A</span>
+                <span>pprobation</span>
+                <span className="mx-1">·</span>
+                <span className="font-medium text-[#C8A961]">D</span>
+                <span>ocumentaire</span>
+                <span className="mx-1">·</span>
+                <span className="font-medium text-[#C8A961]">V</span>
+                <span>alidation</span>
+                <span className="mx-1">·</span>
+                <span className="font-medium text-[#C8A961]">I</span>
+                <span>ntégrité</span>
+                <span className="mx-1">·</span>
+                <span className="font-medium text-[#C8A961]">S</span>
+                <span>écurité</span>
+                <span className="mx-1">·</span>
+                <span className="font-medium text-[#C8A961]">T</span>
+                <span>raçabilité</span>
+              </div>
+              <p className="text-[11px] text-[#C8A961]/40 mt-1 italic">
+                « L'avis de confiance, la trace qui sécurise. »
+              </p>
             </div>
           </div>
         </div>

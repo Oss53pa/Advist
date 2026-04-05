@@ -42,16 +42,16 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-advist-gold/5 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center p-4">
       {/* Decorative Elements */}
-      <div className="fixed bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-advist-navy/10 to-transparent rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
-      <div className="fixed top-1/4 right-0 w-96 h-96 bg-advist-gold/10 rounded-full blur-3xl translate-x-1/3" />
+      <div className="fixed bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-[#C8A961]/10 to-transparent rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
+      <div className="fixed top-1/4 right-0 w-96 h-96 bg-[#C8A961]/5 rounded-full blur-3xl translate-x-1/3" />
 
       <div className="relative w-full max-w-md">
         {/* Retour */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-4 py-2 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-dark/5 rounded-xl mb-6 transition-all duration-300"
+          className="inline-flex items-center gap-2 px-4 py-2 text-white/40 hover:text-white hover:bg-white/5 rounded-xl mb-6 transition-all duration-300"
         >
           <ArrowLeft size={20} />
           <span>{t('common.back')}</span>
@@ -60,17 +60,13 @@ export const LoginPage: React.FC = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="mb-4">
-            <h1 className="font-decorative text-3xl bg-gradient-to-r from-advist-navy to-primary-600 bg-clip-text text-transparent">
-              Advist
-            </h1>
+            <h1 className="font-decorative text-3xl text-[#C8A961]">Advist</h1>
           </div>
-          <p className="text-advist-text-secondary">
-            {t('landing.hero.subtitle', 'Gestion Documentaire')}
-          </p>
+          <p className="text-white/40">{t('landing.hero.subtitle', 'Gestion Documentaire')}</p>
         </div>
 
-        <Card padding="lg">
-          <h2 className="text-xl font-semibold text-advist-gray900 mb-6">{t('auth.login')}</h2>
+        <Card padding="lg" className="!bg-[#1A1A1D] !border !border-white/5">
+          <h2 className="text-xl font-light text-white mb-6">{t('auth.login')}</h2>
 
           {error && (
             <div className="mb-4 p-3 bg-advist-red/10 border border-advist-red/30 rounded-xl text-advist-red text-sm">
@@ -116,13 +112,13 @@ export const LoginPage: React.FC = () => {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-advist-blue-light text-advist-gray900 focus:ring-advist-gold"
+                  className="w-4 h-4 rounded border-white/10 bg-white/5 text-[#C8A961] focus:ring-[#C8A961]"
                 />
-                <span className="text-sm text-advist-gray900">{t('auth.rememberMe')}</span>
+                <span className="text-sm text-white/80">{t('auth.rememberMe')}</span>
               </label>
               <Link
                 to="/forgot-password"
-                className="text-sm text-advist-gray900 hover:text-advist-gray900"
+                className="text-sm text-[#C8A961] hover:text-[#C8A961]/80"
               >
                 {t('auth.forgotPassword')}
               </Link>
@@ -134,10 +130,10 @@ export const LoginPage: React.FC = () => {
           </form>
 
           <div className="mt-6 text-center">
-            <span className="text-advist-text-secondary">{t('auth.noAccount')}</span>{' '}
+            <span className="text-white/40">{t('auth.noAccount')}</span>{' '}
             <Link
               to="/register"
-              className="text-advist-gold font-semibold hover:text-advist-gold-dark transition-colors"
+              className="text-[#C8A961] font-medium hover:text-[#C8A961]/80 transition-colors"
             >
               {t('auth.register')}
             </Link>
