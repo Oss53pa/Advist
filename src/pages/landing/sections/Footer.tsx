@@ -41,9 +41,17 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand column */}
           <div className="col-span-2">
-            <Link to="/" className="inline-flex items-center mb-6">
+            <Link to="/" className="inline-flex items-center mb-3">
               <span className="font-decorative text-2xl text-[#C8A961]">Advist</span>
             </Link>
+            <a
+              href="https://atlas-studio.org"
+              className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all group"
+            >
+              <span className="font-decorative text-sm" style={{ color: '#EF9F27' }}>Atlas</span>
+              <span className="text-xs text-gray-400 group-hover:text-gray-300">Studio</span>
+              <ArrowUpRight className="w-3 h-3 text-gray-500 group-hover:text-white transition-colors" />
+            </a>
             <p className="text-white/40 text-sm leading-relaxed mb-6 max-w-xs">
               {t(
                 'footer.description',
@@ -165,7 +173,7 @@ export const Footer: React.FC = () => {
               <p className="text-sm text-white/30">
                 © {currentYear} <span className="font-decorative text-[#C8A961]">Advist</span> by{' '}
                 <a
-                  href="https://atlas-studio.org"
+                  href="https://atlas-studio.org/applications/advist"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-decorative text-[#C8A961]/60 hover:text-[#C8A961] transition-colors"
