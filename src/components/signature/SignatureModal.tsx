@@ -4,7 +4,7 @@ import {
   PenTool,
   Shield,
   Clock,
-  MapPin,
+  _MapPin,
   FileText,
   AlertTriangle,
   Check,
@@ -18,6 +18,7 @@ import { Badge } from '../ui/Badge';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import SignaturePad, { SignatureData } from './SignaturePad';
+import { ConsentScreen } from './ConsentScreen';
 
 export interface SignatureRequest {
   id: string;
@@ -36,13 +37,21 @@ export interface SignatureModalProps {
   isOpen: boolean;
   onClose: () => void;
   request: SignatureRequest;
-  onSign: (signatureData: SignatureData, pin?: string) => Promise<void>;
+  onSign: (signatureData: SignatureData, pin?: string, consentId?: string) => Promise<void>;
   onRefuse: (reason: string) => Promise<void>;
   savedSignatures?: SignatureData[];
   requirePin?: boolean;
 }
 
-type Step = 'overview' | 'select-signature' | 'create-signature' | 'confirm' | 'pin' | 'success' | 'refuse';
+type Step =
+  | 'overview'
+  | 'consent'
+  | 'select-signature'
+  | 'create-signature'
+  | 'confirm'
+  | 'pin'
+  | 'success'
+  | 'refuse';
 
 export const SignatureModal: React.FC<SignatureModalProps> = ({
   isOpen,
@@ -60,6 +69,7 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
   const [pinError, setPinError] = useState('');
   const [refuseReason, setRefuseReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [consentId, setConsentId] = useState<string | null>(null);
 
   // Reset state when modal opens
   useEffect(() => {
@@ -69,6 +79,7 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
       setPin('');
       setPinError('');
       setRefuseReason('');
+      setConsentId(null);
     }
   }, [isOpen]);
 
@@ -85,14 +96,17 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
       case 'advanced':
         return {
           label: t('signature.type.advanced', 'Signature avancée'),
-          description: t('signature.type.advancedDesc', 'Vérification d\'identité renforcée'),
+          description: t('signature.type.advancedDesc', "Vérification d'identité renforcée"),
           color: 'bg-advist-gold-light text-advist-gray900',
           icon: <Shield size={16} />,
         };
       case 'qualified':
         return {
           label: t('signature.type.qualified', 'Signature qualifiée'),
-          description: t('signature.type.qualifiedDesc', 'Valeur juridique maximale - Conforme OHADA'),
+          description: t(
+            'signature.type.qualifiedDesc',
+            'Valeur juridique maximale - Conforme OHADA'
+          ),
           color: 'bg-advist-surface-dark text-advist-gray900',
           icon: <Lock size={16} />,
         };
@@ -137,7 +151,7 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
 
     setIsSubmitting(true);
     try {
-      await onSign(selectedSignature, requirePin ? pin : undefined);
+      await onSign(selectedSignature, requirePin ? pin : undefined, consentId || undefined);
       setCurrentStep('success');
     } catch (error) {
       console.error('Signature failed:', error);
@@ -182,7 +196,8 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                     {t('signature.requestedBy', 'Demandé par')} {request.requestedBy}
                   </p>
                   <p className="text-sm text-[#A29790]">
-                    {t('signature.requestedAt', 'Le')} {new Date(request.requestedAt).toLocaleDateString('fr-FR')}
+                    {t('signature.requestedAt', 'Le')}{' '}
+                    {new Date(request.requestedAt).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
               </div>
@@ -203,7 +218,8 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 <div className="flex items-center gap-2">
                   <Clock size={18} className="text-advist-gold-dark" />
                   <p className="text-sm text-advist-gold-dark">
-                    {t('signature.deadline', 'Date limite')}: {new Date(request.deadline).toLocaleDateString('fr-FR')}
+                    {t('signature.deadline', 'Date limite')}:{' '}
+                    {new Date(request.deadline).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
               </div>
@@ -213,7 +229,11 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
             {request.requiresParaphs && (
               <div className="p-4 bg-advist-gold-light border border-advist-gold rounded-lg">
                 <p className="text-sm text-advist-gray900">
-                  📝 {t('signature.paraphRequired', 'Des paraphes sont requis sur certaines pages de ce document')}
+                  📝{' '}
+                  {t(
+                    'signature.paraphRequired',
+                    'Des paraphes sont requis sur certaines pages de ce document'
+                  )}
                 </p>
               </div>
             )}
@@ -221,7 +241,10 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
             {/* Legal notice */}
             <div className="p-4 bg-advist-surface-dark border border-advist-border rounded-lg">
               <p className="text-xs text-advist-text-secondary">
-                {t('signature.legalNotice', 'En signant ce document, vous confirmez avoir lu et accepté son contenu. Cette signature a une valeur juridique conformément à la réglementation OHADA sur les signatures électroniques.')}
+                {t(
+                  'signature.legalNotice',
+                  'En signant ce document, vous confirmez avoir lu et accepté son contenu. Cette signature a une valeur juridique conformément à la réglementation OHADA sur les signatures électroniques.'
+                )}
               </p>
             </div>
 
@@ -235,10 +258,7 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 <X size={16} className="mr-2" />
                 {t('signature.refuse', 'Refuser de signer')}
               </Button>
-              <Button
-                className="flex-1"
-                onClick={() => setCurrentStep('select-signature')}
-              >
+              <Button className="flex-1" onClick={() => setCurrentStep('consent')}>
                 {t('signature.proceed', 'Procéder à la signature')}
                 <ChevronRight size={16} className="ml-2" />
               </Button>
@@ -246,17 +266,37 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
           </div>
         );
 
+      case 'consent':
+        return (
+          <ConsentScreen
+            documentId={request.documentId}
+            documentTitle={request.documentName}
+            signerName=""
+            signerEmail=""
+            onConsent={(id) => {
+              setConsentId(id);
+              setCurrentStep('select-signature');
+            }}
+            onCancel={() => setCurrentStep('overview')}
+          />
+        );
+
       case 'select-signature':
         return (
           <div className="space-y-6">
             <p className="text-[#3A4654]">
-              {t('signature.selectOrCreate', 'Sélectionnez une signature existante ou créez-en une nouvelle')}
+              {t(
+                'signature.selectOrCreate',
+                'Sélectionnez une signature existante ou créez-en une nouvelle'
+              )}
             </p>
 
             {/* Saved signatures */}
             {savedSignatures.length > 0 && (
               <div className="space-y-3">
-                <h4 className="font-medium text-[#383733]">{t('signature.savedSignatures', 'Signatures enregistrées')}</h4>
+                <h4 className="font-medium text-[#383733]">
+                  {t('signature.savedSignatures', 'Signatures enregistrées')}
+                </h4>
                 <div className="grid gap-3">
                   {savedSignatures.map((sig, index) => (
                     <button
@@ -270,7 +310,8 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                         className="h-16 object-contain"
                       />
                       <p className="text-xs text-[#A29790] mt-2">
-                        {t('signature.createdAt', 'Créée le')} {new Date(sig.timestamp).toLocaleDateString('fr-FR')}
+                        {t('signature.createdAt', 'Créée le')}{' '}
+                        {new Date(sig.timestamp).toLocaleDateString('fr-FR')}
                       </p>
                     </button>
                   ))}
@@ -315,7 +356,10 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 {t('signature.enterPin', 'Entrez votre code PIN')}
               </h3>
               <p className="text-sm text-[#3A4654] mt-2">
-                {t('signature.pinRequired', 'Pour des raisons de sécurité, veuillez entrer votre code PIN de signature')}
+                {t(
+                  'signature.pinRequired',
+                  'Pour des raisons de sécurité, veuillez entrer votre code PIN de signature'
+                )}
               </p>
             </div>
 
@@ -329,13 +373,15 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 className="text-center text-2xl tracking-widest"
                 autoFocus
               />
-              {pinError && (
-                <p className="text-sm text-advist-error mt-2 text-center">{pinError}</p>
-              )}
+              {pinError && <p className="text-sm text-advist-error mt-2 text-center">{pinError}</p>}
             </div>
 
             <div className="flex gap-3">
-              <Button variant="ghost" onClick={() => setCurrentStep('select-signature')} className="flex-1">
+              <Button
+                variant="ghost"
+                onClick={() => setCurrentStep('select-signature')}
+                className="flex-1"
+              >
                 {t('common.back', 'Retour')}
               </Button>
               <Button onClick={handlePinSubmit} className="flex-1">
@@ -386,13 +432,20 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
               <div className="flex items-start gap-2">
                 <AlertTriangle size={18} className="text-advist-gold-dark shrink-0 mt-0.5" />
                 <p className="text-sm text-advist-gold-dark">
-                  {t('signature.finalWarning', 'Cette action est définitive. En cliquant sur "Signer", vous apposez votre signature électronique sur ce document.')}
+                  {t(
+                    'signature.finalWarning',
+                    'Cette action est définitive. En cliquant sur "Signer", vous apposez votre signature électronique sur ce document.'
+                  )}
                 </p>
               </div>
             </div>
 
             <div className="flex gap-3">
-              <Button variant="ghost" onClick={() => setCurrentStep('select-signature')} className="flex-1">
+              <Button
+                variant="ghost"
+                onClick={() => setCurrentStep('select-signature')}
+                className="flex-1"
+              >
                 {t('common.back', 'Retour')}
               </Button>
               <Button
@@ -400,7 +453,9 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 disabled={isSubmitting}
                 className="flex-1 bg-advist-success hover:bg-green-50"
               >
-                {isSubmitting ? t('signature.signing', 'Signature en cours...') : t('signature.sign', 'Signer le document')}
+                {isSubmitting
+                  ? t('signature.signing', 'Signature en cours...')
+                  : t('signature.sign', 'Signer le document')}
               </Button>
             </div>
           </div>
@@ -417,7 +472,10 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 {t('signature.success', 'Document signé avec succès')}
               </h3>
               <p className="text-[#3A4654] mt-2">
-                {t('signature.successDesc', 'Votre signature électronique a été apposée sur le document.')}
+                {t(
+                  'signature.successDesc',
+                  'Votre signature électronique a été apposée sur le document.'
+                )}
               </p>
             </div>
 
@@ -427,9 +485,17 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 {t('signature.certificate', 'Certificat de signature')}
               </h4>
               <div className="space-y-1 text-sm text-advist-success">
-                <p><strong>ID:</strong> SIG-{Date.now()}</p>
-                <p><strong>{t('signature.timestamp', 'Horodatage')}:</strong> {new Date().toISOString()}</p>
-                <p><strong>{t('signature.hash', 'Hash')}:</strong> {selectedSignature?.hash?.slice(0, 16)}...</p>
+                <p>
+                  <strong>ID:</strong> SIG-{Date.now()}
+                </p>
+                <p>
+                  <strong>{t('signature.timestamp', 'Horodatage')}:</strong>{' '}
+                  {new Date().toISOString()}
+                </p>
+                <p>
+                  <strong>{t('signature.hash', 'Hash')}:</strong>{' '}
+                  {selectedSignature?.hash?.slice(0, 16)}...
+                </p>
               </div>
             </div>
 
@@ -450,7 +516,10 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 {t('signature.refuseTitle', 'Refuser de signer')}
               </h3>
               <p className="text-sm text-[#3A4654] mt-2">
-                {t('signature.refuseDesc', 'Veuillez indiquer le motif de votre refus. Cette action est définitive.')}
+                {t(
+                  'signature.refuseDesc',
+                  'Veuillez indiquer le motif de votre refus. Cette action est définitive.'
+                )}
               </p>
             </div>
 
@@ -461,7 +530,10 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
               <textarea
                 value={refuseReason}
                 onChange={(e) => setRefuseReason(e.target.value)}
-                placeholder={t('signature.refuseReasonPlaceholder', 'Expliquez pourquoi vous refusez de signer ce document...')}
+                placeholder={t(
+                  'signature.refuseReasonPlaceholder',
+                  'Expliquez pourquoi vous refusez de signer ce document...'
+                )}
                 className="w-full p-3 border border-[#EAEAEA] rounded-lg resize-none"
                 rows={4}
               />
@@ -471,7 +543,10 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
               <div className="flex items-start gap-2">
                 <AlertTriangle size={18} className="text-advist-error shrink-0 mt-0.5" />
                 <p className="text-sm text-advist-error">
-                  {t('signature.refuseWarning', 'Attention : Le refus de signature bloquera le circuit de validation. Le Document Owner sera notifié.')}
+                  {t(
+                    'signature.refuseWarning',
+                    'Attention : Le refus de signature bloquera le circuit de validation. Le Document Owner sera notifié.'
+                  )}
                 </p>
               </div>
             </div>
@@ -486,7 +561,9 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 disabled={!refuseReason.trim() || isSubmitting}
                 className="flex-1"
               >
-                {isSubmitting ? t('common.loading', 'Chargement...') : t('signature.confirmRefuse', 'Confirmer le refus')}
+                {isSubmitting
+                  ? t('common.loading', 'Chargement...')
+                  : t('signature.confirmRefuse', 'Confirmer le refus')}
               </Button>
             </div>
           </div>
@@ -499,6 +576,8 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
     switch (currentStep) {
       case 'overview':
         return t('signature.modalTitle', 'Demande de signature');
+      case 'consent':
+        return 'Consentement obligatoire';
       case 'select-signature':
         return t('signature.selectSignature', 'Choisir une signature');
       case 'create-signature':

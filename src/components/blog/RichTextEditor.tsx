@@ -16,9 +16,9 @@ import {
   Code,
   Link,
   Image as ImageIcon,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
+  _AlignLeft,
+  _AlignCenter,
+  _AlignRight,
   Minus,
   Eye,
   Edit3,
@@ -46,37 +46,85 @@ const STOCK_IMAGES = [
   {
     category: 'Business',
     images: [
-      { url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800', alt: 'Business analytics dashboard' },
-      { url: 'https://images.unsplash.com/photo-1553484771-371a605b060b?w=800', alt: 'Team meeting' },
-      { url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800', alt: 'Business presentation' },
-      { url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800', alt: 'Modern office' },
+      {
+        url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800',
+        alt: 'Business analytics dashboard',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1553484771-371a605b060b?w=800',
+        alt: 'Team meeting',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800',
+        alt: 'Business presentation',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+        alt: 'Modern office',
+      },
     ],
   },
   {
     category: 'Documents',
     images: [
-      { url: 'https://images.unsplash.com/photo-1568667256549-094345857637?w=800', alt: 'Documents and laptop' },
-      { url: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800', alt: 'Signing documents' },
-      { url: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800', alt: 'Financial documents' },
-      { url: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800', alt: 'Contract signing' },
+      {
+        url: 'https://images.unsplash.com/photo-1568667256549-094345857637?w=800',
+        alt: 'Documents and laptop',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800',
+        alt: 'Signing documents',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800',
+        alt: 'Financial documents',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800',
+        alt: 'Contract signing',
+      },
     ],
   },
   {
     category: 'Technologie',
     images: [
-      { url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800', alt: 'Technology circuit' },
-      { url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', alt: 'Cybersecurity' },
-      { url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800', alt: 'Data visualization' },
-      { url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800', alt: 'Cloud computing' },
+      {
+        url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800',
+        alt: 'Technology circuit',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800',
+        alt: 'Cybersecurity',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800',
+        alt: 'Data visualization',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800',
+        alt: 'Cloud computing',
+      },
     ],
   },
   {
     category: 'Juridique',
     images: [
-      { url: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800', alt: 'Justice scale' },
-      { url: 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=800', alt: 'Law library' },
-      { url: 'https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?w=800', alt: 'Legal contract' },
-      { url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800', alt: 'Professional lawyer' },
+      {
+        url: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800',
+        alt: 'Justice scale',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=800',
+        alt: 'Law library',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?w=800',
+        alt: 'Legal contract',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800',
+        alt: 'Professional lawyer',
+      },
     ],
   },
 ];
@@ -84,8 +132,8 @@ const STOCK_IMAGES = [
 export default function RichTextEditor({
   value,
   onChange,
-  placeholder = "Rédigez votre contenu...",
-  minHeight = "300px",
+  placeholder = 'Rédigez votre contenu...',
+  minHeight = '300px',
 }: RichTextEditorProps) {
   const [isPreview, setIsPreview] = useState(false);
   const [imageModal, setImageModal] = useState<ImageModalState>({
@@ -100,38 +148,45 @@ export default function RichTextEditor({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const insertAtCursor = useCallback((before: string, after: string = '') => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
+  const insertAtCursor = useCallback(
+    (before: string, after: string = '') => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = value.substring(start, end);
-    const newText = value.substring(0, start) + before + selectedText + after + value.substring(end);
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = value.substring(start, end);
+      const newText =
+        value.substring(0, start) + before + selectedText + after + value.substring(end);
 
-    onChange(newText);
+      onChange(newText);
 
-    // Restore cursor position
-    setTimeout(() => {
-      textarea.focus();
-      const newCursorPos = start + before.length + selectedText.length;
-      textarea.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
-  }, [value, onChange]);
+      // Restore cursor position
+      setTimeout(() => {
+        textarea.focus();
+        const newCursorPos = start + before.length + selectedText.length;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+      }, 0);
+    },
+    [value, onChange]
+  );
 
-  const wrapSelection = useCallback((tag: string, attrs: string = '') => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
+  const wrapSelection = useCallback(
+    (tag: string, attrs: string = '') => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = value.substring(start, end) || 'texte';
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const _selectedText = value.substring(start, end) || 'texte';
 
-    const openTag = attrs ? `<${tag} ${attrs}>` : `<${tag}>`;
-    const closeTag = `</${tag}>`;
+      const openTag = attrs ? `<${tag} ${attrs}>` : `<${tag}>`;
+      const closeTag = `</${tag}>`;
 
-    insertAtCursor(openTag, closeTag);
-  }, [value, insertAtCursor]);
+      insertAtCursor(openTag, closeTag);
+    },
+    [value, insertAtCursor]
+  );
 
   const insertHeading = (level: number) => {
     const textarea = textareaRef.current;
@@ -150,7 +205,9 @@ export default function RichTextEditor({
 
   const insertList = (ordered: boolean) => {
     const tag = ordered ? 'ol' : 'ul';
-    insertAtCursor(`\n<${tag}>\n  <li>Élément 1</li>\n  <li>Élément 2</li>\n  <li>Élément 3</li>\n</${tag}>\n`);
+    insertAtCursor(
+      `\n<${tag}>\n  <li>Élément 1</li>\n  <li>Élément 2</li>\n  <li>Élément 3</li>\n</${tag}>\n`
+    );
   };
 
   const insertBlockquote = () => {
@@ -169,7 +226,9 @@ export default function RichTextEditor({
     const url = prompt('URL du lien:', 'https://');
     if (url) {
       const textarea = textareaRef.current;
-      const selectedText = textarea ? value.substring(textarea.selectionStart, textarea.selectionEnd) : '';
+      const _selectedText = textarea
+        ? value.substring(textarea.selectionStart, textarea.selectionEnd)
+        : '';
       insertAtCursor(`<a href="${url}" target="_blank">`, '</a>');
     }
   };
@@ -215,17 +274,17 @@ export default function RichTextEditor({
     try {
       // Upload to server
       const result = await blogApi.uploadImage(file);
-      setImageModal(prev => ({ ...prev, url: result.url, alt: file.name }));
+      setImageModal((prev) => ({ ...prev, url: result.url, alt: file.name }));
     } catch (error) {
       console.error('Upload error:', error);
       // Fallback to data URL if upload fails
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = event.target?.result as string;
-        setImageModal(prev => ({ ...prev, url: dataUrl, alt: file.name }));
+        setImageModal((prev) => ({ ...prev, url: dataUrl, alt: file.name }));
       };
       reader.readAsDataURL(file);
-      setUploadError('Erreur lors de l\'upload. Image utilisée localement.');
+      setUploadError("Erreur lors de l'upload. Image utilisée localement.");
     } finally {
       setIsUploading(false);
     }
@@ -272,7 +331,11 @@ export default function RichTextEditor({
 
         <div className="flex items-center gap-0.5 px-2 border-r border-primary-300">
           <ToolbarButton icon={List} onClick={() => insertList(false)} title="Liste à puces" />
-          <ToolbarButton icon={ListOrdered} onClick={() => insertList(true)} title="Liste numérotée" />
+          <ToolbarButton
+            icon={ListOrdered}
+            onClick={() => insertList(true)}
+            title="Liste numérotée"
+          />
           <ToolbarButton icon={Quote} onClick={insertBlockquote} title="Citation" />
           <ToolbarButton icon={Code} onClick={insertCode} title="Code" />
         </div>
@@ -281,7 +344,7 @@ export default function RichTextEditor({
           <ToolbarButton icon={Link} onClick={insertLink} title="Lien" />
           <ToolbarButton
             icon={ImageIcon}
-            onClick={() => setImageModal(prev => ({ ...prev, isOpen: true }))}
+            onClick={() => setImageModal((prev) => ({ ...prev, isOpen: true }))}
             title="Image"
           />
           <ToolbarButton icon={Minus} onClick={insertHorizontalRule} title="Ligne horizontale" />
@@ -291,7 +354,7 @@ export default function RichTextEditor({
           <ToolbarButton
             icon={isPreview ? Edit3 : Eye}
             onClick={() => setIsPreview(!isPreview)}
-            title={isPreview ? "Éditer" : "Aperçu"}
+            title={isPreview ? 'Éditer' : 'Aperçu'}
             active={isPreview}
           />
         </div>
@@ -302,7 +365,9 @@ export default function RichTextEditor({
         <div
           className="p-4 prose prose-primary max-w-none overflow-auto"
           style={{ minHeight }}
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(value || '<p class="text-primary-400">Aucun contenu</p>') }}
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(value || '<p class="text-primary-400">Aucun contenu</p>'),
+          }}
         />
       ) : (
         <textarea
@@ -374,7 +439,9 @@ export default function RichTextEditor({
                   <div className="space-y-4">
                     {STOCK_IMAGES.map((category) => (
                       <div key={category.category}>
-                        <h4 className="text-sm font-medium text-primary-700 mb-2">{category.category}</h4>
+                        <h4 className="text-sm font-medium text-primary-700 mb-2">
+                          {category.category}
+                        </h4>
                         <div className="grid grid-cols-4 gap-2">
                           {category.images.map((img, idx) => (
                             <button
@@ -419,7 +486,9 @@ export default function RichTextEditor({
                         <>
                           <Upload className="h-12 w-12 text-primary-400 mx-auto mb-3" />
                           <p className="text-primary-600">Cliquez ou glissez une image</p>
-                          <p className="text-sm text-primary-400 mt-1">JPG, PNG, GIF, WebP (max 5 Mo)</p>
+                          <p className="text-sm text-primary-400 mt-1">
+                            JPG, PNG, GIF, WebP (max 5 Mo)
+                          </p>
                         </>
                       )}
                       <input
@@ -431,9 +500,7 @@ export default function RichTextEditor({
                         disabled={isUploading}
                       />
                     </div>
-                    {uploadError && (
-                      <p className="mt-2 text-sm text-red-600">{uploadError}</p>
-                    )}
+                    {uploadError && <p className="mt-2 text-sm text-red-600">{uploadError}</p>}
                   </div>
                 )}
 
@@ -445,7 +512,7 @@ export default function RichTextEditor({
                     <input
                       type="url"
                       value={imageModal.url}
-                      onChange={(e) => setImageModal(prev => ({ ...prev, url: e.target.value }))}
+                      onChange={(e) => setImageModal((prev) => ({ ...prev, url: e.target.value }))}
                       placeholder="https://example.com/image.jpg"
                       className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-accent-500"
                     />
@@ -470,7 +537,9 @@ export default function RichTextEditor({
                         <input
                           type="text"
                           value={imageModal.alt}
-                          onChange={(e) => setImageModal(prev => ({ ...prev, alt: e.target.value }))}
+                          onChange={(e) =>
+                            setImageModal((prev) => ({ ...prev, alt: e.target.value }))
+                          }
                           placeholder="Description de l'image"
                           className="w-full px-3 py-1.5 border border-primary-300 rounded-lg text-sm"
                         />
@@ -482,7 +551,9 @@ export default function RichTextEditor({
                         <input
                           type="text"
                           value={imageModal.caption}
-                          onChange={(e) => setImageModal(prev => ({ ...prev, caption: e.target.value }))}
+                          onChange={(e) =>
+                            setImageModal((prev) => ({ ...prev, caption: e.target.value }))
+                          }
                           placeholder="Légende sous l'image"
                           className="w-full px-3 py-1.5 border border-primary-300 rounded-lg text-sm"
                         />

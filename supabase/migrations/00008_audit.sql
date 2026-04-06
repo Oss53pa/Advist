@@ -1,5 +1,5 @@
 -- Audit Logs (with cryptographic chaining for tamper-evidence)
-CREATE TABLE audit_logs (
+CREATE TABLE IF NOT EXISTS audit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
@@ -17,7 +17,7 @@ CREATE TABLE audit_logs (
 );
 
 -- Audit Log Archives (for compliance retention)
-CREATE TABLE audit_log_archives (
+CREATE TABLE IF NOT EXISTS audit_log_archives (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     archive_date DATE NOT NULL,

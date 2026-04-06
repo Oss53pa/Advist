@@ -63,7 +63,7 @@ class OfflineService {
 
       request.onsuccess = () => {
         this.db = request.result;
-        console.log('IndexedDB initialized successfully');
+        console.info('IndexedDB initialized successfully');
         resolve();
       };
 
@@ -127,7 +127,7 @@ class OfflineService {
    * Notify all listeners of status change
    */
   private notifyListeners(): void {
-    this.listeners.forEach(callback => callback(this.isOnline));
+    this.listeners.forEach((callback) => callback(this.isOnline));
   }
 
   /**
@@ -142,7 +142,9 @@ class OfflineService {
   /**
    * Save an offline action
    */
-  async saveOfflineAction(action: Omit<OfflineAction, 'id' | 'synced' | 'synced_at'>): Promise<OfflineAction> {
+  async saveOfflineAction(
+    action: Omit<OfflineAction, 'id' | 'synced' | 'synced_at'>
+  ): Promise<OfflineAction> {
     if (!this.db) await this.init();
 
     const offlineAction: OfflineAction = {
@@ -306,8 +308,8 @@ class OfflineService {
       request.onsuccess = () => {
         const now = new Date();
         const validDocs = (request.result as CachedDocument[])
-          .filter(cached => new Date(cached.expiresAt) > now)
-          .map(cached => cached.document);
+          .filter((cached) => new Date(cached.expiresAt) > now)
+          .map((cached) => cached.document);
         resolve(validDocs);
       };
 
@@ -371,7 +373,7 @@ class OfflineService {
       const request = index.getAll(IDBKeyRange.only(documentId));
 
       request.onsuccess = () => {
-        const comments = (request.result as CachedComment[]).map(c => c.comment);
+        const comments = (request.result as CachedComment[]).map((c) => c.comment);
         resolve(comments);
       };
 
@@ -508,17 +510,17 @@ class OfflineService {
     switch (type) {
       case 'comment':
         // await api.post(`/documents/${document_id}/comments/`, payload);
-        console.log(`Syncing comment for document ${document_id}:`, payload);
+        console.info(`Syncing comment for document ${document_id}:`, payload);
         break;
 
       case 'validation':
         // await api.post(`/workflows/steps/${step_id}/validate/`, payload);
-        console.log(`Syncing validation for workflow step:`, payload);
+        console.info(`Syncing validation for workflow step:`, payload);
         break;
 
       case 'annotation':
         // await api.post(`/documents/${document_id}/annotations/`, payload);
-        console.log(`Syncing annotation for document ${document_id}:`, payload);
+        console.info(`Syncing annotation for document ${document_id}:`, payload);
         break;
 
       default:
@@ -526,7 +528,7 @@ class OfflineService {
     }
 
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
   // ==================== STORAGE MANAGEMENT ====================
@@ -571,7 +573,7 @@ class OfflineService {
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   }
 
   /**

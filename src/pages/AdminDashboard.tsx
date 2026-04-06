@@ -1,50 +1,48 @@
 ﻿import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
   FileText,
   GitBranch,
-  Clock,
-  CheckCircle,
-  AlertCircle,
+  _Clock,
+  _CheckCircle,
+  _AlertCircle,
   ArrowRight,
-  Plus,
+  _Plus,
   Users,
-  Building2,
-  TrendingUp,
+  _Building2,
+  _TrendingUp,
   TrendingDown,
-  Activity,
+  _Activity,
   Shield,
-  Eye,
-  Calendar,
-  ChevronRight,
-  Bell,
+  _Eye,
+  _Calendar,
+  _ChevronRight,
+  _Bell,
   BarChart3,
-  Settings,
+  _Settings,
   Database,
   Server,
-  Zap,
+  _Zap,
   PenTool,
   History,
   AlertTriangle,
   UserPlus,
-  RefreshCw,
-  FolderOpen,
+  _RefreshCw,
+  _FolderOpen,
   HardDrive,
-  Workflow,
+  _Workflow,
   ArrowUpRight,
-  MoreHorizontal,
-  Search,
-  Filter,
+  _MoreHorizontal,
+  _Search,
+  _Filter,
   Download,
 } from 'lucide-react';
-import { Avatar } from '../components/ui/Avatar';
-import { Badge, Button, Modal, MiniChart, ProgressCircle } from '../components/ui';
+import { Avatar, MiniChart, ProgressCircle } from '../components/ui';
 import { useAuthStore } from '../store';
 
 // Données pour les graphiques de tendance (simulé)
 const weeklyData = [35, 45, 32, 67, 52, 78, 62];
-const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const _weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
 // Mock data for admin
 const systemStats = [
@@ -97,18 +95,70 @@ const storageUsed = 45; // GB
 const storageTotal = 100; // GB
 
 const recentUsers = [
-  { id: 1, name: 'Marie Dupont', email: 'marie.d@company.com', role: 'Manager', status: 'active', lastActive: '2 min', avatar: null },
-  { id: 2, name: 'Pierre Martin', email: 'pierre.m@company.com', role: 'Utilisateur', status: 'active', lastActive: '15 min', avatar: null },
-  { id: 3, name: 'Sophie Bernard', email: 'sophie.b@company.com', role: 'Admin', status: 'away', lastActive: '1h', avatar: null },
-  { id: 4, name: 'Jean Kouassi', email: 'jean.k@company.com', role: 'Utilisateur', status: 'offline', lastActive: '3h', avatar: null },
+  {
+    id: 1,
+    name: 'Marie Dupont',
+    email: 'marie.d@company.com',
+    role: 'Manager',
+    status: 'active',
+    lastActive: '2 min',
+    avatar: null,
+  },
+  {
+    id: 2,
+    name: 'Pierre Martin',
+    email: 'pierre.m@company.com',
+    role: 'Utilisateur',
+    status: 'active',
+    lastActive: '15 min',
+    avatar: null,
+  },
+  {
+    id: 3,
+    name: 'Sophie Bernard',
+    email: 'sophie.b@company.com',
+    role: 'Admin',
+    status: 'away',
+    lastActive: '1h',
+    avatar: null,
+  },
+  {
+    id: 4,
+    name: 'Jean Kouassi',
+    email: 'jean.k@company.com',
+    role: 'Utilisateur',
+    status: 'offline',
+    lastActive: '3h',
+    avatar: null,
+  },
 ];
 
 const pendingApprovals = [
-  { id: 1, type: 'user', title: 'Nouvelle demande d\'accès', user: 'Alice Martin', time: '5 min', priority: 'high' },
-  { id: 2, type: 'workflow', title: 'Nouveau template workflow', user: 'Pierre Koffi', time: '30 min', priority: 'medium' },
-  { id: 3, type: 'document', title: 'Document confidentiel', user: 'Marie Dupont', time: '1h', priority: 'high' },
+  {
+    id: 1,
+    type: 'user',
+    title: "Nouvelle demande d'accès",
+    user: 'Alice Martin',
+    time: '5 min',
+    priority: 'high',
+  },
+  {
+    id: 2,
+    type: 'workflow',
+    title: 'Nouveau template workflow',
+    user: 'Pierre Koffi',
+    time: '30 min',
+    priority: 'medium',
+  },
+  {
+    id: 3,
+    type: 'document',
+    title: 'Document confidentiel',
+    user: 'Marie Dupont',
+    time: '1h',
+    priority: 'high',
+  },
 ];
-
 
 const systemHealth = [
   { name: 'API Server', status: 'healthy', uptime: '99.9%', icon: Server },
@@ -118,17 +168,50 @@ const systemHealth = [
 ];
 
 const activityLog = [
-  { id: 1, action: 'Nouvel utilisateur créé', user: 'Admin', target: 'Jean Kouassi', time: '2 min', type: 'user' },
-  { id: 2, action: 'Workflow modifié', user: 'Marie Dupont', target: 'Validation Contrats', time: '15 min', type: 'workflow' },
-  { id: 3, action: 'Permission mise à jour', user: 'Admin', target: 'Groupe Managers', time: '30 min', type: 'security' },
-  { id: 4, action: 'Document archivé', user: 'Système', target: 'Rapport 2023', time: '1h', type: 'document' },
+  {
+    id: 1,
+    action: 'Nouvel utilisateur créé',
+    user: 'Admin',
+    target: 'Jean Kouassi',
+    time: '2 min',
+    type: 'user',
+  },
+  {
+    id: 2,
+    action: 'Workflow modifié',
+    user: 'Marie Dupont',
+    target: 'Validation Contrats',
+    time: '15 min',
+    type: 'workflow',
+  },
+  {
+    id: 3,
+    action: 'Permission mise à jour',
+    user: 'Admin',
+    target: 'Groupe Managers',
+    time: '30 min',
+    type: 'security',
+  },
+  {
+    id: 4,
+    action: 'Document archivé',
+    user: 'Système',
+    target: 'Rapport 2023',
+    time: '1h',
+    type: 'document',
+  },
 ];
 
 export const AdminDashboard: React.FC = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const basePath = '/admin';
-  const today = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const today = new Date().toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
   return (
     <div className="space-y-6">
@@ -143,9 +226,7 @@ export const AdminDashboard: React.FC = () => {
               <h1 className="text-2xl font-bold mt-1">
                 Bonjour, {user?.first_name || 'Administrateur'} !
               </h1>
-              <p className="text-white/70 mt-2">
-                Voici un aperçu de votre organisation
-              </p>
+              <p className="text-white/70 mt-2">Voici un aperçu de votre organisation</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -181,7 +262,9 @@ export const AdminDashboard: React.FC = () => {
                 ) : (
                   <TrendingDown size={16} className="text-advist-warning" />
                 )}
-                <span className={`text-sm font-semibold ${stat.trend === 'up' ? 'text-advist-earth' : 'text-advist-warning'}`}>
+                <span
+                  className={`text-sm font-semibold ${stat.trend === 'up' ? 'text-advist-earth' : 'text-advist-warning'}`}
+                >
                   {stat.change}
                 </span>
               </div>
@@ -189,7 +272,7 @@ export const AdminDashboard: React.FC = () => {
             <p className="text-3xl font-bold text-advist-gray900">{stat.value}</p>
             <p className="text-sm text-advist-blue-light mt-1">{stat.label}</p>
             <div className="mt-3 pt-3 border-t border-advist-border">
-              <MiniChart data={weeklyData.map(v => v + index * 10)} color={stat.bgColor} />
+              <MiniChart data={weeklyData.map((v) => v + index * 10)} color={stat.bgColor} />
             </div>
           </div>
         ))}
@@ -197,7 +280,6 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Main Content Grid - 3 columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
         {/* Column 1 - Utilisateurs + Système */}
         <div className="flex flex-col gap-6">
           {/* Recent Users */}
@@ -207,7 +289,10 @@ export const AdminDashboard: React.FC = () => {
                 <Users size={18} className="text-advist-blue-light" />
                 <h3 className="font-semibold text-advist-gray900">Utilisateurs actifs</h3>
               </div>
-              <Link to={`${basePath}/users`} className="text-xs text-advist-gray900 hover:underline">
+              <Link
+                to={`${basePath}/users`}
+                className="text-xs text-advist-gray900 hover:underline"
+              >
                 Voir tous
               </Link>
             </div>
@@ -216,9 +301,15 @@ export const AdminDashboard: React.FC = () => {
                 <div key={u.id} className="flex items-center gap-3">
                   <div className="relative">
                     <Avatar name={u.name} size="sm" />
-                    <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white
-                      ${u.status === 'active' ? 'bg-advist-earth' :
-                        u.status === 'away' ? 'bg-advist-warning' : 'bg-advist-surface-dark'}`}
+                    <div
+                      className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white
+                      ${
+                        u.status === 'active'
+                          ? 'bg-advist-earth'
+                          : u.status === 'away'
+                            ? 'bg-advist-warning'
+                            : 'bg-advist-surface-dark'
+                      }`}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -245,23 +336,30 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="space-y-2">
               {systemHealth.map((service, index) => (
-                <div key={index} className="flex items-center justify-between p-2.5 bg-advist-surface-dark/50 rounded-xl">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-2.5 bg-advist-surface-dark/50 rounded-xl"
+                >
                   <div className="flex items-center gap-2">
                     <service.icon size={14} className="text-advist-blue-light" />
                     <span className="text-sm text-advist-gray900">{service.name}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-advist-blue-light">{service.uptime}</span>
-                    <div className={`w-2 h-2 rounded-full ${
-                      service.status === 'healthy' ? 'bg-advist-earth' :
-                      service.status === 'warning' ? 'bg-advist-warning' : 'bg-advist-error'
-                    }`} />
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        service.status === 'healthy'
+                          ? 'bg-advist-earth'
+                          : service.status === 'warning'
+                            ? 'bg-advist-warning'
+                            : 'bg-advist-error'
+                      }`}
+                    />
                   </div>
                 </div>
               ))}
             </div>
           </div>
-
         </div>
 
         {/* Column 2 - Activités + Documents Stats */}
@@ -273,19 +371,27 @@ export const AdminDashboard: React.FC = () => {
                 <History size={18} className="text-advist-earth" />
                 <h3 className="font-semibold text-advist-gray900">Journal d'activité</h3>
               </div>
-              <Link to={`${basePath}/audit`} className="text-xs text-advist-gray900 hover:underline">
+              <Link
+                to={`${basePath}/audit`}
+                className="text-xs text-advist-gray900 hover:underline"
+              >
                 Voir tout
               </Link>
             </div>
             <div className="p-4 space-y-3">
               {activityLog.map((log) => (
                 <div key={log.id} className="flex items-start gap-3">
-                  <div className={`p-1.5 rounded-xl mt-0.5 ${
-                    log.type === 'user' ? 'bg-advist-gold-light/20 text-advist-gray900' :
-                    log.type === 'workflow' ? 'bg-advist-earth/20 text-advist-earth' :
-                    log.type === 'security' ? 'bg-advist-error/20 text-advist-error' :
-                    'bg-advist-surface-dark text-advist-gray900'
-                  }`}>
+                  <div
+                    className={`p-1.5 rounded-xl mt-0.5 ${
+                      log.type === 'user'
+                        ? 'bg-advist-gold-light/20 text-advist-gray900'
+                        : log.type === 'workflow'
+                          ? 'bg-advist-earth/20 text-advist-earth'
+                          : log.type === 'security'
+                            ? 'bg-advist-error/20 text-advist-error'
+                            : 'bg-advist-surface-dark text-advist-gray900'
+                    }`}
+                  >
                     {log.type === 'user' && <Users size={12} />}
                     {log.type === 'workflow' && <GitBranch size={12} />}
                     {log.type === 'security' && <Shield size={12} />}
@@ -293,7 +399,9 @@ export const AdminDashboard: React.FC = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-advist-gray900 truncate">{log.action}</p>
-                    <p className="text-xs text-advist-blue-light">{log.user} • {log.time}</p>
+                    <p className="text-xs text-advist-blue-light">
+                      {log.user} • {log.time}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -320,21 +428,27 @@ export const AdminDashboard: React.FC = () => {
                   <div className="w-3 h-3 rounded-full bg-advist-earth" />
                   <span className="text-sm text-advist-gray900">Approuvés</span>
                 </div>
-                <span className="text-sm font-semibold text-advist-gray900">{documentStats.approved}</span>
+                <span className="text-sm font-semibold text-advist-gray900">
+                  {documentStats.approved}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-advist-gold-light" />
                   <span className="text-sm text-advist-gray900">En attente</span>
                 </div>
-                <span className="text-sm font-semibold text-advist-gray900">{documentStats.pending}</span>
+                <span className="text-sm font-semibold text-advist-gray900">
+                  {documentStats.pending}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-advist-error" />
                   <span className="text-sm text-advist-gray900">Rejetés</span>
                 </div>
-                <span className="text-sm font-semibold text-advist-gray900">{documentStats.rejected}</span>
+                <span className="text-sm font-semibold text-advist-gray900">
+                  {documentStats.rejected}
+                </span>
               </div>
             </div>
           </div>
@@ -383,11 +497,18 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="space-y-2">
               {pendingApprovals.map((item) => (
-                <div key={item.id} className="p-3 bg-white/10 hover:bg-white/15 rounded-[10px] transition-all duration-240 cursor-pointer">
+                <div
+                  key={item.id}
+                  className="p-3 bg-white/10 hover:bg-white/15 rounded-[10px] transition-all duration-240 cursor-pointer"
+                >
                   <div className="flex items-center justify-between mb-1">
-                    <span className={`px-2 py-0.5 text-[10px] font-semibold uppercase rounded ${
-                      item.priority === 'high' ? 'bg-advist-warning/30 text-advist-warning' : 'bg-advist-gold-light/30 text-advist-blue-light'
-                    }`}>
+                    <span
+                      className={`px-2 py-0.5 text-[10px] font-semibold uppercase rounded ${
+                        item.priority === 'high'
+                          ? 'bg-advist-warning/30 text-advist-warning'
+                          : 'bg-advist-gold-light/30 text-advist-blue-light'
+                      }`}
+                    >
                       {item.priority === 'high' ? 'Urgent' : 'Normal'}
                     </span>
                     <span className="text-[10px] text-white/50">{item.time}</span>
@@ -402,7 +523,6 @@ export const AdminDashboard: React.FC = () => {
               <ArrowRight size={16} />
             </button>
           </div>
-
         </div>
       </div>
     </div>

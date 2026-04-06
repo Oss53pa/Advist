@@ -176,6 +176,164 @@ export const claudeService = {
   },
 
   /**
+   * Stream a chat response token-by-token via Edge Function proxy
+   * Uses SSE (Server-Sent Events) for real-time streaming
+   */
+  async chatStream(
+    messages: ClaudeMessage[],
+    onToken: (token: string) => void,
+    onComplete?: (fullResponse: string) => void,
+    systemPrompt?: string,
+    options?: { model?: string; maxTokens?: number },
+  ): Promise<void> {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/ai-proxy`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabaseAnonKey}`,
+        apikey: supabaseAnonKey,
+      },
+      body: JSON.stringify({
+        provider: 'anthropic',
+        model: options?.model || 'claude-sonnet-4-20250514',
+        max_tokens: options?.maxTokens || 4096,
+        stream: true,
+        system: systemPrompt || SYSTEM_PROMPTS.assistant,
+        messages: messages.map((m) => ({ role: m.role, content: m.content })),
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`AI streaming failed: ${error}`);
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) throw new Error('No response body for streaming');
+
+    const decoder = new TextDecoder();
+    let fullResponse = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            const token =
+              parsed.delta?.text ||
+              parsed.content?.[0]?.text ||
+              parsed.choices?.[0]?.delta?.content ||
+              '';
+            if (token) {
+              fullResponse += token;
+              onToken(token);
+            }
+          } catch {
+            // Non-JSON line or partial chunk — append as raw text
+            if (data.trim() && data !== '[DONE]') {
+              fullResponse += data;
+              onToken(data);
+            }
+          }
+        }
+      }
+    }
+
+    onComplete?.(fullResponse);
+  },
+
+  /**
+   * Chat with real application context (workflow, document, signatures)
+   * PROPH3T-aware: injects live data from the current session
+   */
+  async chatWithContext(
+    messages: ClaudeMessage[],
+    context: {
+      documentId?: string;
+      workflowId?: string;
+      organizationName?: string;
+      currentPage?: string;
+    },
+    options?: { model?: string; stream?: boolean; onToken?: (token: string) => void },
+  ): Promise<ClaudeResponse> {
+    const { supabase } = await import('../lib/supabase');
+    let contextBlock = '';
+
+    // Inject live document data
+    if (context.documentId) {
+      const { data: doc } = await supabase
+        .from('documents')
+        .select('title, status, document_type, current_version, created_at')
+        .eq('id', context.documentId)
+        .single();
+      if (doc) {
+        contextBlock += `\n\nDocument actuel: "${doc.title}" (${doc.status}, v${doc.current_version}, cree le ${doc.created_at})`;
+      }
+    }
+
+    // Inject live workflow data
+    if (context.workflowId) {
+      const { data: workflow } = await supabase
+        .from('workflow_instances')
+        .select('status, current_step, created_at, completed_at')
+        .eq('id', context.workflowId)
+        .single();
+      if (workflow) {
+        contextBlock += `\nCircuit: etape ${workflow.current_step}, statut ${workflow.status}`;
+      }
+
+      const { data: steps } = await supabase
+        .from('workflow_steps')
+        .select('step_number, name, status')
+        .eq('instance_id', context.workflowId)
+        .order('step_number');
+      if (steps?.length) {
+        contextBlock += `\nEtapes: ${steps.map((s: any) => `${s.step_number}. ${s.name} (${s.status})`).join(', ')}`;
+      }
+    }
+
+    if (context.organizationName) {
+      contextBlock += `\nOrganisation: ${context.organizationName}`;
+    }
+    if (context.currentPage) {
+      contextBlock += `\nPage actuelle: ${context.currentPage}`;
+    }
+
+    const enrichedSystem = SYSTEM_PROMPTS.assistant + (contextBlock ? `\n\nCONTEXTE EN TEMPS REEL:${contextBlock}` : '');
+
+    if (options?.stream && options?.onToken) {
+      let finalResponse = '';
+      await this.chatStream(
+        messages,
+        options.onToken,
+        (full) => { finalResponse = full; },
+        enrichedSystem,
+        { model: options.model },
+      );
+      return {
+        id: '',
+        content: finalResponse,
+        model: options.model || 'claude-sonnet-4-20250514',
+        stopReason: 'end_turn',
+        usage: { inputTokens: 0, outputTokens: 0 },
+      };
+    }
+
+    return this.chat(messages, enrichedSystem, { model: options?.model });
+  },
+
+  /**
    * Get available models
    */
   getAvailableModels(): Array<{ id: string; name: string; description: string }> {

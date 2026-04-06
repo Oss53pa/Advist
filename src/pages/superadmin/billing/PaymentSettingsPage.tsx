@@ -6,7 +6,7 @@ import {
   Building2,
   Settings,
   Check,
-  X,
+  _X,
   Eye,
   EyeOff,
   Plus,
@@ -16,7 +16,7 @@ import {
   CheckCircle,
   ExternalLink,
   Shield,
-  RefreshCw,
+  _RefreshCw,
   Globe,
   Wallet,
 } from 'lucide-react';
@@ -77,7 +77,7 @@ const mockGatewayConfigs = [
 // Mock bank account
 const mockBankAccount = {
   id: '1',
-  bankName: 'Société Générale Côte d\'Ivoire',
+  bankName: "Société Générale Côte d'Ivoire",
   bankCode: 'SGCI',
   accountName: 'ADVIST SARL',
   accountNumber: 'CI93 XXXX XXXX XXXX XXXX 1234',
@@ -93,21 +93,33 @@ const mockBankAccount = {
 
 // Available gateways to add
 const availableGateways = [
-  { id: 'stripe', name: 'Stripe', description: 'Cartes bancaires internationales', icon: CreditCard },
-  { id: 'paydunya', name: 'PayDunya', description: 'Mobile Money Afrique de l\'Ouest', icon: Smartphone },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    description: 'Cartes bancaires internationales',
+    icon: CreditCard,
+  },
+  {
+    id: 'paydunya',
+    name: 'PayDunya',
+    description: "Mobile Money Afrique de l'Ouest",
+    icon: Smartphone,
+  },
   { id: 'flutterwave', name: 'Flutterwave', description: 'Paiements Afrique', icon: Globe },
   { id: 'cinetpay', name: 'CinetPay', description: 'Mobile Money Afrique', icon: Wallet },
 ];
 
 export const PaymentSettingsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [showGatewayModal, setShowGatewayModal] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
-  const [selectedGateway, setSelectedGateway] = useState<typeof mockGatewayConfigs[0] | null>(null);
+  const [_selectedGateway, _setSelectedGateway] = useState<(typeof mockGatewayConfigs)[0] | null>(
+    null
+  );
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
 
   const toggleSecret = (id: string) => {
-    setShowSecrets(prev => ({ ...prev, [id]: !prev[id] }));
+    setShowSecrets((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
@@ -196,11 +208,15 @@ export const PaymentSettingsPage: React.FC = () => {
                 <div className="space-y-3">
                   <div>
                     <p className="text-sm text-advist-blue-light">Opérateur</p>
-                    <p className="font-semibold text-advist-gray900">{mockBankAccount.mobileMoneyProvider}</p>
+                    <p className="font-semibold text-advist-gray900">
+                      {mockBankAccount.mobileMoneyProvider}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-advist-blue-light">Numéro</p>
-                    <p className="font-mono text-advist-gray900">{mockBankAccount.mobileMoneyNumber}</p>
+                    <p className="font-mono text-advist-gray900">
+                      {mockBankAccount.mobileMoneyNumber}
+                    </p>
                   </div>
                 </div>
                 <p className="text-xs text-advist-blue-light mt-4">
@@ -239,7 +255,9 @@ export const PaymentSettingsPage: React.FC = () => {
             <div key={config.id} className="p-5">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 ${config.color} rounded-xl flex items-center justify-center`}>
+                  <div
+                    className={`w-12 h-12 ${config.color} rounded-xl flex items-center justify-center`}
+                  >
                     <config.icon size={24} className="text-white" />
                   </div>
                   <div>
@@ -278,7 +296,10 @@ export const PaymentSettingsPage: React.FC = () => {
                             <code className="text-xs bg-advist-bg px-2 py-1 rounded font-mono">
                               {showSecrets[config.id] ? 'adv_sec_xxx...xxx' : '••••••••••••••••'}
                             </code>
-                            <button onClick={() => toggleSecret(config.id)} className="text-advist-blue-light hover:text-advist-gray900">
+                            <button
+                              onClick={() => toggleSecret(config.id)}
+                              className="text-advist-blue-light hover:text-advist-gray900"
+                            >
                               {showSecrets[config.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                             </button>
                           </div>
@@ -302,7 +323,9 @@ export const PaymentSettingsPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   {/* Status Toggle */}
                   <div className="flex items-center gap-2 mr-4">
-                    <span className={`text-sm font-medium ${config.isActive ? 'text-advist-success' : 'text-advist-text-muted'}`}>
+                    <span
+                      className={`text-sm font-medium ${config.isActive ? 'text-advist-success' : 'text-advist-text-muted'}`}
+                    >
                       {config.isActive ? 'Actif' : 'Inactif'}
                     </span>
                     <button
@@ -321,7 +344,11 @@ export const PaymentSettingsPage: React.FC = () => {
                   <Button variant="ghost" size="sm">
                     <Settings size={16} />
                   </Button>
-                  <Button variant="ghost" size="sm" className="text-advist-error hover:bg-advist-gold-light">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-advist-error hover:bg-advist-gold-light"
+                  >
                     <Trash2 size={16} />
                   </Button>
                 </div>
@@ -339,7 +366,8 @@ export const PaymentSettingsPage: React.FC = () => {
         <div>
           <h3 className="font-medium text-advist-gray900">Sécurité des paiements</h3>
           <p className="text-sm text-advist-gray900 mt-1">
-            Toutes les clés API sont chiffrées avec AES-256. Les données de cartes bancaires ne transitent jamais par nos serveurs (tokenisation PCI-DSS).
+            Toutes les clés API sont chiffrées avec AES-256. Les données de cartes bancaires ne
+            transitent jamais par nos serveurs (tokenisation PCI-DSS).
           </p>
         </div>
       </div>
@@ -408,9 +436,7 @@ export const PaymentSettingsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                Pays
-              </label>
+              <label className="block text-sm font-medium text-advist-gray900 mb-2">Pays</label>
               <select className="w-full px-4 py-3 border border-advist-bg rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30">
                 <option value="CI">🇨🇮 Côte d'Ivoire</option>
                 <option value="SN">🇸🇳 Sénégal</option>
@@ -456,9 +482,7 @@ export const PaymentSettingsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                Devise
-              </label>
+              <label className="block text-sm font-medium text-advist-gray900 mb-2">Devise</label>
               <select className="w-full px-4 py-3 border border-advist-bg rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30">
                 <option value="XOF">XOF - Franc CFA (BCEAO)</option>
                 <option value="XAF">XAF - Franc CFA (BEAC)</option>
@@ -470,7 +494,9 @@ export const PaymentSettingsPage: React.FC = () => {
 
           {/* Mobile Money Alternative */}
           <div className="border-t border-advist-bg pt-6">
-            <h4 className="font-medium text-advist-gray900 mb-4">Alternative Mobile Money (optionnel)</h4>
+            <h4 className="font-medium text-advist-gray900 mb-4">
+              Alternative Mobile Money (optionnel)
+            </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-advist-gray900 mb-2">

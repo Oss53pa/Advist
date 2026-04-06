@@ -1,40 +1,45 @@
 ﻿import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Shield,
-  Lock,
+  _Lock,
   Key,
   AlertTriangle,
-  CheckCircle,
+  _CheckCircle,
   XCircle,
-  Eye,
-  EyeOff,
+  _Eye,
+  _EyeOff,
   Users,
   Globe,
   Clock,
   Activity,
-  FileText,
+  _FileText,
   RefreshCw,
   Settings,
   Smartphone,
-  Mail,
+  _Mail,
   MapPin,
   Ban,
   UserX,
   ShieldAlert,
   ShieldCheck,
-  Fingerprint,
-  KeyRound,
-  History,
+  _Fingerprint,
+  _KeyRound,
+  _History,
   Download,
-  Filter,
+  _Filter,
 } from 'lucide-react';
 import { Card, Button, Badge, Modal } from '../../components/ui';
 
 // Types
 interface SecurityEvent {
   id: string;
-  type: 'login_failed' | 'suspicious_activity' | 'password_reset' | 'mfa_disabled' | 'ip_blocked' | 'permission_change';
+  type:
+    | 'login_failed'
+    | 'suspicious_activity'
+    | 'password_reset'
+    | 'mfa_disabled'
+    | 'ip_blocked'
+    | 'permission_change';
   severity: 'low' | 'medium' | 'high' | 'critical';
   user: string;
   tenant: string;
@@ -72,26 +77,146 @@ const securityMetrics = [
 ];
 
 const securityEvents: SecurityEvent[] = [
-  { id: '1', type: 'login_failed', severity: 'medium', user: 'unknown', tenant: 'sgci', ip: '192.168.1.100', location: 'Abidjan, CI', timestamp: new Date(Date.now() - 1000 * 60 * 5), details: '5 tentatives echouees consecutives' },
-  { id: '2', type: 'suspicious_activity', severity: 'high', user: 'admin@orange-ci.com', tenant: 'orange-ci', ip: '10.0.0.45', location: 'Lagos, NG', timestamp: new Date(Date.now() - 1000 * 60 * 15), details: 'Connexion depuis un nouvel emplacement' },
-  { id: '3', type: 'mfa_disabled', severity: 'medium', user: 'finance@advist.com', tenant: 'advist-demo', ip: '172.16.0.12', location: 'Dakar, SN', timestamp: new Date(Date.now() - 1000 * 60 * 30), details: 'MFA desactive par l\'utilisateur' },
-  { id: '4', type: 'password_reset', severity: 'low', user: 'user@bceao.int', tenant: 'bceao', ip: '192.168.10.5', location: 'Dakar, SN', timestamp: new Date(Date.now() - 1000 * 60 * 45), details: 'Reinitialisation mot de passe demandee' },
-  { id: '5', type: 'ip_blocked', severity: 'high', user: 'N/A', tenant: 'N/A', ip: '45.33.32.156', location: 'Unknown', timestamp: new Date(Date.now() - 1000 * 60 * 60), details: 'Tentative de brute force detectee' },
-  { id: '6', type: 'permission_change', severity: 'medium', user: 'admin@example.com', tenant: 'example-org', ip: '192.168.1.1', location: 'Abidjan, CI', timestamp: new Date(Date.now() - 1000 * 60 * 90), details: 'Role admin attribue a nouveau user' },
+  {
+    id: '1',
+    type: 'login_failed',
+    severity: 'medium',
+    user: 'unknown',
+    tenant: 'sgci',
+    ip: '192.168.1.100',
+    location: 'Abidjan, CI',
+    timestamp: new Date(Date.now() - 1000 * 60 * 5),
+    details: '5 tentatives echouees consecutives',
+  },
+  {
+    id: '2',
+    type: 'suspicious_activity',
+    severity: 'high',
+    user: 'admin@orange-ci.com',
+    tenant: 'orange-ci',
+    ip: '10.0.0.45',
+    location: 'Lagos, NG',
+    timestamp: new Date(Date.now() - 1000 * 60 * 15),
+    details: 'Connexion depuis un nouvel emplacement',
+  },
+  {
+    id: '3',
+    type: 'mfa_disabled',
+    severity: 'medium',
+    user: 'finance@advist.com',
+    tenant: 'advist-demo',
+    ip: '172.16.0.12',
+    location: 'Dakar, SN',
+    timestamp: new Date(Date.now() - 1000 * 60 * 30),
+    details: "MFA desactive par l'utilisateur",
+  },
+  {
+    id: '4',
+    type: 'password_reset',
+    severity: 'low',
+    user: 'user@bceao.int',
+    tenant: 'bceao',
+    ip: '192.168.10.5',
+    location: 'Dakar, SN',
+    timestamp: new Date(Date.now() - 1000 * 60 * 45),
+    details: 'Reinitialisation mot de passe demandee',
+  },
+  {
+    id: '5',
+    type: 'ip_blocked',
+    severity: 'high',
+    user: 'N/A',
+    tenant: 'N/A',
+    ip: '45.33.32.156',
+    location: 'Unknown',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60),
+    details: 'Tentative de brute force detectee',
+  },
+  {
+    id: '6',
+    type: 'permission_change',
+    severity: 'medium',
+    user: 'admin@example.com',
+    tenant: 'example-org',
+    ip: '192.168.1.1',
+    location: 'Abidjan, CI',
+    timestamp: new Date(Date.now() - 1000 * 60 * 90),
+    details: 'Role admin attribue a nouveau user',
+  },
 ];
 
 const blockedIPs: BlockedIP[] = [
-  { ip: '45.33.32.156', reason: 'Brute force attack', blockedAt: new Date(Date.now() - 1000 * 60 * 60), attempts: 150, country: 'Unknown' },
-  { ip: '103.21.244.0', reason: 'SQL injection attempt', blockedAt: new Date(Date.now() - 1000 * 60 * 120), attempts: 45, country: 'CN' },
-  { ip: '185.220.101.1', reason: 'Suspicious scanning', blockedAt: new Date(Date.now() - 1000 * 60 * 180), attempts: 89, country: 'RU' },
-  { ip: '91.121.87.10', reason: 'Multiple failed logins', blockedAt: new Date(Date.now() - 1000 * 60 * 240), attempts: 23, country: 'FR' },
+  {
+    ip: '45.33.32.156',
+    reason: 'Brute force attack',
+    blockedAt: new Date(Date.now() - 1000 * 60 * 60),
+    attempts: 150,
+    country: 'Unknown',
+  },
+  {
+    ip: '103.21.244.0',
+    reason: 'SQL injection attempt',
+    blockedAt: new Date(Date.now() - 1000 * 60 * 120),
+    attempts: 45,
+    country: 'CN',
+  },
+  {
+    ip: '185.220.101.1',
+    reason: 'Suspicious scanning',
+    blockedAt: new Date(Date.now() - 1000 * 60 * 180),
+    attempts: 89,
+    country: 'RU',
+  },
+  {
+    ip: '91.121.87.10',
+    reason: 'Multiple failed logins',
+    blockedAt: new Date(Date.now() - 1000 * 60 * 240),
+    attempts: 23,
+    country: 'FR',
+  },
 ];
 
 const activeSessions: ActiveSession[] = [
-  { id: '1', user: 'admin@sgci.com', tenant: 'Societe Generale CI', device: 'Chrome / Windows', ip: '192.168.1.50', location: 'Abidjan, CI', startedAt: new Date(Date.now() - 1000 * 60 * 30), lastActivity: new Date(Date.now() - 1000 * 60 * 2) },
-  { id: '2', user: 'dg@orange-ci.com', tenant: 'Orange Cote d\'Ivoire', device: 'Safari / macOS', ip: '10.0.0.100', location: 'Abidjan, CI', startedAt: new Date(Date.now() - 1000 * 60 * 120), lastActivity: new Date(Date.now() - 1000 * 60 * 5) },
-  { id: '3', user: 'finance@bceao.int', tenant: 'BCEAO', device: 'Firefox / Ubuntu', ip: '172.16.0.25', location: 'Dakar, SN', startedAt: new Date(Date.now() - 1000 * 60 * 60), lastActivity: new Date(Date.now() - 1000 * 60 * 10) },
-  { id: '4', user: 'user@ecobank.ml', tenant: 'Ecobank Mali', device: 'Chrome / Android', ip: '192.168.50.12', location: 'Bamako, ML', startedAt: new Date(Date.now() - 1000 * 60 * 45), lastActivity: new Date(Date.now() - 1000 * 60 * 1) },
+  {
+    id: '1',
+    user: 'admin@sgci.com',
+    tenant: 'Societe Generale CI',
+    device: 'Chrome / Windows',
+    ip: '192.168.1.50',
+    location: 'Abidjan, CI',
+    startedAt: new Date(Date.now() - 1000 * 60 * 30),
+    lastActivity: new Date(Date.now() - 1000 * 60 * 2),
+  },
+  {
+    id: '2',
+    user: 'dg@orange-ci.com',
+    tenant: "Orange Cote d'Ivoire",
+    device: 'Safari / macOS',
+    ip: '10.0.0.100',
+    location: 'Abidjan, CI',
+    startedAt: new Date(Date.now() - 1000 * 60 * 120),
+    lastActivity: new Date(Date.now() - 1000 * 60 * 5),
+  },
+  {
+    id: '3',
+    user: 'finance@bceao.int',
+    tenant: 'BCEAO',
+    device: 'Firefox / Ubuntu',
+    ip: '172.16.0.25',
+    location: 'Dakar, SN',
+    startedAt: new Date(Date.now() - 1000 * 60 * 60),
+    lastActivity: new Date(Date.now() - 1000 * 60 * 10),
+  },
+  {
+    id: '4',
+    user: 'user@ecobank.ml',
+    tenant: 'Ecobank Mali',
+    device: 'Chrome / Android',
+    ip: '192.168.50.12',
+    location: 'Bamako, ML',
+    startedAt: new Date(Date.now() - 1000 * 60 * 45),
+    lastActivity: new Date(Date.now() - 1000 * 60 * 1),
+  },
 ];
 
 const securityPolicies = [
@@ -106,7 +231,7 @@ const securityPolicies = [
 ];
 
 export const SuperAdminSecurityPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showBlockIPModal, setShowBlockIPModal] = useState(false);
   const [showPoliciesModal, setShowPoliciesModal] = useState(false);
@@ -119,7 +244,7 @@ export const SuperAdminSecurityPage: React.FC = () => {
 
   const formatTimeAgo = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    if (seconds < 60) return 'A l\'instant';
+    if (seconds < 60) return "A l'instant";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `Il y a ${minutes}min`;
     const hours = Math.floor(minutes / 60);
@@ -129,38 +254,49 @@ export const SuperAdminSecurityPage: React.FC = () => {
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case 'critical': return <Badge variant="danger">Critique</Badge>;
-      case 'high': return <Badge variant="danger">Eleve</Badge>;
-      case 'medium': return <Badge variant="warning">Moyen</Badge>;
-      case 'low': return <Badge variant="default">Faible</Badge>;
-      default: return <Badge>Inconnu</Badge>;
+      case 'critical':
+        return <Badge variant="danger">Critique</Badge>;
+      case 'high':
+        return <Badge variant="danger">Eleve</Badge>;
+      case 'medium':
+        return <Badge variant="warning">Moyen</Badge>;
+      case 'low':
+        return <Badge variant="default">Faible</Badge>;
+      default:
+        return <Badge>Inconnu</Badge>;
     }
   };
 
   const getEventIcon = (type: string) => {
     switch (type) {
-      case 'login_failed': return <XCircle size={16} className="text-advist-error" />;
-      case 'suspicious_activity': return <AlertTriangle size={16} className="text-advist-gold-dark" />;
-      case 'password_reset': return <Key size={16} className="text-advist-gray900" />;
-      case 'mfa_disabled': return <Smartphone size={16} className="text-advist-gold-dark" />;
-      case 'ip_blocked': return <Ban size={16} className="text-advist-error" />;
-      case 'permission_change': return <Users size={16} className="text-advist-gray900" />;
-      default: return <Activity size={16} className="text-advist-text-secondary" />;
+      case 'login_failed':
+        return <XCircle size={16} className="text-advist-error" />;
+      case 'suspicious_activity':
+        return <AlertTriangle size={16} className="text-advist-gold-dark" />;
+      case 'password_reset':
+        return <Key size={16} className="text-advist-gray900" />;
+      case 'mfa_disabled':
+        return <Smartphone size={16} className="text-advist-gold-dark" />;
+      case 'ip_blocked':
+        return <Ban size={16} className="text-advist-error" />;
+      case 'permission_change':
+        return <Users size={16} className="text-advist-gray900" />;
+      default:
+        return <Activity size={16} className="text-advist-text-secondary" />;
     }
   };
 
-  const filteredEvents = filterSeverity === 'all'
-    ? securityEvents
-    : securityEvents.filter(e => e.severity === filterSeverity);
+  const filteredEvents =
+    filterSeverity === 'all'
+      ? securityEvents
+      : securityEvents.filter((e) => e.severity === filterSeverity);
 
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-advist-gray900">
-            Securite & Audit
-          </h1>
+          <h1 className="text-2xl font-bold text-advist-gray900">Securite & Audit</h1>
           <p className="text-advist-gray900 mt-1">
             Surveillance et gestion de la securite de la plateforme
           </p>
@@ -190,24 +326,38 @@ export const SuperAdminSecurityPage: React.FC = () => {
                 <p className="text-sm text-advist-gray900 mb-1">{metric.label}</p>
                 <p className="text-2xl font-bold text-advist-gray900">{metric.value}</p>
                 <div className="flex items-center gap-1 mt-2">
-                  <span className={`text-sm font-medium ${metric.change >= 0 ? 'text-advist-success' : 'text-advist-error'}`}>
-                    {metric.change >= 0 ? '+' : ''}{metric.change}%
+                  <span
+                    className={`text-sm font-medium ${metric.change >= 0 ? 'text-advist-success' : 'text-advist-error'}`}
+                  >
+                    {metric.change >= 0 ? '+' : ''}
+                    {metric.change}%
                   </span>
                   <span className="text-xs text-advist-gray900">vs hier</span>
                 </div>
               </div>
-              <div className={`p-3 rounded-xl ${
-                metric.color === 'red' ? 'bg-advist-gold-light' :
-                metric.color === 'blue' ? 'bg-advist-gold-light' :
-                metric.color === 'green' ? 'bg-green-50' :
-                'bg-advist-surface-dark'
-              }`}>
-                <metric.icon size={24} className={`${
-                  metric.color === 'red' ? 'text-advist-error' :
-                  metric.color === 'blue' ? 'text-advist-gray900' :
-                  metric.color === 'green' ? 'text-advist-success' :
-                  'text-advist-gray900'
-                }`} />
+              <div
+                className={`p-3 rounded-xl ${
+                  metric.color === 'red'
+                    ? 'bg-advist-gold-light'
+                    : metric.color === 'blue'
+                      ? 'bg-advist-gold-light'
+                      : metric.color === 'green'
+                        ? 'bg-green-50'
+                        : 'bg-advist-surface-dark'
+                }`}
+              >
+                <metric.icon
+                  size={24}
+                  className={`${
+                    metric.color === 'red'
+                      ? 'text-advist-error'
+                      : metric.color === 'blue'
+                        ? 'text-advist-gray900'
+                        : metric.color === 'green'
+                          ? 'text-advist-success'
+                          : 'text-advist-gray900'
+                  }`}
+                />
               </div>
             </div>
           </Card>
@@ -240,10 +390,11 @@ export const SuperAdminSecurityPage: React.FC = () => {
 
           <div className="space-y-3">
             {filteredEvents.map((event) => (
-              <div key={event.id} className="flex items-start gap-4 p-4 bg-advist-bg rounded-xl hover:bg-advist-bg transition-all duration-240">
-                <div className="p-2 bg-white rounded-xl">
-                  {getEventIcon(event.type)}
-                </div>
+              <div
+                key={event.id}
+                className="flex items-start gap-4 p-4 bg-advist-bg rounded-xl hover:bg-advist-bg transition-all duration-240"
+              >
+                <div className="p-2 bg-white rounded-xl">{getEventIcon(event.type)}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-medium text-advist-gray900">{event.details}</span>
@@ -291,7 +442,10 @@ export const SuperAdminSecurityPage: React.FC = () => {
 
           <div className="space-y-3">
             {blockedIPs.map((ip) => (
-              <div key={ip.ip} className="p-3 bg-advist-gold-light border border-advist-gold rounded-xl">
+              <div
+                key={ip.ip}
+                className="p-3 bg-advist-gold-light border border-advist-gold rounded-xl"
+              >
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-mono text-sm font-medium text-advist-error">{ip.ip}</span>
                   <Badge variant="danger">{ip.country}</Badge>
@@ -328,12 +482,24 @@ export const SuperAdminSecurityPage: React.FC = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-advist-bg">
-                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">Utilisateur</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">Organisation</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">Appareil</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">IP / Location</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">Derniere activite</th>
-                <th className="text-right py-3 px-4 text-sm font-medium text-advist-gray900">Actions</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">
+                  Utilisateur
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">
+                  Organisation
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">
+                  Appareil
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">
+                  IP / Location
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-advist-gray900">
+                  Derniere activite
+                </th>
+                <th className="text-right py-3 px-4 text-sm font-medium text-advist-gray900">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -351,10 +517,16 @@ export const SuperAdminSecurityPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="py-4 px-4">
-                    <span className="text-sm text-advist-gray900">{formatTimeAgo(session.lastActivity)}</span>
+                    <span className="text-sm text-advist-gray900">
+                      {formatTimeAgo(session.lastActivity)}
+                    </span>
                   </td>
                   <td className="py-4 px-4 text-right">
-                    <Button variant="ghost" size="sm" className="text-advist-error hover:bg-advist-gold-light">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-advist-error hover:bg-advist-gold-light"
+                    >
                       <XCircle size={14} />
                     </Button>
                   </td>
@@ -374,7 +546,10 @@ export const SuperAdminSecurityPage: React.FC = () => {
       >
         <div className="space-y-3">
           {securityPolicies.map((policy) => (
-            <div key={policy.name} className="flex items-center justify-between p-3 bg-advist-bg rounded-xl">
+            <div
+              key={policy.name}
+              className="flex items-center justify-between p-3 bg-advist-bg rounded-xl"
+            >
               <div>
                 <span className="font-medium text-advist-gray900">{policy.name}</span>
                 <p className="text-sm text-advist-gray900">{policy.value}</p>
@@ -401,9 +576,7 @@ export const SuperAdminSecurityPage: React.FC = () => {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-advist-gray900 mb-1">
-              Adresse IP
-            </label>
+            <label className="block text-sm font-medium text-advist-gray900 mb-1">Adresse IP</label>
             <input
               type="text"
               placeholder="192.168.1.1"
@@ -411,9 +584,7 @@ export const SuperAdminSecurityPage: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-advist-gray900 mb-1">
-              Raison
-            </label>
+            <label className="block text-sm font-medium text-advist-gray900 mb-1">Raison</label>
             <select className="w-full px-3 py-2 border border-advist-bg rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-gold">
               <option>Tentative de brute force</option>
               <option>Activite suspecte</option>
@@ -423,9 +594,7 @@ export const SuperAdminSecurityPage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-advist-gray900 mb-1">
-              Duree
-            </label>
+            <label className="block text-sm font-medium text-advist-gray900 mb-1">Duree</label>
             <select className="w-full px-3 py-2 border border-advist-bg rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-gold">
               <option>24 heures</option>
               <option>7 jours</option>

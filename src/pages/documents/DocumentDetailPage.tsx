@@ -20,7 +20,7 @@ import {
   Settings,
   Shield,
   Link2,
-  ExternalLink,
+  _ExternalLink,
   ChevronRight,
   Bookmark,
   BookmarkCheck,
@@ -47,28 +47,28 @@ import {
   Type,
   Stamp,
   X,
-  Check,
-  Palette,
+  _Check,
+  _Palette,
   Undo,
-  Redo,
+  _Redo,
   Save,
   Eye,
   EyeOff,
   Sparkles,
   Languages,
 } from 'lucide-react';
-import { Avatar } from '../../components/ui/Avatar';
+import { Button, Badge, StatusBadge, Avatar, Modal, Input } from '../../components/ui';
+import { PrintButton } from '../../shared/PrintEngine';
 import {
-  Card,
-  Button,
-  Badge,
-  StatusBadge,
-  Modal,
-  Input,
-} from '../../components/ui';
-import { WordEditor, ExcelEditor, VersionComparison, AIDocumentAnalysis, DocumentTranslator, ValidationWorkflowPanel, ValidationStatusBadge } from '../../components/documents';
+  WordEditor,
+  ExcelEditor,
+  VersionComparison,
+  AIDocumentAnalysis,
+  DocumentTranslator,
+  ValidationWorkflowPanel,
+} from '../../components/documents';
 import type { ValidationStatus } from '../../components/documents';
-import { ValidationReport, ValidationReportPreview } from '../../components/workflows';
+import { ValidationReport } from '../../components/workflows';
 import type { ValidationReportData } from '../../components/workflows';
 import { AnomalyAlert } from '../../components/anomalies';
 import { anomalyDetectionService, type Anomaly } from '../../services/anomalyDetection';
@@ -79,7 +79,20 @@ import type { ChatMessage, TypingUser } from '../../hooks/useDocumentCollaborati
 type ViewMode = 'pdf' | 'word' | 'excel';
 
 // Types for sidebar panels
-type PanelId = 'ai' | 'translate' | 'info' | 'metadata' | 'owner' | 'validation' | 'workflow' | 'signatures' | 'versions' | 'linked' | 'comments' | 'activity' | 'actions';
+type PanelId =
+  | 'ai'
+  | 'translate'
+  | 'info'
+  | 'metadata'
+  | 'owner'
+  | 'validation'
+  | 'workflow'
+  | 'signatures'
+  | 'versions'
+  | 'linked'
+  | 'comments'
+  | 'activity'
+  | 'actions';
 
 interface SidebarPanel {
   id: PanelId;
@@ -89,7 +102,17 @@ interface SidebarPanel {
 }
 
 // Annotation types
-type AnnotationTool = 'select' | 'highlight' | 'note' | 'draw' | 'rectangle' | 'circle' | 'arrow' | 'text' | 'signature' | 'stamp';
+type AnnotationTool =
+  | 'select'
+  | 'highlight'
+  | 'note'
+  | 'draw'
+  | 'rectangle'
+  | 'circle'
+  | 'arrow'
+  | 'text'
+  | 'signature'
+  | 'stamp';
 
 interface Annotation {
   id: string;
@@ -126,8 +149,11 @@ interface DocumentDetailPageProps {
   onBack?: () => void;
 }
 
-export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded = false, onBack }) => {
-  const { t } = useTranslation();
+export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
+  embedded = false,
+  onBack,
+}) => {
+  const { _t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -135,7 +161,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
 
   const [showShareModal, setShowShareModal] = useState(false);
   const [showWorkflowModal, setShowWorkflowModal] = useState(false);
-  const [showSignModal, setShowSignModal] = useState(false);
+  const [_showSignModal, setShowSignModal] = useState(false);
   const [showValidationReport, setShowValidationReport] = useState(false);
   const [showVersionComparison, setShowVersionComparison] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -144,7 +170,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      content: 'J\'ai termine la revision de l\'article 3.',
+      content: "J'ai termine la revision de l'article 3.",
       author: { id: '1', name: 'Marie Dupont', avatar: undefined },
       createdAt: new Date(Date.now() - 3600000).toISOString(),
     },
@@ -162,7 +188,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
       pageReference: 5,
     },
   ]);
-  const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
+  const [typingUsers, _setTypingUsers] = useState<TypingUser[]>([]);
 
   // Anomaly detection state
   const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
@@ -178,8 +204,25 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
   const [activeTool, setActiveTool] = useState<AnnotationTool>('select');
   const [annotations, setAnnotations] = useState<Annotation[]>([
     // Sample annotations
-    { id: '1', type: 'highlight', page: 1, x: 48, y: 180, width: 400, height: 20, color: '#FEF08A' },
-    { id: '2', type: 'note', page: 1, x: 450, y: 280, color: '#FEF08A', content: 'Vérifier ce montant' },
+    {
+      id: '1',
+      type: 'highlight',
+      page: 1,
+      x: 48,
+      y: 180,
+      width: 400,
+      height: 20,
+      color: '#FEF08A',
+    },
+    {
+      id: '2',
+      type: 'note',
+      page: 1,
+      x: 450,
+      y: 280,
+      color: '#FEF08A',
+      content: 'Vérifier ce montant',
+    },
     { id: '3', type: 'stamp', page: 1, x: 400, y: 50, color: '#10B981', content: 'APPROUVÉ' },
   ]);
   const [selectedColor, setSelectedColor] = useState('#FEF08A');
@@ -193,7 +236,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
 
   // View mode state - determines which editor to show
   const [viewMode, setViewMode] = useState<ViewMode>('pdf');
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [_isEditMode, setIsEditMode] = useState(false);
 
   // Mock document data - with file extension to determine document type
   const documentId = parseInt(id || '1');
@@ -277,13 +320,15 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
     const documentData = {
       id: document?.id,
       document_date: document?.created_at,
-      amount: document?.metadata?.montant ? parseFloat(document.metadata.montant.replace(/[^\d]/g, '')) : undefined,
+      amount: document?.metadata?.montant
+        ? parseFloat(document.metadata.montant.replace(/[^\d]/g, ''))
+        : undefined,
       title: document?.title,
       document_type: document?.document_type?.name,
     };
     const detectedAnomalies = anomalyDetectionService.detectAnomaliesLocally(documentData);
     setAnomalies(detectedAnomalies);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documentId]);
 
   // Determine available view modes based on file extension
@@ -448,11 +493,14 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
           department: 'Direction Générale',
         },
         completedAt: workflow.current_step > 3 ? '2024-11-26T10:00:00Z' : undefined,
-        completedBy: workflow.current_step > 3 ? {
-          id: 4,
-          name: 'Jean Dupont',
-          email: 'jean.dupont@example.com',
-        } : undefined,
+        completedBy:
+          workflow.current_step > 3
+            ? {
+                id: 4,
+                name: 'Jean Dupont',
+                email: 'jean.dupont@example.com',
+              }
+            : undefined,
         comment: workflow.current_step > 3 ? 'Approuvé pour signature.' : undefined,
       },
       {
@@ -470,25 +518,34 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
         },
       },
     ],
-    finalSignature: workflow.status === 'completed' ? {
-      signedBy: {
-        id: 5,
-        name: 'Marie Leblanc',
-        email: 'marie.leblanc@example.com',
-        title: 'Directrice Générale',
-      },
-      signedAt: '2024-11-27T16:30:00Z',
-      signatureData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAoCAYAAAAIeF9DAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFfSURBVGiB7doxSsRAGMXx/y4WYmFhYSFYWAgWFoKFhWBhIVhYCBYWgoWFYGEhWFgIFhaChaAHeACP4REUEVFEt3ABtxCLycYxJMvu6sw37sL/K2YmM8y8ZAbOIKIoiqIoiqLoXfLu+HQ6LSIyIyJHIrIqIsfq+qK+/hGR9yJypfvvqOu7ur5VLpfr9fr5arW6p3u+ISLn6nmAqiqqqi9E5Eq9/bWInIjIM9X+IiLfRORJvf2DiDwTkRt1fUVdt9X1Y/X2IvKirp+q60t1fayuT9T1gbq+oN7+VL39kXr7Y3V9ot7+RF0fq+tD9fZ76u2P1dsfq7c/VG+/ra5P1NtfqOsr6u2P1fWhevtt9fan6u2v1NsfqetD9fbb6vpMXZ+ot79R13fU29+q6wt1faWuj9T1ubq+VNe36u3v1fWBuj5W13fq+kxdH6nrU3V9ot7+Ul1fq+t7dX2tro/V9am6PlHXF+r6Ql1fqus7dX2nrq/U9aG6PlbXp+r6RkT+AB3zj4+Oj48fHx8fHx8/Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pv9/Aab8hbxQ4YPXAAAA',
-      certificateId: 'CERT-2024-00892',
-      reason: 'Signature du contrat pour approbation finale',
-    } : undefined,
+    finalSignature:
+      workflow.status === 'completed'
+        ? {
+            signedBy: {
+              id: 5,
+              name: 'Marie Leblanc',
+              email: 'marie.leblanc@example.com',
+              title: 'Directrice Générale',
+            },
+            signedAt: '2024-11-27T16:30:00Z',
+            signatureData:
+              'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAoCAYAAAAIeF9DAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFfSURBVGiB7doxSsRAGMXx/y4WYmFhYSFYWAgWFoKFhWBhIVhYCBYWgoWFYGEhWFgIFhaChaAHeACP4REUEVFEt3ABtxCLycYxJMvu6sw37sL/K2YmM8y8ZAbOIKIoiqIoiqLoXfLu+HQ6LSIyIyJHIrIqIsfq+qK+/hGR9yJypfvvqOu7ur5VLpfr9fr5arW6p3u+ISLn6nmAqiqqqi9E5Eq9/bWInIjIM9X+IiLfRORJvf2DiDwTkRt1fUVdt9X1Y/X2IvKirp+q60t1fayuT9T1gbq+oN7+VL39kXr7Y3V9ot7+RF0fq+tD9fZ76u2P1dsfq7c/VG+/ra5P1NtfqOsr6u2P1fWhevtt9fan6u2v1NsfqetD9fbb6vpMXZ+ot79R13fU29+q6wt1faWuj9T1ubq+VNe36u3v1fWBuj5W13fq+kxdH6nrU3V9ot7+Ul1fq+t7dX2tro/V9am6PlHXF+r6Ql1fqus7dX2nrq/U9aG6PlbXp+r6RkT+AB3zj4+Oj48fHx8fHx8/Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pv9/Aab8hbxQ4YPXAAAA',
+            certificateId: 'CERT-2024-00892',
+            reason: 'Signature du contrat pour approbation finale',
+          }
+        : undefined,
     verificationCode: 'ADVIST-VRF-8A3B-C7D2-E9F4',
     generatedAt: new Date().toISOString(),
   };
 
   const activities = [
     { action: 'Version uploadée', user: 'Marie D.', time: '2h', icon: <Layers size={14} /> },
-    { action: 'Commentaire ajouté', user: 'Pierre M.', time: '1j', icon: <MessageSquare size={14} /> },
+    {
+      action: 'Commentaire ajouté',
+      user: 'Pierre M.',
+      time: '1j',
+      icon: <MessageSquare size={14} />,
+    },
     { action: 'Workflow démarré', user: 'Marie D.', time: '2j', icon: <GitBranch size={14} /> },
     { action: 'Document créé', user: 'Marie D.', time: '7j', icon: <FileText size={14} /> },
   ];
@@ -497,7 +554,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   };
 
   // Chat handlers
@@ -510,7 +567,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
       replyTo,
       pageReference,
     };
-    setChatMessages(prev => [...prev, newMessage]);
+    setChatMessages((prev) => [...prev, newMessage]);
   };
 
   const handleStartTyping = () => {
@@ -605,7 +662,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
 
   // Delete annotation
   const deleteAnnotation = (id: string) => {
-    setAnnotations(annotations.filter(a => a.id !== id));
+    setAnnotations(annotations.filter((a) => a.id !== id));
   };
 
   // Sidebar panels configuration
@@ -614,13 +671,15 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
       id: 'ai',
       icon: <Sparkles size={20} />,
       label: 'Analyse IA',
-      badge: <span className="absolute -top-1 -right-1 w-2 h-2 bg-advist-dark rounded-full animate-pulse" />
+      badge: (
+        <span className="absolute -top-1 -right-1 w-2 h-2 bg-advist-dark rounded-full animate-pulse" />
+      ),
     },
     {
       id: 'translate',
       icon: <Languages size={20} />,
       label: 'Traduction',
-      badge: <span className="absolute -top-1 -right-1 w-2 h-2 bg-advist-dark rounded-full" />
+      badge: <span className="absolute -top-1 -right-1 w-2 h-2 bg-advist-dark rounded-full" />,
     },
     { id: 'info', icon: <Info size={20} />, label: 'Informations' },
     { id: 'metadata', icon: <Tag size={20} />, label: 'Métadonnées' },
@@ -629,23 +688,24 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
       id: 'validation',
       icon: <CheckCircle size={20} />,
       label: 'Validation',
-      badge: <span className="absolute -top-1 -right-1 w-2 h-2 bg-advist-gold rounded-full" />
+      badge: <span className="absolute -top-1 -right-1 w-2 h-2 bg-advist-gold rounded-full" />,
     },
     {
       id: 'workflow',
       icon: <GitBranch size={20} />,
       label: 'Workflow',
-      badge: <span className="absolute -top-1 -right-1 w-2 h-2 bg-advist-dark rounded-full" />
+      badge: <span className="absolute -top-1 -right-1 w-2 h-2 bg-advist-dark rounded-full" />,
     },
     {
       id: 'signatures',
       icon: <PenTool size={20} />,
       label: 'Signatures',
-      badge: document.signature_status.pending_signatures > 0 ? (
-        <span className="absolute -top-1 -right-1 w-4 h-4 bg-advist-gold text-advist-gray900 text-[10px] flex items-center justify-center rounded-full">
-          {document.signature_status.pending_signatures}
-        </span>
-      ) : undefined
+      badge:
+        document.signature_status.pending_signatures > 0 ? (
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-advist-gold text-advist-gray900 text-[10px] flex items-center justify-center rounded-full">
+            {document.signature_status.pending_signatures}
+          </span>
+        ) : undefined,
     },
     { id: 'versions', icon: <History size={20} />, label: 'Versions' },
     { id: 'linked', icon: <Link2 size={20} />, label: 'Documents liés' },
@@ -653,11 +713,12 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
       id: 'comments',
       icon: <MessageSquare size={20} />,
       label: 'Commentaires',
-      badge: comments.length > 0 ? (
-        <span className="absolute -top-1 -right-1 w-4 h-4 bg-advist-text-secondary text-white text-[10px] flex items-center justify-center rounded-full">
-          {comments.length}
-        </span>
-      ) : undefined
+      badge:
+        comments.length > 0 ? (
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-advist-text-secondary text-white text-[10px] flex items-center justify-center rounded-full">
+            {comments.length}
+          </span>
+        ) : undefined,
     },
     { id: 'activity', icon: <Activity size={20} />, label: 'Activité' },
     { id: 'actions', icon: <Settings size={20} />, label: 'Actions' },
@@ -685,7 +746,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
               documentTitle={document.title}
               documentContent="Ce contrat porte sur la location de bureaux de 200m² situés à Abidjan Plateau. Le loyer mensuel est fixé à 500 000 FCFA avec une caution de 3 mois."
               documentSummary={document.description}
-              annotations={annotations.filter(a => a.content).map(a => ({ id: a.id, content: a.content || '' }))}
+              annotations={annotations
+                .filter((a) => a.content)
+                .map((a) => ({ id: a.id, content: a.content || '' }))}
             />
           </div>
         );
@@ -700,27 +763,35 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
               <AnomalyAlert
                 anomalies={anomalies}
                 compact
-                onResolve={(id) => setAnomalies(prev => prev.filter(a => a.id !== id))}
-                onDismiss={(id) => setAnomalies(prev => prev.filter(a => a.id !== id))}
+                onResolve={(id) => setAnomalies((prev) => prev.filter((a) => a.id !== id))}
+                onDismiss={(id) => setAnomalies((prev) => prev.filter((a) => a.id !== id))}
               />
             )}
 
             <div className="space-y-3">
               <div className="flex justify-between items-center py-2 border-b border-[#F0F0EB]">
                 <span className="text-sm text-advist-blue-light">Type</span>
-                <span className="text-sm font-medium text-advist-gray900">{document.document_type.name}</span>
+                <span className="text-sm font-medium text-advist-gray900">
+                  {document.document_type.name}
+                </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-[#F0F0EB]">
                 <span className="text-sm text-advist-blue-light">Taille</span>
-                <span className="text-sm font-medium text-advist-gray900">{formatFileSize(document.file_size)}</span>
+                <span className="text-sm font-medium text-advist-gray900">
+                  {formatFileSize(document.file_size)}
+                </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-[#F0F0EB]">
                 <span className="text-sm text-advist-blue-light">Version</span>
-                <span className="text-sm font-medium text-advist-gray900">v{document.current_version}</span>
+                <span className="text-sm font-medium text-advist-gray900">
+                  v{document.current_version}
+                </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-[#F0F0EB]">
                 <span className="text-sm text-advist-blue-light">Pages</span>
-                <span className="text-sm font-medium text-advist-gray900">{document.total_pages}</span>
+                <span className="text-sm font-medium text-advist-gray900">
+                  {document.total_pages}
+                </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-[#F0F0EB]">
                 <span className="text-sm text-advist-blue-light">Créé le</span>
@@ -735,7 +806,10 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                 <div className="flex flex-wrap gap-2 mt-2">
                   {document.tags.map((tag) => (
                     <Badge key={tag.id} variant="outline" size="sm">
-                      <span className="w-2 h-2 rounded-full mr-1.5" style={{ backgroundColor: tag.color }} />
+                      <span
+                        className="w-2 h-2 rounded-full mr-1.5"
+                        style={{ backgroundColor: tag.color }}
+                      />
                       {tag.name}
                     </Badge>
                   ))}
@@ -751,13 +825,23 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
             <h3 className="font-semibold text-advist-gray900 text-lg">Métadonnées</h3>
             <div className="space-y-3">
               {Object.entries(document.metadata).map(([key, value]) => (
-                <div key={key} className="flex justify-between items-center py-2 border-b border-[#F0F0EB]">
-                  <span className="text-sm text-advist-blue-light capitalize">{key.replace('_', ' ')}</span>
+                <div
+                  key={key}
+                  className="flex justify-between items-center py-2 border-b border-[#F0F0EB]"
+                >
+                  <span className="text-sm text-advist-blue-light capitalize">
+                    {key.replace('_', ' ')}
+                  </span>
                   <span className="text-sm font-medium text-advist-gray900">{value}</span>
                 </div>
               ))}
             </div>
-            <Button variant="outline" size="sm" className="w-full mt-4" leftIcon={<Edit size={14} />}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full mt-4"
+              leftIcon={<Edit size={14} />}
+            >
               Modifier les métadonnées
             </Button>
           </div>
@@ -835,19 +919,19 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
               isOwner={true}
               canReview={true}
               onSubmitForReview={async (notes) => {
-                console.log('Submitting for review:', notes);
+                console.info('Submitting for review:', notes);
               }}
               onStartReview={async () => {
-                console.log('Starting review');
+                console.info('Starting review');
               }}
               onRequestChanges={async (comments) => {
-                console.log('Requesting changes:', comments);
+                console.info('Requesting changes:', comments);
               }}
               onValidate={async (comments) => {
-                console.log('Validating:', comments);
+                console.info('Validating:', comments);
               }}
               onReject={async (reason) => {
-                console.log('Rejecting:', reason);
+                console.info('Rejecting:', reason);
               }}
             />
           </div>
@@ -858,19 +942,27 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
           <div className="p-4 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-advist-gray900 text-lg">Workflow</h3>
-              <Badge variant="info" size="sm">En cours</Badge>
+              <Badge variant="info" size="sm">
+                En cours
+              </Badge>
             </div>
-            <p className="text-sm text-[#585858] bg-[#F9F9F7] p-3 rounded-xl">{workflow.template}</p>
+            <p className="text-sm text-[#585858] bg-[#F9F9F7] p-3 rounded-xl">
+              {workflow.template}
+            </p>
 
             {/* Progress indicator */}
             <div className="flex items-center gap-1">
               {workflow.steps.map((step, idx) => (
                 <React.Fragment key={idx}>
-                  <div className={`flex-1 h-1.5 rounded-full ${
-                    step.status === 'completed' ? 'bg-advist-success' :
-                    step.status === 'in_progress' ? 'bg-advist-dark' :
-                    'bg-advist-border'
-                  }`} />
+                  <div
+                    className={`flex-1 h-1.5 rounded-full ${
+                      step.status === 'completed'
+                        ? 'bg-advist-success'
+                        : step.status === 'in_progress'
+                          ? 'bg-advist-dark'
+                          : 'bg-advist-border'
+                    }`}
+                  />
                 </React.Fragment>
               ))}
             </div>
@@ -880,27 +972,41 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                 <div
                   key={idx}
                   className={`flex items-start gap-3 p-3 rounded-xl transition-all duration-240 ${
-                    step.status === 'in_progress' ? 'bg-advist-gold-light border border-advist-gold' :
-                    step.status === 'completed' ? 'bg-green-50/50' :
-                    'bg-[#F9F9F7]'
+                    step.status === 'in_progress'
+                      ? 'bg-advist-gold-light border border-advist-gold'
+                      : step.status === 'completed'
+                        ? 'bg-green-50/50'
+                        : 'bg-[#F9F9F7]'
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step.status === 'completed' ? 'bg-advist-success text-white' :
-                    step.status === 'in_progress' ? 'bg-advist-dark text-white' :
-                    'bg-advist-border text-advist-text-secondary'
-                  }`}>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                      step.status === 'completed'
+                        ? 'bg-advist-success text-white'
+                        : step.status === 'in_progress'
+                          ? 'bg-advist-dark text-white'
+                          : 'bg-advist-border text-advist-text-secondary'
+                    }`}
+                  >
                     {step.status === 'completed' ? <CheckCircle size={16} /> : idx + 1}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <p className={`font-medium ${
-                        step.status === 'in_progress' ? 'text-advist-gray900' :
-                        step.status === 'completed' ? 'text-advist-success' :
-                        'text-advist-gray900'
-                      }`}>{step.name}</p>
+                      <p
+                        className={`font-medium ${
+                          step.status === 'in_progress'
+                            ? 'text-advist-gray900'
+                            : step.status === 'completed'
+                              ? 'text-advist-success'
+                              : 'text-advist-gray900'
+                        }`}
+                      >
+                        {step.name}
+                      </p>
                       {step.status === 'in_progress' && step.deadline && (
-                        <Badge variant="warning" size="sm">{step.deadline}</Badge>
+                        <Badge variant="warning" size="sm">
+                          {step.deadline}
+                        </Badge>
                       )}
                       {step.status === 'completed' && step.date && (
                         <span className="text-xs text-advist-success">{step.date}</span>
@@ -924,7 +1030,8 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                 Voir le rapport de validation
               </Button>
               <p className="text-xs text-advist-blue-light text-center mt-2">
-                {validationReportData.steps.filter(s => s.status === 'approved').length} / {validationReportData.steps.length} étapes validées
+                {validationReportData.steps.filter((s) => s.status === 'approved').length} /{' '}
+                {validationReportData.steps.length} étapes validées
               </p>
             </div>
           </div>
@@ -939,7 +1046,8 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                 variant={document.signature_status.pending_signatures > 0 ? 'warning' : 'success'}
                 size="sm"
               >
-                {document.signature_status.completed_signatures}/{document.signature_status.required_signatures}
+                {document.signature_status.completed_signatures}/
+                {document.signature_status.required_signatures}
               </Badge>
             </div>
 
@@ -948,11 +1056,14 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
               <div className="h-3 bg-[#E0E0D8] rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all"
-                  style={{ width: `${(document.signature_status.completed_signatures / document.signature_status.required_signatures) * 100}%` }}
+                  style={{
+                    width: `${(document.signature_status.completed_signatures / document.signature_status.required_signatures) * 100}%`,
+                  }}
                 />
               </div>
               <p className="text-xs text-advist-blue-light mt-1 text-center">
-                {document.signature_status.completed_signatures} sur {document.signature_status.required_signatures} signatures
+                {document.signature_status.completed_signatures} sur{' '}
+                {document.signature_status.required_signatures} signatures
               </p>
             </div>
 
@@ -976,8 +1087,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                       <p className="text-xs text-advist-blue-light">
                         {sig.status === 'completed'
                           ? `Signé le ${sig.signed_at?.split('T')[0]}`
-                          : `Échéance: ${sig.deadline?.split('T')[0]}`
-                        }
+                          : `Échéance: ${sig.deadline?.split('T')[0]}`}
                       </p>
                     </div>
                     {sig.status === 'completed' ? (
@@ -1007,7 +1117,11 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
             )}
 
             {document.signature_status.pending_signatures > 0 && (
-              <Button className="w-full mt-4" leftIcon={<PenTool size={16} />} onClick={() => setShowSignModal(true)}>
+              <Button
+                className="w-full mt-4"
+                leftIcon={<PenTool size={16} />}
+                onClick={() => setShowSignModal(true)}
+              >
                 Signer maintenant
               </Button>
             )}
@@ -1019,7 +1133,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
           <div className="p-4 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-advist-gray900 text-lg">Versions</h3>
-              <Badge variant="gray" size="sm">v{document.current_version}</Badge>
+              <Badge variant="gray" size="sm">
+                v{document.current_version}
+              </Badge>
             </div>
 
             {/* Compare Versions Button */}
@@ -1045,9 +1161,13 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-semibold text-advist-gray900">v{v.version}</span>
+                      <span className="text-lg font-semibold text-advist-gray900">
+                        v{v.version}
+                      </span>
                       {v.version === document.current_version && (
-                        <Badge variant="info" size="sm">Actuelle</Badge>
+                        <Badge variant="info" size="sm">
+                          Actuelle
+                        </Badge>
                       )}
                     </div>
                     <Button variant="ghost" size="sm">
@@ -1055,7 +1175,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                     </Button>
                   </div>
                   <p className="text-sm text-[#585858] mb-1">{v.comment}</p>
-                  <p className="text-xs text-advist-blue-light">{v.by} • {v.date}</p>
+                  <p className="text-xs text-advist-blue-light">
+                    {v.by} • {v.date}
+                  </p>
                 </div>
               ))}
             </div>
@@ -1070,7 +1192,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
           <div className="p-4 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-advist-gray900 text-lg">Documents liés</h3>
-              <Badge variant="gray" size="sm">{linkedDocuments.length}</Badge>
+              <Badge variant="gray" size="sm">
+                {linkedDocuments.length}
+              </Badge>
             </div>
             <div className="space-y-2">
               {linkedDocuments.map((doc) => (
@@ -1101,7 +1225,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
           <div className="p-4 space-y-4 flex flex-col h-full">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-advist-gray900 text-lg">Commentaires</h3>
-              <Badge variant="gray" size="sm">{comments.length}</Badge>
+              <Badge variant="gray" size="sm">
+                {comments.length}
+              </Badge>
             </div>
             <div className="flex-1 space-y-3 overflow-y-auto">
               {comments.map((c) => (
@@ -1148,7 +1274,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                     </div>
                     <div className="flex-1 pt-1">
                       <p className="text-sm font-medium text-advist-gray900">{a.action}</p>
-                      <p className="text-xs text-advist-blue-light">{a.user} • Il y a {a.time}</p>
+                      <p className="text-xs text-advist-blue-light">
+                        {a.user} • Il y a {a.time}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -1165,26 +1293,64 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
           <div className="p-4 space-y-4">
             <h3 className="font-semibold text-advist-gray900 text-lg">Actions</h3>
             <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-start" size="sm" leftIcon={<Download size={16} />}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                size="sm"
+                leftIcon={<Download size={16} />}
+              >
                 Télécharger
               </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm" leftIcon={<Share2 size={16} />} onClick={() => setShowShareModal(true)}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                size="sm"
+                leftIcon={<Share2 size={16} />}
+                onClick={() => setShowShareModal(true)}
+              >
                 Partager
               </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm" leftIcon={<Printer size={16} />} onClick={() => window.print()}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                size="sm"
+                leftIcon={<Printer size={16} />}
+                onClick={() => window.print()}
+              >
                 Imprimer
               </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm" leftIcon={<Edit size={16} />}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                size="sm"
+                leftIcon={<Edit size={16} />}
+              >
                 Modifier les métadonnées
               </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm" leftIcon={<GitBranch size={16} />} onClick={() => setShowWorkflowModal(true)}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                size="sm"
+                leftIcon={<GitBranch size={16} />}
+                onClick={() => setShowWorkflowModal(true)}
+              >
                 Lancer un workflow
               </Button>
-              <Button variant="outline" className="w-full justify-start" size="sm" leftIcon={document.is_locked ? <Unlock size={16} /> : <Lock size={16} />}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                size="sm"
+                leftIcon={document.is_locked ? <Unlock size={16} /> : <Lock size={16} />}
+              >
                 {document.is_locked ? 'Déverrouiller' : 'Verrouiller'}
               </Button>
               <div className="pt-2 border-t border-[#E0E0D8]">
-                <Button variant="outline" className="w-full justify-start text-advist-error hover:bg-advist-gold-light border-advist-gold" size="sm" leftIcon={<Trash2 size={16} />}>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-advist-error hover:bg-advist-gold-light border-advist-gold"
+                  size="sm"
+                  leftIcon={<Trash2 size={16} />}
+                >
                   Supprimer le document
                 </Button>
               </div>
@@ -1202,7 +1368,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
     if (!showAnnotations) return null;
 
     return annotations
-      .filter(a => a.page === currentPage)
+      .filter((a) => a.page === currentPage)
       .map((annotation) => {
         switch (annotation.type) {
           case 'highlight':
@@ -1218,7 +1384,10 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                   backgroundColor: annotation.color,
                   opacity: 0.5,
                 }}
-                onClick={(e) => { e.stopPropagation(); deleteAnnotation(annotation.id); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteAnnotation(annotation.id);
+                }}
               >
                 <button className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
                   <X size={10} />
@@ -1298,7 +1467,10 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                   border: `3px solid ${annotation.color}`,
                   backgroundColor: 'transparent',
                 }}
-                onClick={(e) => { e.stopPropagation(); deleteAnnotation(annotation.id); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteAnnotation(annotation.id);
+                }}
               >
                 <button className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
                   <X size={10} />
@@ -1319,7 +1491,10 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                   border: `3px solid ${annotation.color}`,
                   backgroundColor: 'transparent',
                 }}
-                onClick={(e) => { e.stopPropagation(); deleteAnnotation(annotation.id); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteAnnotation(annotation.id);
+                }}
               >
                 <button className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
                   <X size={10} />
@@ -1327,7 +1502,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
               </div>
             );
 
-          case 'draw':
+          case 'draw': {
             if (!annotation.points || annotation.points.length < 2) return null;
             const pathD = annotation.points.reduce((acc, point, idx) => {
               return acc + (idx === 0 ? `M ${point.x}% ${point.y}%` : ` L ${point.x}% ${point.y}%`);
@@ -1348,6 +1523,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                 />
               </svg>
             );
+          }
 
           default:
             return null;
@@ -1359,108 +1535,136 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
     <div className="h-[calc(100vh-120px)] flex flex-col print:h-auto print:block">
       {/* Top Bar */}
       {!embedded && (
-      <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-[#E0E0D8] print:hidden">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => onBack ? onBack() : navigate(-1)}
-            className="p-2 hover:bg-advist-bg rounded-xl transition-all duration-240"
-          >
-            <ArrowLeft size={20} className="text-advist-gray900" />
-          </button>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-semibold text-advist-gray900">{document.title}</h1>
-              <StatusBadge status={document.status} />
-              {document.is_locked && (
-                <Lock size={14} className="text-advist-gold" />
-              )}
-            </div>
-            <div className="flex items-center gap-2 text-xs text-advist-blue-light">
-              <span>v{document.current_version}</span>
-              <span>•</span>
-              <span>{formatFileSize(document.file_size)}</span>
-              <span>•</span>
-              <span>{document.total_pages} pages</span>
+        <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-[#E0E0D8] print:hidden">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => (onBack ? onBack() : navigate(-1))}
+              className="p-2 hover:bg-advist-bg rounded-xl transition-all duration-240"
+            >
+              <ArrowLeft size={20} className="text-advist-gray900" />
+            </button>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="font-semibold text-advist-gray900">{document.title}</h1>
+                <StatusBadge status={document.status} />
+                {document.is_locked && <Lock size={14} className="text-advist-gold" />}
+              </div>
+              <div className="flex items-center gap-2 text-xs text-advist-blue-light">
+                <span>v{document.current_version}</span>
+                <span>•</span>
+                <span>{formatFileSize(document.file_size)}</span>
+                <span>•</span>
+                <span>{document.total_pages} pages</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          {/* View Mode Selector */}
-          {canEdit && (
-            <>
-              <div className="flex items-center bg-advist-bg rounded-xl p-1">
-                <button
-                  onClick={() => { setViewMode('pdf'); setIsEditMode(false); }}
-                  className={`px-3 py-1.5 text-sm rounded-md transition-all ${
-                    viewMode === 'pdf'
-                      ? 'bg-white shadow text-advist-gray900 font-medium'
-                      : 'text-advist-blue-light hover:text-advist-gray900'
-                  }`}
-                >
-                  Aperçu
-                </button>
-                {availableViewModes.includes('word') && (
+          <div className="flex items-center gap-2">
+            {/* View Mode Selector */}
+            {canEdit && (
+              <>
+                <div className="flex items-center bg-advist-bg rounded-xl p-1">
                   <button
-                    onClick={() => { setViewMode('word'); setIsEditMode(true); }}
-                    className={`px-3 py-1.5 text-sm rounded-md transition-all flex items-center gap-1 ${
-                      viewMode === 'word'
-                        ? 'bg-advist-dark text-white shadow font-medium'
+                    onClick={() => {
+                      setViewMode('pdf');
+                      setIsEditMode(false);
+                    }}
+                    className={`px-3 py-1.5 text-sm rounded-md transition-all ${
+                      viewMode === 'pdf'
+                        ? 'bg-white shadow text-advist-gray900 font-medium'
                         : 'text-advist-blue-light hover:text-advist-gray900'
                     }`}
                   >
-                    <Edit size={14} />
-                    Word
+                    Aperçu
                   </button>
-                )}
-                {availableViewModes.includes('excel') && (
-                  <button
-                    onClick={() => { setViewMode('excel'); setIsEditMode(true); }}
-                    className={`px-3 py-1.5 text-sm rounded-md transition-all flex items-center gap-1 ${
-                      viewMode === 'excel'
-                        ? 'bg-advist-success text-white shadow font-medium'
-                        : 'text-advist-blue-light hover:text-advist-gray900'
-                    }`}
-                  >
-                    <Edit size={14} />
-                    Excel
-                  </button>
+                  {availableViewModes.includes('word') && (
+                    <button
+                      onClick={() => {
+                        setViewMode('word');
+                        setIsEditMode(true);
+                      }}
+                      className={`px-3 py-1.5 text-sm rounded-md transition-all flex items-center gap-1 ${
+                        viewMode === 'word'
+                          ? 'bg-advist-dark text-white shadow font-medium'
+                          : 'text-advist-blue-light hover:text-advist-gray900'
+                      }`}
+                    >
+                      <Edit size={14} />
+                      Word
+                    </button>
+                  )}
+                  {availableViewModes.includes('excel') && (
+                    <button
+                      onClick={() => {
+                        setViewMode('excel');
+                        setIsEditMode(true);
+                      }}
+                      className={`px-3 py-1.5 text-sm rounded-md transition-all flex items-center gap-1 ${
+                        viewMode === 'excel'
+                          ? 'bg-advist-success text-white shadow font-medium'
+                          : 'text-advist-blue-light hover:text-advist-gray900'
+                      }`}
+                    >
+                      <Edit size={14} />
+                      Excel
+                    </button>
+                  )}
+                </div>
+                <div className="w-px h-6 bg-advist-surface-dark" />
+              </>
+            )}
+
+            <Button variant="ghost" size="sm" onClick={() => setIsBookmarked(!isBookmarked)}>
+              {isBookmarked ? (
+                <BookmarkCheck size={18} className="text-advist-gold" />
+              ) : (
+                <Bookmark size={18} />
+              )}
+            </Button>
+            <PrintButton
+              config={{ title: 'Détail du document', appName: 'Advist' }}
+              className="p-2 hover:bg-advist-bg rounded-xl transition-all duration-240 text-advist-blue-light hover:text-advist-gray900"
+            >
+              <div>
+                <h1 style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>
+                  {document.title}
+                </h1>
+                <p>
+                  Version : v{document.current_version} — {document.total_pages} pages —{' '}
+                  {formatFileSize(document.file_size)}
+                </p>
+                <p>Statut : {document.status}</p>
+                <p>Type : {document.document_type}</p>
+                {document.ohada_compliant && (
+                  <p>Conforme OHADA — Certificat : {document.ohada_certificate_id}</p>
                 )}
               </div>
-              <div className="w-px h-6 bg-advist-surface-dark" />
-            </>
-          )}
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsBookmarked(!isBookmarked)}
-          >
-            {isBookmarked ? (
-              <BookmarkCheck size={18} className="text-advist-gold" />
-            ) : (
-              <Bookmark size={18} />
-            )}
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => window.print()}>
-            <Printer size={18} />
-          </Button>
-          <Button variant="outline" size="sm" leftIcon={<Download size={16} />}>
-            Télécharger
-          </Button>
-          <Button variant="outline" size="sm" leftIcon={<Share2 size={16} />} onClick={() => setShowShareModal(true)}>
-            Partager
-          </Button>
-          {document.signature_status?.pending_signatures > 0 && (
-            <Button size="sm" leftIcon={<PenTool size={16} />} onClick={() => setShowSignModal(true)}>
-              Signer
+            </PrintButton>
+            <Button variant="outline" size="sm" leftIcon={<Download size={16} />}>
+              Télécharger
             </Button>
-          )}
-          <Button variant="ghost" size="sm">
-            <MoreVertical size={18} />
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<Share2 size={16} />}
+              onClick={() => setShowShareModal(true)}
+            >
+              Partager
+            </Button>
+            {document.signature_status?.pending_signatures > 0 && (
+              <Button
+                size="sm"
+                leftIcon={<PenTool size={16} />}
+                onClick={() => setShowSignModal(true)}
+              >
+                Signer
+              </Button>
+            )}
+            <Button variant="ghost" size="sm">
+              <MoreVertical size={18} />
+            </Button>
+          </div>
         </div>
-      </div>
       )}
 
       {/* OHADA Banner */}
@@ -1469,7 +1673,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
           <div className="flex items-center gap-2">
             <Shield size={16} className="text-advist-success" />
             <span className="text-sm font-medium text-advist-success">Document conforme OHADA</span>
-            <Badge variant="success" size="sm">Certifié</Badge>
+            <Badge variant="success" size="sm">
+              Certifié
+            </Badge>
           </div>
           <span className="text-xs text-advist-success">{document.ohada_certificate_id}</span>
         </div>
@@ -1483,7 +1689,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
             <div className="flex-1">
               <WordEditor
                 onSave={(content) => {
-                  console.log('Saving Word document:', content);
+                  console.info('Saving Word document:', content);
                   // Here you would save the document
                 }}
               />
@@ -1525,7 +1731,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
             <div className="flex-1">
               <ExcelEditor
                 onSave={(data) => {
-                  console.log('Saving Excel document:', data);
+                  console.info('Saving Excel document:', data);
                   // Here you would save the document
                 }}
               />
@@ -1562,301 +1768,334 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
         )}
 
         {/* PDF Viewer Mode (default) */}
-        {viewMode === 'pdf' && <>
-        {/* Left Annotation Toolbar */}
-        <div className="w-14 bg-[#2D2D2D] flex flex-col items-center py-3 gap-1 print:hidden">
-          {annotationTools.map((tool) => (
-            <button
-              key={tool.id}
-              onClick={() => {
-                setActiveTool(tool.id);
-                if (tool.id === 'stamp') setShowStampPicker(true);
-              }}
-              className={`relative p-2.5 rounded-xl transition-all group ${
-                activeTool === tool.id
-                  ? 'bg-advist-dark text-white'
-                  : 'text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white'
-              }`}
-              title={tool.label}
-            >
-              {tool.icon}
-              {/* Tooltip */}
-              <div className="absolute left-full ml-2 px-2 py-1 bg-advist-dark text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
-                {tool.label}
-              </div>
-            </button>
-          ))}
-
-          <div className="w-8 h-px bg-advist-surface-dark my-2" />
-
-          {/* Color Picker Button */}
-          <div className="relative">
-            <button
-              onClick={() => setShowColorPicker(!showColorPicker)}
-              className="p-2.5 rounded-xl text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white transition-all"
-              title="Couleur"
-            >
-              <div
-                className="w-5 h-5 rounded border-2 border-white"
-                style={{ backgroundColor: selectedColor }}
-              />
-            </button>
-
-            {/* Color Picker Dropdown */}
-            {showColorPicker && (
-              <div className="absolute left-full ml-2 bg-white rounded-xl shadow-xl p-2 z-30">
-                <div className="flex gap-1">
-                  {HIGHLIGHT_COLORS.map((color) => (
-                    <button
-                      key={color.value}
-                      onClick={() => {
-                        setSelectedColor(color.value);
-                        setShowColorPicker(false);
-                      }}
-                      className={`w-8 h-8 rounded-xl border-2 transition-transform hover:scale-110 ${
-                        selectedColor === color.value ? 'border-primary-800' : 'border-transparent'
-                      }`}
-                      style={{ backgroundColor: color.value }}
-                      title={color.name}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Show/Hide Annotations */}
-          <button
-            onClick={() => setShowAnnotations(!showAnnotations)}
-            className={`p-2.5 rounded-xl transition-all ${
-              showAnnotations
-                ? 'text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white'
-                : 'text-advist-error bg-advist-dark/30'
-            }`}
-            title={showAnnotations ? 'Masquer annotations' : 'Afficher annotations'}
-          >
-            {showAnnotations ? <Eye size={18} /> : <EyeOff size={18} />}
-          </button>
-
-          <div className="flex-1" />
-
-          {/* Undo/Redo */}
-          <button
-            onClick={() => {
-              if (annotations.length > 0) {
-                setAnnotations(annotations.slice(0, -1));
-              }
-            }}
-            className="p-2.5 rounded-xl text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white transition-all"
-            title="Annuler"
-          >
-            <Undo size={18} />
-          </button>
-
-          {/* Save Annotations */}
-          <button
-            className="p-2.5 rounded-xl text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white transition-all"
-            title="Sauvegarder les annotations"
-          >
-            <Save size={18} />
-          </button>
-        </div>
-
-        {/* Document Viewer */}
-        <div className="flex-1 flex flex-col bg-[#525659] relative print:bg-white">
-          {/* Viewer Toolbar */}
-          <div className="flex items-center justify-between px-4 py-2 bg-[#3A3D40] border-b border-[#2a2d30] print:hidden">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="p-1.5 hover:bg-white/10 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft size={18} className="text-white" />
-              </button>
-              <span className="text-sm text-white px-2">
-                Page {currentPage} / {document.total_pages}
-              </span>
-              <button
-                onClick={() => setCurrentPage(Math.min(document.total_pages, currentPage + 1))}
-                disabled={currentPage === document.total_pages}
-                className="p-1.5 hover:bg-white/10 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight size={18} className="text-white" />
-              </button>
-            </div>
-
-            {/* Active tool indicator */}
-            {activeTool !== 'select' && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-advist-dark/20 rounded-xl">
-                <span className="text-advist-text-secondary">
-                  {annotationTools.find(t => t.id === activeTool)?.icon}
-                </span>
-                <span className="text-sm text-advist-text-secondary">
-                  {annotationTools.find(t => t.id === activeTool)?.label}
-                </span>
+        {viewMode === 'pdf' && (
+          <>
+            {/* Left Annotation Toolbar */}
+            <div className="w-14 bg-[#2D2D2D] flex flex-col items-center py-3 gap-1 print:hidden">
+              {annotationTools.map((tool) => (
                 <button
-                  onClick={() => setActiveTool('select')}
-                  className="p-1 hover:bg-white/10 rounded"
-                >
-                  <X size={14} className="text-advist-text-secondary" />
-                </button>
-              </div>
-            )}
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setZoom(Math.max(50, zoom - 25))}
-                className="p-1.5 hover:bg-white/10 rounded"
-              >
-                <ZoomOut size={18} className="text-white" />
-              </button>
-              <span className="text-sm text-white w-12 text-center">{zoom}%</span>
-              <button
-                onClick={() => setZoom(Math.min(200, zoom + 25))}
-                className="p-1.5 hover:bg-white/10 rounded"
-              >
-                <ZoomIn size={18} className="text-white" />
-              </button>
-              <div className="w-px h-5 bg-white/20 mx-2" />
-              <button className="p-1.5 hover:bg-white/10 rounded">
-                <RotateCw size={18} className="text-white" />
-              </button>
-              <button className="p-1.5 hover:bg-white/10 rounded">
-                <Maximize2 size={18} className="text-white" />
-              </button>
-            </div>
-          </div>
-
-          {/* Document Display */}
-          <div className="flex-1 overflow-auto p-8 flex items-start justify-center print:p-0 print:block print:overflow-visible print:bg-white">
-            <div
-              className="bg-white shadow-2xl rounded-xl overflow-hidden transition-transform print:shadow-none print:rounded-none print:transform-none"
-              style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}
-            >
-              {/* Simulated document page */}
-              <div
-                ref={documentRef}
-                className={`w-[595px] h-[842px] p-12 relative print:w-full print:h-auto print:p-8 ${
-                  activeTool !== 'select' ? 'cursor-crosshair' : ''
-                }`}
-                onClick={handleDocumentClick}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-              >
-                {/* Page header */}
-                <div className="text-center mb-8">
-                  <h2 className="text-xl font-bold text-advist-gray900">CONTRAT DE PRESTATION DE SERVICES</h2>
-                  <p className="text-advist-text-secondary mt-1">Année 2024 - Quatrième Trimestre</p>
-                </div>
-
-                {/* Document content simulation */}
-                <div className="space-y-4 text-sm text-advist-gray900">
-                  <p className="font-semibold">ENTRE LES SOUSSIGNÉS :</p>
-                  <p><strong>ADVIST SARL</strong>, société à responsabilité limitée au capital de 100 000 €, immatriculée au RCS sous le numéro 123 456 789, dont le siège social est situé à Abidjan, Côte d'Ivoire,</p>
-                  <p className="mt-2">Représentée par Mme Marie DUPONT, en sa qualité de Directrice Générale,</p>
-                  <p className="mt-4 font-semibold">ET</p>
-                  <p><strong>TECHCORP SA</strong>, société anonyme au capital de 500 000 €...</p>
-
-                  <div className="mt-8">
-                    <p className="font-semibold">ARTICLE 1 - OBJET</p>
-                    <p className="mt-2">Le présent contrat a pour objet de définir les conditions...</p>
-                  </div>
-
-                  <div className="mt-6">
-                    <p className="font-semibold">ARTICLE 2 - DURÉE</p>
-                    <p className="mt-2">Le présent contrat est conclu pour une durée de 3 mois...</p>
-                  </div>
-                </div>
-
-                {/* Render annotations */}
-                {renderAnnotations()}
-
-                {/* Draw current path */}
-                {isDrawing && currentPath.length > 1 && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'visible' }}>
-                    <path
-                      d={currentPath.reduce((acc, point, idx) => {
-                        return acc + (idx === 0 ? `M ${point.x}% ${point.y}%` : ` L ${point.x}% ${point.y}%`);
-                      }, '')}
-                      stroke={selectedColor}
-                      strokeWidth="3"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-
-                {/* Paraph indicator */}
-                {document.paraph_pages?.includes(currentPage) && (
-                  <div className="absolute bottom-8 right-8 flex items-center gap-2 px-3 py-1.5 bg-advist-gold-light border border-advist-gold rounded-xl print:hidden">
-                    <FileSignature size={14} className="text-advist-gold-dark" />
-                    <span className="text-xs text-advist-gold-dark font-medium">Paraphe requis</span>
-                  </div>
-                )}
-
-                {/* Page number */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-advist-text-muted print:hidden">
-                  {currentPage} / {document.total_pages}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Double Sidebar */}
-        {!sidebarCollapsed && (
-          <div className="print:hidden flex">
-            {/* Sidebar 1 - Icon Navigation */}
-            <div className="w-16 bg-[#F9F9F7] border-l border-[#E0E0D8] flex flex-col py-2">
-              {panels.map((panel) => (
-                <button
-                  key={panel.id}
-                  onClick={() => setActivePanel(panel.id)}
-                  className={`relative mx-2 my-1 p-3 rounded-xl transition-all group ${
-                    activePanel === panel.id
-                      ? 'bg-advist-dark text-white shadow-lg'
-                      : 'hover:bg-[#E0E0D8] text-advist-blue-light hover:text-advist-gray900'
+                  key={tool.id}
+                  onClick={() => {
+                    setActiveTool(tool.id);
+                    if (tool.id === 'stamp') setShowStampPicker(true);
+                  }}
+                  className={`relative p-2.5 rounded-xl transition-all group ${
+                    activeTool === tool.id
+                      ? 'bg-advist-dark text-white'
+                      : 'text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white'
                   }`}
-                  title={panel.label}
+                  title={tool.label}
                 >
-                  {panel.icon}
-                  {panel.badge}
-
+                  {tool.icon}
                   {/* Tooltip */}
                   <div className="absolute left-full ml-2 px-2 py-1 bg-advist-dark text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
-                    {panel.label}
+                    {tool.label}
                   </div>
                 </button>
               ))}
+
+              <div className="w-8 h-px bg-advist-surface-dark my-2" />
+
+              {/* Color Picker Button */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowColorPicker(!showColorPicker)}
+                  className="p-2.5 rounded-xl text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white transition-all"
+                  title="Couleur"
+                >
+                  <div
+                    className="w-5 h-5 rounded border-2 border-white"
+                    style={{ backgroundColor: selectedColor }}
+                  />
+                </button>
+
+                {/* Color Picker Dropdown */}
+                {showColorPicker && (
+                  <div className="absolute left-full ml-2 bg-white rounded-xl shadow-xl p-2 z-30">
+                    <div className="flex gap-1">
+                      {HIGHLIGHT_COLORS.map((color) => (
+                        <button
+                          key={color.value}
+                          onClick={() => {
+                            setSelectedColor(color.value);
+                            setShowColorPicker(false);
+                          }}
+                          className={`w-8 h-8 rounded-xl border-2 transition-transform hover:scale-110 ${
+                            selectedColor === color.value
+                              ? 'border-primary-800'
+                              : 'border-transparent'
+                          }`}
+                          style={{ backgroundColor: color.value }}
+                          title={color.name}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Show/Hide Annotations */}
+              <button
+                onClick={() => setShowAnnotations(!showAnnotations)}
+                className={`p-2.5 rounded-xl transition-all ${
+                  showAnnotations
+                    ? 'text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white'
+                    : 'text-advist-error bg-advist-dark/30'
+                }`}
+                title={showAnnotations ? 'Masquer annotations' : 'Afficher annotations'}
+              >
+                {showAnnotations ? <Eye size={18} /> : <EyeOff size={18} />}
+              </button>
+
+              <div className="flex-1" />
+
+              {/* Undo/Redo */}
+              <button
+                onClick={() => {
+                  if (annotations.length > 0) {
+                    setAnnotations(annotations.slice(0, -1));
+                  }
+                }}
+                className="p-2.5 rounded-xl text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white transition-all"
+                title="Annuler"
+              >
+                <Undo size={18} />
+              </button>
+
+              {/* Save Annotations */}
+              <button
+                className="p-2.5 rounded-xl text-advist-text-muted hover:bg-[#3D3D3D] hover:text-white transition-all"
+                title="Sauvegarder les annotations"
+              >
+                <Save size={18} />
+              </button>
             </div>
 
-            {/* Sidebar 2 - Content Panel */}
-            <div className="w-[450px] bg-white border-l border-[#E0E0D8] overflow-y-auto">
-              {renderPanelContent()}
+            {/* Document Viewer */}
+            <div className="flex-1 flex flex-col bg-[#525659] relative print:bg-white">
+              {/* Viewer Toolbar */}
+              <div className="flex items-center justify-between px-4 py-2 bg-[#3A3D40] border-b border-[#2a2d30] print:hidden">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="p-1.5 hover:bg-white/10 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft size={18} className="text-white" />
+                  </button>
+                  <span className="text-sm text-white px-2">
+                    Page {currentPage} / {document.total_pages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(Math.min(document.total_pages, currentPage + 1))}
+                    disabled={currentPage === document.total_pages}
+                    className="p-1.5 hover:bg-white/10 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight size={18} className="text-white" />
+                  </button>
+                </div>
+
+                {/* Active tool indicator */}
+                {activeTool !== 'select' && (
+                  <div className="flex items-center gap-2 px-3 py-1 bg-advist-dark/20 rounded-xl">
+                    <span className="text-advist-text-secondary">
+                      {annotationTools.find((t) => t.id === activeTool)?.icon}
+                    </span>
+                    <span className="text-sm text-advist-text-secondary">
+                      {annotationTools.find((t) => t.id === activeTool)?.label}
+                    </span>
+                    <button
+                      onClick={() => setActiveTool('select')}
+                      className="p-1 hover:bg-white/10 rounded"
+                    >
+                      <X size={14} className="text-advist-text-secondary" />
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setZoom(Math.max(50, zoom - 25))}
+                    className="p-1.5 hover:bg-white/10 rounded"
+                  >
+                    <ZoomOut size={18} className="text-white" />
+                  </button>
+                  <span className="text-sm text-white w-12 text-center">{zoom}%</span>
+                  <button
+                    onClick={() => setZoom(Math.min(200, zoom + 25))}
+                    className="p-1.5 hover:bg-white/10 rounded"
+                  >
+                    <ZoomIn size={18} className="text-white" />
+                  </button>
+                  <div className="w-px h-5 bg-white/20 mx-2" />
+                  <button className="p-1.5 hover:bg-white/10 rounded">
+                    <RotateCw size={18} className="text-white" />
+                  </button>
+                  <button className="p-1.5 hover:bg-white/10 rounded">
+                    <Maximize2 size={18} className="text-white" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Document Display */}
+              <div className="flex-1 overflow-auto p-8 flex items-start justify-center print:p-0 print:block print:overflow-visible print:bg-white">
+                <div
+                  className="bg-white shadow-2xl rounded-xl overflow-hidden transition-transform print:shadow-none print:rounded-none print:transform-none"
+                  style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}
+                >
+                  {/* Simulated document page */}
+                  <div
+                    ref={documentRef}
+                    className={`w-[595px] h-[842px] p-12 relative print:w-full print:h-auto print:p-8 ${
+                      activeTool !== 'select' ? 'cursor-crosshair' : ''
+                    }`}
+                    onClick={handleDocumentClick}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                  >
+                    {/* Page header */}
+                    <div className="text-center mb-8">
+                      <h2 className="text-xl font-bold text-advist-gray900">
+                        CONTRAT DE PRESTATION DE SERVICES
+                      </h2>
+                      <p className="text-advist-text-secondary mt-1">
+                        Année 2024 - Quatrième Trimestre
+                      </p>
+                    </div>
+
+                    {/* Document content simulation */}
+                    <div className="space-y-4 text-sm text-advist-gray900">
+                      <p className="font-semibold">ENTRE LES SOUSSIGNÉS :</p>
+                      <p>
+                        <strong>ADVIST SARL</strong>, société à responsabilité limitée au capital de
+                        100 000 €, immatriculée au RCS sous le numéro 123 456 789, dont le siège
+                        social est situé à Abidjan, Côte d'Ivoire,
+                      </p>
+                      <p className="mt-2">
+                        Représentée par Mme Marie DUPONT, en sa qualité de Directrice Générale,
+                      </p>
+                      <p className="mt-4 font-semibold">ET</p>
+                      <p>
+                        <strong>TECHCORP SA</strong>, société anonyme au capital de 500 000 €...
+                      </p>
+
+                      <div className="mt-8">
+                        <p className="font-semibold">ARTICLE 1 - OBJET</p>
+                        <p className="mt-2">
+                          Le présent contrat a pour objet de définir les conditions...
+                        </p>
+                      </div>
+
+                      <div className="mt-6">
+                        <p className="font-semibold">ARTICLE 2 - DURÉE</p>
+                        <p className="mt-2">
+                          Le présent contrat est conclu pour une durée de 3 mois...
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Render annotations */}
+                    {renderAnnotations()}
+
+                    {/* Draw current path */}
+                    {isDrawing && currentPath.length > 1 && (
+                      <svg
+                        className="absolute inset-0 w-full h-full pointer-events-none"
+                        style={{ overflow: 'visible' }}
+                      >
+                        <path
+                          d={currentPath.reduce((acc, point, idx) => {
+                            return (
+                              acc +
+                              (idx === 0
+                                ? `M ${point.x}% ${point.y}%`
+                                : ` L ${point.x}% ${point.y}%`)
+                            );
+                          }, '')}
+                          stroke={selectedColor}
+                          strokeWidth="3"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+
+                    {/* Paraph indicator */}
+                    {document.paraph_pages?.includes(currentPage) && (
+                      <div className="absolute bottom-8 right-8 flex items-center gap-2 px-3 py-1.5 bg-advist-gold-light border border-advist-gold rounded-xl print:hidden">
+                        <FileSignature size={14} className="text-advist-gold-dark" />
+                        <span className="text-xs text-advist-gold-dark font-medium">
+                          Paraphe requis
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Page number */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-advist-text-muted print:hidden">
+                      {currentPage} / {document.total_pages}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+
+            {/* Double Sidebar */}
+            {!sidebarCollapsed && (
+              <div className="print:hidden flex">
+                {/* Sidebar 1 - Icon Navigation */}
+                <div className="w-16 bg-[#F9F9F7] border-l border-[#E0E0D8] flex flex-col py-2">
+                  {panels.map((panel) => (
+                    <button
+                      key={panel.id}
+                      onClick={() => setActivePanel(panel.id)}
+                      className={`relative mx-2 my-1 p-3 rounded-xl transition-all group ${
+                        activePanel === panel.id
+                          ? 'bg-advist-dark text-white shadow-lg'
+                          : 'hover:bg-[#E0E0D8] text-advist-blue-light hover:text-advist-gray900'
+                      }`}
+                      title={panel.label}
+                    >
+                      {panel.icon}
+                      {panel.badge}
+
+                      {/* Tooltip */}
+                      <div className="absolute left-full ml-2 px-2 py-1 bg-advist-dark text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                        {panel.label}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Sidebar 2 - Content Panel */}
+                <div className="w-[450px] bg-white border-l border-[#E0E0D8] overflow-y-auto">
+                  {renderPanelContent()}
+                </div>
+              </div>
+            )}
+
+            {/* Sidebar Toggle */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={`absolute top-1/2 -translate-y-1/2 p-1.5 bg-white border border-[#E0E0D8] rounded-l-lg shadow-md hover:bg-advist-bg transition-all z-10 print:hidden ${
+                sidebarCollapsed ? 'right-0' : 'right-[514px]'
+              }`}
+            >
+              {sidebarCollapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+            </button>
+          </>
         )}
-
-        {/* Sidebar Toggle */}
-        <button
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className={`absolute top-1/2 -translate-y-1/2 p-1.5 bg-white border border-[#E0E0D8] rounded-l-lg shadow-md hover:bg-advist-bg transition-all z-10 print:hidden ${
-            sidebarCollapsed ? 'right-0' : 'right-[514px]'
-          }`}
-        >
-          {sidebarCollapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-        </button>
-        </>}
       </div>
 
       {/* Stamp Picker Modal */}
       {showStampPicker && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowStampPicker(false)}>
-          <div className="bg-white rounded-xl p-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={() => setShowStampPicker(false)}
+        >
+          <div className="bg-white rounded-xl p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="font-semibold text-advist-gray900 mb-3">Choisir un tampon</h3>
             <div className="grid grid-cols-2 gap-2">
               {STAMP_OPTIONS.map((stamp) => (
@@ -1867,7 +2106,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
                     setShowStampPicker(false);
                   }}
                   className={`p-3 rounded-xl border-2 transition-all hover:scale-105 ${
-                    selectedStamp.label === stamp.label ? 'border-primary-800' : 'border-transparent'
+                    selectedStamp.label === stamp.label
+                      ? 'border-primary-800'
+                      : 'border-transparent'
                   }`}
                   style={{ backgroundColor: stamp.bgColor }}
                 >
@@ -1882,7 +2123,11 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
       )}
 
       {/* Share Modal */}
-      <Modal isOpen={showShareModal} onClose={() => setShowShareModal(false)} title="Partager le document">
+      <Modal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        title="Partager le document"
+      >
         <div className="space-y-4">
           <Input
             label="Email ou nom"
@@ -1890,14 +2135,20 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
             leftIcon={<User size={18} />}
           />
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="ghost" onClick={() => setShowShareModal(false)}>Annuler</Button>
+            <Button variant="ghost" onClick={() => setShowShareModal(false)}>
+              Annuler
+            </Button>
             <Button>Partager</Button>
           </div>
         </div>
       </Modal>
 
       {/* Workflow Modal */}
-      <Modal isOpen={showWorkflowModal} onClose={() => setShowWorkflowModal(false)} title="Lancer un workflow">
+      <Modal
+        isOpen={showWorkflowModal}
+        onClose={() => setShowWorkflowModal(false)}
+        title="Lancer un workflow"
+      >
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-advist-gray900 mb-2">Modèle</label>
@@ -1908,7 +2159,9 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
             </select>
           </div>
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="ghost" onClick={() => setShowWorkflowModal(false)}>Annuler</Button>
+            <Button variant="ghost" onClick={() => setShowWorkflowModal(false)}>
+              Annuler
+            </Button>
             <Button leftIcon={<GitBranch size={18} />}>Lancer</Button>
           </div>
         </div>
@@ -1919,7 +2172,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
         data={validationReportData}
         isOpen={showValidationReport}
         onClose={() => setShowValidationReport(false)}
-        onDownload={() => console.log('PDF downloaded')}
+        onDownload={() => console.info('PDF downloaded')}
         onPrint={() => window.print()}
       />
 

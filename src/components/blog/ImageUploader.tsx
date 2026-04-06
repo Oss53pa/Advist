@@ -17,7 +17,7 @@ export default function ImageUploader({
   value,
   onChange,
   onFileSelect,
-  placeholder = "Glissez une image ou cliquez pour sélectionner",
+  placeholder = 'Glissez une image ou cliquez pour sélectionner',
   className = '',
   aspectRatio = 'video',
 }: ImageUploaderProps) {
@@ -84,8 +84,8 @@ export default function ImageUploader({
         }
       };
       reader.readAsDataURL(file);
-    } catch (err) {
-      setError('Erreur lors du chargement de l\'image');
+    } catch (_err) {
+      setError("Erreur lors du chargement de l'image");
     } finally {
       setIsUploading(false);
     }
@@ -127,12 +127,10 @@ export default function ImageUploader({
   return (
     <div className={className}>
       {value ? (
-        <div className={`relative ${aspectRatioClass} bg-primary-100 rounded-lg overflow-hidden group`}>
-          <img
-            src={value}
-            alt="Preview"
-            className="w-full h-full object-cover"
-          />
+        <div
+          className={`relative ${aspectRatioClass} bg-primary-100 rounded-lg overflow-hidden group`}
+        >
+          <img src={value} alt="Preview" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
             <button
               type="button"
@@ -163,9 +161,10 @@ export default function ImageUploader({
             ${aspectRatioClass} border-2 border-dashed rounded-lg
             flex flex-col items-center justify-center cursor-pointer
             transition-colors
-            ${isDragging
-              ? 'border-accent-500 bg-accent-50'
-              : 'border-primary-300 hover:border-primary-400 bg-primary-50'
+            ${
+              isDragging
+                ? 'border-accent-500 bg-accent-50'
+                : 'border-primary-300 hover:border-primary-400 bg-primary-50'
             }
           `}
         >
@@ -202,9 +201,7 @@ export default function ImageUploader({
           ) : (
             <>
               <ImageIcon className="h-10 w-10 text-primary-400 mb-3" />
-              <p className="text-sm text-primary-600 text-center px-4">
-                {placeholder}
-              </p>
+              <p className="text-sm text-primary-600 text-center px-4">{placeholder}</p>
               <div className="flex items-center gap-3 mt-3">
                 <button
                   type="button"
@@ -230,9 +227,7 @@ export default function ImageUploader({
         </div>
       )}
 
-      {error && (
-        <p className="mt-2 text-sm text-red-600">{error}</p>
-      )}
+      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
       <input
         ref={fileInputRef}

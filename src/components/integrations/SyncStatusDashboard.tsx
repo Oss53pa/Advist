@@ -13,7 +13,7 @@ import {
   Clock,
   RefreshCw,
   FileText,
-  ArrowUpDown,
+  _ArrowUpDown,
   ChevronDown,
   ChevronUp,
   Filter,
@@ -22,23 +22,15 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { useIntegrationStore } from '../../stores';
-import type { IntegrationSyncLog } from '../../services/integrations';
 
 interface SyncStatusDashboardProps {
   connectionId?: string;
 }
 
-export const SyncStatusDashboard: React.FC<SyncStatusDashboardProps> = ({
-  connectionId,
-}) => {
+export const SyncStatusDashboard: React.FC<SyncStatusDashboardProps> = ({ connectionId }) => {
   const { t } = useTranslation();
-  const {
-    syncLogs,
-    connections,
-    isLoading,
-    fetchSyncLogs,
-    fetchConnections,
-  } = useIntegrationStore();
+  const { syncLogs, connections, isLoading, fetchSyncLogs, fetchConnections } =
+    useIntegrationStore();
 
   const [expandedLogs, setExpandedLogs] = useState<Set<string>>(new Set());
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -184,7 +176,9 @@ export const SyncStatusDashboard: React.FC<SyncStatusDashboardProps> = ({
             <option value="all">{t('integrations.sync.filterAll', 'Tous les statuts')}</option>
             <option value="completed">{t('integrations.sync.filterCompleted', 'Termines')}</option>
             <option value="failed">{t('integrations.sync.filterFailed', 'Echoues')}</option>
-            <option value="in_progress">{t('integrations.sync.filterInProgress', 'En cours')}</option>
+            <option value="in_progress">
+              {t('integrations.sync.filterInProgress', 'En cours')}
+            </option>
           </select>
         </div>
 
@@ -274,11 +268,7 @@ export const SyncStatusDashboard: React.FC<SyncStatusDashboardProps> = ({
                         {new Date(log.started_at).toLocaleString('fr-FR')}
                       </td>
                       <td className="px-4 py-3">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleLogExpanded(log.id)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => toggleLogExpanded(log.id)}>
                           {expandedLogs.has(log.id) ? (
                             <ChevronUp size={16} />
                           ) : (
@@ -294,7 +284,7 @@ export const SyncStatusDashboard: React.FC<SyncStatusDashboardProps> = ({
                             {log.error_message && (
                               <div className="p-3 bg-red-50 rounded-lg">
                                 <p className="text-sm font-medium text-red-700 mb-1">
-                                  {t('integrations.sync.errorMessage', 'Message d\'erreur')}:
+                                  {t('integrations.sync.errorMessage', "Message d'erreur")}:
                                 </p>
                                 <p className="text-sm text-red-600">{log.error_message}</p>
                               </div>
@@ -306,7 +296,10 @@ export const SyncStatusDashboard: React.FC<SyncStatusDashboardProps> = ({
                                 </p>
                                 <div className="space-y-1 max-h-40 overflow-y-auto">
                                   {log.errors.map((error, idx) => (
-                                    <div key={idx} className="p-2 bg-red-50 rounded text-xs text-red-600">
+                                    <div
+                                      key={idx}
+                                      className="p-2 bg-red-50 rounded text-xs text-red-600"
+                                    >
                                       {typeof error === 'string' ? error : JSON.stringify(error)}
                                     </div>
                                   ))}

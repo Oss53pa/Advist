@@ -1,5 +1,5 @@
 -- Security Events
-CREATE TABLE security_events (
+CREATE TABLE IF NOT EXISTS security_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
     user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
@@ -17,7 +17,7 @@ CREATE TABLE security_events (
 );
 
 -- IP Allowlists
-CREATE TABLE ip_allowlists (
+CREATE TABLE IF NOT EXISTS ip_allowlists (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     ip_address INET NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE ip_allowlists (
 );
 
 -- API Keys
-CREATE TABLE api_keys (
+CREATE TABLE IF NOT EXISTS api_keys (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -45,7 +45,7 @@ CREATE TABLE api_keys (
 );
 
 -- Login History
-CREATE TABLE login_history (
+CREATE TABLE IF NOT EXISTS login_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     ip_address INET,
@@ -59,7 +59,7 @@ CREATE TABLE login_history (
 );
 
 -- Active Sessions
-CREATE TABLE active_sessions (
+CREATE TABLE IF NOT EXISTS active_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     session_token_hash VARCHAR(256) NOT NULL,

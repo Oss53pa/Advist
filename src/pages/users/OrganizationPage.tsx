@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import {
   Building2,
-  Users,
+  _Users,
   Shield,
   Globe,
   Mail,
@@ -60,7 +60,9 @@ interface NotificationSettings {
 
 export const OrganizationPage: React.FC = () => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'general' | 'security' | 'notifications' | 'billing'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'security' | 'notifications' | 'billing'>(
+    'general'
+  );
 
   const tabs = [
     { id: 'general', label: t('organization.general'), icon: Building2 },
@@ -74,9 +76,7 @@ export const OrganizationPage: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-advist-gray900">{t('organization.title')}</h1>
-        <p className="text-advist-gray900 mt-1">
-          {t('organization.subtitle')}
-        </p>
+        <p className="text-advist-gray900 mt-1">{t('organization.subtitle')}</p>
       </div>
 
       {/* Tabs */}
@@ -88,9 +88,10 @@ export const OrganizationPage: React.FC = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`
                 flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all duration-240
-                ${activeTab === tab.id
-                  ? 'border-advist-dark text-advist-gray900'
-                  : 'border-transparent text-advist-gray900 hover:text-advist-gray900'
+                ${
+                  activeTab === tab.id
+                    ? 'border-advist-dark text-advist-gray900'
+                    : 'border-transparent text-advist-gray900 hover:text-advist-gray900'
                 }
               `}
             >
@@ -128,7 +129,10 @@ const GeneralSettings: React.FC = () => {
   });
 
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [saveMessage, setSaveMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -138,7 +142,7 @@ const GeneralSettings: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setSaveMessage({ type: 'success', text: t('common.saveSuccess') });
       setTimeout(() => setSaveMessage(null), 3000);
-    } catch (error) {
+    } catch (_error) {
       setSaveMessage({ type: 'error', text: t('common.saveError') });
     } finally {
       setIsSaving(false);
@@ -436,11 +440,13 @@ const GeneralSettings: React.FC = () => {
 
       {/* Save Message */}
       {saveMessage && (
-        <div className={`p-4 rounded-xl flex items-center gap-3 ${
-          saveMessage.type === 'success'
-            ? 'bg-green-50 border border-advist-success text-advist-success'
-            : 'bg-advist-gold-light border border-advist-gold text-advist-error'
-        }`}>
+        <div
+          className={`p-4 rounded-xl flex items-center gap-3 ${
+            saveMessage.type === 'success'
+              ? 'bg-green-50 border border-advist-success text-advist-success'
+              : 'bg-advist-gold-light border border-advist-gold text-advist-error'
+          }`}
+        >
           {saveMessage.type === 'success' ? <Check size={18} /> : <AlertTriangle size={18} />}
           {saveMessage.text}
         </div>
@@ -477,7 +483,10 @@ const SecuritySettingsTab: React.FC = () => {
     ip_whitelist: [],
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [saveMessage, setSaveMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -487,7 +496,7 @@ const SecuritySettingsTab: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setSaveMessage({ type: 'success', text: t('organization.securitySaved') });
       setTimeout(() => setSaveMessage(null), 3000);
-    } catch (error) {
+    } catch (_error) {
       setSaveMessage({ type: 'error', text: t('common.saveError') });
     } finally {
       setIsSaving(false);
@@ -516,9 +525,7 @@ const SecuritySettingsTab: React.FC = () => {
             <input
               type="checkbox"
               checked={settings.two_factor_enabled}
-              onChange={(e) =>
-                setSettings({ ...settings, two_factor_enabled: e.target.checked })
-              }
+              onChange={(e) => setSettings({ ...settings, two_factor_enabled: e.target.checked })}
               className="sr-only peer"
             />
             <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-gold rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -603,27 +610,25 @@ const SecuritySettingsTab: React.FC = () => {
           <Lock size={20} />
           {t('organization.ipWhitelist')}
         </h2>
-        <p className="text-sm text-advist-gray900 mb-4">
-          {t('organization.ipWhitelistDesc')}
-        </p>
+        <p className="text-sm text-advist-gray900 mb-4">{t('organization.ipWhitelistDesc')}</p>
         <div className="flex gap-2">
           <Input placeholder="Ex: 192.168.1.0/24" className="flex-1" />
           <Button variant="outline">{t('common.add')}</Button>
         </div>
         {settings.ip_whitelist.length === 0 && (
-          <p className="text-sm text-advist-blue-light mt-3">
-            {t('organization.noIpRestriction')}
-          </p>
+          <p className="text-sm text-advist-blue-light mt-3">{t('organization.noIpRestriction')}</p>
         )}
       </Card>
 
       {/* Save Message */}
       {saveMessage && (
-        <div className={`p-4 rounded-xl flex items-center gap-3 ${
-          saveMessage.type === 'success'
-            ? 'bg-green-50 border border-advist-success text-advist-success'
-            : 'bg-advist-gold-light border border-advist-gold text-advist-error'
-        }`}>
+        <div
+          className={`p-4 rounded-xl flex items-center gap-3 ${
+            saveMessage.type === 'success'
+              ? 'bg-green-50 border border-advist-success text-advist-success'
+              : 'bg-advist-gold-light border border-advist-gold text-advist-error'
+          }`}
+        >
           {saveMessage.type === 'success' ? <Check size={18} /> : <AlertTriangle size={18} />}
           {saveMessage.text}
         </div>
@@ -660,7 +665,10 @@ const NotificationSettingsTab: React.FC = () => {
     weekly_summary: false,
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [saveMessage, setSaveMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -670,7 +678,7 @@ const NotificationSettingsTab: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setSaveMessage({ type: 'success', text: t('organization.notificationsSaved') });
       setTimeout(() => setSaveMessage(null), 3000);
-    } catch (error) {
+    } catch (_error) {
       setSaveMessage({ type: 'error', text: t('common.saveError') });
     } finally {
       setIsSaving(false);
@@ -733,9 +741,7 @@ const NotificationSettingsTab: React.FC = () => {
                 <input
                   type="checkbox"
                   checked={settings[option.key]}
-                  onChange={(e) =>
-                    setSettings({ ...settings, [option.key]: e.target.checked })
-                  }
+                  onChange={(e) => setSettings({ ...settings, [option.key]: e.target.checked })}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-gold rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -747,11 +753,13 @@ const NotificationSettingsTab: React.FC = () => {
 
       {/* Save Message */}
       {saveMessage && (
-        <div className={`p-4 rounded-xl flex items-center gap-3 ${
-          saveMessage.type === 'success'
-            ? 'bg-green-50 border border-advist-success text-advist-success'
-            : 'bg-advist-gold-light border border-advist-gold text-advist-error'
-        }`}>
+        <div
+          className={`p-4 rounded-xl flex items-center gap-3 ${
+            saveMessage.type === 'success'
+              ? 'bg-green-50 border border-advist-success text-advist-success'
+              : 'bg-advist-gold-light border border-advist-gold text-advist-error'
+          }`}
+        >
           {saveMessage.type === 'success' ? <Check size={18} /> : <AlertTriangle size={18} />}
           {saveMessage.text}
         </div>
@@ -806,11 +814,11 @@ const BillingSettings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-advist-gray900">{t('settings.plan.current')}</h2>
+            <h2 className="text-lg font-semibold text-advist-gray900">
+              {t('settings.plan.current')}
+            </h2>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-bold text-advist-gray900">
-                {currentPlan.price}€
-              </span>
+              <span className="text-3xl font-bold text-advist-gray900">{currentPlan.price}€</span>
               <span className="text-advist-gray900">/ {currentPlan.period}</span>
             </div>
             <Badge variant="green" className="mt-2">

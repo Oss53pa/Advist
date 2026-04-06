@@ -19,10 +19,15 @@ import {
   BarChart3,
   MousePointer,
   CheckCircle,
-  AlertCircle,
+  _AlertCircle,
 } from 'lucide-react';
 import { newslettersApi, subscribersApi } from '../../../services/marketing';
-import type { Newsletter, NewsletterStatus, SubscriberStats, NewsletterCreateData } from '../../../types';
+import type {
+  Newsletter,
+  NewsletterStatus,
+  SubscriberStats,
+  NewsletterCreateData,
+} from '../../../types';
 
 const STATUS_LABELS: Record<NewsletterStatus, string> = {
   draft: 'Brouillon',
@@ -114,7 +119,10 @@ export default function MarketingNewslettersPage() {
   };
 
   const handleDelete = async (newsletter: Newsletter) => {
-    if (!confirm(t('superadmin.marketing.newsletters.confirmDelete', { subject: newsletter.subject }))) return;
+    if (
+      !confirm(t('superadmin.marketing.newsletters.confirmDelete', { subject: newsletter.subject }))
+    )
+      return;
 
     try {
       await newslettersApi.delete(newsletter.id);
@@ -125,7 +133,10 @@ export default function MarketingNewslettersPage() {
   };
 
   const handleSend = async (newsletter: Newsletter) => {
-    if (!confirm(t('superadmin.marketing.newsletters.confirmSend', { subject: newsletter.subject }))) return;
+    if (
+      !confirm(t('superadmin.marketing.newsletters.confirmSend', { subject: newsletter.subject }))
+    )
+      return;
 
     try {
       await newslettersApi.send(newsletter.id);
@@ -188,15 +199,15 @@ export default function MarketingNewslettersPage() {
   };
 
   const toggleAudience = (audience: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       target_audience: prev.target_audience.includes(audience)
-        ? prev.target_audience.filter(a => a !== audience)
+        ? prev.target_audience.filter((a) => a !== audience)
         : [...prev.target_audience, audience],
     }));
   };
 
-  const filteredNewsletters = newsletters.filter(n =>
+  const filteredNewsletters = newsletters.filter((n) =>
     n.subject.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -214,10 +225,10 @@ export default function MarketingNewslettersPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-primary-900">{t('superadmin.marketing.newsletters.title')}</h1>
-          <p className="text-primary-600 mt-1">
-            {t('superadmin.marketing.newsletters.subtitle')}
-          </p>
+          <h1 className="text-2xl font-bold text-primary-900">
+            {t('superadmin.marketing.newsletters.title')}
+          </h1>
+          <p className="text-primary-600 mt-1">{t('superadmin.marketing.newsletters.subtitle')}</p>
         </div>
         <button
           onClick={handleCreateNew}
@@ -236,7 +247,9 @@ export default function MarketingNewslettersPage() {
               <Mail className="h-5 w-5 text-primary-900" />
             </div>
             <div>
-              <p className="text-sm text-primary-600">{t('superadmin.marketing.newsletters.total')}</p>
+              <p className="text-sm text-primary-600">
+                {t('superadmin.marketing.newsletters.total')}
+              </p>
               <p className="text-xl font-bold">{newsletters.length}</p>
             </div>
           </div>
@@ -247,9 +260,11 @@ export default function MarketingNewslettersPage() {
               <CheckCircle className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-primary-600">{t('superadmin.marketing.newsletters.sent')}</p>
+              <p className="text-sm text-primary-600">
+                {t('superadmin.marketing.newsletters.sent')}
+              </p>
               <p className="text-xl font-bold">
-                {newsletters.filter(n => n.status === 'sent').length}
+                {newsletters.filter((n) => n.status === 'sent').length}
               </p>
             </div>
           </div>
@@ -260,9 +275,11 @@ export default function MarketingNewslettersPage() {
               <Clock className="h-5 w-5 text-yellow-600" />
             </div>
             <div>
-              <p className="text-sm text-primary-600">{t('superadmin.marketing.newsletters.scheduled')}</p>
+              <p className="text-sm text-primary-600">
+                {t('superadmin.marketing.newsletters.scheduled')}
+              </p>
               <p className="text-xl font-bold">
-                {newsletters.filter(n => n.status === 'scheduled').length}
+                {newsletters.filter((n) => n.status === 'scheduled').length}
               </p>
             </div>
           </div>
@@ -273,7 +290,9 @@ export default function MarketingNewslettersPage() {
               <Users className="h-5 w-5 text-primary-900" />
             </div>
             <div>
-              <p className="text-sm text-primary-600">{t('superadmin.marketing.newsletters.activeSubscribers')}</p>
+              <p className="text-sm text-primary-600">
+                {t('superadmin.marketing.newsletters.activeSubscribers')}
+              </p>
               <p className="text-xl font-bold">{stats?.active || 0}</p>
             </div>
           </div>
@@ -302,7 +321,9 @@ export default function MarketingNewslettersPage() {
           >
             <option value="">{t('superadmin.marketing.newsletters.allStatuses')}</option>
             <option value="draft">{t('superadmin.marketing.newsletters.drafts')}</option>
-            <option value="scheduled">{t('superadmin.marketing.newsletters.scheduledFilter')}</option>
+            <option value="scheduled">
+              {t('superadmin.marketing.newsletters.scheduledFilter')}
+            </option>
             <option value="sent">{t('superadmin.marketing.newsletters.sentFilter')}</option>
             <option value="failed">{t('superadmin.marketing.newsletters.failed')}</option>
           </select>
@@ -331,27 +352,29 @@ export default function MarketingNewslettersPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-primary-900">
-                        {newsletter.subject}
-                      </h3>
-                      <span className={`px-2 py-1 text-xs rounded-full ${STATUS_COLORS[newsletter.status]}`}>
+                      <h3 className="font-semibold text-primary-900">{newsletter.subject}</h3>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${STATUS_COLORS[newsletter.status]}`}
+                      >
                         {STATUS_LABELS[newsletter.status]}
                       </span>
                     </div>
 
                     {newsletter.preview_text && (
-                      <p className="text-sm text-primary-600 mt-1">
-                        {newsletter.preview_text}
-                      </p>
+                      <p className="text-sm text-primary-600 mt-1">{newsletter.preview_text}</p>
                     )}
 
                     <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-primary-500">
                       {newsletter.target_audience && newsletter.target_audience.length > 0 ? (
                         <span className="flex items-center gap-1">
                           <Users className="h-4 w-4" />
-                          {newsletter.target_audience.map(a =>
-                            a === 'prospect' ? t('superadmin.marketing.newsletters.prospects') : t('superadmin.marketing.newsletters.clients')
-                          ).join(', ')}
+                          {newsletter.target_audience
+                            .map((a) =>
+                              a === 'prospect'
+                                ? t('superadmin.marketing.newsletters.prospects')
+                                : t('superadmin.marketing.newsletters.clients')
+                            )
+                            .join(', ')}
                         </span>
                       ) : (
                         <span className="flex items-center gap-1">
@@ -364,7 +387,8 @@ export default function MarketingNewslettersPage() {
                         <>
                           <span className="flex items-center gap-1">
                             <Mail className="h-4 w-4" />
-                            {newsletter.recipients_count} {t('superadmin.marketing.newsletters.recipients')}
+                            {newsletter.recipients_count}{' '}
+                            {t('superadmin.marketing.newsletters.recipients')}
                           </span>
                           <span className="flex items-center gap-1">
                             <BarChart3 className="h-4 w-4" />
@@ -372,7 +396,8 @@ export default function MarketingNewslettersPage() {
                           </span>
                           <span className="flex items-center gap-1">
                             <MousePointer className="h-4 w-4" />
-                            {newsletter.click_rate}% {t('superadmin.marketing.newsletters.clickRate')}
+                            {newsletter.click_rate}%{' '}
+                            {t('superadmin.marketing.newsletters.clickRate')}
                           </span>
                         </>
                       )}
@@ -380,13 +405,15 @@ export default function MarketingNewslettersPage() {
                       {newsletter.scheduled_at && newsletter.status === 'scheduled' && (
                         <span className="flex items-center gap-1">
                           <Clock className="h-4 w-4" />
-                          {t('superadmin.marketing.newsletters.scheduledFor')}: {new Date(newsletter.scheduled_at).toLocaleString('fr-FR')}
+                          {t('superadmin.marketing.newsletters.scheduledFor')}:{' '}
+                          {new Date(newsletter.scheduled_at).toLocaleString('fr-FR')}
                         </span>
                       )}
 
                       {newsletter.sent_at && (
                         <span>
-                          {t('superadmin.marketing.newsletters.sentOn')} {new Date(newsletter.sent_at).toLocaleDateString('fr-FR')}
+                          {t('superadmin.marketing.newsletters.sentOn')}{' '}
+                          {new Date(newsletter.sent_at).toLocaleDateString('fr-FR')}
                         </span>
                       )}
                     </div>
@@ -459,7 +486,9 @@ export default function MarketingNewslettersPage() {
           <div className="bg-white rounded-xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-semibold">
-                {editingNewsletter ? t('superadmin.marketing.newsletters.edit') : t('superadmin.marketing.newsletters.new')}
+                {editingNewsletter
+                  ? t('superadmin.marketing.newsletters.edit')
+                  : t('superadmin.marketing.newsletters.new')}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
@@ -480,7 +509,7 @@ export default function MarketingNewslettersPage() {
                     type="text"
                     required
                     value={formData.subject}
-                    onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
                     className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     placeholder={t('superadmin.marketing.newsletters.subjectPlaceholder')}
                   />
@@ -494,13 +523,16 @@ export default function MarketingNewslettersPage() {
                   <input
                     type="text"
                     value={formData.preview_text}
-                    onChange={(e) => setFormData(prev => ({ ...prev, preview_text: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, preview_text: e.target.value }))
+                    }
                     maxLength={150}
                     className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     placeholder={t('superadmin.marketing.newsletters.previewTextPlaceholder')}
                   />
                   <p className="text-xs text-primary-500 mt-1">
-                    {formData.preview_text.length}/150 {t('superadmin.marketing.newsletters.characters')}
+                    {formData.preview_text.length}/150{' '}
+                    {t('superadmin.marketing.newsletters.characters')}
                   </p>
                 </div>
 
@@ -517,7 +549,9 @@ export default function MarketingNewslettersPage() {
                         onChange={() => toggleAudience('prospect')}
                         className="h-4 w-4 text-primary-900 rounded"
                       />
-                      <span>{t('superadmin.marketing.newsletters.prospects')} ({stats?.prospects || 0})</span>
+                      <span>
+                        {t('superadmin.marketing.newsletters.prospects')} ({stats?.prospects || 0})
+                      </span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -526,11 +560,14 @@ export default function MarketingNewslettersPage() {
                         onChange={() => toggleAudience('client')}
                         className="h-4 w-4 text-primary-900 rounded"
                       />
-                      <span>{t('superadmin.marketing.newsletters.clients')} ({stats?.clients || 0})</span>
+                      <span>
+                        {t('superadmin.marketing.newsletters.clients')} ({stats?.clients || 0})
+                      </span>
                     </label>
                   </div>
                   <p className="text-sm text-primary-500 mt-2">
-                    {t('superadmin.marketing.newsletters.estimatedRecipients')}: {getEstimatedRecipients()} {t('superadmin.marketing.newsletters.subscribers')}
+                    {t('superadmin.marketing.newsletters.estimatedRecipients')}:{' '}
+                    {getEstimatedRecipients()} {t('superadmin.marketing.newsletters.subscribers')}
                   </p>
                 </div>
 
@@ -542,7 +579,7 @@ export default function MarketingNewslettersPage() {
                   <textarea
                     required
                     value={formData.content}
-                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
                     rows={12}
                     className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500 font-mono text-sm"
                     placeholder={t('superadmin.marketing.newsletters.contentPlaceholder')}
@@ -563,7 +600,11 @@ export default function MarketingNewslettersPage() {
                   disabled={saving}
                   className="px-6 py-2 bg-primary-900 text-white rounded-lg hover:bg-primary-800 disabled:opacity-50"
                 >
-                  {saving ? t('common.saving') : editingNewsletter ? t('common.update') : t('common.create')}
+                  {saving
+                    ? t('common.saving')
+                    : editingNewsletter
+                      ? t('common.update')
+                      : t('common.create')}
                 </button>
               </div>
             </form>
@@ -576,7 +617,9 @@ export default function MarketingNewslettersPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="text-lg font-semibold">{t('superadmin.marketing.newsletters.scheduleTitle')}</h2>
+              <h2 className="text-lg font-semibold">
+                {t('superadmin.marketing.newsletters.scheduleTitle')}
+              </h2>
               <button
                 onClick={() => setShowScheduleModal(null)}
                 className="p-2 hover:bg-primary-100 rounded-lg"
@@ -620,7 +663,9 @@ export default function MarketingNewslettersPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="text-lg font-semibold">{t('superadmin.marketing.newsletters.preview')}</h2>
+              <h2 className="text-lg font-semibold">
+                {t('superadmin.marketing.newsletters.preview')}
+              </h2>
               <button
                 onClick={() => setPreviewNewsletter(null)}
                 className="p-2 hover:bg-primary-100 rounded-lg"
@@ -632,8 +677,12 @@ export default function MarketingNewslettersPage() {
               {/* Email header simulation */}
               <div className="bg-primary-100 p-4 border-b">
                 <div className="text-sm">
-                  <p><strong>De:</strong> ADVIST &lt;newsletter@advist.fr&gt;</p>
-                  <p><strong>Sujet:</strong> {previewNewsletter.subject}</p>
+                  <p>
+                    <strong>De:</strong> ADVIST &lt;newsletter@advist.fr&gt;
+                  </p>
+                  <p>
+                    <strong>Sujet:</strong> {previewNewsletter.subject}
+                  </p>
                   {previewNewsletter.preview_text && (
                     <p className="text-primary-500 mt-1">{previewNewsletter.preview_text}</p>
                   )}

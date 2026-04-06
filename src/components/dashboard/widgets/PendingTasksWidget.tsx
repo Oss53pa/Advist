@@ -3,7 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckSquare, Clock, ArrowRight, AlertCircle } from 'lucide-react';
+import { Clock, ArrowRight, AlertCircle } from 'lucide-react';
 import { WidgetConfig } from '../../../services/dashboard';
 
 interface PendingTasksWidgetProps {
@@ -26,14 +26,49 @@ export const PendingTasksWidget: React.FC<PendingTasksWidgetProps> = ({ config }
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 400));
+      await new Promise((resolve) => setTimeout(resolve, 400));
 
       const mockTasks: TaskItem[] = [
-        { id: 1, title: 'Approbation requise', documentTitle: 'Contrat Q4', type: 'approval', deadline: '29 Nov', isUrgent: true },
-        { id: 2, title: 'Signature requise', documentTitle: 'Budget 2025', type: 'signature', deadline: '30 Nov', isUrgent: false },
-        { id: 3, title: 'Revue demandée', documentTitle: 'Rapport annuel', type: 'review', deadline: '5 Déc', isUrgent: false },
-        { id: 4, title: 'Approbation requise', documentTitle: 'Facture 1234', type: 'approval', deadline: '7 Déc', isUrgent: false },
-        { id: 5, title: 'Signature requise', documentTitle: 'Avenant contrat', type: 'signature', deadline: '10 Déc', isUrgent: false },
+        {
+          id: 1,
+          title: 'Approbation requise',
+          documentTitle: 'Contrat Q4',
+          type: 'approval',
+          deadline: '29 Nov',
+          isUrgent: true,
+        },
+        {
+          id: 2,
+          title: 'Signature requise',
+          documentTitle: 'Budget 2025',
+          type: 'signature',
+          deadline: '30 Nov',
+          isUrgent: false,
+        },
+        {
+          id: 3,
+          title: 'Revue demandée',
+          documentTitle: 'Rapport annuel',
+          type: 'review',
+          deadline: '5 Déc',
+          isUrgent: false,
+        },
+        {
+          id: 4,
+          title: 'Approbation requise',
+          documentTitle: 'Facture 1234',
+          type: 'approval',
+          deadline: '7 Déc',
+          isUrgent: false,
+        },
+        {
+          id: 5,
+          title: 'Signature requise',
+          documentTitle: 'Avenant contrat',
+          type: 'signature',
+          deadline: '10 Déc',
+          isUrgent: false,
+        },
       ];
 
       const limit = config.settings.limit || 5;
@@ -56,7 +91,7 @@ export const PendingTasksWidget: React.FC<PendingTasksWidgetProps> = ({ config }
   if (loading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3].map(i => (
+        {[1, 2, 3].map((i) => (
           <div key={i} className="animate-pulse p-3 border border-advist-border rounded-lg">
             <div className="h-4 w-3/4 bg-advist-surface-dark rounded mb-2"></div>
             <div className="h-3 w-1/2 bg-advist-surface-dark rounded"></div>
@@ -68,7 +103,7 @@ export const PendingTasksWidget: React.FC<PendingTasksWidgetProps> = ({ config }
 
   return (
     <div className="space-y-2">
-      {tasks.map(task => {
+      {tasks.map((task) => {
         const badge = getTypeBadge(task.type);
         return (
           <Link
@@ -84,7 +119,9 @@ export const PendingTasksWidget: React.FC<PendingTasksWidgetProps> = ({ config }
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   {task.isUrgent && <AlertCircle size={14} className="text-advist-gold-dark" />}
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${badge.bg} ${badge.text}`}>
+                  <span
+                    className={`px-2 py-0.5 rounded text-xs font-medium ${badge.bg} ${badge.text}`}
+                  >
                     {badge.label}
                   </span>
                 </div>

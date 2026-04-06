@@ -46,7 +46,7 @@ interface PaymentFormProps {
 // Mobile Money providers by country
 const mobileMoneyProviders = {
   CI: {
-    name: 'Côte d\'Ivoire',
+    name: "Côte d'Ivoire",
     flag: '🇨🇮',
     code: '+225',
     providers: [
@@ -138,7 +138,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   onCancel,
   showCancel = true,
 }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [paymentType, setPaymentType] = useState<'card' | 'mobile_money'>('card');
   const [selectedCountry, setSelectedCountry] = useState<string>('CI');
   const [selectedProvider, setSelectedProvider] = useState<string>('');
@@ -178,7 +178,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   const formatExpiry = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     if (v.length >= 2) {
-      return `${v.substring(0, 2)  }/${  v.substring(2, 4)}`;
+      return `${v.substring(0, 2)}/${v.substring(2, 4)}`;
     }
     return v;
   };
@@ -236,14 +236,13 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
       <div className="text-center mb-6 p-6 bg-gradient-to-br from-advist-navy to-advist-navy/90 rounded-2xl text-white">
         <p className="text-sm text-advist-blue-light mb-1">Montant à payer</p>
         <p className="text-4xl font-bold">
-          {formatCurrency(amount)} <span className="text-xl">{currency === 'XOF' ? 'FCFA' : currency}</span>
+          {formatCurrency(amount)}{' '}
+          <span className="text-xl">{currency === 'XOF' ? 'FCFA' : currency}</span>
         </p>
         {invoiceNumber && (
           <p className="text-sm text-advist-blue-light mt-2">Facture: {invoiceNumber}</p>
         )}
-        {organizationName && (
-          <p className="text-sm text-white/70 mt-1">{organizationName}</p>
-        )}
+        {organizationName && <p className="text-sm text-white/70 mt-1">{organizationName}</p>}
       </div>
 
       {/* Payment Type Selector */}
@@ -257,16 +256,19 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
               : 'border-advist-border hover:border-advist-border'
           }`}
         >
-          <CreditCard size={24} className={paymentType === 'card' ? 'text-advist-gray900' : 'text-advist-text-muted'} />
+          <CreditCard
+            size={24}
+            className={paymentType === 'card' ? 'text-advist-gray900' : 'text-advist-text-muted'}
+          />
           <div className="text-left">
-            <p className={`font-medium ${paymentType === 'card' ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}>
+            <p
+              className={`font-medium ${paymentType === 'card' ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}
+            >
               Carte bancaire
             </p>
             <p className="text-xs text-advist-text-muted">Visa, Mastercard</p>
           </div>
-          {paymentType === 'card' && (
-            <Check size={18} className="text-advist-gray900 ml-auto" />
-          )}
+          {paymentType === 'card' && <Check size={18} className="text-advist-gray900 ml-auto" />}
         </button>
 
         <button
@@ -278,9 +280,16 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
               : 'border-advist-border hover:border-advist-border'
           }`}
         >
-          <Smartphone size={24} className={paymentType === 'mobile_money' ? 'text-advist-gray900' : 'text-advist-text-muted'} />
+          <Smartphone
+            size={24}
+            className={
+              paymentType === 'mobile_money' ? 'text-advist-gray900' : 'text-advist-text-muted'
+            }
+          />
           <div className="text-left">
-            <p className={`font-medium ${paymentType === 'mobile_money' ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}>
+            <p
+              className={`font-medium ${paymentType === 'mobile_money' ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}
+            >
               Mobile Money
             </p>
             <p className="text-xs text-advist-text-muted">Orange, MTN, Wave...</p>
@@ -309,7 +318,10 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                   className="w-full px-4 py-3 pl-12 border border-advist-border rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30 focus:border-advist-blue-light"
                   required
                 />
-                <CreditCard size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-advist-text-muted" />
+                <CreditCard
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-advist-text-muted"
+                />
                 {detectCardType(cardNumber) && (
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-lg">
                     {detectCardType(cardNumber)?.logo}
@@ -334,9 +346,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                  CVC
-                </label>
+                <label className="block text-sm font-medium text-advist-gray900 mb-2">CVC</label>
                 <input
                   type="text"
                   value={cardCvc}
@@ -370,9 +380,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
           <div className="space-y-4 p-5 bg-advist-surface-dark rounded-xl">
             {/* Country Selector */}
             <div>
-              <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                Pays
-              </label>
+              <label className="block text-sm font-medium text-advist-gray900 mb-2">Pays</label>
               <div className="relative">
                 <select
                   value={selectedCountry}
@@ -391,7 +399,10 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg">
                   {currentCountry?.flag}
                 </span>
-                <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-advist-text-muted" />
+                <ChevronDown
+                  size={18}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-advist-text-muted"
+                />
               </div>
             </div>
 
@@ -412,10 +423,14 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                         : 'border-advist-border hover:border-advist-border'
                     }`}
                   >
-                    <div className={`w-10 h-10 ${provider.color} rounded-full flex items-center justify-center text-white text-lg`}>
+                    <div
+                      className={`w-10 h-10 ${provider.color} rounded-full flex items-center justify-center text-white text-lg`}
+                    >
                       {provider.logo}
                     </div>
-                    <span className={`font-medium ${selectedProvider === provider.id ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}>
+                    <span
+                      className={`font-medium ${selectedProvider === provider.id ? 'text-advist-gray900' : 'text-advist-text-secondary'}`}
+                    >
                       {provider.name}
                     </span>
                     {selectedProvider === provider.id && (

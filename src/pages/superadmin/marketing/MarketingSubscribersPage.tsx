@@ -11,7 +11,7 @@ import {
   UserX,
   Download,
   Trash2,
-  Filter,
+  _Filter,
   Building2,
   Calendar,
 } from 'lucide-react';
@@ -65,7 +65,12 @@ export default function MarketingSubscribersPage() {
   };
 
   const handleUnsubscribe = async (subscriber: NewsletterSubscriber) => {
-    if (!confirm(t('superadmin.marketing.subscribers.confirmUnsubscribe', { email: subscriber.email }))) return;
+    if (
+      !confirm(
+        t('superadmin.marketing.subscribers.confirmUnsubscribe', { email: subscriber.email })
+      )
+    )
+      return;
 
     try {
       await subscribersApi.unsubscribe(subscriber.id);
@@ -76,7 +81,8 @@ export default function MarketingSubscribersPage() {
   };
 
   const handleDelete = async (subscriber: NewsletterSubscriber) => {
-    if (!confirm(t('superadmin.marketing.subscribers.confirmDelete', { email: subscriber.email }))) return;
+    if (!confirm(t('superadmin.marketing.subscribers.confirmDelete', { email: subscriber.email })))
+      return;
 
     try {
       await subscribersApi.delete(subscriber.id);
@@ -87,10 +93,15 @@ export default function MarketingSubscribersPage() {
   };
 
   const handleBulkUnsubscribe = async () => {
-    if (!confirm(t('superadmin.marketing.subscribers.confirmBulkUnsubscribe', { count: selectedIds.length }))) return;
+    if (
+      !confirm(
+        t('superadmin.marketing.subscribers.confirmBulkUnsubscribe', { count: selectedIds.length })
+      )
+    )
+      return;
 
     try {
-      await Promise.all(selectedIds.map(id => subscribersApi.unsubscribe(id)));
+      await Promise.all(selectedIds.map((id) => subscribersApi.unsubscribe(id)));
       setSelectedIds([]);
       await loadData();
     } catch (error) {
@@ -101,14 +112,16 @@ export default function MarketingSubscribersPage() {
   const handleExport = () => {
     const csvContent = [
       ['Email', 'Prenom', 'Nom', 'Type', 'Actif', 'Date inscription'].join(','),
-      ...filteredSubscribers.map(s => [
-        s.email,
-        s.first_name || '',
-        s.last_name || '',
-        TYPE_LABELS[s.subscriber_type],
-        s.is_active ? 'Oui' : 'Non',
-        new Date(s.subscribed_at).toLocaleDateString('fr-FR'),
-      ].join(','))
+      ...filteredSubscribers.map((s) =>
+        [
+          s.email,
+          s.first_name || '',
+          s.last_name || '',
+          TYPE_LABELS[s.subscriber_type],
+          s.is_active ? 'Oui' : 'Non',
+          new Date(s.subscribed_at).toLocaleDateString('fr-FR'),
+        ].join(',')
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -122,22 +135,19 @@ export default function MarketingSubscribersPage() {
     if (selectedIds.length === filteredSubscribers.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredSubscribers.map(s => s.id));
+      setSelectedIds(filteredSubscribers.map((s) => s.id));
     }
   };
 
   const toggleSelect = (id: string) => {
-    setSelectedIds(prev =>
-      prev.includes(id)
-        ? prev.filter(i => i !== id)
-        : [...prev, id]
-    );
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
-  const filteredSubscribers = subscribers.filter(s =>
-    s.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (s.first_name && s.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (s.last_name && s.last_name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredSubscribers = subscribers.filter(
+    (s) =>
+      s.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (s.first_name && s.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (s.last_name && s.last_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -145,10 +155,10 @@ export default function MarketingSubscribersPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-primary-900">{t('superadmin.marketing.subscribers.title')}</h1>
-          <p className="text-primary-600 mt-1">
-            {t('superadmin.marketing.subscribers.subtitle')}
-          </p>
+          <h1 className="text-2xl font-bold text-primary-900">
+            {t('superadmin.marketing.subscribers.title')}
+          </h1>
+          <p className="text-primary-600 mt-1">{t('superadmin.marketing.subscribers.subtitle')}</p>
         </div>
         <button
           onClick={handleExport}
@@ -168,7 +178,9 @@ export default function MarketingSubscribersPage() {
                 <Users className="h-5 w-5 text-primary-900" />
               </div>
               <div>
-                <p className="text-sm text-primary-600">{t('superadmin.marketing.subscribers.total')}</p>
+                <p className="text-sm text-primary-600">
+                  {t('superadmin.marketing.subscribers.total')}
+                </p>
                 <p className="text-xl font-bold">{stats.total}</p>
               </div>
             </div>
@@ -179,7 +191,9 @@ export default function MarketingSubscribersPage() {
                 <UserCheck className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-primary-600">{t('superadmin.marketing.subscribers.active')}</p>
+                <p className="text-sm text-primary-600">
+                  {t('superadmin.marketing.subscribers.active')}
+                </p>
                 <p className="text-xl font-bold">{stats.active}</p>
               </div>
             </div>
@@ -190,7 +204,9 @@ export default function MarketingSubscribersPage() {
                 <Mail className="h-5 w-5 text-primary-900" />
               </div>
               <div>
-                <p className="text-sm text-primary-600">{t('superadmin.marketing.subscribers.prospects')}</p>
+                <p className="text-sm text-primary-600">
+                  {t('superadmin.marketing.subscribers.prospects')}
+                </p>
                 <p className="text-xl font-bold">{stats.prospects}</p>
               </div>
             </div>
@@ -201,7 +217,9 @@ export default function MarketingSubscribersPage() {
                 <Building2 className="h-5 w-5 text-primary-900" />
               </div>
               <div>
-                <p className="text-sm text-primary-600">{t('superadmin.marketing.subscribers.clients')}</p>
+                <p className="text-sm text-primary-600">
+                  {t('superadmin.marketing.subscribers.clients')}
+                </p>
                 <p className="text-xl font-bold">{stats.clients}</p>
               </div>
             </div>
@@ -212,7 +230,9 @@ export default function MarketingSubscribersPage() {
                 <UserX className="h-5 w-5 text-red-600" />
               </div>
               <div>
-                <p className="text-sm text-primary-600">{t('superadmin.marketing.subscribers.unsubscribed')}</p>
+                <p className="text-sm text-primary-600">
+                  {t('superadmin.marketing.subscribers.unsubscribed')}
+                </p>
                 <p className="text-xl font-bold">{stats.unsubscribed}</p>
               </div>
             </div>
@@ -251,7 +271,9 @@ export default function MarketingSubscribersPage() {
           >
             <option value="">{t('superadmin.marketing.subscribers.allStatuses')}</option>
             <option value="active">{t('superadmin.marketing.subscribers.activeFilter')}</option>
-            <option value="inactive">{t('superadmin.marketing.subscribers.unsubscribedFilter')}</option>
+            <option value="inactive">
+              {t('superadmin.marketing.subscribers.unsubscribedFilter')}
+            </option>
           </select>
 
           {selectedIds.length > 0 && (
@@ -329,7 +351,9 @@ export default function MarketingSubscribersPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 text-xs rounded-full ${TYPE_COLORS[subscriber.subscriber_type]}`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${TYPE_COLORS[subscriber.subscriber_type]}`}
+                    >
                       {TYPE_LABELS[subscriber.subscriber_type]}
                     </span>
                   </td>

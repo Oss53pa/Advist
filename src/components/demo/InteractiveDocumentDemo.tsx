@@ -8,10 +8,10 @@ import {
   Upload,
   Folder,
   Search,
-  Filter,
+  _Filter,
   Grid,
   List,
-  MoreVertical,
+  _MoreVertical,
   Download,
   Share2,
   Trash2,
@@ -50,12 +50,67 @@ interface Document {
 }
 
 const initialDocuments: Document[] = [
-  { id: 1, name: 'Contrat_Fournisseur_2024.pdf', type: 'pdf', size: '2.4 MB', status: 'approved', date: '15 Déc 2024', owner: 'Marie Koné', starred: true, tags: ['Contrat', 'Urgent'] },
-  { id: 2, name: 'Budget_Q4_2024.xlsx', type: 'excel', size: '1.8 MB', status: 'pending', date: '14 Déc 2024', owner: 'Jean Diallo', tags: ['Finance'] },
-  { id: 3, name: 'Presentation_Client.pdf', type: 'pdf', size: '5.2 MB', status: 'draft', date: '13 Déc 2024', owner: 'Aminata Sow', tags: ['Commercial'] },
-  { id: 4, name: 'Facture_INV-2024-001.pdf', type: 'pdf', size: '0.8 MB', status: 'approved', date: '12 Déc 2024', owner: 'Marie Koné', tags: ['Comptabilité'] },
-  { id: 5, name: 'Logo_Entreprise_HD.png', type: 'image', size: '0.3 MB', status: 'approved', date: '10 Déc 2024', owner: 'Design Team', starred: true },
-  { id: 6, name: 'Rapport_Annuel_2024.pdf', type: 'pdf', size: '8.1 MB', status: 'pending', date: '08 Déc 2024', owner: 'Jean Diallo', tags: ['Rapport', 'Direction'] },
+  {
+    id: 1,
+    name: 'Contrat_Fournisseur_2024.pdf',
+    type: 'pdf',
+    size: '2.4 MB',
+    status: 'approved',
+    date: '15 Déc 2024',
+    owner: 'Marie Koné',
+    starred: true,
+    tags: ['Contrat', 'Urgent'],
+  },
+  {
+    id: 2,
+    name: 'Budget_Q4_2024.xlsx',
+    type: 'excel',
+    size: '1.8 MB',
+    status: 'pending',
+    date: '14 Déc 2024',
+    owner: 'Jean Diallo',
+    tags: ['Finance'],
+  },
+  {
+    id: 3,
+    name: 'Presentation_Client.pdf',
+    type: 'pdf',
+    size: '5.2 MB',
+    status: 'draft',
+    date: '13 Déc 2024',
+    owner: 'Aminata Sow',
+    tags: ['Commercial'],
+  },
+  {
+    id: 4,
+    name: 'Facture_INV-2024-001.pdf',
+    type: 'pdf',
+    size: '0.8 MB',
+    status: 'approved',
+    date: '12 Déc 2024',
+    owner: 'Marie Koné',
+    tags: ['Comptabilité'],
+  },
+  {
+    id: 5,
+    name: 'Logo_Entreprise_HD.png',
+    type: 'image',
+    size: '0.3 MB',
+    status: 'approved',
+    date: '10 Déc 2024',
+    owner: 'Design Team',
+    starred: true,
+  },
+  {
+    id: 6,
+    name: 'Rapport_Annuel_2024.pdf',
+    type: 'pdf',
+    size: '8.1 MB',
+    status: 'pending',
+    date: '08 Déc 2024',
+    owner: 'Jean Diallo',
+    tags: ['Rapport', 'Direction'],
+  },
 ];
 
 type ViewStep = 'intro' | 'browse' | 'upload' | 'preview';
@@ -73,35 +128,51 @@ export const InteractiveDocumentDemo: React.FC = () => {
 
   const stats = {
     total: documents.length,
-    approved: documents.filter(d => d.status === 'approved').length,
-    pending: documents.filter(d => d.status === 'pending').length,
+    approved: documents.filter((d) => d.status === 'approved').length,
+    pending: documents.filter((d) => d.status === 'pending').length,
     totalSize: '18.6 MB',
   };
 
   const getFileIcon = (type: string, size: 'sm' | 'lg' = 'sm') => {
     const sizeClass = size === 'lg' ? 'w-8 h-8' : 'w-5 h-5';
     switch (type) {
-      case 'pdf': return <FileText className={`${sizeClass} text-red-500`} />;
-      case 'excel': return <FileSpreadsheet className={`${sizeClass} text-gray-900`} />;
-      case 'image': return <FileImage className={`${sizeClass} text-gray-900`} />;
-      default: return <File className={`${sizeClass} text-gray-500`} />;
+      case 'pdf':
+        return <FileText className={`${sizeClass} text-red-500`} />;
+      case 'excel':
+        return <FileSpreadsheet className={`${sizeClass} text-gray-900`} />;
+      case 'image':
+        return <FileImage className={`${sizeClass} text-gray-900`} />;
+      default:
+        return <File className={`${sizeClass} text-gray-500`} />;
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full"><CheckCircle className="w-3 h-3" /> Approuvé</span>;
+        return (
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+            <CheckCircle className="w-3 h-3" /> Approuvé
+          </span>
+        );
       case 'pending':
-        return <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-700 bg-gray-50 px-2 py-1 rounded-full"><Clock className="w-3 h-3" /> En attente</span>;
+        return (
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-700 bg-gray-50 px-2 py-1 rounded-full">
+            <Clock className="w-3 h-3" /> En attente
+          </span>
+        );
       case 'draft':
-        return <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full"><AlertCircle className="w-3 h-3" /> Brouillon</span>;
+        return (
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+            <AlertCircle className="w-3 h-3" /> Brouillon
+          </span>
+        );
       default:
         return null;
     }
   };
 
-  const filteredDocs = documents.filter(doc => {
+  const filteredDocs = documents.filter((doc) => {
     const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = !activeFilter || doc.status === activeFilter;
     return matchesSearch && matchesFilter;
@@ -109,9 +180,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
 
   const toggleSelect = (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedDocs(prev =>
-      prev.includes(id) ? prev.filter(d => d !== id) : [...prev, id]
-    );
+    setSelectedDocs((prev) => (prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]));
   };
 
   const handleUpload = async () => {
@@ -119,7 +188,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
     setUploadProgress(0);
 
     for (let i = 0; i <= 100; i += 5) {
-      await new Promise(resolve => setTimeout(resolve, 80));
+      await new Promise((resolve) => setTimeout(resolve, 80));
       setUploadProgress(i);
     }
 
@@ -134,7 +203,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
       tags: ['Nouveau'],
     };
 
-    setDocuments(prev => [newDoc, ...prev]);
+    setDocuments((prev) => [newDoc, ...prev]);
     setIsUploading(false);
     setUploadProgress(0);
     setStep('browse');
@@ -166,9 +235,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
               <Star className="w-4 h-4 text-white" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Gestion documentaire
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Gestion documentaire</h2>
           <p className="text-gray-500 max-w-md mx-auto">
             Explorez une interface intuitive pour gérer, organiser et retrouver vos documents.
           </p>
@@ -297,7 +364,10 @@ export const InteractiveDocumentDemo: React.FC = () => {
                 <p className="text-sm font-medium text-gray-700 mb-2">Tags</p>
                 <div className="flex flex-wrap gap-2">
                   {previewDoc.tags.map((tag, i) => (
-                    <span key={i} className="px-3 py-1 bg-gray-50 text-gray-800 text-xs font-medium rounded-full">
+                    <span
+                      key={i}
+                      className="px-3 py-1 bg-gray-50 text-gray-800 text-xs font-medium rounded-full"
+                    >
                       {tag}
                     </span>
                   ))}
@@ -412,7 +482,9 @@ export const InteractiveDocumentDemo: React.FC = () => {
             </div>
             <div>
               <h3 className="text-white font-semibold text-lg">Mes Documents</h3>
-              <p className="text-white/60 text-sm">{documents.length} fichiers • {stats.totalSize}</p>
+              <p className="text-white/60 text-sm">
+                {documents.length} fichiers • {stats.totalSize}
+              </p>
             </div>
           </div>
           <button
@@ -475,7 +547,11 @@ export const InteractiveDocumentDemo: React.FC = () => {
           { id: null, label: 'Tous', count: documents.length },
           { id: 'approved', label: 'Approuvés', count: stats.approved },
           { id: 'pending', label: 'En attente', count: stats.pending },
-          { id: 'draft', label: 'Brouillons', count: documents.filter(d => d.status === 'draft').length },
+          {
+            id: 'draft',
+            label: 'Brouillons',
+            count: documents.filter((d) => d.status === 'draft').length,
+          },
         ].map((filter) => (
           <button
             key={filter.id || 'all'}
@@ -487,9 +563,11 @@ export const InteractiveDocumentDemo: React.FC = () => {
             }`}
           >
             {filter.label}
-            <span className={`px-1.5 py-0.5 rounded text-xs ${
-              activeFilter === filter.id ? 'bg-white/20' : 'bg-gray-200'
-            }`}>
+            <span
+              className={`px-1.5 py-0.5 rounded text-xs ${
+                activeFilter === filter.id ? 'bg-white/20' : 'bg-gray-200'
+              }`}
+            >
               {filter.count}
             </span>
           </button>
@@ -499,9 +577,14 @@ export const InteractiveDocumentDemo: React.FC = () => {
       {/* Selected Actions */}
       {selectedDocs.length > 0 && (
         <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 border border-gray-100 rounded-xl">
-          <span className="text-sm font-medium text-gray-800">{selectedDocs.length} sélectionné(s)</span>
+          <span className="text-sm font-medium text-gray-800">
+            {selectedDocs.length} sélectionné(s)
+          </span>
           <div className="flex gap-2">
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Télécharger">
+            <button
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Télécharger"
+            >
               <Download className="w-4 h-4 text-gray-900" />
             </button>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Partager">
@@ -524,7 +607,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
       {/* Documents Grid/List */}
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-2 gap-3">
-          {filteredDocs.map(doc => (
+          {filteredDocs.map((doc) => (
             <div
               key={doc.id}
               onClick={() => handlePreview(doc)}
@@ -556,7 +639,9 @@ export const InteractiveDocumentDemo: React.FC = () => {
                   {getFileIcon(doc.type, 'lg')}
                 </div>
                 <h4 className="font-medium text-gray-900 text-sm truncate mb-1">{doc.name}</h4>
-                <p className="text-xs text-gray-500 mb-2">{doc.size} • {doc.date}</p>
+                <p className="text-xs text-gray-500 mb-2">
+                  {doc.size} • {doc.date}
+                </p>
                 {getStatusBadge(doc.status)}
               </div>
             </div>
@@ -564,7 +649,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-2">
-          {filteredDocs.map(doc => (
+          {filteredDocs.map((doc) => (
             <div
               key={doc.id}
               onClick={() => handlePreview(doc)}
@@ -591,9 +676,13 @@ export const InteractiveDocumentDemo: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h4 className="font-medium text-gray-900 text-sm truncate">{doc.name}</h4>
-                  {doc.starred && <Star className="w-3 h-3 text-gray-400 fill-gray-400 flex-shrink-0" />}
+                  {doc.starred && (
+                    <Star className="w-3 h-3 text-gray-400 fill-gray-400 flex-shrink-0" />
+                  )}
                 </div>
-                <p className="text-xs text-gray-500">{doc.owner} • {doc.date}</p>
+                <p className="text-xs text-gray-500">
+                  {doc.owner} • {doc.date}
+                </p>
               </div>
 
               <div className="flex items-center gap-3 flex-shrink-0">

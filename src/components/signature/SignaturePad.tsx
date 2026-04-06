@@ -3,19 +3,18 @@ import { useTranslation } from 'react-i18next';
 import {
   PenTool,
   Eraser,
-  RotateCcw,
+  _RotateCcw,
   Upload,
   Type,
-  Palette,
+  _Palette,
   Check,
   X,
-  Download,
-  Trash2,
+  _Download,
+  _Trash2,
   Image,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import { Modal } from '../ui/Modal';
 
 export interface SignatureData {
   type: 'draw' | 'type' | 'upload';
@@ -51,7 +50,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
   existingSignature,
   width = 500,
   height = 200,
-  title,
+  _title,
   showTypeOption = true,
   showUploadOption = true,
 }) => {
@@ -70,7 +69,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
   const [selectedFont, setSelectedFont] = useState(SIGNATURE_FONTS[0]);
 
   // Upload mode state
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [_uploadedImage, setUploadedImage] = useState<string | null>(null);
 
   // Initialize canvas
   useEffect(() => {
@@ -113,7 +112,9 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
   }, [width, height, existingSignature, t]);
 
   // Drawing handlers
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const startDrawing = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     if (mode !== 'draw') return;
     setIsDrawing(true);
     setHasDrawn(true);
@@ -269,10 +270,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Calculate scale to fit
-        const scale = Math.min(
-          (canvas.width - 60) / img.width,
-          (canvas.height - 60) / img.height
-        );
+        const scale = Math.min((canvas.width - 60) / img.width, (canvas.height - 60) / img.height);
         const x = (canvas.width - img.width * scale) / 2;
         const y = (canvas.height - img.height * scale) / 2;
 
@@ -309,7 +307,9 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
         <button
           onClick={() => setMode('draw')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-            mode === 'draw' ? 'bg-[#383733] text-white' : 'bg-[#EAEAEA] text-[#383733] hover:bg-[#D5D5D5]'
+            mode === 'draw'
+              ? 'bg-[#383733] text-white'
+              : 'bg-[#EAEAEA] text-[#383733] hover:bg-[#D5D5D5]'
           }`}
         >
           <PenTool size={18} />
@@ -323,7 +323,9 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
               clearCanvas();
             }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              mode === 'type' ? 'bg-[#383733] text-white' : 'bg-[#EAEAEA] text-[#383733] hover:bg-[#D5D5D5]'
+              mode === 'type'
+                ? 'bg-[#383733] text-white'
+                : 'bg-[#EAEAEA] text-[#383733] hover:bg-[#D5D5D5]'
             }`}
           >
             <Type size={18} />
@@ -338,7 +340,9 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
               clearCanvas();
             }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              mode === 'upload' ? 'bg-[#383733] text-white' : 'bg-[#EAEAEA] text-[#383733] hover:bg-[#D5D5D5]'
+              mode === 'upload'
+                ? 'bg-[#383733] text-white'
+                : 'bg-[#EAEAEA] text-[#383733] hover:bg-[#D5D5D5]'
             }`}
           >
             <Upload size={18} />
@@ -480,7 +484,11 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
       {/* Security notice */}
       <div className="p-3 bg-advist-gold-light rounded-lg border border-advist-gold">
         <p className="text-sm text-advist-gray900">
-          🔒 {t('signature.securityNotice', 'Votre signature sera chiffrée et stockée de manière sécurisée. Elle ne pourra être utilisée que par vous.')}
+          🔒{' '}
+          {t(
+            'signature.securityNotice',
+            'Votre signature sera chiffrée et stockée de manière sécurisée. Elle ne pourra être utilisée que par vous.'
+          )}
         </p>
       </div>
 

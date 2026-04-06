@@ -1,5 +1,5 @@
 -- Workflow Templates
-CREATE TABLE workflow_templates (
+CREATE TABLE IF NOT EXISTS workflow_templates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -16,12 +16,15 @@ CREATE TABLE workflow_templates (
 );
 
 -- Add FK from project_workflows to workflow_templates
-ALTER TABLE project_workflows
-    ADD CONSTRAINT fk_project_workflows_template
-    FOREIGN KEY (workflow_template_id) REFERENCES workflow_templates(id) ON DELETE SET NULL;
+DO $$ BEGIN
+    ALTER TABLE project_workflows
+        ADD CONSTRAINT fk_project_workflows_template
+        FOREIGN KEY (workflow_template_id) REFERENCES workflow_templates(id) ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Workflow Instances
-CREATE TABLE workflow_instances (
+CREATE TABLE IF NOT EXISTS workflow_instances (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     template_id UUID NOT NULL REFERENCES workflow_templates(id) ON DELETE RESTRICT,
@@ -40,7 +43,7 @@ CREATE TABLE workflow_instances (
 );
 
 -- Workflow Steps
-CREATE TABLE workflow_steps (
+CREATE TABLE IF NOT EXISTS workflow_steps (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     instance_id UUID NOT NULL REFERENCES workflow_instances(id) ON DELETE CASCADE,
     step_number INTEGER NOT NULL,
@@ -59,7 +62,7 @@ CREATE TABLE workflow_steps (
 );
 
 -- Workflow Step Assignees
-CREATE TABLE workflow_assignees (
+CREATE TABLE IF NOT EXISTS workflow_assignees (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     step_id UUID NOT NULL REFERENCES workflow_steps(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -71,7 +74,7 @@ CREATE TABLE workflow_assignees (
 );
 
 -- Workflow History
-CREATE TABLE workflow_history (
+CREATE TABLE IF NOT EXISTS workflow_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     instance_id UUID NOT NULL REFERENCES workflow_instances(id) ON DELETE CASCADE,
     step_id UUID REFERENCES workflow_steps(id) ON DELETE SET NULL,

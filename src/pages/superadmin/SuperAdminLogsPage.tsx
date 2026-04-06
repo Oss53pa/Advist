@@ -3,34 +3,34 @@ import { useTranslation } from 'react-i18next';
 import {
   FileText,
   Search,
-  Filter,
+  _Filter,
   Download,
   RefreshCw,
-  Calendar,
-  Clock,
+  _Calendar,
+  _Clock,
   User,
   Building2,
   Globe,
   Activity,
   Shield,
-  Settings,
+  _Settings,
   LogIn,
-  LogOut,
-  Upload,
-  Trash2,
-  Edit,
+  _LogOut,
+  _Upload,
+  _Trash2,
+  _Edit,
   Eye,
-  Key,
+  _Key,
   AlertTriangle,
   CheckCircle,
   XCircle,
-  Info,
+  _Info,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   Copy,
   Server,
-  Database,
+  _Database,
   Zap,
 } from 'lucide-react';
 import { Card, Button, Badge, Modal } from '../../components/ui';
@@ -96,7 +96,7 @@ const mockLogs: AuditLog[] = [
     category: 'workflow',
     severity: 'info',
     user: { id: 'u3', email: 'dg@orange-ci.com', name: 'Fatou Koné' },
-    tenant: { id: 't2', name: 'Orange Côte d\'Ivoire' },
+    tenant: { id: 't2', name: "Orange Côte d'Ivoire" },
     resource: 'Workflow',
     resourceId: 'wf-456',
     ip: '10.0.0.100',
@@ -208,12 +208,17 @@ const mockLogs: AuditLog[] = [
 const logStats = [
   { label: 'Logs (24h)', value: '45,678', icon: Activity, color: 'bg-primary-50 text-primary-900' },
   { label: 'Erreurs', value: '23', icon: XCircle, color: 'bg-red-50 text-red-600' },
-  { label: 'Avertissements', value: '156', icon: AlertTriangle, color: 'bg-primary-50 text-primary-900' },
+  {
+    label: 'Avertissements',
+    value: '156',
+    icon: AlertTriangle,
+    color: 'bg-primary-50 text-primary-900',
+  },
   { label: 'Connexions', value: '1,234', icon: LogIn, color: 'bg-green-50 text-primary-900' },
 ];
 
 export const SuperAdminLogsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -242,7 +247,7 @@ export const SuperAdminLogsPage: React.FC = () => {
 
   const formatTimeAgo = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    if (seconds < 60) return 'À l\'instant';
+    if (seconds < 60) return "À l'instant";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `Il y a ${minutes}min`;
     const hours = Math.floor(minutes / 60);
@@ -345,9 +350,7 @@ export const SuperAdminLogsPage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-primary-900">Logs & Audit</h1>
-          <p className="text-primary-600 mt-1">
-            Journal d'activité global de la plateforme ADVIST
-          </p>
+          <p className="text-primary-600 mt-1">Journal d'activité global de la plateforme ADVIST</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={handleRefresh}>
@@ -383,7 +386,10 @@ export const SuperAdminLogsPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-4">
           {/* Search */}
           <div className="relative flex-1 min-w-[250px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400" />
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400"
+            />
             <input
               type="text"
               placeholder="Rechercher dans les logs..."
@@ -459,14 +465,26 @@ export const SuperAdminLogsPage: React.FC = () => {
           <table className="w-full">
             <thead className="bg-primary-50 border-b border-primary-200">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">Horodatage</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">
+                  Horodatage
+                </th>
                 <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">Action</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">Utilisateur</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">Organisation</th>
-                <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">Niveau</th>
-                <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">Statut</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">
+                  Utilisateur
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">
+                  Organisation
+                </th>
+                <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">
+                  Niveau
+                </th>
+                <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">
+                  Statut
+                </th>
                 <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">IP</th>
-                <th className="text-right py-3 px-4 text-sm font-medium text-primary-600">Actions</th>
+                <th className="text-right py-3 px-4 text-sm font-medium text-primary-600">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-primary-100 font-mono text-sm">
@@ -477,8 +495,8 @@ export const SuperAdminLogsPage: React.FC = () => {
                     log.severity === 'critical' || log.severity === 'error'
                       ? 'bg-red-50/30'
                       : log.severity === 'warning'
-                      ? 'bg-primary-50/30'
-                      : ''
+                        ? 'bg-primary-50/30'
+                        : ''
                   }`}
                   onClick={() => setSelectedLog(log)}
                 >
@@ -579,7 +597,9 @@ export const SuperAdminLogsPage: React.FC = () => {
               <div className="flex items-center gap-3">
                 {getCategoryIcon(selectedLog.category)}
                 <div>
-                  <p className="font-medium text-primary-900">{getActionLabel(selectedLog.action)}</p>
+                  <p className="font-medium text-primary-900">
+                    {getActionLabel(selectedLog.action)}
+                  </p>
                   <p className="text-xs text-primary-500 font-mono">{selectedLog.action}</p>
                 </div>
               </div>
@@ -625,7 +645,9 @@ export const SuperAdminLogsPage: React.FC = () => {
               </div>
               <div className="p-3 bg-primary-50 rounded-xl">
                 <p className="text-xs text-primary-500 mb-1">User Agent</p>
-                <p className="font-medium text-primary-900 text-xs truncate">{selectedLog.userAgent}</p>
+                <p className="font-medium text-primary-900 text-xs truncate">
+                  {selectedLog.userAgent}
+                </p>
               </div>
             </div>
 

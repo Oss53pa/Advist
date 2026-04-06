@@ -12,19 +12,19 @@ import {
   Settings,
   Trash2,
   Eye,
-  EyeOff,
+  _EyeOff,
   Building2,
-  Users,
-  HardDrive,
+  _Users,
+  _HardDrive,
   CreditCard,
   Shield,
   Server,
   Activity,
-  Mail,
-  MessageSquare,
+  _Mail,
+  _MessageSquare,
   Plus,
   Check,
-  X,
+  _X,
 } from 'lucide-react';
 import { Card, Button, Badge, Modal } from '../../components/ui';
 
@@ -77,7 +77,7 @@ const alerts: Alert[] = [
     category: 'usage',
     title: 'Quota stockage proche de la limite',
     message: 'L\'organisation "Orange CI" a atteint 85% de son quota de stockage.',
-    tenant: 'Orange Cote d\'Ivoire',
+    tenant: "Orange Cote d'Ivoire",
     timestamp: new Date(Date.now() - 1000 * 60 * 30),
     isRead: false,
     isResolved: false,
@@ -156,16 +156,56 @@ const alerts: Alert[] = [
 ];
 
 const alertRules: AlertRule[] = [
-  { id: '1', name: 'Quota stockage > 80%', condition: 'storage_used > 80%', action: 'Email + Dashboard', enabled: true, lastTriggered: new Date(Date.now() - 1000 * 60 * 30) },
-  { id: '2', name: 'Echec backup', condition: 'backup_status = failed', action: 'Email + SMS', enabled: true, lastTriggered: new Date(Date.now() - 1000 * 60 * 15) },
-  { id: '3', name: 'Paiement en retard > 7j', condition: 'payment_overdue > 7 days', action: 'Email', enabled: true, lastTriggered: new Date(Date.now() - 1000 * 60 * 60) },
-  { id: '4', name: 'Tentatives login > 5', condition: 'failed_logins > 5', action: 'Email + Block IP', enabled: true, lastTriggered: new Date(Date.now() - 1000 * 60 * 90) },
-  { id: '5', name: 'CPU > 90%', condition: 'cpu_usage > 90%', action: 'Email + Slack', enabled: true },
-  { id: '6', name: 'Nouvelle inscription', condition: 'new_tenant = true', action: 'Email', enabled: false },
+  {
+    id: '1',
+    name: 'Quota stockage > 80%',
+    condition: 'storage_used > 80%',
+    action: 'Email + Dashboard',
+    enabled: true,
+    lastTriggered: new Date(Date.now() - 1000 * 60 * 30),
+  },
+  {
+    id: '2',
+    name: 'Echec backup',
+    condition: 'backup_status = failed',
+    action: 'Email + SMS',
+    enabled: true,
+    lastTriggered: new Date(Date.now() - 1000 * 60 * 15),
+  },
+  {
+    id: '3',
+    name: 'Paiement en retard > 7j',
+    condition: 'payment_overdue > 7 days',
+    action: 'Email',
+    enabled: true,
+    lastTriggered: new Date(Date.now() - 1000 * 60 * 60),
+  },
+  {
+    id: '4',
+    name: 'Tentatives login > 5',
+    condition: 'failed_logins > 5',
+    action: 'Email + Block IP',
+    enabled: true,
+    lastTriggered: new Date(Date.now() - 1000 * 60 * 90),
+  },
+  {
+    id: '5',
+    name: 'CPU > 90%',
+    condition: 'cpu_usage > 90%',
+    action: 'Email + Slack',
+    enabled: true,
+  },
+  {
+    id: '6',
+    name: 'Nouvelle inscription',
+    condition: 'new_tenant = true',
+    action: 'Email',
+    enabled: false,
+  },
 ];
 
 export const SuperAdminAlertsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterPriority, setFilterPriority] = useState<string>('all');
@@ -180,7 +220,7 @@ export const SuperAdminAlertsPage: React.FC = () => {
 
   const formatTimeAgo = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    if (seconds < 60) return 'A l\'instant';
+    if (seconds < 60) return "A l'instant";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `Il y a ${minutes}min`;
     const hours = Math.floor(minutes / 60);
@@ -190,22 +230,32 @@ export const SuperAdminAlertsPage: React.FC = () => {
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case 'error': return <XCircle size={20} className="text-advist-error" />;
-      case 'warning': return <AlertTriangle size={20} className="text-advist-gold-dark" />;
-      case 'success': return <CheckCircle size={20} className="text-advist-success" />;
-      case 'info': return <Info size={20} className="text-advist-gray900" />;
-      default: return <Bell size={20} className="text-advist-text-secondary" />;
+      case 'error':
+        return <XCircle size={20} className="text-advist-error" />;
+      case 'warning':
+        return <AlertTriangle size={20} className="text-advist-gold-dark" />;
+      case 'success':
+        return <CheckCircle size={20} className="text-advist-success" />;
+      case 'info':
+        return <Info size={20} className="text-advist-gray900" />;
+      default:
+        return <Bell size={20} className="text-advist-text-secondary" />;
     }
   };
 
   const getAlertBg = (type: string, isRead: boolean) => {
     if (!isRead) {
       switch (type) {
-        case 'error': return 'bg-advist-gold-light border-advist-gold';
-        case 'warning': return 'bg-advist-gold-light border-advist-gold';
-        case 'success': return 'bg-green-50 border-advist-success';
-        case 'info': return 'bg-advist-gold-light border-advist-gold';
-        default: return 'bg-advist-surface-dark border-advist-border';
+        case 'error':
+          return 'bg-advist-gold-light border-advist-gold';
+        case 'warning':
+          return 'bg-advist-gold-light border-advist-gold';
+        case 'success':
+          return 'bg-green-50 border-advist-success';
+        case 'info':
+          return 'bg-advist-gold-light border-advist-gold';
+        default:
+          return 'bg-advist-surface-dark border-advist-border';
       }
     }
     return 'bg-white border-advist-bg';
@@ -213,26 +263,37 @@ export const SuperAdminAlertsPage: React.FC = () => {
 
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
-      case 'critical': return <Badge variant="danger">Critique</Badge>;
-      case 'high': return <Badge variant="warning">Eleve</Badge>;
-      case 'medium': return <Badge variant="default">Moyen</Badge>;
-      case 'low': return <Badge variant="default">Faible</Badge>;
-      default: return <Badge>Inconnu</Badge>;
+      case 'critical':
+        return <Badge variant="danger">Critique</Badge>;
+      case 'high':
+        return <Badge variant="warning">Eleve</Badge>;
+      case 'medium':
+        return <Badge variant="default">Moyen</Badge>;
+      case 'low':
+        return <Badge variant="default">Faible</Badge>;
+      default:
+        return <Badge>Inconnu</Badge>;
     }
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'system': return <Server size={14} />;
-      case 'security': return <Shield size={14} />;
-      case 'billing': return <CreditCard size={14} />;
-      case 'usage': return <Activity size={14} />;
-      case 'tenant': return <Building2 size={14} />;
-      default: return <Bell size={14} />;
+      case 'system':
+        return <Server size={14} />;
+      case 'security':
+        return <Shield size={14} />;
+      case 'billing':
+        return <CreditCard size={14} />;
+      case 'usage':
+        return <Activity size={14} />;
+      case 'tenant':
+        return <Building2 size={14} />;
+      default:
+        return <Bell size={14} />;
     }
   };
 
-  const filteredAlerts = alerts.filter(alert => {
+  const filteredAlerts = alerts.filter((alert) => {
     if (filterCategory !== 'all' && alert.category !== filterCategory) return false;
     if (filterPriority !== 'all' && alert.priority !== filterPriority) return false;
     if (showUnreadOnly && alert.isRead) return false;
@@ -244,12 +305,8 @@ export const SuperAdminAlertsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-advist-gray900">
-            Alertes & Notifications
-          </h1>
-          <p className="text-advist-gray900 mt-1">
-            Centre de gestion des alertes de la plateforme
-          </p>
+          <h1 className="text-2xl font-bold text-advist-gray900">Alertes & Notifications</h1>
+          <p className="text-advist-gray900 mt-1">Centre de gestion des alertes de la plateforme</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={handleRefresh}>
@@ -276,18 +333,29 @@ export const SuperAdminAlertsPage: React.FC = () => {
                 <p className="text-sm text-advist-gray900">{stat.label}</p>
                 <p className="text-3xl font-bold text-advist-gray900 mt-1">{stat.value}</p>
               </div>
-              <div className={`p-3 rounded-xl ${
-                stat.color === 'blue' ? 'bg-advist-gold-light' :
-                stat.color === 'red' ? 'bg-advist-gold-light' :
-                stat.color === 'orange' ? 'bg-advist-gold-light' :
-                'bg-green-50'
-              }`}>
-                <stat.icon size={24} className={`${
-                  stat.color === 'blue' ? 'text-advist-gray900' :
-                  stat.color === 'red' ? 'text-advist-error' :
-                  stat.color === 'orange' ? 'text-advist-gold-dark' :
-                  'text-advist-success'
-                }`} />
+              <div
+                className={`p-3 rounded-xl ${
+                  stat.color === 'blue'
+                    ? 'bg-advist-gold-light'
+                    : stat.color === 'red'
+                      ? 'bg-advist-gold-light'
+                      : stat.color === 'orange'
+                        ? 'bg-advist-gold-light'
+                        : 'bg-green-50'
+                }`}
+              >
+                <stat.icon
+                  size={24}
+                  className={`${
+                    stat.color === 'blue'
+                      ? 'text-advist-gray900'
+                      : stat.color === 'red'
+                        ? 'text-advist-error'
+                        : stat.color === 'orange'
+                          ? 'text-advist-gold-dark'
+                          : 'text-advist-success'
+                  }`}
+                />
               </div>
             </div>
           </Card>
@@ -354,18 +422,16 @@ export const SuperAdminAlertsPage: React.FC = () => {
             onClick={() => setSelectedAlert(alert)}
           >
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                {getAlertIcon(alert.type)}
-              </div>
+              <div className="flex-shrink-0">{getAlertIcon(alert.type)}</div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className={`font-medium ${alert.isRead ? 'text-advist-gray900' : 'text-advist-gray900 font-semibold'}`}>
+                  <h3
+                    className={`font-medium ${alert.isRead ? 'text-advist-gray900' : 'text-advist-gray900 font-semibold'}`}
+                  >
                     {alert.title}
                   </h3>
-                  {!alert.isRead && (
-                    <span className="w-2 h-2 bg-advist-dark rounded-full" />
-                  )}
+                  {!alert.isRead && <span className="w-2 h-2 bg-advist-dark rounded-full" />}
                 </div>
 
                 <p className="text-sm text-advist-gray900 mb-2">{alert.message}</p>
@@ -392,9 +458,7 @@ export const SuperAdminAlertsPage: React.FC = () => {
 
               <div className="flex flex-col items-end gap-2">
                 {getPriorityBadge(alert.priority)}
-                {alert.isResolved && (
-                  <Badge variant="success">Resolu</Badge>
-                )}
+                {alert.isResolved && <Badge variant="success">Resolu</Badge>}
               </div>
             </div>
           </Card>
@@ -428,7 +492,10 @@ export const SuperAdminAlertsPage: React.FC = () => {
 
           <div className="space-y-3">
             {alertRules.map((rule) => (
-              <div key={rule.id} className="flex items-center justify-between p-4 bg-advist-bg rounded-xl">
+              <div
+                key={rule.id}
+                className="flex items-center justify-between p-4 bg-advist-bg rounded-xl"
+              >
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-medium text-advist-gray900">{rule.name}</span>
@@ -442,7 +509,9 @@ export const SuperAdminAlertsPage: React.FC = () => {
                   <p className="text-xs text-advist-gray900 mt-1">
                     Action: {rule.action}
                     {rule.lastTriggered && (
-                      <span className="ml-2">• Dernier declenchement: {formatTimeAgo(rule.lastTriggered)}</span>
+                      <span className="ml-2">
+                        • Dernier declenchement: {formatTimeAgo(rule.lastTriggered)}
+                      </span>
                     )}
                   </p>
                 </div>
@@ -486,7 +555,9 @@ export const SuperAdminAlertsPage: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-3 bg-advist-bg rounded-xl">
                 <p className="text-xs text-advist-gray900">Categorie</p>
-                <p className="font-medium text-advist-gray900 capitalize">{selectedAlert.category}</p>
+                <p className="font-medium text-advist-gray900 capitalize">
+                  {selectedAlert.category}
+                </p>
               </div>
               <div className="p-3 bg-advist-bg rounded-xl">
                 <p className="text-xs text-advist-gray900">Date</p>

@@ -5,7 +5,7 @@
  * File uploads use Supabase Storage bucket "marketing".
  */
 import { supabase } from '../lib/supabase';
-import { parseSupabaseError, getPaginationRange, uploadFile, getPublicUrl } from './supabase-helpers';
+import { parseSupabaseError, uploadFile, getPublicUrl } from './supabase-helpers';
 import type {
   SocialAccount,
   PostTemplate,
@@ -35,7 +35,7 @@ function buildPaginatedResponse<T>(
   data: T[] | null,
   count: number | null,
   page: number,
-  pageSize: number,
+  pageSize: number
 ): PaginatedResponse<T> {
   const total = count ?? 0;
   const totalPages = Math.ceil(total / pageSize);
@@ -50,15 +50,12 @@ function buildPaginatedResponse<T>(
 // ---------------------------------------------------------------------------
 // Helper: upload media file and return public URL
 // ---------------------------------------------------------------------------
-async function uploadMarketingFile(
-  file: File,
-  folder: string,
-): Promise<string> {
+async function uploadMarketingFile(file: File, folder: string): Promise<string> {
   const ext = file.name.split('.').pop() ?? 'bin';
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const result = await uploadFile(MARKETING_BUCKET, path, file, { upsert: false });
   if (!result) throw new Error('File upload failed');
-  return getPublicUrl(MARKETING_BUCKET, result.path);
+  return await getPublicUrl(MARKETING_BUCKET, result.path);
 }
 
 // =========================================================================
@@ -110,10 +107,7 @@ export const socialAccountsApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('social_accounts')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('social_accounts').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -137,7 +131,10 @@ export const socialAccountsApi = {
       .single();
 
     if (error) throw parseSupabaseError(error);
-    return { status: 'refreshed', message: `Token refreshed for account ${(data as Record<string, unknown>).account_name}` };
+    return {
+      status: 'refreshed',
+      message: `Token refreshed for account ${(data as Record<string, unknown>).account_name}`,
+    };
   },
 };
 
@@ -145,7 +142,10 @@ export const socialAccountsApi = {
 // Post Templates API
 // =========================================================================
 export const templatesApi = {
-  list: async (params?: { search?: string; category?: string }): Promise<PaginatedResponse<PostTemplate>> => {
+  list: async (params?: {
+    search?: string;
+    category?: string;
+  }): Promise<PaginatedResponse<PostTemplate>> => {
     let query = supabase
       .from('post_templates')
       .select('*', { count: 'exact' })
@@ -164,11 +164,7 @@ export const templatesApi = {
   },
 
   get: async (id: string): Promise<PostTemplate> => {
-    const { data, error } = await supabase
-      .from('post_templates')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('post_templates').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as PostTemplate;
@@ -198,10 +194,7 @@ export const templatesApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('post_templates')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('post_templates').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -237,11 +230,7 @@ export const publicationsApi = {
   },
 
   get: async (id: string): Promise<Publication> => {
-    const { data, error } = await supabase
-      .from('publications')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('publications').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as Publication;
@@ -300,15 +289,14 @@ export const publicationsApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('publications')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('publications').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
 
-  publish: async (id: string): Promise<{
+  publish: async (
+    id: string
+  ): Promise<{
     status: string;
     results: Array<{ platform: string; status: string; external_url: string }>;
   }> => {
@@ -327,13 +315,16 @@ export const publicationsApi = {
         {
           platform: 'all',
           status: 'success',
-          external_url: (data as Record<string, unknown>).external_url as string ?? '',
+          external_url: ((data as Record<string, unknown>).external_url as string) ?? '',
         },
       ],
     };
   },
 
-  schedule: async (id: string, scheduledAt: string): Promise<{
+  schedule: async (
+    id: string,
+    scheduledAt: string
+  ): Promise<{
     status: string;
     scheduled_at: string;
   }> => {
@@ -459,11 +450,7 @@ export const blogApi = {
   },
 
   get: async (id: string): Promise<BlogPost> => {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as BlogPost;
@@ -480,7 +467,12 @@ export const blogApi = {
       title: data.title,
       content: data.content,
       excerpt: data.excerpt,
-      slug: data.slug ?? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+      slug:
+        data.slug ??
+        data.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, ''),
       cover_image_url: featuredImageUrl ?? null,
       seo_title: data.meta_title ?? null,
       seo_description: data.meta_description ?? null,
@@ -528,10 +520,7 @@ export const blogApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('blog_posts')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -548,16 +537,15 @@ export const blogApi = {
   },
 
   archive: async (id: string): Promise<{ status: string }> => {
-    const { error } = await supabase
-      .from('blog_posts')
-      .update({ status: 'archived' })
-      .eq('id', id);
+    const { error } = await supabase.from('blog_posts').update({ status: 'archived' }).eq('id', id);
 
     if (error) throw parseSupabaseError(error);
     return { status: 'archived' };
   },
 
-  uploadImage: async (file: File): Promise<{
+  uploadImage: async (
+    file: File
+  ): Promise<{
     url: string;
     filename: string;
     size: number;
@@ -644,7 +632,12 @@ export const subscribersApi = {
 
     const { data, error, count } = await query;
     if (error) throw parseSupabaseError(error);
-    return buildPaginatedResponse<NewsletterSubscriber>(data as NewsletterSubscriber[], count, 1, PAGE_SIZE);
+    return buildPaginatedResponse<NewsletterSubscriber>(
+      data as NewsletterSubscriber[],
+      count,
+      1,
+      PAGE_SIZE
+    );
   },
 
   get: async (id: string): Promise<NewsletterSubscriber> => {
@@ -669,7 +662,10 @@ export const subscribersApi = {
     return created as NewsletterSubscriber;
   },
 
-  update: async (id: string, data: Partial<NewsletterSubscriber>): Promise<NewsletterSubscriber> => {
+  update: async (
+    id: string,
+    data: Partial<NewsletterSubscriber>
+  ): Promise<NewsletterSubscriber> => {
     const { data: updated, error } = await supabase
       .from('newsletter_subscribers')
       .update(data as Record<string, unknown>)
@@ -682,10 +678,7 @@ export const subscribersApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('newsletter_subscribers')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('newsletter_subscribers').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -752,11 +745,7 @@ export const newslettersApi = {
   },
 
   get: async (id: string): Promise<Newsletter> => {
-    const { data, error } = await supabase
-      .from('newsletters')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('newsletters').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as Newsletter;
@@ -798,15 +787,14 @@ export const newslettersApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('newsletters')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('newsletters').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
 
-  send: async (id: string): Promise<{
+  send: async (
+    id: string
+  ): Promise<{
     status: string;
     recipients_count: number;
     sent_at: string;
@@ -834,7 +822,10 @@ export const newslettersApi = {
     return { status: 'sent', recipients_count: recipientCount ?? 0, sent_at: now };
   },
 
-  schedule: async (id: string, scheduledAt: string): Promise<{
+  schedule: async (
+    id: string,
+    scheduledAt: string
+  ): Promise<{
     status: string;
     scheduled_at: string;
   }> => {

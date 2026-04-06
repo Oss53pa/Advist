@@ -44,8 +44,18 @@ type ViewMode = 'month' | 'week';
 
 const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 const MONTHS_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  'Janvier',
+  'Février',
+  'Mars',
+  'Avril',
+  'Mai',
+  'Juin',
+  'Juillet',
+  'Août',
+  'Septembre',
+  'Octobre',
+  'Novembre',
+  'Décembre',
 ];
 
 const TYPE_ICONS: Record<Deadline['type'], React.ReactNode> = {
@@ -60,7 +70,11 @@ const TYPE_ICONS: Record<Deadline['type'], React.ReactNode> = {
 // Couleurs pastel pour les types (en accord avec la charte ADVIST)
 const TYPE_STYLES: Record<Deadline['type'], { bg: string; text: string; dot: string }> = {
   expiration: { bg: 'bg-advist-red/10', text: 'text-advist-red', dot: 'bg-advist-red' },
-  renewal: { bg: 'bg-advist-gold-light/20', text: 'text-advist-gray900', dot: 'bg-advist-gold-light' },
+  renewal: {
+    bg: 'bg-advist-gold-light/20',
+    text: 'text-advist-gray900',
+    dot: 'bg-advist-gold-light',
+  },
   payment: { bg: 'bg-green-50', text: 'text-advist-success', dot: 'bg-advist-success' },
   review: { bg: 'bg-advist-surface-dark', text: 'text-advist-gray900', dot: 'bg-advist-dark' },
   signature: { bg: 'bg-advist-gold-light', text: 'text-advist-gold-dark', dot: 'bg-advist-gold' },
@@ -73,7 +87,7 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
   documentId,
   compact = false,
 }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isSendingReminder, setIsSendingReminder] = useState(false);
@@ -103,7 +117,7 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
   // Fetch deadlines
   useEffect(() => {
     fetchDeadlines();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange.start.toISOString(), dateRange.end.toISOString(), documentId]);
 
   const fetchDeadlines = async () => {
@@ -144,17 +158,18 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
     setCurrentDate(newDate);
   };
 
-  const goToToday = () => setCurrentDate(new Date());
+  const _goToToday = () => setCurrentDate(new Date());
 
   // Get deadlines for a specific date
   const getDeadlinesForDate = (date: Date): Deadline[] => {
     const dateStr = date.toISOString().split('T')[0];
-    return deadlines.filter(d => {
+    return deadlines.filter((d) => {
       const matches = d.date.split('T')[0] === dateStr;
       if (searchQuery) {
-        return matches && (
-          d.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          d.documentName.toLowerCase().includes(searchQuery.toLowerCase())
+        return (
+          matches &&
+          (d.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            d.documentName.toLowerCase().includes(searchQuery.toLowerCase()))
         );
       }
       return matches;
@@ -196,12 +211,12 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
 
   // Stats
   const stats = useMemo(() => {
-    const overdue = deadlines.filter(d => calculateDaysRemaining(d.date) < 0).length;
-    const thisWeek = deadlines.filter(d => {
+    const overdue = deadlines.filter((d) => calculateDaysRemaining(d.date) < 0).length;
+    const thisWeek = deadlines.filter((d) => {
       const days = calculateDaysRemaining(d.date);
       return days >= 0 && days <= 7;
     }).length;
-    const completed = deadlines.filter(d => d.status === 'completed').length;
+    const completed = deadlines.filter((d) => d.status === 'completed').length;
     const total = deadlines.length;
 
     // Calcul des pourcentages
@@ -295,21 +310,23 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
                   </div>
 
                   {/* Date */}
-                  <div className={`
+                  <div
+                    className={`
                     text-xs font-medium px-2 py-1 rounded-lg
-                    ${isOverdue
-                      ? 'bg-advist-red/10 text-advist-red'
-                      : daysRemaining <= 3
-                        ? 'bg-advist-gold-light text-advist-gold-dark'
-                        : 'bg-advist-surface-dark text-advist-gray900'
+                    ${
+                      isOverdue
+                        ? 'bg-advist-red/10 text-advist-red'
+                        : daysRemaining <= 3
+                          ? 'bg-advist-gold-light text-advist-gold-dark'
+                          : 'bg-advist-surface-dark text-advist-gray900'
                     }
-                  `}>
+                  `}
+                  >
                     {isOverdue
                       ? `${Math.abs(daysRemaining)}j retard`
                       : daysRemaining === 0
                         ? "Aujourd'hui"
-                        : `${daysRemaining}j`
-                    }
+                        : `${daysRemaining}j`}
                   </div>
                 </div>
               );
@@ -331,7 +348,10 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
 
           {/* Search */}
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light" />
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
+            />
             <input
               type="text"
               placeholder="Rechercher..."
@@ -486,7 +506,12 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
             <div className="flex items-center gap-2 px-3 py-2 bg-advist-red/10 rounded-xl">
               <CalendarIcon size={14} className="text-advist-red" />
               <span className="text-sm font-medium text-advist-gray900">
-                {dateRange.start.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - {dateRange.end.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                {dateRange.start.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} -{' '}
+                {dateRange.end.toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
               </span>
             </div>
 
@@ -545,15 +570,18 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
                   `}
                 >
                   {/* Date Number */}
-                  <div className={`
+                  <div
+                    className={`
                     w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium mb-1
-                    ${isToday
-                      ? 'bg-advist-dark text-white'
-                      : !isCurrentMonth
-                        ? 'text-advist-blue-light/40'
-                        : 'text-advist-gray900'
+                    ${
+                      isToday
+                        ? 'bg-advist-dark text-white'
+                        : !isCurrentMonth
+                          ? 'text-advist-blue-light/40'
+                          : 'text-advist-gray900'
                     }
-                  `}>
+                  `}
+                  >
                     {day.getDate()}
                   </div>
 
@@ -570,13 +598,16 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
                           className={`
                             w-full text-left px-2 py-1 rounded-lg text-xs font-medium
                             flex items-center gap-1.5 truncate transition-all duration-200
-                            ${isOverdue
-                              ? 'bg-advist-red/10 text-advist-red hover:bg-advist-red/20'
-                              : `${style.bg} ${style.text} hover:opacity-80`
+                            ${
+                              isOverdue
+                                ? 'bg-advist-red/10 text-advist-red hover:bg-advist-red/20'
+                                : `${style.bg} ${style.text} hover:opacity-80`
                             }
                           `}
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isOverdue ? 'bg-advist-red' : style.dot}`} />
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isOverdue ? 'bg-advist-red' : style.dot}`}
+                          />
                           <span className="truncate">{deadline.title}</span>
                         </button>
                       );
@@ -595,26 +626,25 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
       )}
 
       {/* Detail Modal */}
-      <Modal
-        isOpen={showDetailModal}
-        onClose={() => setShowDetailModal(false)}
-        title=""
-        size="md"
-      >
+      <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} title="" size="md">
         {selectedDeadline && (
           <div className="space-y-6">
             {/* Header */}
             <div className="flex items-start gap-4">
-              <div className={`
+              <div
+                className={`
                 p-3 rounded-xl ${TYPE_STYLES[selectedDeadline.type].bg}
-              `}>
+              `}
+              >
                 {React.cloneElement(TYPE_ICONS[selectedDeadline.type] as React.ReactElement, {
                   size: 24,
-                  className: TYPE_STYLES[selectedDeadline.type].text
+                  className: TYPE_STYLES[selectedDeadline.type].text,
                 })}
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-advist-gray900">{selectedDeadline.title}</h3>
+                <h3 className="text-lg font-semibold text-advist-gray900">
+                  {selectedDeadline.title}
+                </h3>
                 <p className="text-sm text-advist-blue-light">{selectedDeadline.documentName}</p>
               </div>
               <button
@@ -637,30 +667,35 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
                   })}
                 </p>
               </div>
-              <div className={`p-4 rounded-xl ${
-                calculateDaysRemaining(selectedDeadline.date) < 0
-                  ? 'bg-advist-red/10'
-                  : 'bg-green-50'
-              }`}>
-                <p className="text-xs text-advist-blue-light mb-1">Statut</p>
-                <p className={`font-semibold ${
+              <div
+                className={`p-4 rounded-xl ${
                   calculateDaysRemaining(selectedDeadline.date) < 0
-                    ? 'text-advist-red'
-                    : 'text-advist-success'
-                }`}>
+                    ? 'bg-advist-red/10'
+                    : 'bg-green-50'
+                }`}
+              >
+                <p className="text-xs text-advist-blue-light mb-1">Statut</p>
+                <p
+                  className={`font-semibold ${
+                    calculateDaysRemaining(selectedDeadline.date) < 0
+                      ? 'text-advist-red'
+                      : 'text-advist-success'
+                  }`}
+                >
                   {calculateDaysRemaining(selectedDeadline.date) < 0
                     ? `${Math.abs(calculateDaysRemaining(selectedDeadline.date))} jours de retard`
                     : calculateDaysRemaining(selectedDeadline.date) === 0
                       ? "Aujourd'hui"
-                      : `J-${calculateDaysRemaining(selectedDeadline.date)}`
-                  }
+                      : `J-${calculateDaysRemaining(selectedDeadline.date)}`}
                 </p>
               </div>
             </div>
 
             {/* Type & Priority */}
             <div className="flex items-center gap-3">
-              <span className={`px-3 py-1.5 rounded-lg text-sm font-medium ${TYPE_STYLES[selectedDeadline.type].bg} ${TYPE_STYLES[selectedDeadline.type].text}`}>
+              <span
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium ${TYPE_STYLES[selectedDeadline.type].bg} ${TYPE_STYLES[selectedDeadline.type].text}`}
+              >
                 {getTypeLabel(selectedDeadline.type)}
               </span>
               <span
@@ -686,9 +721,10 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
                     key={reminder.id}
                     className={`
                       px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2
-                      ${reminder.sent
-                        ? 'bg-green-50 text-advist-success'
-                        : 'bg-advist-surface-dark text-advist-gray900/70'
+                      ${
+                        reminder.sent
+                          ? 'bg-green-50 text-advist-success'
+                          : 'bg-advist-surface-dark text-advist-gray900/70'
                       }
                     `}
                   >
@@ -713,7 +749,7 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
                     alert('Rappel envoyé avec succès');
                   } catch (error) {
                     console.error('Failed to send reminder:', error);
-                    alert('Erreur lors de l\'envoi du rappel');
+                    alert("Erreur lors de l'envoi du rappel");
                   } finally {
                     setIsSendingReminder(false);
                   }

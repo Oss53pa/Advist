@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   TrendingUp,
@@ -19,6 +19,9 @@ import {
 } from 'lucide-react';
 import { Card, Button, Badge } from '../../components/ui';
 import { UpgradeGate } from '../../components/subscription/UpgradeGate';
+import { supabase } from '../../lib/supabase';
+import { useAuthStore } from '../../store';
+import { PrintButton } from '../../shared/PrintEngine';
 
 // Types
 interface KPIData {
@@ -45,139 +48,356 @@ interface ActivityItem {
   timestamp: Date;
 }
 
-// Mock Data
-const kpiData: KPIData[] = [
-  {
-    label: 'Documents traités',
-    value: '1,247',
-    change: 12.5,
-    changeLabel: 'vs mois dernier',
-    icon: FileText,
-    color: 'blue',
-  },
-  {
-    label: 'Signatures effectuées',
-    value: '3,892',
-    change: 8.3,
-    changeLabel: 'vs mois dernier',
-    icon: FileSignature,
-    color: 'green',
-  },
-  {
-    label: 'Workflows actifs',
-    value: '156',
-    change: -2.1,
-    changeLabel: 'vs mois dernier',
-    icon: Activity,
-    color: 'purple',
-  },
-  {
-    label: 'Temps moyen validation',
-    value: '2.4j',
-    change: -15.2,
-    changeLabel: 'vs mois dernier',
-    icon: Clock,
-    color: 'orange',
-  },
-];
+interface MonthlyDataItem {
+  month: string;
+  documents: number;
+  signatures: number;
+  workflows: number;
+}
 
-const documentsByType: ChartData[] = [
-  { label: 'Contrats', value: 35, color: '#3B82F6' },
-  { label: 'Factures', value: 25, color: '#10B981' },
-  { label: 'Rapports', value: 20, color: '#8B5CF6' },
-  { label: 'Procès-verbaux', value: 12, color: '#F59E0B' },
-  { label: 'Autres', value: 8, color: '#6B7280' },
-];
+interface TopSigner {
+  name: string;
+  role: string;
+  count: number;
+  avatar: string;
+}
 
-const workflowStatus: ChartData[] = [
-  { label: 'Complétés', value: 68, color: '#10B981' },
-  { label: 'En cours', value: 22, color: '#3B82F6' },
-  { label: 'En attente', value: 7, color: '#F59E0B' },
-  { label: 'Rejetés', value: 3, color: '#F59E0B' },
-];
+interface DepartmentStat {
+  name: string;
+  documents: number;
+  signatures: number;
+  completion: number;
+}
 
-const monthlyData = [
-  { month: 'Jan', documents: 120, signatures: 340, workflows: 45 },
-  { month: 'Fév', documents: 145, signatures: 420, workflows: 52 },
-  { month: 'Mar', documents: 132, signatures: 380, workflows: 48 },
-  { month: 'Avr', documents: 168, signatures: 490, workflows: 61 },
-  { month: 'Mai', documents: 155, signatures: 450, workflows: 55 },
-  { month: 'Juin', documents: 189, signatures: 520, workflows: 68 },
-  { month: 'Juil', documents: 201, signatures: 580, workflows: 72 },
-  { month: 'Août', documents: 178, signatures: 510, workflows: 64 },
-  { month: 'Sept', documents: 210, signatures: 620, workflows: 78 },
-  { month: 'Oct', documents: 225, signatures: 680, workflows: 85 },
-  { month: 'Nov', documents: 198, signatures: 590, workflows: 74 },
-  { month: 'Déc', documents: 156, signatures: 470, workflows: 58 },
-];
-
-const topSigners = [
-  { name: 'Mamadou Diallo', role: 'Directeur Général', count: 245, avatar: 'MD' },
-  { name: 'Aminata Sow', role: 'DAF', count: 198, avatar: 'AS' },
-  { name: 'Ibrahima Ndiaye', role: 'DRH', count: 156, avatar: 'IN' },
-  { name: 'Fatou Diop', role: 'Directrice Juridique', count: 134, avatar: 'FD' },
-  { name: 'Ousmane Fall', role: 'Chef de Projet', count: 112, avatar: 'OF' },
-];
-
-const recentActivity: ActivityItem[] = [
-  {
-    id: '1',
-    type: 'signature',
-    action: 'a signé',
-    user: 'Mamadou Diallo',
-    target: 'Contrat_2024_001.pdf',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-  },
-  {
-    id: '2',
-    type: 'document',
-    action: 'a créé',
-    user: 'Aminata Sow',
-    target: 'Rapport_Q4_2024.pdf',
-    timestamp: new Date(Date.now() - 1000 * 60 * 15),
-  },
-  {
-    id: '3',
-    type: 'workflow',
-    action: 'a approuvé',
-    user: 'Ibrahima Ndiaye',
-    target: 'Workflow #WF-2024-156',
-    timestamp: new Date(Date.now() - 1000 * 60 * 32),
-  },
-  {
-    id: '4',
-    type: 'user',
-    action: 'a été ajouté',
-    user: 'Fatou Diop',
-    target: "à l'équipe Finance",
-    timestamp: new Date(Date.now() - 1000 * 60 * 45),
-  },
-  {
-    id: '5',
-    type: 'signature',
-    action: 'a rejeté',
-    user: 'Ousmane Fall',
-    target: 'Devis_Client_X.pdf',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60),
-  },
-];
-
-const departmentStats = [
-  { name: 'Direction Générale', documents: 89, signatures: 234, completion: 95 },
-  { name: 'Finance', documents: 156, signatures: 412, completion: 88 },
-  { name: 'Ressources Humaines', documents: 78, signatures: 198, completion: 92 },
-  { name: 'Juridique', documents: 124, signatures: 356, completion: 97 },
-  { name: 'Commercial', documents: 201, signatures: 489, completion: 85 },
-];
+const MONTH_NAMES = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+const TYPE_COLORS = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#6B7280', '#EF4444', '#14B8A6', '#EC4899'];
+const WF_STATUS_COLORS: Record<string, string> = {
+  completed: '#10B981',
+  active: '#3B82F6',
+  paused: '#F59E0B',
+  cancelled: '#EF4444',
+  failed: '#EF4444',
+};
+const WF_STATUS_LABELS: Record<string, string> = {
+  completed: 'Complétés',
+  active: 'En cours',
+  paused: 'En attente',
+  cancelled: 'Annulés',
+  failed: 'Échoués',
+};
 
 export const AnalyticsPage: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
   const [dateRange, setDateRange] = useState('month');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isLoading, setIsLoading] = useState(true);
+
+  // State for all analytics data
+  const [kpiData, setKpiData] = useState<KPIData[]>([]);
+  const [documentsByType, setDocumentsByType] = useState<ChartData[]>([]);
+  const [workflowStatus, setWorkflowStatus] = useState<ChartData[]>([]);
+  const [monthlyData, setMonthlyData] = useState<MonthlyDataItem[]>([]);
+  const [topSigners, setTopSigners] = useState<TopSigner[]>([]);
+  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
+  const [departmentStats, setDepartmentStats] = useState<DepartmentStat[]>([]);
+  const [totalDocuments, setTotalDocuments] = useState(0);
+
+  const fetchAnalytics = async () => {
+    if (!orgId) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+
+    try {
+      const [
+        docCountRes,
+        sigCountRes,
+        activeWfRes,
+        docTypesRes,
+        wfStatusRes,
+        docsForMonthly,
+        sigsForMonthly,
+        wfForMonthly,
+        topSignersRes,
+        auditLogsRes,
+        deptDocsRes,
+      ] = await Promise.all([
+        // KPI: total documents
+        supabase
+          .from('documents')
+          .select('*', { count: 'exact', head: true })
+          .eq('organization_id', orgId)
+          .is('deleted_at', null),
+        // KPI: total signatures completed
+        supabase
+          .from('document_signatures')
+          .select('*, documents!inner(organization_id)', { count: 'exact', head: true })
+          .eq('documents.organization_id', orgId)
+          .eq('status', 'signed'),
+        // KPI: active workflows
+        supabase
+          .from('workflow_instances')
+          .select('*', { count: 'exact', head: true })
+          .eq('organization_id', orgId)
+          .eq('status', 'active'),
+        // Documents by type (with type name)
+        supabase
+          .from('documents')
+          .select('document_type_id, document_types(name)')
+          .eq('organization_id', orgId)
+          .is('deleted_at', null),
+        // Workflow status distribution
+        supabase
+          .from('workflow_instances')
+          .select('status')
+          .eq('organization_id', orgId),
+        // Documents created per month (last 12 months)
+        supabase
+          .from('documents')
+          .select('created_at')
+          .eq('organization_id', orgId)
+          .is('deleted_at', null)
+          .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1).toISOString()),
+        // Signatures per month
+        supabase
+          .from('document_signatures')
+          .select('created_at, documents!inner(organization_id)')
+          .eq('documents.organization_id', orgId)
+          .eq('status', 'signed')
+          .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1).toISOString()),
+        // Workflows per month
+        supabase
+          .from('workflow_instances')
+          .select('created_at')
+          .eq('organization_id', orgId)
+          .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1).toISOString()),
+        // Top signers
+        supabase
+          .from('document_signatures')
+          .select('user_id, profiles!document_signatures_user_id_fkey(first_name, last_name, job_title), documents!inner(organization_id)')
+          .eq('documents.organization_id', orgId)
+          .eq('status', 'signed'),
+        // Recent activity from audit logs
+        supabase
+          .from('audit_logs')
+          .select('id, action, resource_type, resource_name, user_id, created_at, profiles:user_id(first_name, last_name)')
+          .eq('organization_id', orgId)
+          .order('created_at', { ascending: false })
+          .limit(5),
+        // Department stats: documents per department
+        supabase
+          .from('documents')
+          .select('created_by, profiles!documents_created_by_fkey(department_id, departments:department_id(name))')
+          .eq('organization_id', orgId)
+          .is('deleted_at', null),
+      ]);
+
+      // --- KPIs ---
+      const totalDocs = docCountRes.count ?? 0;
+      const totalSigs = sigCountRes.count ?? 0;
+      const activeWfs = activeWfRes.count ?? 0;
+
+      setTotalDocuments(totalDocs);
+      setKpiData([
+        {
+          label: 'Documents traités',
+          value: totalDocs.toLocaleString('fr-FR'),
+          change: 0,
+          changeLabel: '',
+          icon: FileText,
+          color: 'blue',
+        },
+        {
+          label: 'Signatures effectuées',
+          value: totalSigs.toLocaleString('fr-FR'),
+          change: 0,
+          changeLabel: '',
+          icon: FileSignature,
+          color: 'green',
+        },
+        {
+          label: 'Workflows actifs',
+          value: activeWfs.toLocaleString('fr-FR'),
+          change: 0,
+          changeLabel: '',
+          icon: Activity,
+          color: 'purple',
+        },
+        {
+          label: 'Temps moyen validation',
+          value: '-',
+          change: 0,
+          changeLabel: '',
+          icon: Clock,
+          color: 'orange',
+        },
+      ]);
+
+      // --- Documents by type ---
+      if (docTypesRes.data) {
+        const typeCounts: Record<string, number> = {};
+        for (const doc of docTypesRes.data as any[]) {
+          const typeName = doc.document_types?.name || 'Autres';
+          typeCounts[typeName] = (typeCounts[typeName] || 0) + 1;
+        }
+        const total = Object.values(typeCounts).reduce((a, b) => a + b, 0) || 1;
+        const sorted = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
+        setDocumentsByType(
+          sorted.map(([label, count], idx) => ({
+            label,
+            value: Math.round((count / total) * 100),
+            color: TYPE_COLORS[idx % TYPE_COLORS.length],
+          }))
+        );
+      }
+
+      // --- Workflow status ---
+      if (wfStatusRes.data) {
+        const statusCounts: Record<string, number> = {};
+        for (const wf of wfStatusRes.data) {
+          statusCounts[wf.status] = (statusCounts[wf.status] || 0) + 1;
+        }
+        const total = Object.values(statusCounts).reduce((a, b) => a + b, 0) || 1;
+        setWorkflowStatus(
+          Object.entries(statusCounts).map(([status, count]) => ({
+            label: WF_STATUS_LABELS[status] || status,
+            value: Math.round((count / total) * 100),
+            color: WF_STATUS_COLORS[status] || '#6B7280',
+          }))
+        );
+      }
+
+      // --- Monthly data ---
+      const now = new Date();
+      const monthBuckets: MonthlyDataItem[] = [];
+      for (let i = 11; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        monthBuckets.push({
+          month: MONTH_NAMES[d.getMonth()],
+          documents: 0,
+          signatures: 0,
+          workflows: 0,
+        });
+      }
+      const bucketIndex = (dateStr: string) => {
+        const d = new Date(dateStr);
+        const monthsDiff = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+        return 11 - monthsDiff;
+      };
+
+      if (docsForMonthly.data) {
+        for (const doc of docsForMonthly.data) {
+          const idx = bucketIndex(doc.created_at);
+          if (idx >= 0 && idx < 12) monthBuckets[idx].documents++;
+        }
+      }
+      if (sigsForMonthly.data) {
+        for (const sig of sigsForMonthly.data) {
+          const idx = bucketIndex(sig.created_at);
+          if (idx >= 0 && idx < 12) monthBuckets[idx].signatures++;
+        }
+      }
+      if (wfForMonthly.data) {
+        for (const wf of wfForMonthly.data) {
+          const idx = bucketIndex(wf.created_at);
+          if (idx >= 0 && idx < 12) monthBuckets[idx].workflows++;
+        }
+      }
+      setMonthlyData(monthBuckets);
+
+      // --- Top signers ---
+      if (topSignersRes.data) {
+        const signerCounts: Record<string, { name: string; role: string; count: number }> = {};
+        for (const sig of topSignersRes.data as any[]) {
+          const uid = sig.user_id;
+          if (!signerCounts[uid]) {
+            const p = sig.profiles;
+            signerCounts[uid] = {
+              name: p ? `${p.first_name} ${p.last_name}`.trim() : '-',
+              role: p?.job_title || '',
+              count: 0,
+            };
+          }
+          signerCounts[uid].count++;
+        }
+        const sorted = Object.values(signerCounts).sort((a, b) => b.count - a.count).slice(0, 5);
+        setTopSigners(
+          sorted.map((s) => ({
+            ...s,
+            avatar: s.name
+              .split(' ')
+              .map((w) => w[0])
+              .join('')
+              .toUpperCase()
+              .slice(0, 2),
+          }))
+        );
+      }
+
+      // --- Recent activity ---
+      if (auditLogsRes.data) {
+        const actionMap: Record<string, { type: ActivityItem['type']; action: string }> = {
+          sign: { type: 'signature', action: 'a signé' },
+          create: { type: 'document', action: 'a créé' },
+          approve: { type: 'workflow', action: 'a approuvé' },
+          reject: { type: 'workflow', action: 'a rejeté' },
+          login: { type: 'user', action: 's\'est connecté' },
+          update: { type: 'document', action: 'a modifié' },
+          delete: { type: 'document', action: 'a supprimé' },
+        };
+        setRecentActivity(
+          (auditLogsRes.data as any[]).map((log) => {
+            const mapped = actionMap[log.action] || { type: 'document' as const, action: log.action };
+            const profile = log.profiles;
+            return {
+              id: log.id,
+              type: mapped.type,
+              action: mapped.action,
+              user: profile ? `${profile.first_name} ${profile.last_name}`.trim() : '-',
+              target: log.resource_name || '',
+              timestamp: new Date(log.created_at),
+            };
+          })
+        );
+      }
+
+      // --- Department stats ---
+      if (deptDocsRes.data) {
+        const deptCounts: Record<string, { documents: number }> = {};
+        for (const doc of deptDocsRes.data as any[]) {
+          const deptName = doc.profiles?.departments?.name || 'Non assigné';
+          if (!deptCounts[deptName]) deptCounts[deptName] = { documents: 0 };
+          deptCounts[deptName].documents++;
+        }
+        setDepartmentStats(
+          Object.entries(deptCounts)
+            .sort((a, b) => b[1].documents - a[1].documents)
+            .map(([name, data]) => ({
+              name,
+              documents: data.documents,
+              signatures: 0,
+              completion: 0,
+            }))
+        );
+      }
+    } catch (err) {
+      console.error('Analytics fetch error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [orgId]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1500);
+    fetchAnalytics().finally(() => setIsRefreshing(false));
   };
 
   const formatTimeAgo = (date: Date) => {
@@ -261,6 +481,49 @@ export const AnalyticsPage: React.FC = () => {
               <Download size={16} className="mr-2" />
               Exporter
             </Button>
+            <PrintButton config={{ title: 'Rapport analytique', appName: 'Advist', format: 'A4', orientation: 'landscape' }}>
+              <div className="space-y-6">
+                {/* KPIs */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {kpiData.map((kpi, index) => (
+                    <div key={index} className="p-5 border rounded-xl">
+                      <p className="text-sm text-advist-text-secondary">{kpi.label}</p>
+                      <p className="text-2xl font-bold">{kpi.value}</p>
+                    </div>
+                  ))}
+                </div>
+                {/* Documents by type */}
+                <div>
+                  <h3 className="font-semibold mb-2">Documents par type</h3>
+                  {documentsByType.map((item, idx) => (
+                    <div key={idx} className="flex justify-between py-1">
+                      <span>{item.label}</span>
+                      <span>{item.value}%</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Workflow status */}
+                <div>
+                  <h3 className="font-semibold mb-2">Statut des workflows</h3>
+                  {workflowStatus.map((item, idx) => (
+                    <div key={idx} className="flex justify-between py-1">
+                      <span>{item.label}</span>
+                      <span>{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Department stats */}
+                <div>
+                  <h3 className="font-semibold mb-2">Performance par département</h3>
+                  {departmentStats.map((dept, idx) => (
+                    <div key={idx} className="flex justify-between py-1">
+                      <span>{dept.name}</span>
+                      <span>{dept.documents} docs, {dept.signatures} signatures, {dept.completion}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </PrintButton>
           </div>
         </div>
 
@@ -399,7 +662,7 @@ export const AnalyticsPage: React.FC = () => {
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-advist-gray900">1,247</p>
+                    <p className="text-2xl font-bold text-advist-gray900">{totalDocuments.toLocaleString('fr-FR')}</p>
                     <p className="text-xs text-advist-gray900">Total</p>
                   </div>
                 </div>
@@ -447,7 +710,9 @@ export const AnalyticsPage: React.FC = () => {
             <div className="mt-6 pt-4 border-t border-advist-bg">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-advist-gray900">Taux de complétion</span>
-                <span className="text-lg font-bold text-advist-success">68%</span>
+                <span className="text-lg font-bold text-advist-success">
+                  {workflowStatus.find(s => s.label === 'Complétés')?.value ?? 0}%
+                </span>
               </div>
             </div>
           </Card>

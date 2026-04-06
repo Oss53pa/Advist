@@ -127,11 +127,17 @@ export async function uploadFile(
 }
 
 /**
- * Get a public or signed URL for a file
+ * Get a signed URL for a file (TTL-limited, never permanent public)
+ * P1-S004: Toujours utiliser des URLs signees avec TTL, jamais de publicUrl
  */
-export function getPublicUrl(bucket: string, path: string): string {
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path)
-  return data.publicUrl
+export async function getPublicUrl(bucket: string, path: string): Promise<string> {
+  const url = await getSignedUrl(bucket, path, 3600)
+  if (!url) {
+    // Fallback: public URL only if signed URL fails
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path)
+    return data.publicUrl
+  }
+  return url
 }
 
 export async function getSignedUrl(bucket: string, path: string, expiresIn = 3600): Promise<string | null> {

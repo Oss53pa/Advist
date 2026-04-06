@@ -6,10 +6,18 @@
  * - document_signatures: actual signatures on documents
  * - signature_certificates: certificate chain with hash verification
  * - signature_audit_log: audit trail
+ *
+ * Valeur Probante (Loi CI 2013-546):
+ * - Server-side timestamp via Edge Function (not client new Date())
+ * - Integrity seal: SHA-256(documentHash + signatureImageHash + signerId + serverTimestamp)
+ * - OTP verification link (verification_id)
+ * - Explicit consent link (consent_id)
+ * - 10-year retention auto-applied after signature
  */
 import { supabase } from '../lib/supabase';
 import { parseSupabaseError } from './supabase-helpers';
 import { SignatureData } from '../components/signature/SignaturePad';
+import { documentRetentionService } from './documentRetentionService';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -35,6 +43,13 @@ export interface SignatureCertificate {
   hash: string;
   previousHash?: string;
   status: 'valid' | 'revoked' | 'expired';
+  // Valeur probante fields
+  serverTimestamp?: string;
+  documentHash?: string;
+  signatureImageHash?: string;
+  integritySeal?: string;
+  verificationId?: string;
+  consentId?: string;
 }
 
 export interface SignatureVerificationResult {
@@ -179,20 +194,35 @@ class SignatureService {
     signatureData: SignatureData,
     signatureType: 'simple' | 'advanced' | 'qualified',
     pin?: string,
+    verificationId?: string,
+    consentId?: string,
   ): Promise<SignatureCertificate> {
     if ((signatureType === 'advanced' || signatureType === 'qualified') && !pin) {
       throw new Error('PIN required for advanced/qualified signatures');
     }
 
-    // Generate hash for integrity
-    const dataToHash = JSON.stringify({
-      documentId,
-      signerId,
-      signatureData: signatureData.data.slice(-100),
-      timestamp: Date.now(),
-      type: signatureType,
-    });
-    const hash = await this.generateHash(dataToHash);
+    // P0-S002: Server-side quota check before signing
+    const { data: doc } = await supabase
+      .from('documents')
+      .select('organization_id')
+      .eq('id', documentId)
+      .single();
+
+    if (doc?.organization_id) {
+      const { data: quotaResult, error: quotaError } = await supabase.functions.invoke(
+        'check-signature-quota',
+        { body: { organization_id: doc.organization_id } },
+      );
+      if (quotaError || (quotaResult && !quotaResult.allowed)) {
+        const reason = quotaResult?.reason || 'QUOTA_CHECK_FAILED';
+        if (reason === 'QUOTA_EXCEEDED') {
+          throw new Error('Quota de signatures mensuel atteint. Veuillez upgrader votre plan.');
+        }
+        if (reason === 'FEATURE_NOT_AVAILABLE') {
+          throw new Error('Cette fonctionnalité n\'est pas disponible avec votre plan actuel.');
+        }
+      }
+    }
 
     // Get previous signature hash for chain
     const previousSig = await this.getLastDocumentSignature(documentId);
@@ -220,9 +250,46 @@ class SignatureService {
       .eq('is_default', true)
       .maybeSingle();
 
-    const now = new Date().toISOString();
+    // ---------------------------------------------------------------------------
+    // SERVER TIMESTAMP + INTEGRITY SEAL via Edge Function
+    // Loi CI 2013-546 — Horodatage serveur incontestable
+    // ---------------------------------------------------------------------------
+    let serverTimestamp: string;
+    let documentHash: string;
+    let signatureImageHash: string;
+    let integritySeal: string;
 
-    // Insert document_signature
+    try {
+      const { data: tsData, error: tsError } = await supabase.functions.invoke(
+        'timestamp-signature',
+        {
+          body: {
+            document_id: documentId,
+            signer_id: signerId,
+            signature_image_base64: signatureData.data,
+          },
+        },
+      );
+
+      if (tsError || !tsData) {
+        throw new Error(tsError?.message || 'Timestamp service unavailable');
+      }
+
+      serverTimestamp = tsData.server_timestamp;
+      documentHash = tsData.document_hash;
+      signatureImageHash = tsData.signature_image_hash;
+      integritySeal = tsData.integrity_seal;
+    } catch (err) {
+      // P0-SIG001: NE PAS permettre de signer sans timestamp serveur
+      // C'est une exigence légale (Loi CI 2013-546, Art. 11)
+      throw new Error(
+        'Service d\'horodatage indisponible. La signature ne peut pas être apposée ' +
+        'sans horodatage serveur certifié (Loi n°2013-546). Veuillez réessayer. ' +
+        `Détail: ${(err as Error).message}`,
+      );
+    }
+
+    // Insert document_signature with integrity fields
     const { data: docSig, error } = await supabase
       .from('document_signatures')
       .insert({
@@ -231,10 +298,17 @@ class SignatureService {
         user_signature_id: userSig?.id || null,
         signature_type: signatureType,
         status: 'signed',
-        signature_hash: hash,
+        signature_hash: integritySeal,
         ip_address: ipAddress,
         user_agent: navigator.userAgent,
-        signed_at: now,
+        signed_at: serverTimestamp,
+        // Valeur probante fields
+        server_timestamp: serverTimestamp,
+        document_hash: documentHash,
+        signature_image_hash: signatureImageHash,
+        integrity_seal: integritySeal,
+        verification_id: verificationId || null,
+        consent_id: consentId || null,
         metadata: {
           signature_data: signatureData,
           previous_hash: previousSig?.signature_hash,
@@ -246,6 +320,22 @@ class SignatureService {
 
     if (error) throw new Error(parseSupabaseError(error).message);
 
+    // Link consent to signature if provided
+    if (consentId) {
+      await supabase
+        .from('signature_consents')
+        .update({ document_signature_id: docSig.id })
+        .eq('id', consentId);
+    }
+
+    // Link verification to signature if provided
+    if (verificationId) {
+      await supabase
+        .from('signer_verifications')
+        .update({ document_signature_id: docSig.id })
+        .eq('id', verificationId);
+    }
+
     // Audit log
     await supabase.from('signature_audit_log').insert({
       document_signature_id: docSig.id,
@@ -256,8 +346,30 @@ class SignatureService {
       details: {
         signature_type: signatureType,
         document_id: documentId,
+        integrity_seal: integritySeal,
+        document_hash: documentHash,
+        verification_id: verificationId,
+        consent_id: consentId,
       },
     });
+
+    // Apply 10-year retention (OHADA)
+    try {
+      const { data: doc } = await supabase
+        .from('documents')
+        .select('organization_id')
+        .eq('id', documentId)
+        .single();
+
+      if (doc?.organization_id) {
+        await documentRetentionService.applyDefaultRetention(
+          documentId,
+          doc.organization_id,
+        );
+      }
+    } catch {
+      // Retention is non-blocking — log but don't fail the signature
+    }
 
     return {
       id: docSig.id,
@@ -267,13 +379,19 @@ class SignatureService {
       signerEmail,
       signatureType,
       signatureData,
-      timestamp: now,
+      timestamp: serverTimestamp,
       ipAddress: ipAddress || undefined,
       userAgent: navigator.userAgent,
       geoLocation,
-      hash,
+      hash: integritySeal,
       previousHash: previousSig?.signature_hash,
       status: 'valid',
+      serverTimestamp,
+      documentHash,
+      signatureImageHash,
+      integritySeal,
+      verificationId,
+      consentId,
     };
   }
 
@@ -307,21 +425,37 @@ class SignatureService {
       errors.push('Certificate has expired');
     }
 
-    // Verify hash integrity
-    const signatureData = meta.signature_data;
-    if (signatureData) {
-      const recomputedHash = await this.generateHash(
-        JSON.stringify({
-          documentId: docSig.document_id,
-          signerId: docSig.user_id,
-          signatureData: signatureData.data?.slice(-100),
-          timestamp: new Date(docSig.signed_at).getTime(),
-          type: docSig.signature_type,
-        }),
-      );
+    // Verify integrity seal (new) or legacy hash
+    if (docSig.integrity_seal && docSig.document_hash && docSig.signature_image_hash && docSig.server_timestamp) {
+      // New integrity seal verification
+      const sealPayload = [
+        docSig.document_hash,
+        docSig.signature_image_hash,
+        docSig.user_id,
+        docSig.server_timestamp,
+      ].join('|');
+      const recomputedSeal = await this.generateHash(sealPayload);
 
-      if (recomputedHash !== docSig.signature_hash) {
-        errors.push('Hash verification failed - signature may have been tampered');
+      if (recomputedSeal !== docSig.integrity_seal) {
+        errors.push('Integrity seal verification failed - signature or document may have been tampered');
+      }
+    } else {
+      // Legacy hash verification (pre-valeur probante signatures)
+      const signatureData = meta.signature_data;
+      if (signatureData) {
+        const recomputedHash = await this.generateHash(
+          JSON.stringify({
+            documentId: docSig.document_id,
+            signerId: docSig.user_id,
+            signatureData: signatureData.data?.slice(-100),
+            timestamp: new Date(docSig.signed_at).getTime(),
+            type: docSig.signature_type,
+          }),
+        );
+
+        if (recomputedHash !== docSig.signature_hash) {
+          errors.push('Hash verification failed - signature may have been tampered');
+        }
       }
     }
 
@@ -355,6 +489,12 @@ class SignatureService {
       hash: docSig.signature_hash,
       previousHash: meta.previous_hash,
       status: docSig.status === 'revoked' ? 'revoked' : 'valid',
+      serverTimestamp: docSig.server_timestamp,
+      documentHash: docSig.document_hash,
+      signatureImageHash: docSig.signature_image_hash,
+      integritySeal: docSig.integrity_seal,
+      verificationId: docSig.verification_id,
+      consentId: docSig.consent_id,
     };
 
     return {

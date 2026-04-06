@@ -950,11 +950,12 @@ async function advanceWorkflow(instanceId: string, completedStepNumber: number):
       .eq('id', nextStep.id);
   } else {
     // No more steps → workflow complete
+    const completedAt = new Date().toISOString();
     await supabase
       .from('workflow_instances')
       .update({
         status: 'completed',
-        completed_at: new Date().toISOString(),
+        completed_at: completedAt,
       })
       .eq('id', instanceId);
 
@@ -970,6 +971,20 @@ async function advanceWorkflow(instanceId: string, completedStepNumber: number):
         .from('documents')
         .update({ status: 'approved' })
         .eq('id', instance.document_id);
+    }
+
+    // P0-C001: Auto-generate CRV (Compte Rendu de Validation) on workflow completion
+    try {
+      const { validationReportService } = await import('./validationReport');
+      if (validationReportService?.generateReport) {
+        const report = await validationReportService.generateReport(instanceId);
+        if (report && validationReportService.saveReport) {
+          await validationReportService.saveReport(report);
+        }
+      }
+    } catch {
+      // CRV generation failure is non-blocking — log but don't fail the workflow
+      console.error('[Workflow] CRV auto-generation failed for instance:', instanceId);
     }
   }
 }

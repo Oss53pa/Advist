@@ -14,8 +14,6 @@ import {
   XCircle,
   FileSignature,
   Stamp,
-  ChevronLeft,
-  ChevronRight,
   Award,
   Ban,
 } from 'lucide-react';
@@ -26,6 +24,7 @@ import {
   Modal,
   Input,
 } from '../../components/ui';
+import { PrintButton } from '../../shared/PrintEngine';
 import { DocumentViewer } from '../../components/documents';
 
 // Pending signature with paraph requirements
@@ -76,6 +75,14 @@ export const SignaturesPage: React.FC = () => {
           <p className="text-advist-gray900/80 mt-1">
             {t('signatures.subtitle', 'Signez vos documents en attente')}
           </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <PrintButton config={{ title: 'Signatures électroniques', appName: 'Advist' }}>
+            <div>
+              <p className="text-sm mb-2">Liste des signatures - {t('signatures.title', 'Signatures')}</p>
+              <p className="text-sm text-gray-500">{t('signatures.subtitle', 'Signez vos documents en attente')}</p>
+            </div>
+          </PrintButton>
         </div>
       </div>
 
@@ -718,7 +725,7 @@ const SignedDocumentsSection: React.FC = () => {
                 leftIcon={<FileText size={16} />}
                 onClick={() => {
                   // Download certificate as PDF
-                  console.log('Download certificate');
+                  console.error('Download certificate not implemented');
                 }}
               >
                 {t('signatures.downloadCertificate', 'Télécharger le certificat')}
@@ -741,17 +748,19 @@ const SignedDocumentsSection: React.FC = () => {
 };
 
 // v2: Enhanced signing modal with page-by-page paraph
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SigningModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
   request: PendingSignatureRequest;
 }> = ({ isOpen, onClose, request }) => {
   const { t } = useTranslation();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const [paraphedPages, setParaphedPages] = useState<number[]>(request.paraphs_completed);
   const [signatureApplied, setSignatureApplied] = useState(false);
   const [showPinConfirm, setShowPinConfirm] = useState(false);
   const [pin, setPin] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [step, setStep] = useState<'paraph' | 'sign' | 'confirm'>('paraph');
 
   const totalPages = request.document.total_pages;

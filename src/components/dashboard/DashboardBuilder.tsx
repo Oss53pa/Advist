@@ -8,23 +8,23 @@ import {
   Settings,
   Save,
   X,
-  Move,
+  _Move,
   Trash2,
   Edit2,
-  Copy,
-  MoreVertical,
+  _Copy,
+  _MoreVertical,
   GripVertical,
-  Maximize2,
-  Minimize2,
+  _Maximize2,
+  _Minimize2,
   RefreshCw,
-  ChevronDown,
+  _ChevronDown,
 } from 'lucide-react';
 import { useDashboardStore } from '../../store/dashboardStore';
 import {
   WidgetConfig,
   WidgetType,
   WIDGET_DEFINITIONS,
-  WidgetPosition,
+  _WidgetPosition,
 } from '../../services/dashboard';
 
 // Widget Content Components
@@ -52,7 +52,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({ className = 
     selectWidget,
     setDragging,
     addWidget,
-    updateWidget,
+    _updateWidget,
     removeWidget,
     updateWidgetPosition,
     saveDashboard,
@@ -65,42 +65,51 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({ className = 
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Handle widget drag start
-  const handleDragStart = useCallback((widgetId: string, e: React.MouseEvent) => {
-    if (!isEditing) return;
-    setDraggedWidget(widgetId);
-    setDragging(true);
-    setDragStartPos({ x: e.clientX, y: e.clientY });
-  }, [isEditing, setDragging]);
+  const handleDragStart = useCallback(
+    (widgetId: string, e: React.MouseEvent) => {
+      if (!isEditing) return;
+      setDraggedWidget(widgetId);
+      setDragging(true);
+      setDragStartPos({ x: e.clientX, y: e.clientY });
+    },
+    [isEditing, setDragging]
+  );
 
   // Handle widget drag
-  const handleDrag = useCallback((e: React.MouseEvent) => {
-    if (!draggedWidget || !gridRef.current || !currentDashboard) return;
+  const handleDrag = useCallback(
+    (e: React.MouseEvent) => {
+      if (!draggedWidget || !gridRef.current || !currentDashboard) return;
 
-    const gridRect = gridRef.current.getBoundingClientRect();
-    const colWidth = gridRect.width / currentDashboard.columns;
-    const rowHeight = currentDashboard.rowHeight + currentDashboard.gap;
+      const gridRect = gridRef.current.getBoundingClientRect();
+      const colWidth = gridRect.width / currentDashboard.columns;
+      const rowHeight = currentDashboard.rowHeight + currentDashboard.gap;
 
-    const deltaX = e.clientX - dragStartPos.x;
-    const deltaY = e.clientY - dragStartPos.y;
+      const deltaX = e.clientX - dragStartPos.x;
+      const deltaY = e.clientY - dragStartPos.y;
 
-    const widget = currentDashboard.widgets.find(w => w.id === draggedWidget);
-    if (!widget) return;
+      const widget = currentDashboard.widgets.find((w) => w.id === draggedWidget);
+      if (!widget) return;
 
-    const newX = Math.max(0, Math.min(
-      currentDashboard.columns - widget.position.w,
-      Math.round((widget.position.x * colWidth + deltaX) / colWidth)
-    ));
-    const newY = Math.max(0, Math.round((widget.position.y * rowHeight + deltaY) / rowHeight));
+      const newX = Math.max(
+        0,
+        Math.min(
+          currentDashboard.columns - widget.position.w,
+          Math.round((widget.position.x * colWidth + deltaX) / colWidth)
+        )
+      );
+      const newY = Math.max(0, Math.round((widget.position.y * rowHeight + deltaY) / rowHeight));
 
-    if (newX !== widget.position.x || newY !== widget.position.y) {
-      updateWidgetPosition(draggedWidget, {
-        ...widget.position,
-        x: newX,
-        y: newY,
-      });
-      setDragStartPos({ x: e.clientX, y: e.clientY });
-    }
-  }, [draggedWidget, currentDashboard, dragStartPos, updateWidgetPosition]);
+      if (newX !== widget.position.x || newY !== widget.position.y) {
+        updateWidgetPosition(draggedWidget, {
+          ...widget.position,
+          x: newX,
+          y: newY,
+        });
+        setDragStartPos({ x: e.clientX, y: e.clientY });
+      }
+    },
+    [draggedWidget, currentDashboard, dragStartPos, updateWidgetPosition]
+  );
 
   // Handle drag end
   const handleDragEnd = useCallback(() => {
@@ -166,7 +175,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({ className = 
   }
 
   const { columns, rowHeight, gap, widgets } = currentDashboard;
-  const colWidth = `calc((100% - ${gap * (columns - 1)}px) / ${columns})`;
+  const _colWidth = `calc((100% - ${gap * (columns - 1)}px) / ${columns})`;
 
   return (
     <div className={`relative ${className}`}>
@@ -226,80 +235,82 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({ className = 
           minHeight: '600px',
         }}
       >
-        {widgets.filter(w => w.visible).map(widget => {
-          const isSelected = selectedWidgetId === widget.id;
-          const isBeingDragged = draggedWidget === widget.id;
+        {widgets
+          .filter((w) => w.visible)
+          .map((widget) => {
+            const isSelected = selectedWidgetId === widget.id;
+            const isBeingDragged = draggedWidget === widget.id;
 
-          return (
-            <div
-              key={widget.id}
-              className={`
+            return (
+              <div
+                key={widget.id}
+                className={`
                 bg-white rounded-xl border transition-all relative
                 ${isEditing ? 'cursor-move' : ''}
                 ${isSelected ? 'border-advist-gold ring-2 ring-advist-gold/20' : 'border-advist-border'}
                 ${isBeingDragged ? 'opacity-75 z-50 shadow-lg' : ''}
               `}
-              style={{
-                gridColumn: `${widget.position.x + 1} / span ${widget.position.w}`,
-                gridRow: `${widget.position.y + 1} / span ${widget.position.h}`,
-                minHeight: `${rowHeight * widget.position.h + gap * (widget.position.h - 1)}px`,
-              }}
-              onClick={() => isEditing && selectWidget(widget.id)}
-            >
-              {/* Widget Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-advist-border">
-                {isEditing && (
-                  <div
-                    className="cursor-grab active:cursor-grabbing p-1 -ml-1 mr-2 text-advist-text-secondary hover:text-advist-gray900"
-                    onMouseDown={(e) => handleDragStart(widget.id, e)}
-                  >
-                    <GripVertical size={16} />
-                  </div>
-                )}
-                <h3 className="font-medium text-advist-gray900 flex-1 truncate">
-                  {widget.title}
-                </h3>
-                {isEditing && isSelected && (
-                  <div className="flex items-center gap-1">
+                style={{
+                  gridColumn: `${widget.position.x + 1} / span ${widget.position.w}`,
+                  gridRow: `${widget.position.y + 1} / span ${widget.position.h}`,
+                  minHeight: `${rowHeight * widget.position.h + gap * (widget.position.h - 1)}px`,
+                }}
+                onClick={() => isEditing && selectWidget(widget.id)}
+              >
+                {/* Widget Header */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-advist-border">
+                  {isEditing && (
+                    <div
+                      className="cursor-grab active:cursor-grabbing p-1 -ml-1 mr-2 text-advist-text-secondary hover:text-advist-gray900"
+                      onMouseDown={(e) => handleDragStart(widget.id, e)}
+                    >
+                      <GripVertical size={16} />
+                    </div>
+                  )}
+                  <h3 className="font-medium text-advist-gray900 flex-1 truncate">
+                    {widget.title}
+                  </h3>
+                  {isEditing && isSelected && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Open settings modal
+                        }}
+                        className="p-1.5 hover:bg-advist-surface-dark rounded-lg transition-all"
+                        title="Paramètres"
+                      >
+                        <Settings size={14} className="text-advist-text-secondary" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeWidget(widget.id);
+                        }}
+                        className="p-1.5 hover:bg-advist-gold-light rounded-lg transition-all"
+                        title="Supprimer"
+                      >
+                        <Trash2 size={14} className="text-advist-error" />
+                      </button>
+                    </div>
+                  )}
+                  {!isEditing && widget.refreshInterval && widget.refreshInterval > 0 && (
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // Open settings modal
-                      }}
                       className="p-1.5 hover:bg-advist-surface-dark rounded-lg transition-all"
-                      title="Paramètres"
+                      title="Actualiser"
                     >
-                      <Settings size={14} className="text-advist-text-secondary" />
+                      <RefreshCw size={14} className="text-advist-text-secondary" />
                     </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeWidget(widget.id);
-                      }}
-                      className="p-1.5 hover:bg-advist-gold-light rounded-lg transition-all"
-                      title="Supprimer"
-                    >
-                      <Trash2 size={14} className="text-advist-error" />
-                    </button>
-                  </div>
-                )}
-                {!isEditing && widget.refreshInterval && widget.refreshInterval > 0 && (
-                  <button
-                    className="p-1.5 hover:bg-advist-surface-dark rounded-lg transition-all"
-                    title="Actualiser"
-                  >
-                    <RefreshCw size={14} className="text-advist-text-secondary" />
-                  </button>
-                )}
-              </div>
+                  )}
+                </div>
 
-              {/* Widget Content */}
-              <div className="p-4 h-[calc(100%-52px)] overflow-auto">
-                {renderWidgetContent(widget)}
+                {/* Widget Content */}
+                <div className="p-4 h-[calc(100%-52px)] overflow-auto">
+                  {renderWidgetContent(widget)}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
 
         {/* Empty state */}
         {widgets.length === 0 && (
@@ -326,28 +337,31 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({ className = 
             </div>
             <div className="p-6 overflow-y-auto max-h-[calc(80vh-80px)]">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {(Object.entries(WIDGET_DEFINITIONS) as [WidgetType, typeof WIDGET_DEFINITIONS[WidgetType]][]).map(
-                  ([type, definition]) => (
-                    <button
-                      key={type}
-                      onClick={() => {
-                        addWidget(type);
-                        setShowWidgetPicker(false);
-                      }}
-                      className="flex flex-col items-center p-4 border border-advist-border rounded-xl hover:border-advist-gold hover:bg-advist-gold-light/30 transition-all group"
-                    >
-                      <div className="w-12 h-12 bg-advist-gold-light rounded-xl flex items-center justify-center mb-3 group-hover:bg-advist-dark group-hover:text-white transition-all">
-                        <WidgetIcon name={definition.icon} />
-                      </div>
-                      <span className="font-medium text-advist-gray900 text-sm">
-                        {definition.name}
-                      </span>
-                      <span className="text-xs text-advist-text-secondary mt-1 text-center">
-                        {definition.description}
-                      </span>
-                    </button>
-                  )
-                )}
+                {(
+                  Object.entries(WIDGET_DEFINITIONS) as [
+                    WidgetType,
+                    (typeof WIDGET_DEFINITIONS)[WidgetType],
+                  ][]
+                ).map(([type, definition]) => (
+                  <button
+                    key={type}
+                    onClick={() => {
+                      addWidget(type);
+                      setShowWidgetPicker(false);
+                    }}
+                    className="flex flex-col items-center p-4 border border-advist-border rounded-xl hover:border-advist-gold hover:bg-advist-gold-light/30 transition-all group"
+                  >
+                    <div className="w-12 h-12 bg-advist-gold-light rounded-xl flex items-center justify-center mb-3 group-hover:bg-advist-dark group-hover:text-white transition-all">
+                      <WidgetIcon name={definition.icon} />
+                    </div>
+                    <span className="font-medium text-advist-gray900 text-sm">
+                      {definition.name}
+                    </span>
+                    <span className="text-xs text-advist-text-secondary mt-1 text-center">
+                      {definition.description}
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -362,26 +376,66 @@ const WidgetIcon: React.FC<{ name: string }> = ({ name }) => {
   // Dynamic icon rendering based on name
   const iconMap: Record<string, React.FC<{ size?: number }>> = {
     'trending-up': ({ size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
         <polyline points="17 6 23 6 23 12" />
       </svg>
     ),
     'line-chart': ({ size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M3 3v18h18" />
         <path d="m19 9-5 5-4-4-3 3" />
       </svg>
     ),
     'bar-chart-2': ({ size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
       </svg>
     ),
     'pie-chart': ({ size = 24 }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
         <path d="M22 12A10 10 0 0 0 12 2v10z" />
       </svg>

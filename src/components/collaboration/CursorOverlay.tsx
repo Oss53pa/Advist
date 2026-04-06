@@ -15,7 +15,7 @@ interface CursorOverlayProps {
 export const CursorOverlay: React.FC<CursorOverlayProps> = ({
   cursors,
   currentPage,
-  containerRef,
+  _containerRef,
   scale = 1,
 }) => {
   // Filter cursors to only show those on the current page
@@ -26,11 +26,7 @@ export const CursorOverlay: React.FC<CursorOverlayProps> = ({
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       {visibleCursors.map((cursor) => (
-        <CursorPointer
-          key={cursor.userId}
-          cursor={cursor}
-          scale={scale}
-        />
+        <CursorPointer key={cursor.userId} cursor={cursor} scale={scale} />
       ))}
     </div>
   );
@@ -91,11 +87,7 @@ const CursorPointer: React.FC<CursorPointerProps> = ({ cursor, scale }) => {
 
       {/* Selection highlight */}
       {cursor.selection && (
-        <SelectionHighlight
-          selection={cursor.selection}
-          color={cursor.userColor}
-          scale={scale}
-        />
+        <SelectionHighlight selection={cursor.selection} color={cursor.userColor} scale={scale} />
       )}
     </div>
   );
@@ -110,11 +102,7 @@ interface SelectionHighlightProps {
   scale: number;
 }
 
-const SelectionHighlight: React.FC<SelectionHighlightProps> = ({
-  selection,
-  color,
-  scale,
-}) => {
+const SelectionHighlight: React.FC<SelectionHighlightProps> = ({ selection, color, scale }) => {
   const width = Math.abs(selection.end.x - selection.start.x) * scale;
   const height = Math.abs(selection.end.y - selection.start.y) * scale;
   const left = Math.min(selection.start.x, selection.end.x) * scale;

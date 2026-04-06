@@ -1,7 +1,7 @@
 -- ISO 27001 Information Security Management System
 
 -- Asset Categories
-CREATE TABLE asset_categories (
+CREATE TABLE IF NOT EXISTS asset_categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE asset_categories (
 );
 
 -- Information Assets
-CREATE TABLE information_assets (
+CREATE TABLE IF NOT EXISTS information_assets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     category_id UUID REFERENCES asset_categories(id) ON DELETE SET NULL,
@@ -34,7 +34,7 @@ CREATE TABLE information_assets (
 );
 
 -- Risk Register
-CREATE TABLE risk_register (
+CREATE TABLE IF NOT EXISTS risk_register (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     risk_id VARCHAR(50) NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE risk_register (
 );
 
 -- Control Objectives (Annex A)
-CREATE TABLE control_objectives (
+CREATE TABLE IF NOT EXISTS control_objectives (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     clause_number VARCHAR(20) NOT NULL,
     title VARCHAR(500) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE control_objectives (
 );
 
 -- Control Implementations
-CREATE TABLE control_implementations (
+CREATE TABLE IF NOT EXISTS control_implementations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     control_id UUID NOT NULL REFERENCES control_objectives(id) ON DELETE CASCADE,
@@ -94,7 +94,7 @@ CREATE TABLE control_implementations (
 );
 
 -- Risk Treatments
-CREATE TABLE risk_treatments (
+CREATE TABLE IF NOT EXISTS risk_treatments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     risk_id UUID NOT NULL REFERENCES risk_register(id) ON DELETE CASCADE,
     control_id UUID REFERENCES control_objectives(id) ON DELETE SET NULL,
@@ -111,7 +111,7 @@ CREATE TABLE risk_treatments (
 );
 
 -- Internal Audits
-CREATE TABLE internal_audits (
+CREATE TABLE IF NOT EXISTS internal_audits (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     title VARCHAR(500) NOT NULL,
@@ -129,7 +129,7 @@ CREATE TABLE internal_audits (
 );
 
 -- Audit Findings
-CREATE TABLE audit_findings (
+CREATE TABLE IF NOT EXISTS audit_findings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     audit_id UUID NOT NULL REFERENCES internal_audits(id) ON DELETE CASCADE,
     finding_number VARCHAR(50) NOT NULL,
@@ -149,7 +149,7 @@ CREATE TABLE audit_findings (
 );
 
 -- Management Reviews
-CREATE TABLE management_reviews (
+CREATE TABLE IF NOT EXISTS management_reviews (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     title VARCHAR(500) NOT NULL,
@@ -165,7 +165,7 @@ CREATE TABLE management_reviews (
 );
 
 -- ISMS Documents
-CREATE TABLE isms_documents (
+CREATE TABLE IF NOT EXISTS isms_documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     document_id UUID REFERENCES documents(id) ON DELETE SET NULL,
@@ -182,7 +182,7 @@ CREATE TABLE isms_documents (
 );
 
 -- Security Incidents
-CREATE TABLE security_incidents (
+CREATE TABLE IF NOT EXISTS security_incidents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     incident_id VARCHAR(50) NOT NULL,
@@ -207,7 +207,7 @@ CREATE TABLE security_incidents (
 );
 
 -- Competence Records
-CREATE TABLE competence_records (
+CREATE TABLE IF NOT EXISTS competence_records (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -223,7 +223,7 @@ CREATE TABLE competence_records (
 );
 
 -- Training Records
-CREATE TABLE training_records (
+CREATE TABLE IF NOT EXISTS training_records (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -240,7 +240,7 @@ CREATE TABLE training_records (
 );
 
 -- Business Continuity Plans
-CREATE TABLE business_continuity_plans (
+CREATE TABLE IF NOT EXISTS business_continuity_plans (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     title VARCHAR(500) NOT NULL,
@@ -260,7 +260,7 @@ CREATE TABLE business_continuity_plans (
 );
 
 -- Supplier Assessments
-CREATE TABLE supplier_assessments (
+CREATE TABLE IF NOT EXISTS supplier_assessments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     supplier_name VARCHAR(255) NOT NULL,
@@ -280,7 +280,7 @@ CREATE TABLE supplier_assessments (
 );
 
 -- Corrective Actions
-CREATE TABLE corrective_actions (
+CREATE TABLE IF NOT EXISTS corrective_actions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     source_type VARCHAR(100) NOT NULL,
@@ -302,7 +302,7 @@ CREATE TABLE corrective_actions (
 );
 
 -- Document Change Requests
-CREATE TABLE document_change_requests (
+CREATE TABLE IF NOT EXISTS document_change_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     document_id UUID REFERENCES documents(id) ON DELETE SET NULL,

@@ -9,15 +9,15 @@ import {
   Folder,
   Plus,
   Search,
-  Filter,
+  _Filter,
   Grid,
   List,
   Calendar,
   Users,
   FileText,
-  ChevronRight,
+  _ChevronRight,
   MoreVertical,
-  Clock,
+  _Clock,
 } from 'lucide-react';
 import {
   Project,
@@ -37,7 +37,7 @@ export const ProjectsPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | 'all'>('all');
-  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const [_showNewProjectModal, setShowNewProjectModal] = useState(false);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -47,7 +47,7 @@ export const ProjectsPage: React.FC = () => {
           statusFilter !== 'all' ? { status: statusFilter } : undefined
         );
         setProjects(data);
-      } catch (error) {
+      } catch (_error) {
         // Mock data for demo
         setProjects([
           {
@@ -95,7 +95,7 @@ export const ProjectsPage: React.FC = () => {
           {
             id: '3',
             name: 'Audit financier 2024',
-            description: 'Préparation des documents pour l\'audit annuel',
+            description: "Préparation des documents pour l'audit annuel",
             reference: 'AUD-2024',
             color: '#F59E0B',
             icon: 'folder',
@@ -141,10 +141,11 @@ export const ProjectsPage: React.FC = () => {
     loadProjects();
   }, [statusFilter]);
 
-  const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.reference?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProjects = projects.filter(
+    (project) =>
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.reference?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const statusOptions: { value: ProjectStatus | 'all'; label: string }[] = [
@@ -162,7 +163,9 @@ export const ProjectsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">{t('nav.projects')}</h1>
-          <p className="text-advist-gray900/70 mt-1">{t('documents.subtitle', 'Gérez vos projets et regroupez vos documents')}</p>
+          <p className="text-advist-gray900/70 mt-1">
+            {t('documents.subtitle', 'Gérez vos projets et regroupez vos documents')}
+          </p>
         </div>
         <button
           onClick={() => setShowNewProjectModal(true)}
@@ -176,7 +179,10 @@ export const ProjectsPage: React.FC = () => {
       {/* Filters */}
       <div className="flex items-center gap-4">
         <div className="flex-1 relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-gray900/50" />
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-gray900/50"
+          />
           <input
             type="text"
             placeholder={t('common.search')}
@@ -190,8 +196,10 @@ export const ProjectsPage: React.FC = () => {
           onChange={(e) => setStatusFilter(e.target.value as ProjectStatus | 'all')}
           className="px-4 py-2.5 border border-advist-border rounded-xl focus:outline-none focus:border-advist-dark"
         >
-          {statusOptions.map(option => (
-            <option key={option.value} value={option.value}>{option.label}</option>
+          {statusOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
           ))}
         </select>
         <div className="flex items-center border border-advist-border rounded-xl overflow-hidden">
@@ -218,9 +226,13 @@ export const ProjectsPage: React.FC = () => {
       ) : filteredProjects.length === 0 ? (
         <div className="text-center py-16">
           <Folder size={48} className="mx-auto mb-4 text-advist-gray900/30" />
-          <h2 className="text-lg font-medium text-advist-gray900">{t('projects.noProjects', 'Aucun projet trouvé')}</h2>
+          <h2 className="text-lg font-medium text-advist-gray900">
+            {t('projects.noProjects', 'Aucun projet trouvé')}
+          </h2>
           <p className="text-advist-gray900/70 mt-1">
-            {searchQuery ? t('projects.tryOtherTerms', 'Essayez avec d\'autres termes de recherche') : t('projects.createFirst', 'Créez votre premier projet')}
+            {searchQuery
+              ? t('projects.tryOtherTerms', "Essayez avec d'autres termes de recherche")
+              : t('projects.createFirst', 'Créez votre premier projet')}
           </p>
           {!searchQuery && (
             <button
@@ -237,7 +249,7 @@ export const ProjectsPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProjects.map((project) => {
             const statusConfig = getStatusConfig(project.status);
-            const priorityConfig = getPriorityConfig(project.priority);
+            const _priorityConfig = getPriorityConfig(project.priority);
 
             return (
               <Link
@@ -248,12 +260,14 @@ export const ProjectsPage: React.FC = () => {
                 <div className="flex items-start justify-between mb-3">
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: `${project.color  }20` }}
+                    style={{ backgroundColor: `${project.color}20` }}
                   >
                     <Folder size={24} style={{ color: project.color }} />
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color}`}>
+                    <span
+                      className={`px-2 py-0.5 rounded text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color}`}
+                    >
                       {statusConfig.label}
                     </span>
                     <button
@@ -280,7 +294,9 @@ export const ProjectsPage: React.FC = () => {
                 {/* Progress bar */}
                 <div className="mb-3">
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-advist-gray900/50">{t('projects.progress', 'Progression')}</span>
+                    <span className="text-advist-gray900/50">
+                      {t('projects.progress', 'Progression')}
+                    </span>
                     <span className="font-medium text-advist-gray900">{project.progress}%</span>
                   </div>
                   <div className="h-1.5 bg-advist-surface-dark rounded-full overflow-hidden">
@@ -358,7 +374,7 @@ export const ProjectsPage: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <div
                           className="w-10 h-10 rounded-lg flex items-center justify-center"
-                          style={{ backgroundColor: `${project.color  }20` }}
+                          style={{ backgroundColor: `${project.color}20` }}
                         >
                           <Folder size={20} style={{ color: project.color }} />
                         </div>
@@ -371,7 +387,9 @@ export const ProjectsPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color}`}>
+                      <span
+                        className={`px-2 py-0.5 rounded text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color}`}
+                      >
                         {statusConfig.label}
                       </span>
                     </td>

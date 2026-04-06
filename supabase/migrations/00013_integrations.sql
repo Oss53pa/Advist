@@ -1,5 +1,5 @@
 -- Integration Connections
-CREATE TABLE integration_connections (
+CREATE TABLE IF NOT EXISTS integration_connections (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     integration_type integration_type NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE integration_connections (
 );
 
 -- Integration Sync Logs
-CREATE TABLE integration_sync_logs (
+CREATE TABLE IF NOT EXISTS integration_sync_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     connection_id UUID NOT NULL REFERENCES integration_connections(id) ON DELETE CASCADE,
     sync_type VARCHAR(50) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE integration_sync_logs (
 );
 
 -- Integration Field Mappings
-CREATE TABLE integration_field_mappings (
+CREATE TABLE IF NOT EXISTS integration_field_mappings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     connection_id UUID NOT NULL REFERENCES integration_connections(id) ON DELETE CASCADE,
     source_field VARCHAR(255) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE integration_field_mappings (
 );
 
 -- Webhooks
-CREATE TABLE webhooks (
+CREATE TABLE IF NOT EXISTS webhooks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE webhooks (
 );
 
 -- Webhook Deliveries
-CREATE TABLE webhook_deliveries (
+CREATE TABLE IF NOT EXISTS webhook_deliveries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     webhook_id UUID NOT NULL REFERENCES webhooks(id) ON DELETE CASCADE,
     event_type VARCHAR(100) NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE webhook_deliveries (
 );
 
 -- Salesforce specific mapping
-CREATE TABLE salesforce_mappings (
+CREATE TABLE IF NOT EXISTS salesforce_mappings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     connection_id UUID NOT NULL REFERENCES integration_connections(id) ON DELETE CASCADE,
     salesforce_object VARCHAR(255) NOT NULL,

@@ -19,7 +19,7 @@ import {
   Building2,
   RefreshCw,
 } from 'lucide-react';
-import { Button, Badge } from '../../../components/ui';
+import { Button } from '../../../components/ui';
 
 // Mock statistics
 const billingStats = [
@@ -71,7 +71,7 @@ const recentTransactions = [
   },
   {
     id: 2,
-    organization: 'Orange Côte d\'Ivoire',
+    organization: "Orange Côte d'Ivoire",
     amount: 2500000,
     currency: 'FCFA',
     method: 'bank_transfer',
@@ -141,7 +141,7 @@ export const BillingDashboard: React.FC = () => {
     setIsRefreshing(true);
     try {
       // Simulate API refresh - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       // In real implementation: await billingService.refreshDashboard();
     } catch (error) {
       console.error('Failed to refresh billing data:', error);
@@ -159,11 +159,19 @@ export const BillingDashboard: React.FC = () => {
       case 'completed':
         return { icon: CheckCircle, color: 'text-advist-success bg-green-50', label: 'Payé' };
       case 'pending':
-        return { icon: Clock, color: 'text-advist-gold-dark bg-advist-gold-light', label: 'En attente' };
+        return {
+          icon: Clock,
+          color: 'text-advist-gold-dark bg-advist-gold-light',
+          label: 'En attente',
+        };
       case 'failed':
         return { icon: XCircle, color: 'text-advist-error bg-advist-gold-light', label: 'Échoué' };
       default:
-        return { icon: Clock, color: 'text-advist-text-secondary bg-advist-surface-dark', label: status };
+        return {
+          icon: Clock,
+          color: 'text-advist-text-secondary bg-advist-surface-dark',
+          label: status,
+        };
     }
   };
 
@@ -225,15 +233,28 @@ export const BillingDashboard: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-1.5 mt-2">
                   {stat.trend === 'up' ? (
-                    <TrendingUp size={14} className={stat.label.includes('Impayés') ? 'text-advist-error' : 'text-advist-success'} />
+                    <TrendingUp
+                      size={14}
+                      className={
+                        stat.label.includes('Impayés') ? 'text-advist-error' : 'text-advist-success'
+                      }
+                    />
                   ) : (
-                    <TrendingDown size={14} className={stat.label.includes('attente') ? 'text-advist-success' : 'text-advist-error'} />
+                    <TrendingDown
+                      size={14}
+                      className={
+                        stat.label.includes('attente') ? 'text-advist-success' : 'text-advist-error'
+                      }
+                    />
                   )}
-                  <span className={`text-sm font-medium ${
-                    (stat.label.includes('Impayés') && stat.trend === 'up') ||
-                    (stat.label.includes('attente') && stat.trend === 'up')
-                      ? 'text-advist-error' : 'text-advist-success'
-                  }`}>
+                  <span
+                    className={`text-sm font-medium ${
+                      (stat.label.includes('Impayés') && stat.trend === 'up') ||
+                      (stat.label.includes('attente') && stat.trend === 'up')
+                        ? 'text-advist-error'
+                        : 'text-advist-success'
+                    }`}
+                  >
                     {stat.change}
                   </span>
                   <span className="text-xs text-advist-blue-light">ce mois</span>
@@ -260,7 +281,10 @@ export const BillingDashboard: React.FC = () => {
             <h3 className="font-semibold text-advist-gray900">Plans</h3>
             <p className="text-sm text-advist-blue-light">Gérer les offres</p>
           </div>
-          <ArrowRight size={18} className="text-advist-blue-light group-hover:translate-x-1 transition-transform" />
+          <ArrowRight
+            size={18}
+            className="text-advist-blue-light group-hover:translate-x-1 transition-transform"
+          />
         </Link>
 
         <Link
@@ -274,7 +298,10 @@ export const BillingDashboard: React.FC = () => {
             <h3 className="font-semibold text-advist-gray900">Abonnements</h3>
             <p className="text-sm text-advist-blue-light">47 actifs</p>
           </div>
-          <ArrowRight size={18} className="text-advist-blue-light group-hover:translate-x-1 transition-transform" />
+          <ArrowRight
+            size={18}
+            className="text-advist-blue-light group-hover:translate-x-1 transition-transform"
+          />
         </Link>
 
         <Link
@@ -288,7 +315,10 @@ export const BillingDashboard: React.FC = () => {
             <h3 className="font-semibold text-advist-gray900">Factures</h3>
             <p className="text-sm text-advist-blue-light">8 en attente</p>
           </div>
-          <ArrowRight size={18} className="text-advist-blue-light group-hover:translate-x-1 transition-transform" />
+          <ArrowRight
+            size={18}
+            className="text-advist-blue-light group-hover:translate-x-1 transition-transform"
+          />
         </Link>
 
         <Link
@@ -302,7 +332,10 @@ export const BillingDashboard: React.FC = () => {
             <h3 className="font-semibold text-advist-gray900">Paiements</h3>
             <p className="text-sm text-advist-blue-light">Enregistrer</p>
           </div>
-          <ArrowRight size={18} className="text-advist-blue-light group-hover:translate-x-1 transition-transform" />
+          <ArrowRight
+            size={18}
+            className="text-advist-blue-light group-hover:translate-x-1 transition-transform"
+          />
         </Link>
       </div>
 
@@ -327,7 +360,10 @@ export const BillingDashboard: React.FC = () => {
             {recentTransactions.map((tx) => {
               const status = getStatusBadge(tx.status);
               return (
-                <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-advist-bg/50 transition-all">
+                <div
+                  key={tx.id}
+                  className="flex items-center justify-between p-4 hover:bg-advist-bg/50 transition-all"
+                >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-advist-dark rounded-xl flex items-center justify-center text-white font-semibold">
                       {tx.organization.charAt(0)}
@@ -351,7 +387,9 @@ export const BillingDashboard: React.FC = () => {
                     <p className="font-semibold text-advist-gray900">
                       {formatCurrency(tx.amount)} {tx.currency}
                     </p>
-                    <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${status.color}`}>
+                    <div
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${status.color}`}
+                    >
                       <status.icon size={12} />
                       {status.label}
                     </div>
@@ -372,15 +410,22 @@ export const BillingDashboard: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-advist-error">Factures impayées</h3>
-                <p className="text-sm text-advist-error">{overdueInvoices.length} factures en retard</p>
+                <p className="text-sm text-advist-error">
+                  {overdueInvoices.length} factures en retard
+                </p>
               </div>
             </div>
 
             <div className="space-y-3">
               {overdueInvoices.map((invoice) => (
-                <div key={invoice.id} className="flex items-center justify-between p-3 bg-white rounded-xl">
+                <div
+                  key={invoice.id}
+                  className="flex items-center justify-between p-3 bg-white rounded-xl"
+                >
                   <div>
-                    <p className="text-sm font-medium text-advist-gray900">{invoice.organization}</p>
+                    <p className="text-sm font-medium text-advist-gray900">
+                      {invoice.organization}
+                    </p>
                     <p className="text-xs text-advist-blue-light">{invoice.invoiceNumber}</p>
                   </div>
                   <div className="text-right">
@@ -394,7 +439,10 @@ export const BillingDashboard: React.FC = () => {
             </div>
 
             <Link to="/superadmin/billing/invoices?status=overdue">
-              <Button variant="outline" className="w-full mt-4 border-advist-gold text-advist-error hover:bg-advist-gold-light">
+              <Button
+                variant="outline"
+                className="w-full mt-4 border-advist-gold text-advist-error hover:bg-advist-gold-light"
+              >
                 Gérer les impayés
               </Button>
             </Link>

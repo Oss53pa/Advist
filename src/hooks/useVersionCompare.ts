@@ -2,7 +2,7 @@
  * Custom hook for version comparison
  */
 import { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import versionCompareService, {
   CompareResponse,
   VersionListResponse,

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,12 +6,8 @@ import {
   GitBranch,
   Clock,
   CheckCircle,
-  AlertCircle,
-  TrendingUp,
-  TrendingDown,
   ArrowRight,
   Plus,
-  Upload,
   X,
   PenTool,
   Eye,
@@ -19,134 +15,32 @@ import {
   ChevronRight,
   Zap,
   Bell,
-  MoreHorizontal,
-  Filter,
-  RefreshCw,
 } from 'lucide-react';
-import { Avatar } from '../components/ui/Avatar';
-import { Card, CardHeader, CardContent, Badge, StatusBadge, Button, Modal, Input } from '../components/ui';
+import { Badge, Avatar, StatusBadge, Button, Modal } from '../components/ui';
 import { NewDocumentForm } from '../components/documents/NewDocumentForm';
 import { useAuthStore } from '../store';
+import { supabase } from '../lib/supabase';
+import { PrintButton } from '../shared/PrintEngine';
 
-// Mock data - would come from API
-const getStats = (t: (key: string, fallback?: string) => string) => [
-  {
-    label: t('dashboard.stats.documents', 'Documents'),
-    value: 156,
-    icon: FileText,
-    change: '+12%',
-    trend: 'up',
-    color: 'from-advist-dark to-advist-dark/80',
-    bgLight: 'bg-advist-surface-dark',
-    textColor: 'text-advist-gray900',
-  },
-  {
-    label: t('dashboard.stats.activeWorkflows', 'Workflows actifs'),
-    value: 23,
-    icon: GitBranch,
-    change: '+5%',
-    trend: 'up',
-    color: 'from-advist-gold to-advist-gold-dark',
-    bgLight: 'bg-advist-gold-light',
-    textColor: 'text-advist-gold-dark',
-  },
-  {
-    label: t('dashboard.stats.pending', 'En attente'),
-    value: 8,
-    icon: Clock,
-    change: '-2',
-    trend: 'down',
-    color: 'from-advist-warning to-advist-gold-dark',
-    bgLight: 'bg-advist-gold-light',
-    textColor: 'text-advist-gold-dark',
-  },
-  {
-    label: t('dashboard.stats.approved', 'Approuvés'),
-    value: 45,
-    icon: CheckCircle,
-    change: '+18%',
-    trend: 'up',
-    color: 'from-advist-success to-advist-success/80',
-    bgLight: 'bg-green-50',
-    textColor: 'text-advist-success',
-  },
-];
+interface RecentDoc {
+  id: string;
+  title: string;
+  status: 'draft' | 'pending_review' | 'approved' | 'rejected' | 'archived';
+  date: string;
+  type: string;
+  owner: string;
+}
 
-const recentDocuments = [
-  {
-    id: 1,
-    title: 'Contrat de prestation Q4 2024',
-    status: 'pending' as const,
-    date: '2024-11-28',
-    type: 'Contrat',
-    owner: 'Marie Dupont',
-  },
-  {
-    id: 2,
-    title: 'Rapport financier annuel',
-    status: 'approved' as const,
-    date: '2024-11-27',
-    type: 'Rapport',
-    owner: 'Pierre Martin',
-  },
-  {
-    id: 3,
-    title: 'Politique de confidentialité',
-    status: 'draft' as const,
-    date: '2024-11-26',
-    type: 'Politique',
-    owner: 'Vous',
-  },
-  {
-    id: 4,
-    title: 'Accord de partenariat',
-    status: 'rejected' as const,
-    date: '2024-11-25',
-    type: 'Contrat',
-    owner: 'Sophie Bernard',
-  },
-  {
-    id: 5,
-    title: 'Procédure qualité ISO',
-    status: 'approved' as const,
-    date: '2024-11-24',
-    type: 'Procédure',
-    owner: 'Vous',
-  },
-];
-
-const getPendingTasks = (t: (key: string, fallback?: string) => string) => [
-  {
-    id: 1,
-    document: 'Contrat de prestation Q4 2024',
-    documentId: 1,
-    type: 'approval' as const,
-    typeLabel: t('dashboard.taskTypes.approval', 'Approbation'),
-    deadline: '2024-11-29',
-    priority: 'high' as const,
-    assignedBy: { name: 'Marie Dupont', avatar: '' },
-  },
-  {
-    id: 2,
-    document: 'Budget prévisionnel 2025',
-    documentId: 5,
-    type: 'signature' as const,
-    typeLabel: t('dashboard.taskTypes.signature', 'Signature'),
-    deadline: '2024-11-30',
-    priority: 'medium' as const,
-    assignedBy: { name: 'Pierre Martin', avatar: '' },
-  },
-  {
-    id: 3,
-    document: 'Procédure qualité v2',
-    documentId: 3,
-    type: 'review' as const,
-    typeLabel: t('dashboard.taskTypes.review', 'Revue'),
-    deadline: '2024-12-01',
-    priority: 'low' as const,
-    assignedBy: { name: 'Sophie Bernard', avatar: '' },
-  },
-];
+interface PendingTask {
+  id: string;
+  document: string;
+  documentId: string;
+  type: 'approval' | 'review' | 'signature';
+  typeLabel: string;
+  deadline: string;
+  priority: 'high' | 'medium' | 'low';
+  assignedBy: { name: string; avatar: string };
+}
 
 const getQuickActions = (t: (key: string, fallback?: string) => string) => [
   { id: 1, label: t('dashboard.actions.newDocument', 'Nouveau document'), icon: Plus, action: 'new-doc' },
@@ -160,13 +54,248 @@ export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNewDocModal, setShowNewDocModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Get translated data
-  const stats = getStats(t);
-  const pendingTasks = getPendingTasks(t);
+  // Stats state
+  const [docCount, setDocCount] = useState(0);
+  const [activeWorkflowCount, setActiveWorkflowCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [approvedCount, setApprovedCount] = useState(0);
+
+  // Recent documents state
+  const [recentDocuments, setRecentDocuments] = useState<RecentDoc[]>([]);
+
+  // Pending tasks state
+  const [pendingTasks, setPendingTasks] = useState<PendingTask[]>([]);
+
+  // Today activity state
+  const [todayApproved, setTodayApproved] = useState(0);
+  const [todaySignatures, setTodaySignatures] = useState(0);
+  const [todayWorkflows, setTodayWorkflows] = useState(0);
+
+  const orgId = user?.organization?.id;
+
+  useEffect(() => {
+    if (!orgId) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchDashboardData = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch all dashboard data in parallel
+        const [
+          docCountRes,
+          activeWfRes,
+          pendingRes,
+          approvedRes,
+          recentDocsRes,
+          tasksRes,
+          todayApprovedRes,
+          todaySignaturesRes,
+          todayWorkflowsRes,
+        ] = await Promise.all([
+          // Total documents count
+          supabase
+            .from('documents')
+            .select('*', { count: 'exact', head: true })
+            .eq('organization_id', orgId)
+            .is('deleted_at', null),
+          // Active workflows count
+          supabase
+            .from('workflow_instances')
+            .select('*', { count: 'exact', head: true })
+            .eq('organization_id', orgId)
+            .eq('status', 'active'),
+          // Pending review documents count
+          supabase
+            .from('documents')
+            .select('*', { count: 'exact', head: true })
+            .eq('organization_id', orgId)
+            .eq('status', 'pending_review')
+            .is('deleted_at', null),
+          // Approved documents count
+          supabase
+            .from('documents')
+            .select('*', { count: 'exact', head: true })
+            .eq('organization_id', orgId)
+            .eq('status', 'approved')
+            .is('deleted_at', null),
+          // Recent documents (last 5)
+          supabase
+            .from('documents')
+            .select('id, title, status, created_at, document_type_id, created_by, document_types(name), profiles!documents_created_by_fkey(first_name, last_name)')
+            .eq('organization_id', orgId)
+            .is('deleted_at', null)
+            .order('created_at', { ascending: false })
+            .limit(5),
+          // Pending tasks: workflow steps assigned to current user that are pending
+          supabase
+            .from('workflow_assignees')
+            .select(`
+              id,
+              status,
+              step:workflow_steps(
+                id,
+                name,
+                step_type,
+                due_date,
+                instance:workflow_instances(
+                  id,
+                  name,
+                  document_id,
+                  document:documents(id, title),
+                  started_by,
+                  starter:profiles!workflow_instances_started_by_fkey(first_name, last_name)
+                )
+              )
+            `)
+            .eq('user_id', user?.id)
+            .eq('status', 'pending')
+            .limit(10),
+          // Today's approved documents
+          supabase
+            .from('documents')
+            .select('*', { count: 'exact', head: true })
+            .eq('organization_id', orgId)
+            .eq('status', 'approved')
+            .gte('approved_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
+          // Today's signatures
+          supabase
+            .from('document_signatures')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'signed')
+            .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
+          // Today's started workflows
+          supabase
+            .from('workflow_instances')
+            .select('*', { count: 'exact', head: true })
+            .eq('organization_id', orgId)
+            .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
+        ]);
+
+        setDocCount(docCountRes.count ?? 0);
+        setActiveWorkflowCount(activeWfRes.count ?? 0);
+        setPendingCount(pendingRes.count ?? 0);
+        setApprovedCount(approvedRes.count ?? 0);
+
+        // Map recent documents
+        if (recentDocsRes.data) {
+          setRecentDocuments(
+            recentDocsRes.data.map((doc: any) => ({
+              id: doc.id,
+              title: doc.title,
+              status: doc.status === 'pending_review' ? 'pending' : doc.status,
+              date: doc.created_at,
+              type: doc.document_types?.name || '-',
+              owner:
+                doc.created_by === user?.id
+                  ? 'Vous'
+                  : doc.profiles
+                    ? `${doc.profiles.first_name} ${doc.profiles.last_name}`.trim()
+                    : '-',
+            }))
+          );
+        }
+
+        // Map pending tasks
+        if (tasksRes.data) {
+          const mapped: PendingTask[] = [];
+          for (const assignee of tasksRes.data as any[]) {
+            const step = assignee.step;
+            if (!step?.instance) continue;
+            const inst = step.instance;
+            const stepType = step.step_type as 'approval' | 'review' | 'signature';
+            const typeLabels: Record<string, string> = {
+              approval: t('dashboard.taskTypes.approval', 'Approbation'),
+              review: t('dashboard.taskTypes.review', 'Revue'),
+              signature: t('dashboard.taskTypes.signature', 'Signature'),
+            };
+            mapped.push({
+              id: assignee.id,
+              document: inst.document?.title || inst.name,
+              documentId: inst.document?.id || inst.id,
+              type: stepType,
+              typeLabel: typeLabels[stepType] || stepType,
+              deadline: step.due_date || '',
+              priority: step.due_date
+                ? ((new Date(step.due_date).getTime() - Date.now()) < 24 * 60 * 60 * 1000
+                  ? 'high'
+                  : (new Date(step.due_date).getTime() - Date.now()) < 72 * 60 * 60 * 1000
+                    ? 'medium'
+                    : 'low')
+                : 'low',
+              assignedBy: {
+                name: inst.starter
+                  ? `${inst.starter.first_name} ${inst.starter.last_name}`.trim()
+                  : '-',
+                avatar: '',
+              },
+            });
+          }
+          setPendingTasks(mapped);
+        }
+
+        setTodayApproved(todayApprovedRes.count ?? 0);
+        setTodaySignatures(todaySignaturesRes.count ?? 0);
+        setTodayWorkflows(todayWorkflowsRes.count ?? 0);
+      } catch (err) {
+        console.error('Dashboard data fetch error:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [orgId, user?.id, t]);
+
+  const stats = useMemo(() => [
+    {
+      label: t('dashboard.stats.documents', 'Documents'),
+      value: docCount,
+      icon: FileText,
+      change: '',
+      trend: 'up' as const,
+      color: 'from-advist-dark to-advist-dark/80',
+      bgLight: 'bg-advist-surface-dark',
+      textColor: 'text-advist-gray900',
+    },
+    {
+      label: t('dashboard.stats.activeWorkflows', 'Workflows actifs'),
+      value: activeWorkflowCount,
+      icon: GitBranch,
+      change: '',
+      trend: 'up' as const,
+      color: 'from-advist-gold to-advist-gold-dark',
+      bgLight: 'bg-advist-gold-light',
+      textColor: 'text-advist-gold-dark',
+    },
+    {
+      label: t('dashboard.stats.pending', 'En attente'),
+      value: pendingCount,
+      icon: Clock,
+      change: '',
+      trend: 'down' as const,
+      color: 'from-advist-warning to-advist-gold-dark',
+      bgLight: 'bg-advist-gold-light',
+      textColor: 'text-advist-gold-dark',
+    },
+    {
+      label: t('dashboard.stats.approved', 'Approuvés'),
+      value: approvedCount,
+      icon: CheckCircle,
+      change: '',
+      trend: 'up' as const,
+      color: 'from-advist-success to-advist-success/80',
+      bgLight: 'bg-green-50',
+      textColor: 'text-advist-success',
+    },
+  ], [t, docCount, activeWorkflowCount, pendingCount, approvedCount]);
+
   const quickActions = getQuickActions(t);
 
-  const [showTaskDetail, setShowTaskDetail] = useState<typeof pendingTasks[0] | null>(null);
+  const [showTaskDetail, setShowTaskDetail] = useState<PendingTask | null>(null);
 
   // Get the base path for navigation (e.g., /user, /admin, or /app)
   const basePath = location.pathname.startsWith('/user')
@@ -251,6 +380,37 @@ export const Dashboard: React.FC = () => {
 
         {/* Quick Actions */}
         <div className="flex items-center gap-3">
+          <PrintButton config={{ title: 'Tableau de bord', appName: 'Advist' }}>
+            <div className="space-y-8">
+              {/* Stats */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+                {stats.map((stat, index) => (
+                  <div key={index} className="bg-white rounded-2xl p-6 border border-advist-border">
+                    <p className="text-sm font-medium text-advist-text-secondary">{stat.label}</p>
+                    <p className="text-4xl font-bold text-advist-gray900">{stat.value}</p>
+                  </div>
+                ))}
+              </div>
+              {/* Recent Documents */}
+              <div>
+                <h2 className="text-lg font-semibold mb-2">{t('dashboard.recentDocuments', 'Documents récents')}</h2>
+                {recentDocuments.map((doc) => (
+                  <div key={doc.id} className="py-2 border-b border-advist-border">
+                    <span className="font-medium">{doc.title}</span> — {doc.type} — {doc.status}
+                  </div>
+                ))}
+              </div>
+              {/* Pending Tasks */}
+              <div>
+                <h2 className="text-lg font-semibold mb-2">{t('dashboard.pendingTasks', 'Tâches en attente')}</h2>
+                {pendingTasks.map((task) => (
+                  <div key={task.id} className="py-2 border-b border-advist-border">
+                    <span className="font-medium">{task.document}</span> — {task.typeLabel}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </PrintButton>
           {quickActions.map((action) => (
             <button
               key={action.id}
@@ -283,18 +443,13 @@ export const Dashboard: React.FC = () => {
             <div className="relative flex items-start justify-between">
               <div className="space-y-3">
                 <p className="text-sm font-medium text-advist-text-secondary">{stat.label}</p>
-                <p className="text-4xl font-bold text-advist-gray900">{stat.value}</p>
-                <div className="flex items-center gap-1.5">
-                  {stat.trend === 'up' ? (
-                    <TrendingUp size={14} className="text-advist-success" />
+                <p className="text-4xl font-bold text-advist-gray900">
+                  {isLoading ? (
+                    <span className="inline-block w-16 h-10 bg-advist-surface-dark rounded animate-pulse" />
                   ) : (
-                    <TrendingDown size={14} className="text-advist-gold-dark" />
+                    stat.value
                   )}
-                  <span className={`text-sm font-medium ${stat.trend === 'up' ? 'text-advist-success' : 'text-advist-gold-dark'}`}>
-                    {stat.change}
-                  </span>
-                  <span className="text-xs text-advist-text-secondary">{t('dashboard.vsLastMonth', 'vs mois dernier')}</span>
-                </div>
+                </p>
               </div>
               <div className={`p-3 rounded-xl ${stat.bgLight}`}>
                 <stat.icon size={24} className={stat.textColor} />
@@ -465,15 +620,15 @@ export const Dashboard: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-advist-success rounded-full" />
-                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.documentsApproved', { count: 3 })}</p>
+                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.documentsApproved', { count: todayApproved })}</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-advist-gold rounded-full" />
-                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.signaturesCompleted', { count: 2 })}</p>
+                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.signaturesCompleted', { count: todaySignatures })}</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-advist-warning rounded-full" />
-                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.workflowStarted', { count: 1 })}</p>
+                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.workflowStarted', { count: todayWorkflows })}</p>
               </div>
             </div>
           </div>

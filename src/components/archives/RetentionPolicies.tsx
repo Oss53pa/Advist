@@ -6,19 +6,19 @@ import {
   Plus,
   Edit2,
   Trash2,
-  Clock,
+  _Clock,
   FileText,
-  Calendar,
+  _Calendar,
   AlertTriangle,
   Check,
   X,
-  Settings,
+  _Settings,
   Archive,
   Zap,
   ChevronDown,
   ChevronRight,
   Lock,
-  Unlock,
+  _Unlock,
 } from 'lucide-react';
 import { Button, Card, Modal, Input, Badge } from '../ui';
 
@@ -63,11 +63,19 @@ const DOCUMENT_TYPES = [
 ];
 
 // Default policies
+/**
+ * Default policies — Module 7 (Valeur Probante)
+ * La politique OHADA 10 ans est la politique par defaut pour les documents signes.
+ * Un trigger PostgreSQL (migration 00028) empeche toute suppression pendant la retention.
+ * Les documents signes via signatureService.signDocument() se voient automatiquement
+ * appliquer la retention via documentRetentionService.applyDefaultRetention().
+ */
 const DEFAULT_POLICIES: RetentionPolicy[] = [
   {
     id: 'policy_1',
     name: 'Conservation légale OHADA',
-    description: 'Politique conforme aux exigences OHADA pour les documents commerciaux',
+    description:
+      'Politique conforme aux exigences OHADA pour les documents commerciaux. Trigger anti-suppression actif (migration 00028).',
     isActive: true,
     isDefault: true,
     documentTypes: ['contract', 'invoice', 'legal'],
@@ -208,10 +216,8 @@ export const RetentionPolicies: React.FC<RetentionPoliciesProps> = ({
     return `${period.value} ${unitLabels[period.unit]}`;
   };
 
-  const getDocumentTypeNames = (typeIds: string[]) => {
-    return typeIds
-      .map((id) => DOCUMENT_TYPES.find((t) => t.id === id)?.name || id)
-      .join(', ');
+  const _getDocumentTypeNames = (typeIds: string[]) => {
+    return typeIds.map((id) => DOCUMENT_TYPES.find((t) => t.id === id)?.name || id).join(', ');
   };
 
   return (
@@ -240,8 +246,8 @@ export const RetentionPolicies: React.FC<RetentionPoliciesProps> = ({
         <div>
           <h4 className="font-medium text-advist-gray900">Conformité OHADA</h4>
           <p className="text-sm text-advist-gray900 mt-1">
-            Les politiques de rétention doivent respecter les exigences légales OHADA.
-            Les documents commerciaux doivent être conservés pendant au moins 10 ans.
+            Les politiques de rétention doivent respecter les exigences légales OHADA. Les documents
+            commerciaux doivent être conservés pendant au moins 10 ans.
           </p>
         </div>
       </div>
@@ -267,14 +273,23 @@ export const RetentionPolicies: React.FC<RetentionPoliciesProps> = ({
                   ) : (
                     <ChevronRight size={16} className="text-[#6B7280]" />
                   )}
-                  <div className={`p-2 rounded-lg ${policy.isActive ? 'bg-green-50' : 'bg-advist-surface-dark'}`}>
-                    <Archive size={18} className={policy.isActive ? 'text-advist-success' : 'text-advist-text-secondary'} />
+                  <div
+                    className={`p-2 rounded-lg ${policy.isActive ? 'bg-green-50' : 'bg-advist-surface-dark'}`}
+                  >
+                    <Archive
+                      size={18}
+                      className={
+                        policy.isActive ? 'text-advist-success' : 'text-advist-text-secondary'
+                      }
+                    />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className="font-medium text-[#1A1A2E]">{policy.name}</h4>
                       {policy.isDefault && (
-                        <Badge variant="blue" size="sm">Par défaut</Badge>
+                        <Badge variant="blue" size="sm">
+                          Par défaut
+                        </Badge>
                       )}
                       {policy.legalHoldEnabled && (
                         <Badge variant="red" size="sm">
@@ -484,7 +499,7 @@ const PolicyEditModal: React.FC<{
   policy: RetentionPolicy;
   onSave: (policy: RetentionPolicy) => void;
 }> = ({ isOpen, onClose, policy, onSave }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [formData, setFormData] = useState<RetentionPolicy>(policy);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -502,12 +517,7 @@ const PolicyEditModal: React.FC<{
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Configurer la politique de rétention"
-      size="lg"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Configurer la politique de rétention" size="lg">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <div className="grid grid-cols-2 gap-4">
@@ -523,10 +533,12 @@ const PolicyEditModal: React.FC<{
               type="number"
               label="Durée de rétention"
               value={formData.retentionPeriod.value}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev,
-                retentionPeriod: { ...prev.retentionPeriod, value: Number(e.target.value) },
-              }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  retentionPeriod: { ...prev.retentionPeriod, value: Number(e.target.value) },
+                }))
+              }
               min={1}
               required
             />
@@ -534,13 +546,15 @@ const PolicyEditModal: React.FC<{
               <label className="block text-sm font-medium text-[#1A1A2E] mb-1.5">Unité</label>
               <select
                 value={formData.retentionPeriod.unit}
-                onChange={(e) => setFormData((prev) => ({
-                  ...prev,
-                  retentionPeriod: {
-                    ...prev.retentionPeriod,
-                    unit: e.target.value as 'days' | 'months' | 'years',
-                  },
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    retentionPeriod: {
+                      ...prev.retentionPeriod,
+                      unit: e.target.value as 'days' | 'months' | 'years',
+                    },
+                  }))
+                }
                 className="w-full px-3 py-2.5 border border-[#E5E7EB] rounded-lg"
               >
                 <option value="days">Jours</option>
@@ -579,9 +593,10 @@ const PolicyEditModal: React.FC<{
                   onClick={() => toggleDocumentType(type.id)}
                   className={`
                     p-3 rounded-lg border-2 text-left transition-all
-                    ${isSelected
-                      ? 'border-[#1A1A2E] bg-[#F8FAFC]'
-                      : 'border-[#E5E7EB] hover:border-[#1A1A2E]'
+                    ${
+                      isSelected
+                        ? 'border-[#1A1A2E] bg-[#F8FAFC]'
+                        : 'border-[#E5E7EB] hover:border-[#1A1A2E]'
                     }
                   `}
                 >
@@ -606,7 +621,9 @@ const PolicyEditModal: React.FC<{
               <input
                 type="checkbox"
                 checked={formData.autoArchive}
-                onChange={(e) => setFormData((prev) => ({ ...prev, autoArchive: e.target.checked }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, autoArchive: e.target.checked }))
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#FBBF24] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1A1A2E]"></div>
@@ -617,7 +634,9 @@ const PolicyEditModal: React.FC<{
               type="number"
               label="Archiver après (jours d'inactivité)"
               value={formData.autoArchiveAfterDays}
-              onChange={(e) => setFormData((prev) => ({ ...prev, autoArchiveAfterDays: Number(e.target.value) }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, autoArchiveAfterDays: Number(e.target.value) }))
+              }
               min={1}
             />
           )}
@@ -646,7 +665,9 @@ const PolicyEditModal: React.FC<{
                 type="checkbox"
                 id="autoDeleteAfterRetention"
                 checked={formData.autoDeleteAfterRetention}
-                onChange={(e) => setFormData((prev) => ({ ...prev, autoDeleteAfterRetention: e.target.checked }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, autoDeleteAfterRetention: e.target.checked }))
+                }
                 className="w-4 h-4 rounded border-advist-gold text-advist-error"
               />
               <label htmlFor="autoDeleteAfterRetention" className="text-sm text-advist-error">
@@ -662,7 +683,9 @@ const PolicyEditModal: React.FC<{
             type="checkbox"
             id="legalHoldEnabled"
             checked={formData.legalHoldEnabled}
-            onChange={(e) => setFormData((prev) => ({ ...prev, legalHoldEnabled: e.target.checked }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, legalHoldEnabled: e.target.checked }))
+            }
             className="w-4 h-4 rounded border-[#E5E7EB] text-[#1A1A2E]"
           />
           <label htmlFor="legalHoldEnabled" className="text-sm text-[#6B7280]">
@@ -677,7 +700,9 @@ const PolicyEditModal: React.FC<{
               type="checkbox"
               id="notifyBeforeDeletion"
               checked={formData.notifyBeforeDeletion}
-              onChange={(e) => setFormData((prev) => ({ ...prev, notifyBeforeDeletion: e.target.checked }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, notifyBeforeDeletion: e.target.checked }))
+              }
               className="w-4 h-4 rounded border-[#E5E7EB] text-[#1A1A2E]"
             />
             <label htmlFor="notifyBeforeDeletion" className="text-sm text-[#6B7280]">
@@ -688,7 +713,9 @@ const PolicyEditModal: React.FC<{
             <Input
               type="number"
               value={formData.notifyDaysBefore}
-              onChange={(e) => setFormData((prev) => ({ ...prev, notifyDaysBefore: Number(e.target.value) }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, notifyDaysBefore: Number(e.target.value) }))
+              }
               min={1}
               className="w-24"
               placeholder="30"
@@ -701,9 +728,7 @@ const PolicyEditModal: React.FC<{
           <Button type="button" variant="ghost" onClick={onClose}>
             Annuler
           </Button>
-          <Button type="submit">
-            Enregistrer la politique
-          </Button>
+          <Button type="submit">Enregistrer la politique</Button>
         </div>
       </form>
     </Modal>

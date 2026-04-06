@@ -517,11 +517,58 @@ export const documentsService = {
   async startWorkflow(id: string, templateId: string): Promise<void> {
     const userId = await requireAuth();
 
+    // P0-W001: Validation pre-lancement obligatoire
+    const { data: template, error: tplError } = await supabase
+      .from('workflow_templates')
+      .select('steps_config, name, is_active')
+      .eq('id', templateId)
+      .single();
+
+    if (tplError || !template) {
+      throw new Error('Template de circuit introuvable');
+    }
+    if (!template.is_active) {
+      throw new Error('Ce template de circuit est desactive');
+    }
+
+    const steps = (template.steps_config || []) as Array<{ name?: string; type?: string; assignees?: unknown[] }>;
+    if (steps.length === 0) {
+      throw new Error('Le circuit doit contenir au moins une etape');
+    }
+    for (let i = 0; i < steps.length; i++) {
+      const step = steps[i];
+      if (!step.name || !step.type) {
+        throw new Error(`Etape ${i + 1} : le nom et le type sont obligatoires`);
+      }
+    }
+
+    // P0-S002: Server-side quota check
+    const { data: doc } = await supabase
+      .from('documents')
+      .select('organization_id')
+      .eq('id', id)
+      .single();
+
+    if (doc?.organization_id) {
+      const { data: quotaResult } = await supabase.functions.invoke(
+        'check-signature-quota',
+        { body: { organization_id: doc.organization_id, feature: 'basic_workflow' } },
+      );
+      if (quotaResult && !quotaResult.allowed) {
+        throw new Error(
+          quotaResult.reason === 'FEATURE_NOT_AVAILABLE'
+            ? 'Cette fonctionnalite n\'est pas disponible avec votre plan.'
+            : 'Quota depasse. Veuillez upgrader votre plan.',
+        );
+      }
+    }
+
     const { error } = await supabase.from('workflow_instances').insert({
       template_id: templateId,
       document_id: id,
       initiated_by: userId,
       status: 'in_progress',
+      name: template.name,
     });
 
     if (error) throw new Error(parseSupabaseError(error).message);

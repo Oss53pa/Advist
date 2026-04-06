@@ -2,11 +2,12 @@
  * FeatureGuard - Composant pour gérer l'accès aux fonctionnalités selon le plan
  * Utilise les couleurs centralisées de usePlanTheme
  */
-import React, { ReactNode } from 'react';
-import { Lock, Zap, ArrowRight } from 'lucide-react';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { Lock, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { useTenantStore, PlanType, TenantFeatures, getPlanInfo } from '../../stores/tenantStore';
 import { Link } from 'react-router-dom';
 import { getPlanTheme, getPlanIcon } from '../../hooks/usePlanTheme';
+import { supabase } from '../../lib/supabase';
 
 // Ré-exporter pour compatibilité
 export { PLAN_THEME as PLAN_COLORS, PLAN_ICONS } from '../../hooks/usePlanTheme';
@@ -154,7 +155,58 @@ export const FeatureGuard: React.FC<FeatureGuardProps> = ({
   showUpgrade = true,
 }) => {
   const { currentTenant, checkFeature } = useTenantStore();
-  const hasAccess = checkFeature(feature);
+  const clientHasAccess = checkFeature(feature);
+  const [serverAllowed, setServerAllowed] = useState<boolean | null>(null);
+  const [checking, setChecking] = useState(false);
+
+  // Server-side verification via check-signature-quota Edge Function (P1-S007)
+  useEffect(() => {
+    if (!clientHasAccess) {
+      setServerAllowed(false);
+      return;
+    }
+
+    const organizationId = currentTenant?.id;
+    if (!organizationId) {
+      setServerAllowed(clientHasAccess);
+      return;
+    }
+
+    let cancelled = false;
+    setChecking(true);
+
+    supabase.functions
+      .invoke('check-signature-quota', {
+        body: { organization_id: organizationId, feature },
+      })
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          console.warn('Server-side feature check failed, using client gate:', error.message);
+          setServerAllowed(clientHasAccess);
+        } else {
+          setServerAllowed(data?.allowed ?? false);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setChecking(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [clientHasAccess, currentTenant?.id, feature]);
+
+  // Show spinner while server check is in flight
+  if (checking || serverAllowed === null) {
+    return (
+      <div className={`flex items-center justify-center p-8 ${className}`}>
+        <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  const hasAccess = serverAllowed;
 
   if (hasAccess) {
     return <>{children}</>;

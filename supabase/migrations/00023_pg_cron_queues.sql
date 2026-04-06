@@ -28,16 +28,18 @@ CREATE TABLE IF NOT EXISTS task_queue (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_task_queue_status ON task_queue(status, scheduled_for);
-CREATE INDEX idx_task_queue_type ON task_queue(task_type);
-CREATE INDEX idx_task_queue_org ON task_queue(organization_id);
+CREATE INDEX IF NOT EXISTS idx_task_queue_status ON task_queue(status, scheduled_for);
+CREATE INDEX IF NOT EXISTS idx_task_queue_type ON task_queue(task_type);
+CREATE INDEX IF NOT EXISTS idx_task_queue_org ON task_queue(organization_id);
 
 -- RLS for task queue
 ALTER TABLE task_queue ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "task_queue_select" ON task_queue;
 CREATE POLICY "task_queue_select" ON task_queue FOR SELECT USING (
     organization_id = public.get_user_org_id()
 );
+DROP POLICY IF EXISTS "task_queue_insert" ON task_queue;
 CREATE POLICY "task_queue_insert" ON task_queue FOR INSERT WITH CHECK (
     organization_id = public.get_user_org_id()
 );
@@ -54,8 +56,8 @@ CREATE TABLE IF NOT EXISTS cache_entries (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_cache_expires ON cache_entries(expires_at) WHERE expires_at IS NOT NULL;
-CREATE INDEX idx_cache_org ON cache_entries(organization_id);
+CREATE INDEX IF NOT EXISTS idx_cache_expires ON cache_entries(expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_cache_org ON cache_entries(organization_id);
 
 -- Function to clean expired cache entries
 CREATE OR REPLACE FUNCTION clean_expired_cache()

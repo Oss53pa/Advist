@@ -112,8 +112,8 @@ const ANNOTATION_COLORS = [
 ];
 
 export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps> = ({
-  documentId,
-  versionNumber,
+  _documentId,
+  _versionNumber,
   annotations,
   currentUserId,
   canAnnotate,
@@ -150,7 +150,7 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
   }, [annotations, filterContext, filterResolved]);
 
   // Group annotations by context
-  const groupedAnnotations = useMemo(() => {
+  const _groupedAnnotations = useMemo(() => {
     const groups: Record<string, ContextualAnnotation[]> = {};
     filteredAnnotations.forEach((ann) => {
       const key = ann.section_id || ann.context_type;
@@ -223,16 +223,12 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
               )}
             </div>
 
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {annotation.content.text}
-            </p>
+            <p className="text-sm text-gray-600 line-clamp-2">{annotation.content.text}</p>
           </div>
 
           <ChevronRight
             size={16}
-            className={`text-gray-400 transition-transform ${
-              isExpanded ? 'rotate-90' : ''
-            }`}
+            className={`text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
           />
         </div>
 
@@ -257,13 +253,9 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
               </div>
               <div className="flex items-center gap-1">
                 <Clock size={12} />
-                <span>
-                  {formatRelativeTime(annotation.created_at)}
-                </span>
+                <span>{formatRelativeTime(annotation.created_at)}</span>
               </div>
-              {annotation.page_number > 0 && (
-                <span>Page {annotation.page_number}</span>
-              )}
+              {annotation.page_number > 0 && <span>Page {annotation.page_number}</span>}
             </div>
 
             {/* Actions */}
@@ -306,10 +298,7 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
                 <CheckCircle size={12} />
                 Résolu par {annotation.resolved_by_name}
                 {annotation.resolved_at && (
-                  <span>
-                    {' '}
-                    {formatRelativeTime(annotation.resolved_at)}
-                  </span>
+                  <span> {formatRelativeTime(annotation.resolved_at)}</span>
                 )}
               </div>
             )}
@@ -323,20 +312,14 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
     <Card className="p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="font-medium">Nouvelle annotation</h4>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => setShowNewForm(false)}
-        >
+        <Button size="sm" variant="ghost" onClick={() => setShowNewForm(false)}>
           <X size={16} />
         </Button>
       </div>
 
       {/* Context type selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Type de contexte
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Type de contexte</label>
         <div className="flex flex-wrap gap-2">
           {Object.entries(CONTEXT_TYPE_CONFIG).map(([key, config]) => {
             const Icon = config.icon;
@@ -364,29 +347,21 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
       {/* Section info */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            ID Section
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">ID Section</label>
           <input
             type="text"
             value={newAnnotation.section_id}
-            onChange={(e) =>
-              setNewAnnotation({ ...newAnnotation, section_id: e.target.value })
-            }
+            onChange={(e) => setNewAnnotation({ ...newAnnotation, section_id: e.target.value })}
             placeholder="ex: section-3.2"
             className="w-full px-3 py-2 border rounded-md text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Titre Section
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Titre Section</label>
           <input
             type="text"
             value={newAnnotation.section_title}
-            onChange={(e) =>
-              setNewAnnotation({ ...newAnnotation, section_title: e.target.value })
-            }
+            onChange={(e) => setNewAnnotation({ ...newAnnotation, section_title: e.target.value })}
             placeholder="ex: Analyse financière"
             className="w-full px-3 py-2 border rounded-md text-sm"
           />
@@ -395,9 +370,7 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
 
       {/* Page number */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Numéro de page
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Numéro de page</label>
         <input
           type="number"
           min={1}
@@ -416,9 +389,7 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
         </label>
         <textarea
           value={newAnnotation.quoted_text}
-          onChange={(e) =>
-            setNewAnnotation({ ...newAnnotation, quoted_text: e.target.value })
-          }
+          onChange={(e) => setNewAnnotation({ ...newAnnotation, quoted_text: e.target.value })}
           placeholder="Copiez le texte que vous annotez..."
           className="w-full px-3 py-2 border rounded-md text-sm resize-none"
           rows={2}
@@ -427,14 +398,10 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
 
       {/* Comment */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Commentaire *
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Commentaire *</label>
         <textarea
           value={newAnnotation.content}
-          onChange={(e) =>
-            setNewAnnotation({ ...newAnnotation, content: e.target.value })
-          }
+          onChange={(e) => setNewAnnotation({ ...newAnnotation, content: e.target.value })}
           placeholder="Votre commentaire..."
           className="w-full px-3 py-2 border rounded-md text-sm resize-none"
           rows={3}
@@ -444,16 +411,12 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
 
       {/* Color selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Couleur
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Couleur</label>
         <div className="flex gap-2">
           {ANNOTATION_COLORS.map((color) => (
             <button
               key={color.value}
-              onClick={() =>
-                setNewAnnotation({ ...newAnnotation, color: color.value })
-              }
+              onClick={() => setNewAnnotation({ ...newAnnotation, color: color.value })}
               className={`w-8 h-8 rounded-full border-2 transition-all ${
                 newAnnotation.color === color.value
                   ? 'ring-2 ring-offset-2 ring-blue-400'
@@ -468,10 +431,7 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
 
       {/* Submit */}
       <div className="flex justify-end gap-2">
-        <Button
-          variant="outline"
-          onClick={() => setShowNewForm(false)}
-        >
+        <Button variant="outline" onClick={() => setShowNewForm(false)}>
           Annuler
         </Button>
         <Button
@@ -526,9 +486,7 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
         {/* Resolution status filter */}
         <select
           value={filterResolved}
-          onChange={(e) =>
-            setFilterResolved(e.target.value as 'all' | 'pending' | 'resolved')
-          }
+          onChange={(e) => setFilterResolved(e.target.value as 'all' | 'pending' | 'resolved')}
           className="text-sm border rounded-md px-2 py-1"
         >
           <option value="all">Tous</option>
@@ -546,20 +504,13 @@ export const ContextualAnnotationPanel: React.FC<ContextualAnnotationPanelProps>
           <MessageSquare size={32} className="mx-auto mb-2 opacity-50" />
           <p className="text-sm">Aucune annotation</p>
           {canAnnotate && (
-            <Button
-              size="sm"
-              variant="link"
-              onClick={() => setShowNewForm(true)}
-              className="mt-2"
-            >
+            <Button size="sm" variant="link" onClick={() => setShowNewForm(true)} className="mt-2">
               Ajouter la première annotation
             </Button>
           )}
         </div>
       ) : (
-        <div className="space-y-2">
-          {filteredAnnotations.map(renderAnnotationItem)}
-        </div>
+        <div className="space-y-2">{filteredAnnotations.map(renderAnnotationItem)}</div>
       )}
 
       {/* Summary */}

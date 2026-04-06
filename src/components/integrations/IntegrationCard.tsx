@@ -16,7 +16,7 @@ import {
   RefreshCw,
   Plug,
   PlugZap,
-  ExternalLink,
+  _ExternalLink,
 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -35,14 +35,17 @@ interface IntegrationCardProps {
   disabled?: boolean;
 }
 
-const PROVIDER_INFO: Record<IntegrationProvider, {
-  name: string;
-  description: string;
-  icon: React.ElementType;
-  color: string;
-  bgColor: string;
-  category: 'cloud' | 'erp' | 'crm';
-}> = {
+const PROVIDER_INFO: Record<
+  IntegrationProvider,
+  {
+    name: string;
+    description: string;
+    icon: React.ElementType;
+    color: string;
+    bgColor: string;
+    category: 'cloud' | 'erp' | 'crm';
+  }
+> = {
   microsoft_365: {
     name: 'Microsoft 365',
     description: 'SharePoint, OneDrive, Outlook, Teams',
@@ -182,14 +185,10 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 mb-1">
-            <h3 className="text-lg font-semibold text-advist-gray900 truncate">
-              {info.name}
-            </h3>
+            <h3 className="text-lg font-semibold text-advist-gray900 truncate">{info.name}</h3>
             {getStatusBadge()}
           </div>
-          <p className="text-sm text-advist-gray900/60 mb-3">
-            {info.description}
-          </p>
+          <p className="text-sm text-advist-gray900/60 mb-3">{info.description}</p>
 
           {/* Last sync info */}
           {connection?.last_sync_at && (
@@ -209,11 +208,7 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
           {/* Actions */}
           <div className="flex flex-wrap gap-2">
             {!connection ? (
-              <Button
-                onClick={onConnect}
-                disabled={disabled || isConnecting}
-                size="sm"
-              >
+              <Button onClick={onConnect} disabled={disabled || isConnecting} size="sm">
                 {isConnecting ? (
                   <Loader2 size={16} className="animate-spin mr-2" />
                 ) : (
@@ -223,12 +218,7 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
               </Button>
             ) : isConnected ? (
               <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onSync}
-                  disabled={isSyncing}
-                >
+                <Button variant="outline" size="sm" onClick={onSync} disabled={isSyncing}>
                   {isSyncing ? (
                     <Loader2 size={16} className="animate-spin mr-2" />
                   ) : (
@@ -236,11 +226,7 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
                   )}
                   {t('integrations.sync', 'Synchroniser')}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onConfigure}
-                >
+                <Button variant="ghost" size="sm" onClick={onConfigure}>
                   <Settings size={16} className="mr-2" />
                   {t('integrations.configure', 'Configurer')}
                 </Button>
@@ -256,11 +242,7 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
               </>
             ) : (
               <>
-                <Button
-                  onClick={onConnect}
-                  disabled={isConnecting}
-                  size="sm"
-                >
+                <Button onClick={onConnect} disabled={isConnecting} size="sm">
                   {isConnecting ? (
                     <Loader2 size={16} className="animate-spin mr-2" />
                   ) : (
@@ -268,11 +250,7 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
                   )}
                   {t('integrations.reconnect', 'Reconnecter')}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onConfigure}
-                >
+                <Button variant="ghost" size="sm" onClick={onConfigure}>
                   <Settings size={16} className="mr-2" />
                   {t('integrations.configure', 'Configurer')}
                 </Button>

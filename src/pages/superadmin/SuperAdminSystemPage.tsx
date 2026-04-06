@@ -4,11 +4,11 @@ import {
   Server,
   Database,
   HardDrive,
-  Cpu,
+  _Cpu,
   Activity,
   RefreshCw,
   CheckCircle,
-  AlertTriangle,
+  _AlertTriangle,
   XCircle,
   Clock,
   Zap,
@@ -16,16 +16,16 @@ import {
   Shield,
   Settings,
   Play,
-  Pause,
+  _Pause,
   RotateCcw,
   Terminal,
   Cloud,
-  Wifi,
+  _Wifi,
   Lock,
-  Key,
+  _Key,
   FileText,
   Download,
-  Upload,
+  _Upload,
   Trash2,
   Calendar,
 } from 'lucide-react';
@@ -61,14 +61,78 @@ interface Job {
 
 // Mock data
 const services: ServiceStatus[] = [
-  { name: 'API Gateway', status: 'healthy', latency: '45ms', uptime: '99.99%', lastCheck: '30s', version: 'v2.4.1', icon: Globe },
-  { name: 'PostgreSQL', status: 'healthy', latency: '12ms', uptime: '99.98%', lastCheck: '30s', version: '15.4', icon: Database },
-  { name: 'Redis Cache', status: 'healthy', latency: '2ms', uptime: '100%', lastCheck: '30s', version: '7.2', icon: Zap },
-  { name: 'Object Storage (S3)', status: 'warning', latency: '120ms', uptime: '99.5%', lastCheck: '30s', version: 'N/A', icon: HardDrive },
-  { name: 'Queue Worker', status: 'healthy', latency: '8ms', uptime: '99.99%', lastCheck: '30s', version: 'v1.2.0', icon: Activity },
-  { name: 'Email Service', status: 'healthy', latency: '250ms', uptime: '99.9%', lastCheck: '30s', version: 'v3.1.0', icon: Cloud },
-  { name: 'PDF Generator', status: 'healthy', latency: '180ms', uptime: '99.95%', lastCheck: '30s', version: 'v2.0.5', icon: FileText },
-  { name: 'Auth Service', status: 'healthy', latency: '35ms', uptime: '100%', lastCheck: '30s', version: 'v4.0.0', icon: Lock },
+  {
+    name: 'API Gateway',
+    status: 'healthy',
+    latency: '45ms',
+    uptime: '99.99%',
+    lastCheck: '30s',
+    version: 'v2.4.1',
+    icon: Globe,
+  },
+  {
+    name: 'PostgreSQL',
+    status: 'healthy',
+    latency: '12ms',
+    uptime: '99.98%',
+    lastCheck: '30s',
+    version: '15.4',
+    icon: Database,
+  },
+  {
+    name: 'Redis Cache',
+    status: 'healthy',
+    latency: '2ms',
+    uptime: '100%',
+    lastCheck: '30s',
+    version: '7.2',
+    icon: Zap,
+  },
+  {
+    name: 'Object Storage (S3)',
+    status: 'warning',
+    latency: '120ms',
+    uptime: '99.5%',
+    lastCheck: '30s',
+    version: 'N/A',
+    icon: HardDrive,
+  },
+  {
+    name: 'Queue Worker',
+    status: 'healthy',
+    latency: '8ms',
+    uptime: '99.99%',
+    lastCheck: '30s',
+    version: 'v1.2.0',
+    icon: Activity,
+  },
+  {
+    name: 'Email Service',
+    status: 'healthy',
+    latency: '250ms',
+    uptime: '99.9%',
+    lastCheck: '30s',
+    version: 'v3.1.0',
+    icon: Cloud,
+  },
+  {
+    name: 'PDF Generator',
+    status: 'healthy',
+    latency: '180ms',
+    uptime: '99.95%',
+    lastCheck: '30s',
+    version: 'v2.0.5',
+    icon: FileText,
+  },
+  {
+    name: 'Auth Service',
+    status: 'healthy',
+    latency: '35ms',
+    uptime: '100%',
+    lastCheck: '30s',
+    version: 'v4.0.0',
+    icon: Lock,
+  },
 ];
 
 const systemMetrics: SystemMetric[] = [
@@ -79,21 +143,93 @@ const systemMetrics: SystemMetric[] = [
 ];
 
 const scheduledJobs: Job[] = [
-  { id: '1', name: 'Backup Database', status: 'completed', lastRun: '2024-11-29 02:00', nextRun: '2024-11-30 02:00', duration: '15min' },
-  { id: '2', name: 'Clean Temp Files', status: 'completed', lastRun: '2024-11-29 04:00', nextRun: '2024-11-30 04:00', duration: '2min' },
-  { id: '3', name: 'Generate Reports', status: 'running', lastRun: '2024-11-29 06:00', nextRun: '2024-11-30 06:00', duration: '8min' },
-  { id: '4', name: 'Sync External APIs', status: 'scheduled', lastRun: '2024-11-28 12:00', nextRun: '2024-11-29 12:00', duration: '5min' },
-  { id: '5', name: 'Archive Old Documents', status: 'failed', lastRun: '2024-11-28 03:00', nextRun: '2024-11-29 03:00', duration: 'N/A' },
-  { id: '6', name: 'Update Search Index', status: 'completed', lastRun: '2024-11-29 01:00', nextRun: '2024-11-30 01:00', duration: '12min' },
+  {
+    id: '1',
+    name: 'Backup Database',
+    status: 'completed',
+    lastRun: '2024-11-29 02:00',
+    nextRun: '2024-11-30 02:00',
+    duration: '15min',
+  },
+  {
+    id: '2',
+    name: 'Clean Temp Files',
+    status: 'completed',
+    lastRun: '2024-11-29 04:00',
+    nextRun: '2024-11-30 04:00',
+    duration: '2min',
+  },
+  {
+    id: '3',
+    name: 'Generate Reports',
+    status: 'running',
+    lastRun: '2024-11-29 06:00',
+    nextRun: '2024-11-30 06:00',
+    duration: '8min',
+  },
+  {
+    id: '4',
+    name: 'Sync External APIs',
+    status: 'scheduled',
+    lastRun: '2024-11-28 12:00',
+    nextRun: '2024-11-29 12:00',
+    duration: '5min',
+  },
+  {
+    id: '5',
+    name: 'Archive Old Documents',
+    status: 'failed',
+    lastRun: '2024-11-28 03:00',
+    nextRun: '2024-11-29 03:00',
+    duration: 'N/A',
+  },
+  {
+    id: '6',
+    name: 'Update Search Index',
+    status: 'completed',
+    lastRun: '2024-11-29 01:00',
+    nextRun: '2024-11-30 01:00',
+    duration: '12min',
+  },
 ];
 
 const recentLogs = [
-  { time: '09:45:23', level: 'INFO', service: 'API', message: 'Request processed successfully - /api/v1/documents' },
-  { time: '09:45:18', level: 'WARN', service: 'Storage', message: 'High latency detected on S3 bucket advist-prod' },
-  { time: '09:45:12', level: 'INFO', service: 'Auth', message: 'User login successful - user@example.com' },
-  { time: '09:45:08', level: 'ERROR', service: 'Queue', message: 'Job failed: archive_documents - Timeout exceeded' },
-  { time: '09:45:01', level: 'INFO', service: 'Cache', message: 'Cache invalidated for tenant: advist-demo' },
-  { time: '09:44:55', level: 'DEBUG', service: 'PDF', message: 'Document generated: contract_2024_001.pdf' },
+  {
+    time: '09:45:23',
+    level: 'INFO',
+    service: 'API',
+    message: 'Request processed successfully - /api/v1/documents',
+  },
+  {
+    time: '09:45:18',
+    level: 'WARN',
+    service: 'Storage',
+    message: 'High latency detected on S3 bucket advist-prod',
+  },
+  {
+    time: '09:45:12',
+    level: 'INFO',
+    service: 'Auth',
+    message: 'User login successful - user@example.com',
+  },
+  {
+    time: '09:45:08',
+    level: 'ERROR',
+    service: 'Queue',
+    message: 'Job failed: archive_documents - Timeout exceeded',
+  },
+  {
+    time: '09:45:01',
+    level: 'INFO',
+    service: 'Cache',
+    message: 'Cache invalidated for tenant: advist-demo',
+  },
+  {
+    time: '09:44:55',
+    level: 'DEBUG',
+    service: 'PDF',
+    message: 'Document generated: contract_2024_001.pdf',
+  },
 ];
 
 const maintenanceWindows = [
@@ -102,7 +238,7 @@ const maintenanceWindows = [
 ];
 
 export const SuperAdminSystemPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceStatus | null>(null);
@@ -114,50 +250,74 @@ export const SuperAdminSystemPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy': return 'bg-advist-success';
-      case 'warning': return 'bg-advist-gold';
-      case 'critical': return 'bg-advist-error';
-      case 'maintenance': return 'bg-advist-dark';
-      default: return 'bg-advist-text-secondary';
+      case 'healthy':
+        return 'bg-advist-success';
+      case 'warning':
+        return 'bg-advist-gold';
+      case 'critical':
+        return 'bg-advist-error';
+      case 'maintenance':
+        return 'bg-advist-dark';
+      default:
+        return 'bg-advist-text-secondary';
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'healthy': return <Badge variant="success">Operationnel</Badge>;
-      case 'warning': return <Badge variant="warning">Attention</Badge>;
-      case 'critical': return <Badge variant="danger">Critique</Badge>;
-      case 'maintenance': return <Badge variant="default">Maintenance</Badge>;
-      default: return <Badge>Inconnu</Badge>;
+      case 'healthy':
+        return <Badge variant="success">Operationnel</Badge>;
+      case 'warning':
+        return <Badge variant="warning">Attention</Badge>;
+      case 'critical':
+        return <Badge variant="danger">Critique</Badge>;
+      case 'maintenance':
+        return <Badge variant="default">Maintenance</Badge>;
+      default:
+        return <Badge>Inconnu</Badge>;
     }
   };
 
   const getJobStatusBadge = (status: string) => {
     switch (status) {
-      case 'running': return <Badge variant="primary">En cours</Badge>;
-      case 'completed': return <Badge variant="success">Termine</Badge>;
-      case 'failed': return <Badge variant="danger">Echec</Badge>;
-      case 'scheduled': return <Badge variant="default">Planifie</Badge>;
-      default: return <Badge>Inconnu</Badge>;
+      case 'running':
+        return <Badge variant="primary">En cours</Badge>;
+      case 'completed':
+        return <Badge variant="success">Termine</Badge>;
+      case 'failed':
+        return <Badge variant="danger">Echec</Badge>;
+      case 'scheduled':
+        return <Badge variant="default">Planifie</Badge>;
+      default:
+        return <Badge>Inconnu</Badge>;
     }
   };
 
   const getLogLevelClass = (level: string) => {
     switch (level) {
-      case 'ERROR': return 'text-advist-error bg-advist-gold-light';
-      case 'WARN': return 'text-advist-gold-dark bg-advist-gold-light';
-      case 'INFO': return 'text-advist-gray900 bg-advist-gold-light';
-      case 'DEBUG': return 'text-advist-text-secondary bg-advist-surface-dark';
-      default: return 'text-advist-text-secondary bg-advist-surface-dark';
+      case 'ERROR':
+        return 'text-advist-error bg-advist-gold-light';
+      case 'WARN':
+        return 'text-advist-gold-dark bg-advist-gold-light';
+      case 'INFO':
+        return 'text-advist-gray900 bg-advist-gold-light';
+      case 'DEBUG':
+        return 'text-advist-text-secondary bg-advist-surface-dark';
+      default:
+        return 'text-advist-text-secondary bg-advist-surface-dark';
     }
   };
 
   const getMetricColor = (status: string) => {
     switch (status) {
-      case 'normal': return 'bg-advist-success';
-      case 'warning': return 'bg-advist-gold';
-      case 'critical': return 'bg-advist-error';
-      default: return 'bg-advist-text-secondary';
+      case 'normal':
+        return 'bg-advist-success';
+      case 'warning':
+        return 'bg-advist-gold';
+      case 'critical':
+        return 'bg-advist-error';
+      default:
+        return 'bg-advist-text-secondary';
     }
   };
 
@@ -166,9 +326,7 @@ export const SuperAdminSystemPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-advist-gray900">
-            Systeme & Infrastructure
-          </h1>
+          <h1 className="text-2xl font-bold text-advist-gray900">Systeme & Infrastructure</h1>
           <p className="text-advist-gray900 mt-1">
             Surveillance et gestion de l'infrastructure ADVIST
           </p>
@@ -195,7 +353,10 @@ export const SuperAdminSystemPage: React.FC = () => {
           <Card key={metric.label} className="p-5">
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm text-advist-gray900">{metric.label}</span>
-              <span className="text-lg font-bold text-advist-gray900">{metric.value}{metric.unit}</span>
+              <span className="text-lg font-bold text-advist-gray900">
+                {metric.value}
+                {metric.unit}
+              </span>
             </div>
             <div className="h-2 bg-advist-bg rounded-full overflow-hidden">
               <div
@@ -273,7 +434,10 @@ export const SuperAdminSystemPage: React.FC = () => {
 
           <div className="space-y-3">
             {scheduledJobs.map((job) => (
-              <div key={job.id} className="flex items-center justify-between p-3 bg-advist-bg rounded-xl">
+              <div
+                key={job.id}
+                className="flex items-center justify-between p-3 bg-advist-bg rounded-xl"
+              >
                 <div className="flex items-center gap-3">
                   {job.status === 'running' && (
                     <RefreshCw size={14} className="text-advist-gray900 animate-spin" />
@@ -281,9 +445,7 @@ export const SuperAdminSystemPage: React.FC = () => {
                   {job.status === 'completed' && (
                     <CheckCircle size={14} className="text-advist-success" />
                   )}
-                  {job.status === 'failed' && (
-                    <XCircle size={14} className="text-advist-error" />
-                  )}
+                  {job.status === 'failed' && <XCircle size={14} className="text-advist-error" />}
                   {job.status === 'scheduled' && (
                     <Clock size={14} className="text-advist-text-secondary" />
                   )}
@@ -317,7 +479,9 @@ export const SuperAdminSystemPage: React.FC = () => {
             {recentLogs.map((log, index) => (
               <div key={index} className="flex items-start gap-2 p-2 bg-advist-bg rounded">
                 <span className="text-advist-gray900 whitespace-nowrap">{log.time}</span>
-                <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getLogLevelClass(log.level)}`}>
+                <span
+                  className={`px-1.5 py-0.5 rounded text-xs font-medium ${getLogLevelClass(log.level)}`}
+                >
                   {log.level}
                 </span>
                 <span className="text-advist-gray900">[{log.service}]</span>

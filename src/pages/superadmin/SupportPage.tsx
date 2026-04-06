@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Headphones,
@@ -14,15 +14,15 @@ import {
   Send,
   User,
   Building2,
-  Filter,
+  _Filter,
   RefreshCw,
   Loader2,
-  ChevronDown,
+  _ChevronDown,
   AlertCircle,
   Pause,
-  X,
+  _X,
 } from 'lucide-react';
-import { Button, Badge, Modal, Input } from '../../components/ui';
+import { Button, Modal, Input } from '../../components/ui';
 import type {
   SupportTicket,
   SupportMessage,
@@ -37,8 +37,9 @@ const mockTickets: SupportTicket[] = [
   {
     id: '1',
     ticket_id: 'SUP-A1B2C3D4',
-    title: 'Probleme de connexion a l\'application',
-    description: 'Je n\'arrive plus a me connecter depuis ce matin. Le message d\'erreur indique "Identifiants invalides" mais je suis sur de mon mot de passe.',
+    title: "Probleme de connexion a l'application",
+    description:
+      'Je n\'arrive plus a me connecter depuis ce matin. Le message d\'erreur indique "Identifiants invalides" mais je suis sur de mon mot de passe.',
     category: 'technical',
     priority: 'high',
     status: 'new',
@@ -55,7 +56,8 @@ const mockTickets: SupportTicket[] = [
     id: '2',
     ticket_id: 'SUP-E5F6G7H8',
     title: 'Question sur la facturation',
-    description: 'Je souhaite passer du plan Starter au plan Business. Comment proceder et quand le changement sera-t-il effectif ?',
+    description:
+      'Je souhaite passer du plan Starter au plan Business. Comment proceder et quand le changement sera-t-il effectif ?',
     category: 'billing',
     priority: 'medium',
     status: 'in_progress',
@@ -74,12 +76,13 @@ const mockTickets: SupportTicket[] = [
     id: '3',
     ticket_id: 'SUP-I9J0K1L2',
     title: 'Demande de formation',
-    description: 'Notre equipe souhaite une session de formation sur les workflows avances. Est-ce possible d\'organiser cela ?',
+    description:
+      "Notre equipe souhaite une session de formation sur les workflows avances. Est-ce possible d'organiser cela ?",
     category: 'general',
     priority: 'low',
     status: 'waiting',
     organization: '3',
-    organization_name: 'Orange Cote d\'Ivoire',
+    organization_name: "Orange Cote d'Ivoire",
     created_by: '3',
     created_by_name: 'Amadou Traore',
     created_by_email: 'amadou.traore@orange.ci',
@@ -93,7 +96,8 @@ const mockTickets: SupportTicket[] = [
     id: '4',
     ticket_id: 'SUP-M3N4O5P6',
     title: 'Bug lors de la signature',
-    description: 'Quand je tente de signer un document, l\'application se fige et je dois rafraichir la page.',
+    description:
+      "Quand je tente de signer un document, l'application se fige et je dois rafraichir la page.",
     category: 'technical',
     priority: 'urgent',
     status: 'in_progress',
@@ -112,7 +116,8 @@ const mockTickets: SupportTicket[] = [
     id: '5',
     ticket_id: 'SUP-Q7R8S9T0',
     title: 'Demande de remboursement',
-    description: 'Suite a un double prelevement sur notre compte, nous demandons le remboursement du montant en trop.',
+    description:
+      'Suite a un double prelevement sur notre compte, nous demandons le remboursement du montant en trop.',
     category: 'billing',
     priority: 'high',
     status: 'resolved',
@@ -137,7 +142,8 @@ const mockMessages: SupportMessage[] = [
     author: '2',
     author_name: 'Marie Diallo',
     author_email: 'marie.diallo@sgci.ci',
-    content: 'Bonjour, je souhaite passer du plan Starter au plan Business. Pouvez-vous m\'indiquer la procedure ?',
+    content:
+      "Bonjour, je souhaite passer du plan Starter au plan Business. Pouvez-vous m'indiquer la procedure ?",
     is_internal: false,
     created_at: '2024-12-28T14:20:00Z',
   },
@@ -147,7 +153,8 @@ const mockMessages: SupportMessage[] = [
     author: 'admin',
     author_name: 'Support ADVIST',
     author_email: 'support@advist.com',
-    content: 'Bonjour Marie, merci pour votre message. Pour passer au plan Business, vous pouvez vous rendre dans Parametres > Abonnement et cliquer sur "Changer de plan". Le changement sera effectif immediatement et la facturation sera proratisee.',
+    content:
+      'Bonjour Marie, merci pour votre message. Pour passer au plan Business, vous pouvez vous rendre dans Parametres > Abonnement et cliquer sur "Changer de plan". Le changement sera effectif immediatement et la facturation sera proratisee.',
     is_internal: false,
     created_at: '2024-12-29T09:15:00Z',
   },
@@ -166,7 +173,7 @@ export const SupportPage: React.FC = () => {
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isInternalNote, setIsInternalNote] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, _setIsLoading] = useState(false);
 
   // Create ticket form state
   const [createForm, setCreateForm] = useState({
@@ -214,43 +221,106 @@ export const SupportPage: React.FC = () => {
   const getStatusInfo = (status: SupportTicketStatus) => {
     switch (status) {
       case 'new':
-        return { icon: AlertCircle, color: 'text-primary-900', bg: 'bg-primary-50', label: t('support.status.new') };
+        return {
+          icon: AlertCircle,
+          color: 'text-primary-900',
+          bg: 'bg-primary-50',
+          label: t('support.status.new'),
+        };
       case 'in_progress':
-        return { icon: Loader2, color: 'text-advist-gold-dark', bg: 'bg-advist-gold-light', label: t('support.status.inProgress') };
+        return {
+          icon: Loader2,
+          color: 'text-advist-gold-dark',
+          bg: 'bg-advist-gold-light',
+          label: t('support.status.inProgress'),
+        };
       case 'waiting':
-        return { icon: Pause, color: 'text-orange-600', bg: 'bg-orange-50', label: t('support.status.waiting') };
+        return {
+          icon: Pause,
+          color: 'text-orange-600',
+          bg: 'bg-orange-50',
+          label: t('support.status.waiting'),
+        };
       case 'resolved':
-        return { icon: CheckCircle, color: 'text-advist-success', bg: 'bg-green-50', label: t('support.status.resolved') };
+        return {
+          icon: CheckCircle,
+          color: 'text-advist-success',
+          bg: 'bg-green-50',
+          label: t('support.status.resolved'),
+        };
       case 'closed':
-        return { icon: XCircle, color: 'text-primary-500', bg: 'bg-primary-100', label: t('support.status.closed') };
+        return {
+          icon: XCircle,
+          color: 'text-primary-500',
+          bg: 'bg-primary-100',
+          label: t('support.status.closed'),
+        };
       default:
-        return { icon: AlertCircle, color: 'text-primary-500', bg: 'bg-primary-100', label: status };
+        return {
+          icon: AlertCircle,
+          color: 'text-primary-500',
+          bg: 'bg-primary-100',
+          label: status,
+        };
     }
   };
 
   const getPriorityInfo = (priority: SupportTicketPriority) => {
     switch (priority) {
       case 'urgent':
-        return { color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', label: t('support.priority.urgent') };
+        return {
+          color: 'text-red-600',
+          bg: 'bg-red-50',
+          border: 'border-red-200',
+          label: t('support.priority.urgent'),
+        };
       case 'high':
-        return { color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', label: t('support.priority.high') };
+        return {
+          color: 'text-orange-600',
+          bg: 'bg-orange-50',
+          border: 'border-orange-200',
+          label: t('support.priority.high'),
+        };
       case 'medium':
-        return { color: 'text-advist-gold-dark', bg: 'bg-advist-gold-light', border: 'border-advist-gold', label: t('support.priority.medium') };
+        return {
+          color: 'text-advist-gold-dark',
+          bg: 'bg-advist-gold-light',
+          border: 'border-advist-gold',
+          label: t('support.priority.medium'),
+        };
       case 'low':
-        return { color: 'text-primary-600', bg: 'bg-primary-50', border: 'border-primary-200', label: t('support.priority.low') };
+        return {
+          color: 'text-primary-600',
+          bg: 'bg-primary-50',
+          border: 'border-primary-200',
+          label: t('support.priority.low'),
+        };
       default:
-        return { color: 'text-primary-600', bg: 'bg-primary-50', border: 'border-primary-200', label: priority };
+        return {
+          color: 'text-primary-600',
+          bg: 'bg-primary-50',
+          border: 'border-primary-200',
+          label: priority,
+        };
     }
   };
 
   const getCategoryInfo = (category: SupportTicketCategory) => {
     switch (category) {
       case 'technical':
-        return { label: t('support.category.technical'), color: 'text-primary-900', bg: 'bg-primary-50' };
+        return {
+          label: t('support.category.technical'),
+          color: 'text-primary-900',
+          bg: 'bg-primary-50',
+        };
       case 'billing':
         return { label: t('support.category.billing'), color: 'text-green-600', bg: 'bg-green-50' };
       case 'general':
-        return { label: t('support.category.general'), color: 'text-primary-900', bg: 'bg-primary-50' };
+        return {
+          label: t('support.category.general'),
+          color: 'text-primary-900',
+          bg: 'bg-primary-50',
+        };
       default:
         return { label: category, color: 'text-primary-600', bg: 'bg-primary-50' };
     }
@@ -275,9 +345,11 @@ export const SupportPage: React.FC = () => {
   };
 
   const handleChangeStatus = (ticketId: string, newStatus: SupportTicketStatus) => {
-    setTickets(tickets.map((t) =>
-      t.id === ticketId ? { ...t, status: newStatus, updated_at: new Date().toISOString() } : t
-    ));
+    setTickets(
+      tickets.map((t) =>
+        t.id === ticketId ? { ...t, status: newStatus, updated_at: new Date().toISOString() } : t
+      )
+    );
     if (selectedTicket?.id === ticketId) {
       setSelectedTicket({ ...selectedTicket, status: newStatus });
     }
@@ -302,11 +374,17 @@ export const SupportPage: React.FC = () => {
     setIsInternalNote(false);
 
     // Update ticket
-    setTickets(tickets.map((t) =>
-      t.id === selectedTicket.id
-        ? { ...t, messages_count: (t.messages_count || 0) + 1, updated_at: new Date().toISOString() }
-        : t
-    ));
+    setTickets(
+      tickets.map((t) =>
+        t.id === selectedTicket.id
+          ? {
+              ...t,
+              messages_count: (t.messages_count || 0) + 1,
+              updated_at: new Date().toISOString(),
+            }
+          : t
+      )
+    );
   };
 
   const handleCreateTicket = () => {
@@ -343,12 +421,8 @@ export const SupportPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-advist-gray900">
-            {t('support.title')}
-          </h1>
-          <p className="text-advist-blue-light mt-1">
-            {t('support.subtitle')}
-          </p>
+          <h1 className="text-2xl font-bold text-advist-gray900">{t('support.title')}</h1>
+          <p className="text-advist-blue-light mt-1">{t('support.subtitle')}</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -437,7 +511,10 @@ export const SupportPage: React.FC = () => {
       <div className="bg-white rounded-xl border border-advist-bg p-4">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light" />
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
+            />
             <input
               type="text"
               placeholder={t('support.searchPlaceholder')}
@@ -523,8 +600,12 @@ export const SupportPage: React.FC = () => {
                   <tr key={ticket.id} className="hover:bg-advist-bg/50 transition-all duration-240">
                     <td className="px-4 py-4">
                       <div>
-                        <p className="font-mono text-sm font-medium text-advist-gray900">{ticket.ticket_id}</p>
-                        <p className="text-sm text-advist-gray900 mt-0.5 line-clamp-1">{ticket.title}</p>
+                        <p className="font-mono text-sm font-medium text-advist-gray900">
+                          {ticket.ticket_id}
+                        </p>
+                        <p className="text-sm text-advist-gray900 mt-0.5 line-clamp-1">
+                          {ticket.title}
+                        </p>
                         <div className="flex items-center gap-1 mt-1 text-xs text-advist-blue-light">
                           <User size={12} />
                           <span>{ticket.created_by_name}</span>
@@ -542,23 +623,33 @@ export const SupportPage: React.FC = () => {
                         <div className="w-8 h-8 bg-advist-dark rounded-lg flex items-center justify-center text-white text-sm font-medium">
                           {ticket.organization_name.charAt(0)}
                         </div>
-                        <span className="text-sm text-advist-gray900">{ticket.organization_name}</span>
+                        <span className="text-sm text-advist-gray900">
+                          {ticket.organization_name}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-lg ${category.bg} ${category.color}`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-lg ${category.bg} ${category.color}`}
+                      >
                         {category.label}
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-lg border ${priority.bg} ${priority.color} ${priority.border}`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-lg border ${priority.bg} ${priority.color} ${priority.border}`}
+                      >
                         {priority.label}
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg ${status.bg}`}>
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg ${status.bg}`}
+                      >
                         <status.icon size={14} className={status.color} />
-                        <span className={`text-xs font-medium ${status.color}`}>{status.label}</span>
+                        <span className={`text-xs font-medium ${status.color}`}>
+                          {status.label}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-4">
@@ -599,7 +690,10 @@ export const SupportPage: React.FC = () => {
         {/* Pagination */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-advist-bg">
           <p className="text-sm text-advist-blue-light">
-            {t('support.showingTickets', { showing: filteredTickets.length, total: tickets.length })}
+            {t('support.showingTickets', {
+              showing: filteredTickets.length,
+              total: tickets.length,
+            })}
           </p>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" disabled>
@@ -625,19 +719,27 @@ export const SupportPage: React.FC = () => {
             <div className="p-4 bg-advist-bg rounded-xl">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-advist-gray900">{selectedTicket.title}</h3>
+                  <h3 className="text-lg font-semibold text-advist-gray900">
+                    {selectedTicket.title}
+                  </h3>
                   <div className="flex items-center gap-3 mt-2">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-lg ${getCategoryInfo(selectedTicket.category).bg} ${getCategoryInfo(selectedTicket.category).color}`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-lg ${getCategoryInfo(selectedTicket.category).bg} ${getCategoryInfo(selectedTicket.category).color}`}
+                    >
                       {getCategoryInfo(selectedTicket.category).label}
                     </span>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-lg border ${getPriorityInfo(selectedTicket.priority).bg} ${getPriorityInfo(selectedTicket.priority).color} ${getPriorityInfo(selectedTicket.priority).border}`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-lg border ${getPriorityInfo(selectedTicket.priority).bg} ${getPriorityInfo(selectedTicket.priority).color} ${getPriorityInfo(selectedTicket.priority).border}`}
+                    >
                       {getPriorityInfo(selectedTicket.priority).label}
                     </span>
                   </div>
                 </div>
                 <select
                   value={selectedTicket.status}
-                  onChange={(e) => handleChangeStatus(selectedTicket.id, e.target.value as SupportTicketStatus)}
+                  onChange={(e) =>
+                    handleChangeStatus(selectedTicket.id, e.target.value as SupportTicketStatus)
+                  }
                   className={`px-3 py-1.5 text-sm font-medium rounded-lg border ${getStatusInfo(selectedTicket.status).bg} ${getStatusInfo(selectedTicket.status).color}`}
                 >
                   <option value="new">{t('support.status.new')}</option>
@@ -656,7 +758,9 @@ export const SupportPage: React.FC = () => {
                   <Building2 size={14} />
                   {t('support.organization')}
                 </div>
-                <p className="font-medium text-advist-gray900">{selectedTicket.organization_name}</p>
+                <p className="font-medium text-advist-gray900">
+                  {selectedTicket.organization_name}
+                </p>
               </div>
               <div className="p-4 bg-advist-bg/50 rounded-xl">
                 <div className="flex items-center gap-2 text-sm text-advist-blue-light mb-1">
@@ -670,7 +774,9 @@ export const SupportPage: React.FC = () => {
 
             {/* Description */}
             <div>
-              <h4 className="text-sm font-medium text-advist-gray900 mb-2">{t('common.description')}</h4>
+              <h4 className="text-sm font-medium text-advist-gray900 mb-2">
+                {t('common.description')}
+              </h4>
               <p className="text-sm text-advist-gray900 p-4 bg-advist-bg/50 rounded-xl">
                 {selectedTicket.description}
               </p>
@@ -678,10 +784,14 @@ export const SupportPage: React.FC = () => {
 
             {/* Messages */}
             <div>
-              <h4 className="text-sm font-medium text-advist-gray900 mb-3">{t('support.conversation')}</h4>
+              <h4 className="text-sm font-medium text-advist-gray900 mb-3">
+                {t('support.conversation')}
+              </h4>
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {messages.length === 0 ? (
-                  <p className="text-sm text-advist-blue-light text-center py-4">{t('support.noMessages')}</p>
+                  <p className="text-sm text-advist-blue-light text-center py-4">
+                    {t('support.noMessages')}
+                  </p>
                 ) : (
                   messages.map((message) => (
                     <div
@@ -690,20 +800,24 @@ export const SupportPage: React.FC = () => {
                         message.is_internal
                           ? 'bg-yellow-50 border border-yellow-200'
                           : message.author === 'admin'
-                          ? 'bg-advist-gold-light'
-                          : 'bg-advist-bg'
+                            ? 'bg-advist-gold-light'
+                            : 'bg-advist-bg'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-advist-gray900">{message.author_name}</span>
+                          <span className="text-sm font-medium text-advist-gray900">
+                            {message.author_name}
+                          </span>
                           {message.is_internal && (
                             <span className="px-1.5 py-0.5 text-[10px] font-medium bg-yellow-200 text-yellow-800 rounded">
                               {t('support.internalNote')}
                             </span>
                           )}
                         </div>
-                        <span className="text-xs text-advist-blue-light">{formatDate(message.created_at)}</span>
+                        <span className="text-xs text-advist-blue-light">
+                          {formatDate(message.created_at)}
+                        </span>
                       </div>
                       <p className="text-sm text-advist-gray900">{message.content}</p>
                     </div>
@@ -722,14 +836,20 @@ export const SupportPage: React.FC = () => {
                     onChange={(e) => setIsInternalNote(e.target.checked)}
                     className="rounded"
                   />
-                  <span className="text-sm text-advist-gray900">{t('support.internalNoteDescription')}</span>
+                  <span className="text-sm text-advist-gray900">
+                    {t('support.internalNoteDescription')}
+                  </span>
                 </label>
               </div>
               <div className="flex gap-2">
                 <textarea
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder={isInternalNote ? t('support.addInternalNotePlaceholder') : t('support.writeReplyPlaceholder')}
+                  placeholder={
+                    isInternalNote
+                      ? t('support.addInternalNotePlaceholder')
+                      : t('support.writeReplyPlaceholder')
+                  }
                   className="flex-1 px-4 py-2.5 border border-advist-bg rounded-xl focus:ring-2 focus:ring-advist-gold resize-none"
                   rows={2}
                 />
@@ -759,7 +879,9 @@ export const SupportPage: React.FC = () => {
           />
 
           <div>
-            <label className="block text-sm font-medium text-advist-gray900 mb-1.5">{t('common.description')}</label>
+            <label className="block text-sm font-medium text-advist-gray900 mb-1.5">
+              {t('common.description')}
+            </label>
             <textarea
               value={createForm.description}
               onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
@@ -772,10 +894,17 @@ export const SupportPage: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-advist-gray900 mb-1.5">{t('support.form.category')}</label>
+              <label className="block text-sm font-medium text-advist-gray900 mb-1.5">
+                {t('support.form.category')}
+              </label>
               <select
                 value={createForm.category}
-                onChange={(e) => setCreateForm({ ...createForm, category: e.target.value as SupportTicketCategory })}
+                onChange={(e) =>
+                  setCreateForm({
+                    ...createForm,
+                    category: e.target.value as SupportTicketCategory,
+                  })
+                }
                 className="w-full px-4 py-2.5 border border-advist-bg rounded-xl focus:ring-2 focus:ring-advist-gold"
               >
                 <option value="technical">{t('support.category.technical')}</option>
@@ -784,10 +913,17 @@ export const SupportPage: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-advist-gray900 mb-1.5">{t('support.form.priority')}</label>
+              <label className="block text-sm font-medium text-advist-gray900 mb-1.5">
+                {t('support.form.priority')}
+              </label>
               <select
                 value={createForm.priority}
-                onChange={(e) => setCreateForm({ ...createForm, priority: e.target.value as SupportTicketPriority })}
+                onChange={(e) =>
+                  setCreateForm({
+                    ...createForm,
+                    priority: e.target.value as SupportTicketPriority,
+                  })
+                }
                 className="w-full px-4 py-2.5 border border-advist-bg rounded-xl focus:ring-2 focus:ring-advist-gold"
               >
                 <option value="low">{t('support.priority.low')}</option>
@@ -809,7 +945,10 @@ export const SupportPage: React.FC = () => {
             <Button variant="ghost" onClick={() => setShowCreateModal(false)}>
               {t('common.cancel')}
             </Button>
-            <Button onClick={handleCreateTicket} disabled={!createForm.title || !createForm.description}>
+            <Button
+              onClick={handleCreateTicket}
+              disabled={!createForm.title || !createForm.description}
+            >
               <Plus size={16} className="mr-2" />
               {t('support.createTicket')}
             </Button>

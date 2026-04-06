@@ -15,7 +15,6 @@ import {
   X,
   RefreshCw,
 } from 'lucide-react';
-import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
 import { useIntegrationStore } from '../../stores';
@@ -34,7 +33,7 @@ export const CloudFolderPicker: React.FC<CloudFolderPickerProps> = ({
   onClose,
   connectionId,
   onSelect,
-  selectedFolderId,
+  _selectedFolderId,
 }) => {
   const { t } = useTranslation();
   const {
@@ -67,9 +66,8 @@ export const CloudFolderPicker: React.FC<CloudFolderPickerProps> = ({
 
   const handleNavigateUp = () => {
     if (folderBreadcrumb.length > 0) {
-      const parentId = folderBreadcrumb.length > 1
-        ? folderBreadcrumb[folderBreadcrumb.length - 2].id
-        : undefined;
+      const parentId =
+        folderBreadcrumb.length > 1 ? folderBreadcrumb[folderBreadcrumb.length - 2].id : undefined;
       navigateUp();
       browseFolders(connectionId, parentId);
     }
@@ -91,9 +89,8 @@ export const CloudFolderPicker: React.FC<CloudFolderPickerProps> = ({
   };
 
   const handleRefresh = () => {
-    const currentParentId = folderBreadcrumb.length > 0
-      ? folderBreadcrumb[folderBreadcrumb.length - 1].id
-      : undefined;
+    const currentParentId =
+      folderBreadcrumb.length > 0 ? folderBreadcrumb[folderBreadcrumb.length - 1].id : undefined;
     browseFolders(connectionId, currentParentId);
   };
 
@@ -107,24 +104,14 @@ export const CloudFolderPicker: React.FC<CloudFolderPickerProps> = ({
       <div className="space-y-4">
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 p-3 bg-advist-bg rounded-xl">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleNavigateToRoot}
-            className="p-1"
-          >
+          <Button variant="ghost" size="sm" onClick={handleNavigateToRoot} className="p-1">
             <Home size={18} />
           </Button>
 
           {folderBreadcrumb.length > 0 && (
             <>
               <ChevronRight size={16} className="text-advist-gray900/40" />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleNavigateUp}
-                className="p-1"
-              >
+              <Button variant="ghost" size="sm" onClick={handleNavigateUp} className="p-1">
                 <ChevronLeft size={18} />
               </Button>
             </>
@@ -180,11 +167,12 @@ export const CloudFolderPicker: React.FC<CloudFolderPickerProps> = ({
                     flex items-center gap-3 px-4 py-3 cursor-pointer
                     border-b border-advist-gray200 last:border-b-0
                     transition-colors
-                    ${localSelectedFolder?.id === folder.id
-                      ? 'bg-advist-primary/10'
-                      : hoveredFolder === folder.id
-                        ? 'bg-advist-bg'
-                        : ''
+                    ${
+                      localSelectedFolder?.id === folder.id
+                        ? 'bg-advist-primary/10'
+                        : hoveredFolder === folder.id
+                          ? 'bg-advist-bg'
+                          : ''
                     }
                   `}
                 >
@@ -199,9 +187,7 @@ export const CloudFolderPicker: React.FC<CloudFolderPickerProps> = ({
                       {folder.name}
                     </p>
                     {folder.path && (
-                      <p className="text-xs text-advist-gray900/50 truncate">
-                        {folder.path}
-                      </p>
+                      <p className="text-xs text-advist-gray900/50 truncate">{folder.path}</p>
                     )}
                   </div>
 
@@ -220,7 +206,9 @@ export const CloudFolderPicker: React.FC<CloudFolderPickerProps> = ({
         {localSelectedFolder && (
           <div className="p-3 bg-advist-primary/5 rounded-xl">
             <p className="text-sm text-advist-gray900">
-              <span className="font-medium">{t('integrations.folderPicker.selected', 'Selectionne')}:</span>{' '}
+              <span className="font-medium">
+                {t('integrations.folderPicker.selected', 'Selectionne')}:
+              </span>{' '}
               {localSelectedFolder.name}
             </p>
           </div>
@@ -232,10 +220,7 @@ export const CloudFolderPicker: React.FC<CloudFolderPickerProps> = ({
             <X size={16} className="mr-2" />
             {t('common.cancel', 'Annuler')}
           </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={!localSelectedFolder}
-          >
+          <Button onClick={handleConfirm} disabled={!localSelectedFolder}>
             <Check size={16} className="mr-2" />
             {t('common.confirm', 'Confirmer')}
           </Button>

@@ -5,16 +5,23 @@
  * Report generation remains client-side; persistence uses Supabase.
  */
 import { supabase } from '../lib/supabase';
-import { parseSupabaseError, downloadFile } from './supabase-helpers';
+import { downloadFile } from './supabase-helpers';
 import { generateVerificationCode as generateVerificationCodeUtil } from '../utils/encryption';
-import type { ValidationReportData, ValidationStep, AuthorizedSigner } from '../components/workflows/ValidationReport';
+import type {
+  ValidationReportData,
+  ValidationStep,
+  AuthorizedSigner,
+} from '../components/workflows/ValidationReport';
 import type { WorkflowInstance, Document } from '../types';
 
 // ---------------------------------------------------------------------------
 // Helpers — pure functions (unchanged)
 // ---------------------------------------------------------------------------
 
-const generateReferenceNumber = (documentId: string | number, workflowId: string | number): string => {
+const generateReferenceNumber = (
+  documentId: string | number,
+  workflowId: string | number
+): string => {
   const date = new Date();
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -112,7 +119,9 @@ export const validationReportService = {
 
     const steps: ValidationStep[] = workflowInstance.steps.map((step) => {
       const mainAssignee = step.assignees[0];
-      const completedAssignee = step.assignees.find(a => a.status === 'approved' || a.status === 'rejected');
+      const completedAssignee = step.assignees.find(
+        (a) => a.status === 'approved' || a.status === 'rejected'
+      );
 
       return {
         id: String(step.id),
@@ -122,21 +131,25 @@ export const validationReportService = {
         status: mapStepStatus(step.status),
         assignee: {
           id: mainAssignee?.user?.id || 0,
-          name: mainAssignee?.user ? `${mainAssignee.user.first_name} ${mainAssignee.user.last_name}` : 'Non assigné',
+          name: mainAssignee?.user
+            ? `${mainAssignee.user.first_name} ${mainAssignee.user.last_name}`
+            : 'Non assigné',
           email: mainAssignee?.user?.email || '',
           role: mainAssignee?.user?.role,
           department: mainAssignee?.user?.department?.name,
           title: '',
         },
         completedAt: completedAssignee?.acted_at,
-        completedBy: completedAssignee ? {
-          id: completedAssignee.user.id,
-          name: `${completedAssignee.user.first_name} ${completedAssignee.user.last_name}`,
-          email: completedAssignee.user.email,
-          delegatedFrom: completedAssignee.delegated_to
-            ? `${mainAssignee?.user?.first_name} ${mainAssignee?.user?.last_name}`
-            : undefined,
-        } : undefined,
+        completedBy: completedAssignee
+          ? {
+              id: completedAssignee.user.id,
+              name: `${completedAssignee.user.first_name} ${completedAssignee.user.last_name}`,
+              email: completedAssignee.user.email,
+              delegatedFrom: completedAssignee.delegated_to
+                ? `${mainAssignee?.user?.first_name} ${mainAssignee?.user?.last_name}`
+                : undefined,
+            }
+          : undefined,
         comment: completedAssignee?.comment,
         signature: undefined,
         paraphPages: [],
@@ -145,7 +158,9 @@ export const validationReportService = {
     });
 
     const authorizedSigners: AuthorizedSigner[] = workflowInstance.template.steps_config
-      .filter(step => step.type === 'signature' || step.type === 'approval' || step.type === 'paraph')
+      .filter(
+        (step) => step.type === 'signature' || step.type === 'approval' || step.type === 'paraph'
+      )
       .map((step) => ({
         id: step.assignee_id,
         name: '',
@@ -200,9 +215,7 @@ export const validationReportService = {
     const blob = new Blob([JSON.stringify(report)], { type: 'application/json' });
     const file = new File([blob], `${report.id}.json`, { type: 'application/json' });
 
-    const { error } = await supabase.storage
-      .from('documents')
-      .upload(path, file, { upsert: true });
+    const { error } = await supabase.storage.from('documents').upload(path, file, { upsert: true });
 
     if (error) throw new Error(error.message);
 
@@ -237,11 +250,11 @@ export const validationReportService = {
       if (!files || files.length === 0) return null;
 
       // Get the latest report for this document
-      const matching = files.filter(f => f.name.startsWith(String(documentId)));
+      const matching = files.filter((f) => f.name.startsWith(String(documentId)));
       if (matching.length === 0) return null;
 
       const latest = matching.sort((a, b) =>
-        (b.created_at || '').localeCompare(a.created_at || ''),
+        (b.created_at || '').localeCompare(a.created_at || '')
       )[0];
 
       return this.getReport(latest.name.replace('.json', ''));
@@ -255,7 +268,7 @@ export const validationReportService = {
    */
   async verifyReport(
     reportId: string,
-    verificationCode: string,
+    verificationCode: string
   ): Promise<{ valid: boolean; report?: ValidationReportData; message?: string }> {
     try {
       const report = await this.getReport(reportId);
@@ -285,11 +298,7 @@ export const validationReportService = {
   /**
    * Send report via email — requires Edge Function (Phase 5)
    */
-  async sendReportByEmail(
-    reportId: string,
-    recipients: string[],
-    message?: string,
-  ): Promise<void> {
+  async sendReportByEmail(reportId: string, recipients: string[], message?: string): Promise<void> {
     const { error } = await supabase.functions.invoke('send-validation-report', {
       body: { reportId, recipients, message },
     });

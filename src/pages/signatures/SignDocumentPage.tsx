@@ -20,10 +20,10 @@ import {
   CheckCircle,
   XCircle,
   Ban,
-  AlertTriangle,
+  _AlertTriangle,
   GitBranch,
 } from 'lucide-react';
-import { Button, Badge, Card, Input } from '../../components/ui';
+import { Button, Badge, Input } from '../../components/ui';
 import { WorkflowViewer } from '../../components/workflows';
 
 // Workflow step interface
@@ -80,7 +80,13 @@ const mockDocuments: Record<string, any> = {
           name: 'Consultation Juridique',
           type: 'consultation',
           status: 'approved',
-          assignee: { id: 2, name: 'Sophie Bernard', email: 'sophie.bernard@example.com', role: 'Juriste', department: 'Direction Juridique' },
+          assignee: {
+            id: 2,
+            name: 'Sophie Bernard',
+            email: 'sophie.bernard@example.com',
+            role: 'Juriste',
+            department: 'Direction Juridique',
+          },
           completedAt: '2024-11-24T11:30:00Z',
           completedBy: { id: 2, name: 'Sophie Bernard', email: 'sophie.bernard@example.com' },
           comment: 'Document conforme aux exigences légales. Clause 5.2 vérifiée.',
@@ -91,7 +97,13 @@ const mockDocuments: Record<string, any> = {
           name: 'Validation Achats',
           type: 'validation',
           status: 'approved',
-          assignee: { id: 3, name: 'Pierre Martin', email: 'pierre.martin@example.com', role: 'Responsable Achats', department: 'Direction des Achats' },
+          assignee: {
+            id: 3,
+            name: 'Pierre Martin',
+            email: 'pierre.martin@example.com',
+            role: 'Responsable Achats',
+            department: 'Direction des Achats',
+          },
           completedAt: '2024-11-25T14:45:00Z',
           completedBy: { id: 3, name: 'Pierre Martin', email: 'pierre.martin@example.com' },
           comment: 'Conditions commerciales validées. Montants conformes au budget prévu.',
@@ -102,7 +114,13 @@ const mockDocuments: Record<string, any> = {
           name: 'Approbation Direction',
           type: 'approval',
           status: 'in_progress',
-          assignee: { id: 4, name: 'Jean Dupont', email: 'jean.dupont@example.com', role: 'Directeur', department: 'Direction Générale' },
+          assignee: {
+            id: 4,
+            name: 'Jean Dupont',
+            email: 'jean.dupont@example.com',
+            role: 'Directeur',
+            department: 'Direction Générale',
+          },
         },
         {
           id: 'step-4',
@@ -110,7 +128,13 @@ const mockDocuments: Record<string, any> = {
           name: 'Signature Finale',
           type: 'signature',
           status: 'pending',
-          assignee: { id: 5, name: 'Marie Leblanc', email: 'marie.leblanc@example.com', role: 'Directrice Générale', department: 'Direction Générale' },
+          assignee: {
+            id: 5,
+            name: 'Marie Leblanc',
+            email: 'marie.leblanc@example.com',
+            role: 'Directrice Générale',
+            department: 'Direction Générale',
+          },
         },
       ] as WorkflowStep[],
     },
@@ -175,7 +199,9 @@ export const SignDocumentPage: React.FC = () => {
   const needsParaphOnCurrentPage = document.pages_to_paraph.includes(currentPage);
   const isCurrentPageParaphed = paraphedPages.includes(currentPage);
   const needsSignatureOnCurrentPage = document.pages_to_sign.includes(currentPage);
-  const allParaphsComplete = document.pages_to_paraph.every((p: number) => paraphedPages.includes(p));
+  const allParaphsComplete = document.pages_to_paraph.every((p: number) =>
+    paraphedPages.includes(p)
+  );
   const canSign = !document.requires_paraph || allParaphsComplete;
 
   const handleParaphPage = () => {
@@ -201,11 +227,11 @@ export const SignDocumentPage: React.FC = () => {
     navigate(-1);
   };
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 25, 300));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 25, 25));
-  const handleRotate = () => setRotation(prev => (prev + 90) % 360);
-  const handlePrevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
-  const handleNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 25, 300));
+  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 25, 25));
+  const handleRotate = () => setRotation((prev) => (prev + 90) % 360);
+  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   return (
     <div className="h-screen flex flex-col bg-advist-bg">
@@ -221,14 +247,18 @@ export const SignDocumentPage: React.FC = () => {
           <div>
             <h1 className="text-advist-gray900 font-semibold">{document.title}</h1>
             <p className="text-sm text-advist-text-muted">
-              {t('signatures.requestedBy', 'Demandé par')} {document.requestedBy} • {totalPages} pages
+              {t('signatures.requestedBy', 'Demandé par')} {document.requestedBy} • {totalPages}{' '}
+              pages
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           {document.ohada_compliant && (
-            <Badge variant="success" className="bg-advist-success/20 text-advist-success border-advist-success/30">
+            <Badge
+              variant="success"
+              className="bg-advist-success/20 text-advist-success border-advist-success/30"
+            >
               <Award size={14} className="mr-1" />
               OHADA
             </Badge>
@@ -236,16 +266,25 @@ export const SignDocumentPage: React.FC = () => {
 
           {/* Zoom controls */}
           <div className="flex items-center gap-1 bg-advist-surface-dark rounded-xl px-2 py-1">
-            <button onClick={handleZoomOut} className="p-1.5 hover:bg-advist-gold/30 rounded text-advist-gray900">
+            <button
+              onClick={handleZoomOut}
+              className="p-1.5 hover:bg-advist-gold/30 rounded text-advist-gray900"
+            >
               <ZoomOut size={16} />
             </button>
             <span className="text-sm text-advist-gray900 min-w-[50px] text-center">{zoom}%</span>
-            <button onClick={handleZoomIn} className="p-1.5 hover:bg-advist-gold/30 rounded text-advist-gray900">
+            <button
+              onClick={handleZoomIn}
+              className="p-1.5 hover:bg-advist-gold/30 rounded text-advist-gray900"
+            >
               <ZoomIn size={16} />
             </button>
           </div>
 
-          <button onClick={handleRotate} className="p-2 hover:bg-advist-surface-dark rounded-xl text-advist-gray900">
+          <button
+            onClick={handleRotate}
+            className="p-2 hover:bg-advist-surface-dark rounded-xl text-advist-gray900"
+          >
             <RotateCw size={18} />
           </button>
 
@@ -268,12 +307,15 @@ export const SignDocumentPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <Stamp size={16} className="text-advist-gold-dark" />
             <span className="text-sm text-advist-gray900">
-              {t('signatures.paraphProgress', 'Progression des paraphes')}: {paraphedPages.length}/{document.pages_to_paraph.length}
+              {t('signatures.paraphProgress', 'Progression des paraphes')}: {paraphedPages.length}/
+              {document.pages_to_paraph.length}
             </span>
             <div className="flex-1 h-2 bg-advist-surface-dark rounded-full overflow-hidden">
               <div
                 className="h-full bg-advist-gold rounded-full transition-all"
-                style={{ width: `${(paraphedPages.length / document.pages_to_paraph.length) * 100}%` }}
+                style={{
+                  width: `${(paraphedPages.length / document.pages_to_paraph.length) * 100}%`,
+                }}
               />
             </div>
             {allParaphsComplete && <CheckCircle size={16} className="text-advist-success" />}
@@ -321,7 +363,9 @@ export const SignDocumentPage: React.FC = () => {
             {/* Document content placeholder */}
             <div className="w-full h-full flex flex-col items-center justify-center p-8">
               <FileText size={64} className="text-advist-text-muted mb-4" />
-              <p className="text-advist-text-secondary text-lg">Page {currentPage} / {totalPages}</p>
+              <p className="text-advist-text-secondary text-lg">
+                Page {currentPage} / {totalPages}
+              </p>
               <p className="text-advist-text-muted text-sm mt-2">{document.title}</p>
 
               {/* In real app, render actual PDF page here */}
@@ -329,11 +373,13 @@ export const SignDocumentPage: React.FC = () => {
 
             {/* Page indicators overlay */}
             {needsParaphOnCurrentPage && (
-              <div className={`absolute top-4 right-4 px-4 py-2 rounded-xl font-medium shadow-lg ${
-                isCurrentPageParaphed
-                  ? 'bg-advist-success text-white'
-                  : 'bg-advist-gold-light text-advist-gold-dark border-2 border-advist-gold'
-              }`}>
+              <div
+                className={`absolute top-4 right-4 px-4 py-2 rounded-xl font-medium shadow-lg ${
+                  isCurrentPageParaphed
+                    ? 'bg-advist-success text-white'
+                    : 'bg-advist-gold-light text-advist-gold-dark border-2 border-advist-gold'
+                }`}
+              >
                 {isCurrentPageParaphed ? (
                   <span className="flex items-center gap-2">
                     <Check size={18} /> {t('signatures.paraphed', 'Paraphé')}
@@ -347,11 +393,13 @@ export const SignDocumentPage: React.FC = () => {
             )}
 
             {needsSignatureOnCurrentPage && (
-              <div className={`absolute bottom-4 right-4 px-4 py-2 rounded-xl font-medium shadow-lg ${
-                signatureApplied
-                  ? 'bg-advist-success text-white'
-                  : 'bg-advist-gold-light text-advist-gray900 border-2 border-advist-dark'
-              }`}>
+              <div
+                className={`absolute bottom-4 right-4 px-4 py-2 rounded-xl font-medium shadow-lg ${
+                  signatureApplied
+                    ? 'bg-advist-success text-white'
+                    : 'bg-advist-gold-light text-advist-gray900 border-2 border-advist-dark'
+                }`}
+              >
                 {signatureApplied ? (
                   <span className="flex items-center gap-2">
                     <Check size={18} /> {t('signatures.signed', 'Signé')}
@@ -372,7 +420,7 @@ export const SignDocumentPage: React.FC = () => {
           <div className="p-4 border-b border-advist-border">
             <h3 className="text-advist-gray900 font-medium mb-3">Pages</h3>
             <div className="flex flex-wrap gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
                 const needsParaph = document.pages_to_paraph.includes(page);
                 const isParaphed = paraphedPages.includes(page);
                 const needsSign = document.pages_to_sign.includes(page);
@@ -384,11 +432,16 @@ export const SignDocumentPage: React.FC = () => {
                     className={`
                       w-10 h-10 rounded-xl text-sm font-medium transition-all
                       ${currentPage === page ? 'ring-2 ring-advist-gold ring-offset-2 ring-offset-white' : ''}
-                      ${needsSign
-                        ? (signatureApplied ? 'bg-advist-success text-white' : 'bg-advist-surface-dark text-advist-text-secondary border border-advist-gold')
-                        : needsParaph
-                          ? (isParaphed ? 'bg-advist-success text-white' : 'bg-advist-gold/30 text-advist-gold-dark border border-advist-gold')
-                          : 'bg-advist-surface-dark text-advist-text-muted hover:bg-advist-gold/20'
+                      ${
+                        needsSign
+                          ? signatureApplied
+                            ? 'bg-advist-success text-white'
+                            : 'bg-advist-surface-dark text-advist-text-secondary border border-advist-gold'
+                          : needsParaph
+                            ? isParaphed
+                              ? 'bg-advist-success text-white'
+                              : 'bg-advist-gold/30 text-advist-gold-dark border border-advist-gold'
+                            : 'bg-advist-surface-dark text-advist-text-muted hover:bg-advist-gold/20'
                       }
                     `}
                   >
@@ -411,9 +464,12 @@ export const SignDocumentPage: React.FC = () => {
                 leftIcon={<Stamp size={18} />}
               >
                 <span className="flex flex-col items-start">
-                  <span className="font-semibold">{t('signatures.paraphAllPages', 'Parapher toutes les pages')}</span>
+                  <span className="font-semibold">
+                    {t('signatures.paraphAllPages', 'Parapher toutes les pages')}
+                  </span>
                   <span className="text-xs opacity-80">
-                    {document.pages_to_paraph.length - paraphedPages.length} {t('signatures.pagesRemaining', 'pages restantes')}
+                    {document.pages_to_paraph.length - paraphedPages.length}{' '}
+                    {t('signatures.pagesRemaining', 'pages restantes')}
                   </span>
                 </span>
               </Button>

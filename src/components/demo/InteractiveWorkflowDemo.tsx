@@ -5,10 +5,10 @@
 import React, { useState, useEffect } from 'react';
 import {
   FileText,
-  User,
+  _User,
   Check,
   X,
-  Clock,
+  _Clock,
   MessageSquare,
   AlertCircle,
   CheckCircle2,
@@ -18,7 +18,7 @@ import {
   Building2,
   Calendar,
   Euro,
-  ArrowRight,
+  _ArrowRight,
   Play,
   Timer,
   Eye,
@@ -67,31 +67,35 @@ export const InteractiveWorkflowDemo: React.FC = () => {
 
   useEffect(() => {
     if (!isComplete && !showIntro) {
-      setApprovers(prev => prev.map((a, i) => ({
-        ...a,
-        status: i < currentStep ? a.status : i === currentStep ? 'current' : 'pending'
-      })));
+      setApprovers((prev) =>
+        prev.map((a, i) => ({
+          ...a,
+          status: i < currentStep ? a.status : i === currentStep ? 'current' : 'pending',
+        }))
+      );
     }
   }, [currentStep, isComplete, showIntro]);
 
   const handleApprove = async () => {
     setIsProcessing(true);
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
 
     const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-    setApprovers(prev => prev.map((a, i) =>
-      i === currentStep
-        ? { ...a, status: 'approved', comment: comment || 'Approuvé', date: now }
-        : a
-    ));
+    setApprovers((prev) =>
+      prev.map((a, i) =>
+        i === currentStep
+          ? { ...a, status: 'approved', comment: comment || 'Approuvé', date: now }
+          : a
+      )
+    );
 
     setComment('');
     setShowCommentBox(false);
     setIsProcessing(false);
 
     if (currentStep < approvers.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
       setIsComplete(true);
     }
@@ -99,15 +103,17 @@ export const InteractiveWorkflowDemo: React.FC = () => {
 
   const handleReject = async () => {
     setIsProcessing(true);
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
 
     const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-    setApprovers(prev => prev.map((a, i) =>
-      i === currentStep
-        ? { ...a, status: 'rejected', comment: comment || 'Modifications requises', date: now }
-        : a
-    ));
+    setApprovers((prev) =>
+      prev.map((a, i) =>
+        i === currentStep
+          ? { ...a, status: 'rejected', comment: comment || 'Modifications requises', date: now }
+          : a
+      )
+    );
 
     setComment('');
     setShowCommentBox(false);
@@ -117,7 +123,14 @@ export const InteractiveWorkflowDemo: React.FC = () => {
   };
 
   const handleRestart = () => {
-    setApprovers(initialApprovers.map(a => ({ ...a, status: 'pending', comment: undefined, date: undefined })));
+    setApprovers(
+      initialApprovers.map((a) => ({
+        ...a,
+        status: 'pending',
+        comment: undefined,
+        date: undefined,
+      }))
+    );
     setCurrentStep(0);
     setComment('');
     setShowCommentBox(false);
@@ -140,9 +153,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
               <Check className="w-5 h-5 text-white" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Workflow de validation
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Workflow de validation</h2>
           <p className="text-gray-500 max-w-md mx-auto">
             Simulez un circuit d'approbation multi-niveaux. Vous incarnerez chaque approbateur.
           </p>
@@ -155,7 +166,9 @@ export const InteractiveWorkflowDemo: React.FC = () => {
               <FileText className="w-8 h-8 text-red-500" />
             </div>
             <div className="flex-1">
-              <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Document à valider</p>
+              <p className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Document à valider
+              </p>
               <h3 className="font-semibold text-lg mb-3">{documentInfo.name}</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex items-center gap-2">
@@ -217,9 +230,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
           Démarrer la simulation
         </button>
 
-        <p className="text-center text-xs text-gray-400 mt-4">
-          Durée estimée : 1 minute
-        </p>
+        <p className="text-center text-xs text-gray-400 mt-4">Durée estimée : 1 minute</p>
       </div>
     );
   }
@@ -228,7 +239,9 @@ export const InteractiveWorkflowDemo: React.FC = () => {
   if (isComplete) {
     return (
       <div className="max-w-2xl mx-auto py-4 text-center">
-        <div className={`w-24 h-24 ${wasRejected ? 'bg-red-100' : 'bg-gray-100'} rounded-full flex items-center justify-center mx-auto mb-6`}>
+        <div
+          className={`w-24 h-24 ${wasRejected ? 'bg-red-100' : 'bg-gray-100'} rounded-full flex items-center justify-center mx-auto mb-6`}
+        >
           {wasRejected ? (
             <XCircle className="w-12 h-12 text-red-600" />
           ) : (
@@ -242,8 +255,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
         <p className="text-gray-500 mb-8 max-w-sm mx-auto">
           {wasRejected
             ? 'Le document a été renvoyé pour modifications au demandeur.'
-            : 'Toutes les approbations ont été obtenues. Le document peut être signé.'
-          }
+            : 'Toutes les approbations ont été obtenues. Le document peut être signé.'}
         </p>
 
         {/* Summary Card */}
@@ -252,23 +264,28 @@ export const InteractiveWorkflowDemo: React.FC = () => {
           <div className="space-y-3">
             {approvers.map((approver) => (
               <div key={approver.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
-                  approver.status === 'approved'
-                    ? 'bg-gray-100 text-green-600'
-                    : approver.status === 'rejected'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-400'
-                }`}>
-                  {approver.status === 'approved' ? <Check className="w-5 h-5" /> :
-                   approver.status === 'rejected' ? <X className="w-5 h-5" /> : approver.avatar}
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                    approver.status === 'approved'
+                      ? 'bg-gray-100 text-green-600'
+                      : approver.status === 'rejected'
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-gray-100 text-gray-400'
+                  }`}
+                >
+                  {approver.status === 'approved' ? (
+                    <Check className="w-5 h-5" />
+                  ) : approver.status === 'rejected' ? (
+                    <X className="w-5 h-5" />
+                  ) : (
+                    approver.avatar
+                  )}
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-gray-900">{approver.name}</p>
                   <p className="text-xs text-gray-500">{approver.comment || 'En attente'}</p>
                 </div>
-                {approver.date && (
-                  <span className="text-xs text-gray-400">{approver.date}</span>
-                )}
+                {approver.date && <span className="text-xs text-gray-400">{approver.date}</span>}
               </div>
             ))}
           </div>
@@ -305,11 +322,15 @@ export const InteractiveWorkflowDemo: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <p className="text-sm font-medium text-gray-900">Étape {currentStep + 1} sur {approvers.length}</p>
+            <p className="text-sm font-medium text-gray-900">
+              Étape {currentStep + 1} sur {approvers.length}
+            </p>
             <p className="text-xs text-gray-500">Validation en cours</p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-gray-900">{Math.round((currentStep / approvers.length) * 100)}%</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {Math.round((currentStep / approvers.length) * 100)}%
+            </p>
           </div>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -325,15 +346,17 @@ export const InteractiveWorkflowDemo: React.FC = () => {
         {approvers.map((approver, index) => (
           <React.Fragment key={approver.id}>
             <div className="flex flex-col items-center">
-              <div className={`relative w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
-                approver.status === 'approved'
-                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-200 scale-100'
-                  : approver.status === 'rejected'
-                  ? 'bg-red-500 text-white shadow-lg shadow-red-200'
-                  : approver.status === 'current'
-                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-200 scale-110 ring-4 ring-gray-100'
-                  : 'bg-gray-100 text-gray-400'
-              }`}>
+              <div
+                className={`relative w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
+                  approver.status === 'approved'
+                    ? 'bg-gray-900 text-white shadow-lg shadow-gray-200 scale-100'
+                    : approver.status === 'rejected'
+                      ? 'bg-red-500 text-white shadow-lg shadow-red-200'
+                      : approver.status === 'current'
+                        ? 'bg-gray-900 text-white shadow-lg shadow-gray-200 scale-110 ring-4 ring-gray-100'
+                        : 'bg-gray-100 text-gray-400'
+                }`}
+              >
                 {approver.status === 'approved' ? (
                   <Check className="w-6 h-6" />
                 ) : approver.status === 'rejected' ? (
@@ -344,16 +367,20 @@ export const InteractiveWorkflowDemo: React.FC = () => {
                   <span>{index + 1}</span>
                 )}
               </div>
-              <span className={`text-xs mt-2 font-medium truncate max-w-[60px] ${
-                approver.status === 'current' ? 'text-gray-900' : 'text-gray-500'
-              }`}>
+              <span
+                className={`text-xs mt-2 font-medium truncate max-w-[60px] ${
+                  approver.status === 'current' ? 'text-gray-900' : 'text-gray-500'
+                }`}
+              >
                 {approver.name.split(' ')[0]}
               </span>
             </div>
             {index < approvers.length - 1 && (
-              <div className={`w-12 h-1 rounded-full transition-all duration-500 ${
-                approver.status === 'approved' ? 'bg-green-400' : 'bg-gray-200'
-              }`} />
+              <div
+                className={`w-12 h-1 rounded-full transition-all duration-500 ${
+                  approver.status === 'approved' ? 'bg-green-400' : 'bg-gray-200'
+                }`}
+              />
             )}
           </React.Fragment>
         ))}
@@ -383,7 +410,9 @@ export const InteractiveWorkflowDemo: React.FC = () => {
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-gray-900 truncate">{documentInfo.name}</h4>
-              <p className="text-sm text-gray-500 mt-1">{documentInfo.vendor} • {documentInfo.amount}</p>
+              <p className="text-sm text-gray-500 mt-1">
+                {documentInfo.vendor} • {documentInfo.amount}
+              </p>
               <button className="inline-flex items-center gap-1 text-xs text-gray-900 hover:text-gray-800 mt-2">
                 <Eye className="w-3 h-3" />
                 Prévisualiser

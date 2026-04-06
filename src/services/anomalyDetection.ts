@@ -8,7 +8,16 @@ import { invokeRpc } from './supabase-crud';
 import { invokeEdgeFunction } from '../lib/supabase';
 
 export type AnomalySeverity = 'info' | 'warning' | 'error' | 'critical';
-export type AnomalyCategory = 'date' | 'amount' | 'signature' | 'metadata' | 'content' | 'compliance' | 'behavior' | 'security' | 'fraud';
+export type AnomalyCategory =
+  | 'date'
+  | 'amount'
+  | 'signature'
+  | 'metadata'
+  | 'content'
+  | 'compliance'
+  | 'behavior'
+  | 'security'
+  | 'fraud';
 
 // Security anomaly types
 export type SecurityAnomalyType =
@@ -62,7 +71,17 @@ export interface AnomalyRule {
 
 export interface AnomalyCondition {
   field: string;
-  operator: 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains' | 'not_contains' | 'regex' | 'date_before' | 'date_after' | 'date_range';
+  operator:
+    | 'equals'
+    | 'not_equals'
+    | 'greater_than'
+    | 'less_than'
+    | 'contains'
+    | 'not_contains'
+    | 'regex'
+    | 'date_before'
+    | 'date_after'
+    | 'date_range';
   value: string | number | Date;
   value2?: string | number | Date; // For range conditions
 }
@@ -100,7 +119,7 @@ export const DEFAULT_RULES: Omit<AnomalyRule, 'id'>[] = [
   },
   {
     name: 'Document expiré',
-    description: 'Le document a dépassé sa date d\'expiration',
+    description: "Le document a dépassé sa date d'expiration",
     category: 'date',
     severity: 'critical',
     enabled: true,
@@ -152,7 +171,7 @@ export const DEFAULT_RULES: Omit<AnomalyRule, 'id'>[] = [
   },
   {
     name: 'Signature non conforme',
-    description: 'La signature électronique n\'est pas conforme aux standards',
+    description: "La signature électronique n'est pas conforme aux standards",
     category: 'signature',
     severity: 'error',
     enabled: true,
@@ -239,10 +258,7 @@ export const anomalyDetectionService = {
     resolved?: boolean;
     documentId?: number;
   }): Promise<Anomaly[]> {
-    let query = supabase
-      .from('anomalies')
-      .select('*')
-      .order('detected_at', { ascending: false });
+    let query = supabase.from('anomalies').select('*').order('detected_at', { ascending: false });
 
     if (filters?.category) query = query.eq('category', filters.category);
     if (filters?.severity) query = query.eq('severity', filters.severity);
@@ -300,10 +316,7 @@ export const anomalyDetectionService = {
    * Delete custom anomaly rule
    */
   async deleteRule(ruleId: string): Promise<void> {
-    const { error } = await supabase
-      .from('anomaly_rules')
-      .delete()
-      .eq('id', ruleId);
+    const { error } = await supabase.from('anomaly_rules').delete().eq('id', ruleId);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -388,7 +401,7 @@ export const anomalyDetectionService = {
           description: `Le document a expiré le ${expDate.toLocaleDateString('fr-FR')}`,
           field: 'expiration_date',
           actualValue: expDate.toISOString(),
-          suggestion: 'Ce document n\'est plus valide',
+          suggestion: "Ce document n'est plus valide",
           documentId: documentData.id || 0,
           detectedAt: now.toISOString(),
           resolved: false,
@@ -465,7 +478,8 @@ export const anomalyDetectionService = {
       const total = parseFloat(documentData.total);
       const expectedTotal = amount + vatAmount;
 
-      if (Math.abs(total - expectedTotal) > 1) { // 1 FCFA tolerance for rounding
+      if (Math.abs(total - expectedTotal) > 1) {
+        // 1 FCFA tolerance for rounding
         anomalies.push({
           id: `local-${Date.now()}-7`,
           category: 'amount',
@@ -485,7 +499,7 @@ export const anomalyDetectionService = {
 
     // Required fields validation
     const requiredFields = ['title', 'document_type', 'document_date'];
-    const missingFields = requiredFields.filter(f => !documentData[f]);
+    const missingFields = requiredFields.filter((f) => !documentData[f]);
 
     if (missingFields.length > 0) {
       anomalies.push({
@@ -803,7 +817,11 @@ export const securityAnomalyService = {
   /**
    * Escalate anomaly
    */
-  async escalateAnomaly(id: string, assignToUserId: string, notes?: string): Promise<SecurityAnomaly> {
+  async escalateAnomaly(
+    id: string,
+    assignToUserId: string,
+    notes?: string
+  ): Promise<SecurityAnomaly> {
     const { data, error } = await supabase
       .from('security_anomalies')
       .update({
@@ -1052,7 +1070,10 @@ export const forensicReportService = {
   /**
    * Add a recommendation to a report
    */
-  async addRecommendation(id: string, recommendation: ForensicRecommendation): Promise<ForensicReport> {
+  async addRecommendation(
+    id: string,
+    recommendation: ForensicRecommendation
+  ): Promise<ForensicReport> {
     const current = await forensicReportService.getReport(id);
     const updatedRecommendations = [...(current.recommendations ?? []), recommendation];
 
@@ -1120,7 +1141,7 @@ export class SecurityAlertWebSocket {
     this.ws = new WebSocket(wsUrl);
 
     this.ws.onopen = () => {
-      console.log('Security alerts WebSocket connected');
+      console.info('Security alerts WebSocket connected');
       this.reconnectAttempts = 0;
       this.emit('connected', {});
     };
@@ -1140,7 +1161,7 @@ export class SecurityAlertWebSocket {
     };
 
     this.ws.onclose = () => {
-      console.log('WebSocket closed');
+      console.info('WebSocket closed');
       this.emit('disconnected', {});
       this.attemptReconnect(token);
     };
@@ -1169,7 +1190,7 @@ export class SecurityAlertWebSocket {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
-      console.log(`Attempting reconnect in ${delay}ms...`);
+      console.info(`Attempting reconnect in ${delay}ms...`);
       setTimeout(() => this.connect(token), delay);
     } else {
       console.error('Max reconnect attempts reached');
@@ -1202,10 +1223,12 @@ export class SecurityAlertWebSocket {
 
   sendAcknowledgment(alertId: string): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({
-        type: 'acknowledge_alert',
-        alert_id: alertId,
-      }));
+      this.ws.send(
+        JSON.stringify({
+          type: 'acknowledge_alert',
+          alert_id: alertId,
+        })
+      );
     }
   }
 }

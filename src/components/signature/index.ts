@@ -4,3 +4,4 @@ export { SignatureCanvas } from './SignatureCanvas';
 export type { SignatureCanvasProps, SignatureCanvasMode } from './SignatureCanvas';
 export { SignatureModal } from './SignatureModal';
 export type { SignatureModalProps } from './SignatureModal';
+export { ConsentScreen } from './ConsentScreen';

@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   Play,
+  Star,
   ShieldCheck,
   Award,
   Globe,
   Check,
-  Sparkles,
+  _Sparkles,
   Zap,
   FileText,
   PenTool,
@@ -16,6 +17,7 @@ import {
   Users,
   BarChart3,
   Lock,
+  _Clock,
   CheckCircle,
 } from 'lucide-react';
 
@@ -45,7 +47,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
     <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0A0A0B]">
       {/* Subtle background */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#C8A961]/[0.03] rounded-full blur-[150px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/[0.02] rounded-full blur-[150px]" />
       </div>
 
       {/* Grid pattern overlay */}
@@ -62,18 +64,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
           {/* Left content */}
           <div className="space-y-8 z-10">
             {/* Announcement badge */}
-            <div className="inline-flex items-center gap-3 px-4 py-2 bg-[#C8A961]/10 backdrop-blur-xl border border-[#C8A961]/20 rounded-full animate-fade-in-up group hover:bg-[#C8A961]/15 transition-all cursor-pointer">
+            <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full animate-fade-in-up group hover:bg-white/10 transition-all cursor-pointer">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#C8A961]" />
-                <span className="text-sm font-medium text-[#C8A961]">Nouveau</span>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/60 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white/80"></span>
+                </span>
+                <span className="text-sm font-medium text-white/80">Nouveau</span>
               </div>
               <span className="text-sm text-white/50">Proph3t IA maintenant disponible</span>
-              <ArrowRight className="w-4 h-4 text-[#C8A961]/50 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-white/30 group-hover:translate-x-1 transition-transform" />
             </div>
 
             {/* Main headline */}
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-light leading-[1.2] tracking-tight">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
                 <span className="text-white">
                   <span className="inline-block overflow-hidden h-[1.2em] align-bottom">
                     <span key={currentWord} className="inline-block animate-slide-up text-white">
@@ -84,14 +89,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
                 <br />
                 <span className="text-white/90">vos documents</span>
                 <br />
-                <span className="text-[#C8A961] font-light">en toute sécurité.</span>
+                <span className="text-white/40">en toute sécurité.</span>
               </h1>
 
-              <p className="text-base md:text-lg text-[#C8A961]/80 font-light italic mt-2">
-                « L'avis de confiance, la trace qui sécurise. »
-              </p>
-
-              <p className="text-base md:text-lg text-white/50 max-w-xl leading-relaxed animate-fade-in-up animation-delay-200 font-light">
+              <p className="text-lg md:text-xl text-white/50 max-w-xl leading-relaxed animate-fade-in-up animation-delay-200">
                 {t(
                   'landing.hero.subtitle',
                   'La plateforme tout-en-un pour digitaliser vos circuits de validation, signer électroniquement et automatiser vos processus documentaires.'
@@ -101,21 +102,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-400">
-              <a href="https://atlas-studio.org/portal?app=advist">
-                <button className="group relative flex items-center justify-center gap-3 px-7 py-3.5 bg-[#C8A961] text-[#0A0A0B] font-medium text-sm rounded-xl overflow-hidden transition-all duration-300 hover:bg-[#D4B872] hover:shadow-[0_0_40px_8px_rgba(200,169,97,0.15)] hover:scale-[1.02]">
-                  <Sparkles className="w-4 h-4 relative z-10" />
+              <Link to="/register">
+                <button className="group relative flex items-center justify-center gap-3 px-8 py-4 bg-white text-black font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_8px_rgba(255,255,255,0.08)] hover:scale-[1.02]">
                   <span className="relative z-10">
-                    {t('landing.hero.cta', 'Commencer gratuitement')}
+                    {t('landing.hero.cta', 'Démarrer gratuitement')}
                   </span>
-                  <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
                 </button>
-              </a>
+              </Link>
               <button
                 onClick={onDemoClick}
-                className="group flex items-center justify-center gap-3 px-7 py-3.5 bg-white/5 backdrop-blur border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300"
+                className="group flex items-center justify-center gap-3 px-8 py-4 bg-white/5 backdrop-blur border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300"
               >
-                <Play className="w-4 h-4 text-white/70" fill="currentColor" />
-                <span className="font-normal text-sm text-white/80">
+                <Play className="w-5 h-5 text-white/70" fill="currentColor" />
+                <span className="font-medium text-white/80">
                   {t('landing.hero.demo', 'Voir la démo')}
                 </span>
               </button>
@@ -128,16 +128,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
                   {[...Array(4)].map((_, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full bg-[#C8A961]/20 border-2 border-[#0A0A0B] flex items-center justify-center text-xs font-bold text-[#C8A961]"
+                      className="w-8 h-8 rounded-full bg-white/10 border-2 border-[#0A0A0B] flex items-center justify-center text-xs font-bold text-white/70"
                     >
-                      {['AD', 'MC', 'IK', 'FN'][i]}
+                      {['JD', 'AM', 'SK', 'LM'][i]}
                     </div>
                   ))}
                 </div>
                 <div>
-                  <p className="text-sm text-white/40 font-light">
-                    Rejoint par <span className="text-white/70 font-medium">500+ entreprises</span>{' '}
-                    en Afrique
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-white/60 text-white/60" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-white/40">
+                    <span className="text-white/70 font-medium">2,500+</span> entreprises
+                    satisfaites
                   </p>
                 </div>
               </div>
@@ -154,7 +159,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
                     key={i}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10"
                   >
-                    <cert.icon className="w-4 h-4 text-[#C8A961]/60" />
+                    <cert.icon className="w-4 h-4 text-white/50" />
                     <span className="text-xs font-medium text-white/50">{cert.label}</span>
                   </div>
                 ))}
@@ -172,7 +177,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
           <a
             href="#trusted"
-            className="flex flex-col items-center gap-2 text-[#C8A961]/40 hover:text-[#C8A961]/60 transition-colors"
+            className="flex flex-col items-center gap-2 text-white/30 hover:text-white/50 transition-colors"
           >
             <span className="text-xs font-medium tracking-wider uppercase">Découvrir</span>
             <div className="w-6 h-10 border-2 border-current rounded-full flex justify-center pt-2">
@@ -202,7 +207,7 @@ const ProductPreview: React.FC = () => {
   return (
     <div className="relative">
       {/* Main container */}
-      <div className="relative bg-white/[0.06] backdrop-blur-xl rounded-2xl border border-[#C8A961]/10 overflow-hidden shadow-2xl">
+      <div className="relative bg-white/[0.06] backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
         {/* Browser chrome */}
         <div className="flex items-center gap-2 px-4 py-3 bg-black/40 border-b border-white/10">
           <div className="flex gap-1.5">
@@ -212,7 +217,7 @@ const ProductPreview: React.FC = () => {
           </div>
           <div className="flex-1 mx-4">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-sm max-w-xs mx-auto">
-              <Lock className="w-3 h-3 text-[#C8A961]/40" />
+              <Lock className="w-3 h-3 text-white/40" />
               <span className="text-white/30">app.advist.com</span>
             </div>
           </div>
@@ -226,9 +231,7 @@ const ProductPreview: React.FC = () => {
               <button
                 key={i}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                  i === activeTab
-                    ? 'bg-[#C8A961]/20 text-[#C8A961]'
-                    : 'text-white/20 hover:text-white/40'
+                  i === activeTab ? 'bg-white/10 text-white' : 'text-white/20 hover:text-white/40'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -253,7 +256,7 @@ const ProductPreview: React.FC = () => {
               onClick={() => setActiveTab(i)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === i
-                  ? 'bg-[#C8A961] text-[#0A0A0B]'
+                  ? 'bg-white text-black'
                   : 'text-white/40 hover:text-white/60 hover:bg-white/5'
               }`}
             >
@@ -265,8 +268,8 @@ const ProductPreview: React.FC = () => {
 
       {/* Floating notifications */}
       <div className="absolute -top-4 -right-4 animate-float">
-        <div className="flex items-center gap-3 px-4 py-3 bg-[#C8A961]/10 backdrop-blur-xl rounded-xl border border-[#C8A961]/20">
-          <Check className="w-5 h-5 text-[#C8A961]" />
+        <div className="flex items-center gap-3 px-4 py-3 bg-white/10 backdrop-blur-xl rounded-xl border border-white/10">
+          <Check className="w-5 h-5 text-white/70" />
           <div>
             <p className="text-sm font-semibold text-white/90">Document signé</p>
             <p className="text-xs text-white/40">À l'instant</p>
@@ -276,8 +279,8 @@ const ProductPreview: React.FC = () => {
 
       <div className="absolute -bottom-4 -left-4 animate-float animation-delay-1000">
         <div className="flex items-center gap-3 px-4 py-3 bg-white/10 backdrop-blur-xl rounded-xl border border-white/10">
-          <div className="w-10 h-10 bg-[#C8A961]/10 rounded-lg flex items-center justify-center">
-            <Zap className="w-5 h-5 text-[#C8A961]" />
+          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+            <Zap className="w-5 h-5 text-white/70" />
           </div>
           <div>
             <p className="text-sm font-semibold text-white/90">Workflow terminé</p>
@@ -300,10 +303,10 @@ const DashboardPreview: React.FC = () => (
         { label: 'Signés', value: '1,847', trend: '+8%' },
       ].map((stat, i) => (
         <div key={i} className="p-3 bg-white/5 rounded-xl border border-white/5">
-          <div className="w-8 h-8 bg-[#C8A961]/10 rounded-lg flex items-center justify-center mb-2">
-            <FileText className="w-4 h-4 text-[#C8A961]/60" />
+          <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center mb-2">
+            <FileText className="w-4 h-4 text-white/60" />
           </div>
-          <p className="text-xl font-bold text-[#C8A961]">{stat.value}</p>
+          <p className="text-xl font-bold text-white">{stat.value}</p>
           <div className="flex items-center justify-between">
             <p className="text-xs text-white/40">{stat.label}</p>
             <span className="text-xs text-white/50">{stat.trend}</span>
@@ -320,7 +323,7 @@ const DashboardPreview: React.FC = () => (
           {['7j', '30j', '90j'].map((p, i) => (
             <span
               key={i}
-              className={`text-xs px-2 py-1 rounded ${i === 1 ? 'bg-[#C8A961] text-[#0A0A0B]' : 'text-white/40'}`}
+              className={`text-xs px-2 py-1 rounded ${i === 1 ? 'bg-white text-black' : 'text-white/40'}`}
             >
               {p}
             </span>
@@ -331,7 +334,7 @@ const DashboardPreview: React.FC = () => (
         {[40, 65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 80].map((h, i) => (
           <div
             key={i}
-            className="flex-1 bg-[#C8A961]/20 rounded-t hover:bg-[#C8A961]/30 transition-opacity"
+            className="flex-1 bg-white/20 rounded-t hover:bg-white/30 transition-opacity"
             style={{ height: `${h}%` }}
           />
         ))}
@@ -352,7 +355,7 @@ const DashboardPreview: React.FC = () => (
           key={i}
           className="flex items-center gap-3 px-4 py-2 border-b border-white/5 last:border-0"
         >
-          <item.icon className="w-4 h-4 text-[#C8A961]/40" />
+          <item.icon className="w-4 h-4 text-white/40" />
           <span className="flex-1 text-sm text-white/60">{item.action}</span>
           <span className="text-xs text-white/30">{item.time}</span>
         </div>
@@ -369,7 +372,7 @@ const DocumentsPreview: React.FC = () => (
         <div className="w-4 h-4 rounded-full bg-white/20" />
         <span className="text-sm text-white/30">Rechercher...</span>
       </div>
-      <button className="h-9 px-4 bg-[#C8A961] text-[#0A0A0B] rounded-lg text-sm font-medium">
+      <button className="h-9 px-4 bg-white text-black rounded-lg text-sm font-medium">
         + Nouveau
       </button>
     </div>
@@ -380,8 +383,8 @@ const DocumentsPreview: React.FC = () => (
           key={i}
           className="p-3 bg-white/5 rounded-xl border border-white/5 text-center hover:bg-white/10 transition-colors cursor-pointer"
         >
-          <div className="w-10 h-10 bg-[#C8A961]/10 rounded-lg mx-auto mb-2 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-[#C8A961]/50" />
+          <div className="w-10 h-10 bg-white/10 rounded-lg mx-auto mb-2 flex items-center justify-center">
+            <FileText className="w-5 h-5 text-white/50" />
           </div>
           <p className="text-xs font-medium text-white/80">{name}</p>
           <p className="text-[10px] text-white/30">{12 + i * 8} fichiers</p>
@@ -403,7 +406,7 @@ const DocumentsPreview: React.FC = () => (
             <FileText className="w-4 h-4 text-white/50" />
           </div>
           <span className="flex-1 text-sm text-white/70 truncate">{doc.name}</span>
-          <span className="text-xs font-medium px-2 py-1 rounded-full bg-[#C8A961]/10 text-[#C8A961]/80">
+          <span className="text-xs font-medium px-2 py-1 rounded-full bg-white/10 text-white/60">
             {doc.status}
           </span>
         </div>
@@ -416,7 +419,7 @@ const DocumentsPreview: React.FC = () => (
 const SignaturesPreview: React.FC = () => (
   <div className="space-y-4 animate-fade-in">
     <div className="flex gap-2">
-      <button className="px-3 py-1.5 bg-[#C8A961] text-[#0A0A0B] rounded-lg text-xs font-medium">
+      <button className="px-3 py-1.5 bg-white text-black rounded-lg text-xs font-medium">
         À signer (3)
       </button>
       <button className="px-3 py-1.5 bg-white/5 text-white/60 rounded-lg text-xs border border-white/10">
@@ -433,37 +436,37 @@ const SignaturesPreview: React.FC = () => (
         className="p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors"
       >
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 bg-[#C8A961]/10 rounded-lg flex items-center justify-center">
-            <PenTool className="w-5 h-5 text-[#C8A961]/50" />
+          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+            <PenTool className="w-5 h-5 text-white/50" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-sm font-medium text-white/90 truncate">{doc.title}</span>
               {doc.urgent && (
-                <span className="text-[10px] px-1.5 py-0.5 bg-[#C8A961]/10 text-[#C8A961] rounded font-medium">
+                <span className="text-[10px] px-1.5 py-0.5 bg-white/10 text-white/60 rounded font-medium">
                   Urgent
                 </span>
               )}
             </div>
             <p className="text-xs text-white/40">Demandé par {doc.from}</p>
           </div>
-          <button className="h-8 px-3 bg-[#C8A961] text-[#0A0A0B] rounded-lg text-xs font-medium">
+          <button className="h-8 px-3 bg-white text-black rounded-lg text-xs font-medium">
             Signer
           </button>
         </div>
       </div>
     ))}
 
-    <div className="p-4 bg-white/5 rounded-xl border border-[#C8A961]/10">
+    <div className="p-4 bg-white/5 rounded-xl border border-white/10">
       <div className="flex items-center gap-2 mb-2">
-        <ShieldCheck className="w-4 h-4 text-[#C8A961]/50" />
+        <ShieldCheck className="w-4 h-4 text-white/50" />
         <span className="text-xs font-medium text-white/70">Signature certifiée eIDAS</span>
       </div>
       <svg className="w-full h-8" viewBox="0 0 200 30">
         <path
           d="M10,20 Q40,5 70,18 T130,15 T180,20"
           fill="none"
-          stroke="rgba(200,169,97,0.4)"
+          stroke="rgba(255,255,255,0.4)"
           strokeWidth="2"
           strokeLinecap="round"
         />
@@ -477,7 +480,7 @@ const WorkflowsPreview: React.FC = () => (
   <div className="space-y-4 animate-fade-in">
     <div className="flex justify-between items-center">
       <span className="text-sm font-medium text-white/80">Workflows actifs</span>
-      <button className="h-8 px-3 bg-[#C8A961] text-[#0A0A0B] rounded-lg text-xs font-medium">
+      <button className="h-8 px-3 bg-white text-black rounded-lg text-xs font-medium">
         + Nouveau
       </button>
     </div>
@@ -485,15 +488,15 @@ const WorkflowsPreview: React.FC = () => (
     <div className="p-4 bg-white/5 rounded-xl border border-white/5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#C8A961]/10 rounded-lg flex items-center justify-center">
-            <GitBranch className="w-5 h-5 text-[#C8A961]/60" />
+          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+            <GitBranch className="w-5 h-5 text-white/60" />
           </div>
           <div>
             <p className="text-sm font-medium text-white/90">Validation Contrat</p>
             <p className="text-xs text-white/40">3 étapes • 2 validées</p>
           </div>
         </div>
-        <span className="text-xs px-2 py-1 bg-[#C8A961]/10 text-[#C8A961] rounded-full font-medium">
+        <span className="text-xs px-2 py-1 bg-white/10 text-white/60 rounded-full font-medium">
           En cours
         </span>
       </div>
@@ -504,7 +507,7 @@ const WorkflowsPreview: React.FC = () => (
             <div className="flex flex-col items-center">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  i < 2 ? 'bg-[#C8A961] text-[#0A0A0B]' : 'bg-white/10'
+                  i < 2 ? 'bg-white text-black' : 'bg-white/10'
                 }`}
               >
                 {i < 2 ? (
@@ -513,14 +516,12 @@ const WorkflowsPreview: React.FC = () => (
                   <div className="w-2 h-2 bg-white/40 rounded-full" />
                 )}
               </div>
-              <span className={`text-[10px] mt-1 ${i < 2 ? 'text-[#C8A961]/70' : 'text-white/30'}`}>
+              <span className={`text-[10px] mt-1 ${i < 2 ? 'text-white/70' : 'text-white/30'}`}>
                 {step}
               </span>
             </div>
             {i < 2 && (
-              <div
-                className={`flex-1 h-0.5 rounded ${i < 1 ? 'bg-[#C8A961]/40' : 'bg-white/10'}`}
-              />
+              <div className={`flex-1 h-0.5 rounded ${i < 1 ? 'bg-white/40' : 'bg-white/10'}`} />
             )}
           </React.Fragment>
         ))}
@@ -535,14 +536,11 @@ const WorkflowsPreview: React.FC = () => (
         <div key={i} className="p-3 bg-white/5 rounded-xl border border-white/5">
           <p className="text-xs font-medium text-white/80 mb-2 truncate">{wf.name}</p>
           <div className="h-1.5 bg-white/10 rounded-full mb-1">
-            <div
-              className="h-full rounded-full bg-[#C8A961]/40"
-              style={{ width: `${wf.progress}%` }}
-            />
+            <div className="h-full rounded-full bg-white/40" style={{ width: `${wf.progress}%` }} />
           </div>
           <div className="flex justify-between">
             <span className="text-[10px] text-white/30">{wf.progress}%</span>
-            <span className="text-[10px] font-medium text-[#C8A961]/50">
+            <span className="text-[10px] font-medium text-white/50">
               {wf.progress === 100 ? 'Terminé' : 'En cours'}
             </span>
           </div>

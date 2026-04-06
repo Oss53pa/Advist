@@ -4,15 +4,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import {
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Calendar as CalendarIcon,
-} from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from 'lucide-react';
 import { publicationsApi } from '../../../services/marketing';
-import type { Publication, SocialPlatform } from '../../../types';
+import type { Publication } from '../../../types';
 
 const platformColors: Record<string, string> = {
   facebook: 'bg-primary-900',
@@ -38,8 +32,18 @@ const statusColors: Record<string, string> = {
 
 const DAYS_OF_WEEK = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 const MONTHS = [
-  'Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'
+  'Janvier',
+  'Fevrier',
+  'Mars',
+  'Avril',
+  'Mai',
+  'Juin',
+  'Juillet',
+  'Aout',
+  'Septembre',
+  'Octobre',
+  'Novembre',
+  'Decembre',
 ];
 
 export default function MarketingCalendarPage() {
@@ -190,10 +194,7 @@ export default function MarketingCalendarPage() {
               {/* Days of Week Header */}
               <div className="grid grid-cols-7 gap-px mb-2">
                 {DAYS_OF_WEEK.map((day) => (
-                  <div
-                    key={day}
-                    className="text-center text-sm font-medium text-primary-500 py-2"
-                  >
+                  <div key={day} className="text-center text-sm font-medium text-primary-500 py-2">
                     {day}
                   </div>
                 ))}
@@ -215,8 +216,8 @@ export default function MarketingCalendarPage() {
                           !day.isCurrentMonth
                             ? 'text-primary-400'
                             : isToday(day.date)
-                            ? 'text-white bg-primary-900 w-7 h-7 rounded-full flex items-center justify-center'
-                            : 'text-primary-900'
+                              ? 'text-white bg-primary-900 w-7 h-7 rounded-full flex items-center justify-center'
+                              : 'text-primary-900'
                         }`}
                       >
                         {day.date.getDate()}
@@ -244,7 +245,9 @@ export default function MarketingCalendarPage() {
                                 </div>
                               ))}
                               {pub.platforms.length > 2 && (
-                                <span className="text-primary-400">+{pub.platforms.length - 2}</span>
+                                <span className="text-primary-400">
+                                  +{pub.platforms.length - 2}
+                                </span>
                               )}
                             </div>
                             <span className="truncate block">{pub.title}</span>
@@ -252,7 +255,8 @@ export default function MarketingCalendarPage() {
                         ))}
                         {dayPublications.length > 3 && (
                           <span className="text-xs text-primary-500">
-                            +{dayPublications.length - 3} {t('superadmin.marketing.calendarPage.others')}
+                            +{dayPublications.length - 3}{' '}
+                            {t('superadmin.marketing.calendarPage.others')}
                           </span>
                         )}
                       </div>
@@ -267,19 +271,27 @@ export default function MarketingCalendarPage() {
 
       {/* Legend */}
       <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="text-sm font-medium text-primary-700 mb-3">{t('superadmin.marketing.calendarPage.legend')}</h3>
+        <h3 className="text-sm font-medium text-primary-700 mb-3">
+          {t('superadmin.marketing.calendarPage.legend')}
+        </h3>
         <div className="flex flex-wrap gap-6">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-l-2 border-primary-900 bg-primary-100 rounded"></div>
-            <span className="text-sm text-primary-600">{t('superadmin.marketing.status.scheduled')}</span>
+            <span className="text-sm text-primary-600">
+              {t('superadmin.marketing.status.scheduled')}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-l-2 border-green-500 bg-primary-100 rounded"></div>
-            <span className="text-sm text-primary-600">{t('superadmin.marketing.status.published')}</span>
+            <span className="text-sm text-primary-600">
+              {t('superadmin.marketing.status.published')}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-l-2 border-red-500 bg-primary-100 rounded"></div>
-            <span className="text-sm text-primary-600">{t('superadmin.marketing.status.failed')}</span>
+            <span className="text-sm text-primary-600">
+              {t('superadmin.marketing.status.failed')}
+            </span>
           </div>
           <div className="border-l border-primary-300 h-6"></div>
           {Object.entries(platformColors).map(([platform, color]) => (
@@ -297,7 +309,9 @@ export default function MarketingCalendarPage() {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg font-semibold text-primary-900">{selectedPublication.title}</h3>
+                <h3 className="text-lg font-semibold text-primary-900">
+                  {selectedPublication.title}
+                </h3>
                 <button
                   onClick={() => setSelectedPublication(null)}
                   className="text-primary-400 hover:text-primary-600"
@@ -308,27 +322,39 @@ export default function MarketingCalendarPage() {
 
               <div className="space-y-4">
                 <div>
-                  <span className="text-sm text-primary-500">{t('superadmin.marketing.calendarPage.status')}:</span>
-                  <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
-                    selectedPublication.status === 'scheduled'
-                      ? 'bg-primary-100 text-primary-800'
-                      : selectedPublication.status === 'published'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-primary-100 text-primary-700'
-                  }`}>
+                  <span className="text-sm text-primary-500">
+                    {t('superadmin.marketing.calendarPage.status')}:
+                  </span>
+                  <span
+                    className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
+                      selectedPublication.status === 'scheduled'
+                        ? 'bg-primary-100 text-primary-800'
+                        : selectedPublication.status === 'published'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-primary-100 text-primary-700'
+                    }`}
+                  >
                     {selectedPublication.status_display}
                   </span>
                 </div>
 
                 <div>
-                  <span className="text-sm text-primary-500">{t('superadmin.marketing.calendarPage.date')}:</span>
+                  <span className="text-sm text-primary-500">
+                    {t('superadmin.marketing.calendarPage.date')}:
+                  </span>
                   <span className="ml-2 text-primary-900">
-                    {new Date(selectedPublication.scheduled_at || selectedPublication.published_at || selectedPublication.created_at).toLocaleString('fr-FR')}
+                    {new Date(
+                      selectedPublication.scheduled_at ||
+                        selectedPublication.published_at ||
+                        selectedPublication.created_at
+                    ).toLocaleString('fr-FR')}
                   </span>
                 </div>
 
                 <div>
-                  <span className="text-sm text-primary-500">{t('superadmin.marketing.calendarPage.platforms')}:</span>
+                  <span className="text-sm text-primary-500">
+                    {t('superadmin.marketing.calendarPage.platforms')}:
+                  </span>
                   <div className="flex gap-2 mt-1">
                     {selectedPublication.platforms.map((platform) => (
                       <div
@@ -346,7 +372,9 @@ export default function MarketingCalendarPage() {
                 </div>
 
                 <div>
-                  <span className="text-sm text-primary-500">{t('superadmin.marketing.calendarPage.content')}:</span>
+                  <span className="text-sm text-primary-500">
+                    {t('superadmin.marketing.calendarPage.content')}:
+                  </span>
                   <p className="mt-1 text-primary-900 whitespace-pre-wrap">
                     {selectedPublication.content}
                   </p>

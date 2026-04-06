@@ -1,9 +1,8 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Archive,
   Search,
-  Filter,
   Download,
   Eye,
   RotateCcw,
@@ -16,15 +15,17 @@ import {
   MoreVertical,
   AlertTriangle,
   CheckCircle,
-  XCircle,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
+import { supabase } from '../../lib/supabase';
+import { useAuthStore } from '../../store';
+import { PrintButton } from '../../shared/PrintEngine';
 
 interface ArchivedDocument {
-  id: number;
+  id: string;
   title: string;
   original_type: string;
   archived_by: string;
@@ -36,106 +37,134 @@ interface ArchivedDocument {
   tags: string[];
 }
 
-// Mock data
-const MOCK_ARCHIVES: ArchivedDocument[] = [
-  {
-    id: 1,
-    title: 'Contrat Client XYZ - 2023',
-    original_type: 'Contrat',
-    archived_by: 'Jean Dupont',
-    archived_at: '2024-06-15',
-    retention_until: '2029-06-15',
-    size: '2.4 MB',
-    reason: 'Fin de contrat',
-    status: 'active',
-    tags: ['Contrat', 'Client', '2023'],
-  },
-  {
-    id: 2,
-    title: 'Rapport Annuel 2022',
-    original_type: 'Rapport',
-    archived_by: 'Marie Martin',
-    archived_at: '2024-01-10',
-    retention_until: '2032-01-10',
-    size: '15.8 MB',
-    reason: 'Archivage annuel',
-    status: 'active',
-    tags: ['Rapport', 'Finance', '2022'],
-  },
-  {
-    id: 3,
-    title: 'Factures Q1-Q2 2023',
-    original_type: 'Facture',
-    archived_by: 'Pierre Bernard',
-    archived_at: '2024-07-01',
-    retention_until: '2034-07-01',
-    size: '45.2 MB',
-    reason: 'Conservation legale',
-    status: 'legal_hold',
-    tags: ['Facture', 'Comptabilite', '2023'],
-  },
-  {
-    id: 4,
-    title: 'Procedures RH 2021',
-    original_type: 'Procedure',
-    archived_by: 'Sophie Petit',
-    archived_at: '2023-12-31',
-    retention_until: '2024-12-31',
-    size: '3.1 MB',
-    reason: 'Mise a jour des procedures',
-    status: 'pending_deletion',
-    tags: ['RH', 'Procedure', '2021'],
-  },
-  {
-    id: 5,
-    title: 'Dossier Formation 2022',
-    original_type: 'Formation',
-    archived_by: 'Lucas Robert',
-    archived_at: '2024-03-20',
-    retention_until: '2027-03-20',
-    size: '8.7 MB',
-    reason: 'Archivage periodique',
-    status: 'active',
-    tags: ['Formation', 'RH', '2022'],
-  },
-];
-
 const STATUS_CONFIG = {
   active: { label: 'Actif', color: 'green' as const, icon: CheckCircle },
   pending_deletion: { label: 'Suppression prevue', color: 'yellow' as const, icon: Clock },
   legal_hold: { label: 'Conservation legale', color: 'red' as const, icon: AlertTriangle },
 };
 
+// Map document_status 'archived' to a display status
+function mapArchiveStatus(metadata: any): 'active' | 'pending_deletion' | 'legal_hold' {
+  if (metadata?.legal_hold) return 'legal_hold';
+  if (metadata?.pending_deletion) return 'pending_deletion';
+  return 'active';
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export const ArchivesPage: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [selectedArchive, setSelectedArchive] = useState<ArchivedDocument | null>(null);
+  const [archives, setArchives] = useState<ArchivedDocument[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isLoading, setIsLoading] = useState(true);
 
-  const filteredArchives = MOCK_ARCHIVES.filter((archive) => {
-    const matchesSearch =
-      archive.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      archive.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesStatus = selectedStatus === 'all' || archive.status === selectedStatus;
-    const matchesType = selectedType === 'all' || archive.original_type === selectedType;
-    return matchesSearch && matchesStatus && matchesType;
-  });
+  useEffect(() => {
+    if (!orgId) {
+      setIsLoading(false);
+      return;
+    }
 
-  const stats = {
-    total: MOCK_ARCHIVES.length,
-    active: MOCK_ARCHIVES.filter((a) => a.status === 'active').length,
-    pendingDeletion: MOCK_ARCHIVES.filter((a) => a.status === 'pending_deletion').length,
-    legalHold: MOCK_ARCHIVES.filter((a) => a.status === 'legal_hold').length,
-  };
+    const fetchArchives = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('documents')
+          .select(`
+            id,
+            title,
+            file_size,
+            tags,
+            metadata,
+            archived_at,
+            status,
+            document_types(name),
+            profiles!documents_updated_by_fkey(first_name, last_name)
+          `)
+          .eq('organization_id', orgId)
+          .eq('status', 'archived')
+          .is('deleted_at', null)
+          .order('archived_at', { ascending: false });
 
-  const totalSize = MOCK_ARCHIVES.reduce((acc, a) => {
-    const size = parseFloat(a.size);
-    return acc + size;
-  }, 0).toFixed(1);
+        if (error) {
+          console.error('Archives fetch error:', error);
+          return;
+        }
 
-  const documentTypes = [...new Set(MOCK_ARCHIVES.map((a) => a.original_type))];
+        if (data) {
+          setArchives(
+            (data as any[]).map((doc) => {
+              const retentionDays = doc.metadata?.retention_days || 365 * 5;
+              const archivedDate = new Date(doc.archived_at || doc.created_at);
+              const retentionUntil = new Date(archivedDate);
+              retentionUntil.setDate(retentionUntil.getDate() + retentionDays);
+
+              return {
+                id: doc.id,
+                title: doc.title,
+                original_type: doc.document_types?.name || '-',
+                archived_by: doc.profiles
+                  ? `${doc.profiles.first_name} ${doc.profiles.last_name}`.trim()
+                  : '-',
+                archived_at: doc.archived_at || '',
+                retention_until: retentionUntil.toISOString().split('T')[0],
+                size: formatFileSize(doc.file_size || 0),
+                reason: doc.metadata?.archive_reason || '-',
+                status: mapArchiveStatus(doc.metadata),
+                tags: doc.tags || [],
+              };
+            })
+          );
+        }
+      } catch (err) {
+        console.error('Archives fetch error:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArchives();
+  }, [orgId]);
+
+  const filteredArchives = useMemo(() => {
+    return archives.filter((archive) => {
+      const matchesSearch =
+        archive.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        archive.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesStatus = selectedStatus === 'all' || archive.status === selectedStatus;
+      const matchesType = selectedType === 'all' || archive.original_type === selectedType;
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }, [archives, searchQuery, selectedStatus, selectedType]);
+
+  const stats = useMemo(() => ({
+    total: archives.length,
+    active: archives.filter((a) => a.status === 'active').length,
+    pendingDeletion: archives.filter((a) => a.status === 'pending_deletion').length,
+    legalHold: archives.filter((a) => a.status === 'legal_hold').length,
+  }), [archives]);
+
+  const totalSize = useMemo(() => {
+    return archives.reduce((acc, a) => {
+      const size = parseFloat(a.size);
+      return acc + (isNaN(size) ? 0 : size);
+    }, 0).toFixed(1);
+  }, [archives]);
+
+  const documentTypes = useMemo(
+    () => [...new Set(archives.map((a) => a.original_type).filter((t) => t !== '-'))],
+    [archives]
+  );
 
   const handleRestore = (archive: ArchivedDocument) => {
     setSelectedArchive(archive);
@@ -153,6 +182,34 @@ export const ArchivesPage: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <PrintButton config={{ title: 'Archives documentaires', appName: 'Advist' }}>
+            <div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Document</th>
+                    <th className="text-left py-2">Type</th>
+                    <th className="text-left py-2">Archivé par</th>
+                    <th className="text-left py-2">Date d'archivage</th>
+                    <th className="text-left py-2">Rétention</th>
+                    <th className="text-left py-2">Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredArchives.map((archive) => (
+                    <tr key={archive.id} className="border-b">
+                      <td className="py-1">{archive.title}</td>
+                      <td className="py-1">{archive.original_type}</td>
+                      <td className="py-1">{archive.archived_by}</td>
+                      <td className="py-1">{new Date(archive.archived_at).toLocaleDateString('fr-FR')}</td>
+                      <td className="py-1">{new Date(archive.retention_until).toLocaleDateString('fr-FR')}</td>
+                      <td className="py-1">{STATUS_CONFIG[archive.status].label}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </PrintButton>
           <Button variant="outline" size="sm">
             <Download size={16} className="mr-2" />
             {t('common.export')}
@@ -466,7 +523,7 @@ const RestoreModal: React.FC<{
   const [destination, setDestination] = useState('original');
 
   const handleRestore = () => {
-    console.log('Restoring:', archive.id, 'to:', destination);
+    console.error('Restoring:', archive.id, 'to:', destination);
     onClose();
   };
 

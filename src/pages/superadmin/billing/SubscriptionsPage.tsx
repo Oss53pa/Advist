@@ -1,10 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Users,
   Search,
-  Filter,
-  MoreVertical,
+  _Filter,
+  _MoreVertical,
   CheckCircle,
   Clock,
   Pause,
@@ -15,12 +14,12 @@ import {
   Unlock,
   RefreshCw,
   ArrowUpRight,
-  ArrowDownRight,
-  Calendar,
-  Building2,
+  _ArrowDownRight,
+  _Calendar,
+  _Building2,
   Loader2,
 } from 'lucide-react';
-import { Button, Modal, Badge } from '../../../components/ui';
+import { Button, Modal } from '../../../components/ui';
 import { subscriptionsService, Subscription } from '../../../services/subscriptions';
 import { ChangePlanModal } from '../../../components/superadmin/ChangePlanModal';
 
@@ -46,7 +45,7 @@ const mockSubscriptions = [
     id: '2',
     organization: {
       id: '2',
-      name: 'Orange Côte d\'Ivoire',
+      name: "Orange Côte d'Ivoire",
       slug: 'orange-ci',
     },
     plan: { name: 'Enterprise', price: 2500000 },
@@ -126,7 +125,7 @@ const mockSubscriptions = [
 
 const statusOptions = [
   { value: '', label: 'Tous les statuts' },
-  { value: 'trial', label: 'Période d\'essai' },
+  { value: 'trial', label: "Période d'essai" },
   { value: 'active', label: 'Actif' },
   { value: 'past_due', label: 'Paiement en retard' },
   { value: 'suspended', label: 'Suspendu' },
@@ -134,7 +133,7 @@ const statusOptions = [
 ];
 
 export const SubscriptionsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
@@ -184,11 +183,19 @@ export const SubscriptionsPage: React.FC = () => {
       case 'active':
         return { icon: CheckCircle, color: 'bg-green-50 text-advist-success', label: 'Actif' };
       case 'past_due':
-        return { icon: AlertTriangle, color: 'bg-advist-gold-light text-advist-gold-dark', label: 'Impayé' };
+        return {
+          icon: AlertTriangle,
+          color: 'bg-advist-gold-light text-advist-gold-dark',
+          label: 'Impayé',
+        };
       case 'suspended':
         return { icon: Lock, color: 'bg-advist-gold-light text-advist-error', label: 'Suspendu' };
       case 'cancelled':
-        return { icon: XCircle, color: 'bg-advist-surface-dark text-advist-gray900', label: 'Annulé' };
+        return {
+          icon: XCircle,
+          color: 'bg-advist-surface-dark text-advist-gray900',
+          label: 'Annulé',
+        };
       default:
         return { icon: Clock, color: 'bg-advist-surface-dark text-advist-gray900', label: status };
     }
@@ -200,7 +207,10 @@ export const SubscriptionsPage: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const handleAction = (subscription: Subscription, action: 'suspend' | 'reactivate' | 'cancel') => {
+  const handleAction = (
+    subscription: Subscription,
+    action: 'suspend' | 'reactivate' | 'cancel'
+  ) => {
     setSelectedSubscription(subscription);
     setActionType(action);
     setSuspendReason('');
@@ -235,7 +245,9 @@ export const SubscriptionsPage: React.FC = () => {
       setSuspendReason('');
     } catch (err) {
       console.error(`Failed to ${actionType} subscription:`, err);
-      setError(`Impossible de ${actionType === 'suspend' ? 'suspendre' : actionType === 'reactivate' ? 'réactiver' : 'annuler'} l'abonnement`);
+      setError(
+        `Impossible de ${actionType === 'suspend' ? 'suspendre' : actionType === 'reactivate' ? 'réactiver' : 'annuler'} l'abonnement`
+      );
     } finally {
       setIsExecutingAction(false);
     }
@@ -247,9 +259,7 @@ export const SubscriptionsPage: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">Abonnements</h1>
-          <p className="text-advist-blue-light mt-1">
-            Gérer les abonnements des organisations
-          </p>
+          <p className="text-advist-blue-light mt-1">Gérer les abonnements des organisations</p>
         </div>
       </div>
 
@@ -271,10 +281,26 @@ export const SubscriptionsPage: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { label: 'Total', value: subscriptions.length, color: 'bg-advist-surface-dark' },
-          { label: 'Actifs', value: subscriptions.filter(s => s.status === 'active').length, color: 'bg-green-50' },
-          { label: 'Essai', value: subscriptions.filter(s => s.status === 'trial').length, color: 'bg-advist-gold-light' },
-          { label: 'Impayés', value: subscriptions.filter(s => s.status === 'past_due').length, color: 'bg-advist-gold-light' },
-          { label: 'Suspendus', value: subscriptions.filter(s => s.status === 'suspended').length, color: 'bg-advist-gold-light' },
+          {
+            label: 'Actifs',
+            value: subscriptions.filter((s) => s.status === 'active').length,
+            color: 'bg-green-50',
+          },
+          {
+            label: 'Essai',
+            value: subscriptions.filter((s) => s.status === 'trial').length,
+            color: 'bg-advist-gold-light',
+          },
+          {
+            label: 'Impayés',
+            value: subscriptions.filter((s) => s.status === 'past_due').length,
+            color: 'bg-advist-gold-light',
+          },
+          {
+            label: 'Suspendus',
+            value: subscriptions.filter((s) => s.status === 'suspended').length,
+            color: 'bg-advist-gold-light',
+          },
         ].map((stat) => (
           <div key={stat.label} className={`${stat.color} rounded-xl p-4 text-center`}>
             <p className="text-2xl font-bold text-advist-gray900">{isLoading ? '-' : stat.value}</p>
@@ -286,7 +312,10 @@ export const SubscriptionsPage: React.FC = () => {
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light" />
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
+          />
           <input
             type="text"
             placeholder="Rechercher une organisation..."
@@ -301,7 +330,9 @@ export const SubscriptionsPage: React.FC = () => {
           className="px-4 py-2.5 bg-white border border-advist-bg rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
         >
           {statusOptions.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
           ))}
         </select>
       </div>
@@ -314,142 +345,151 @@ export const SubscriptionsPage: React.FC = () => {
             <span className="ml-3 text-advist-blue-light">Chargement des abonnements...</span>
           </div>
         ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-advist-bg">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
-                  Organisation
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
-                  Plan
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
-                  Statut
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
-                  Période
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
-                  Prix
-                </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-advist-blue-light uppercase">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-advist-bg">
-              {filteredSubscriptions.map((sub) => {
-                const status = getStatusConfig(sub.status);
-                const daysLeft = Math.ceil(
-                  (new Date(sub.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-                );
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-advist-bg">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
+                    Organisation
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
+                    Plan
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
+                    Statut
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
+                    Période
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-advist-blue-light uppercase">
+                    Prix
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-advist-blue-light uppercase">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-advist-bg">
+                {filteredSubscriptions.map((sub) => {
+                  const status = getStatusConfig(sub.status);
+                  const daysLeft = Math.ceil(
+                    (new Date(sub.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                  );
 
-                return (
-                  <tr key={sub.id} className="hover:bg-advist-bg/50 transition-all">
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-advist-dark rounded-xl flex items-center justify-center text-white font-semibold">
-                          {sub.organization.name.charAt(0)}
+                  return (
+                    <tr key={sub.id} className="hover:bg-advist-bg/50 transition-all">
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-advist-dark rounded-xl flex items-center justify-center text-white font-semibold">
+                            {sub.organization.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-medium text-advist-gray900">
+                              {sub.organization.name}
+                            </p>
+                            <p className="text-xs text-advist-blue-light">
+                              {sub.organization.slug}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-advist-gray900">{sub.organization.name}</p>
-                          <p className="text-xs text-advist-blue-light">{sub.organization.slug}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className="font-medium text-advist-gray900">{sub.plan.name}</span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.color}`}>
-                        <status.icon size={12} />
-                        {status.label}
-                      </div>
-                      {sub.status === 'past_due' && sub.gracePeriodEndsAt && (
-                        <p className="text-xs text-advist-gold-dark mt-1">
-                          Grâce jusqu'au {new Date(sub.gracePeriodEndsAt).toLocaleDateString('fr-FR')}
-                        </p>
-                      )}
-                      {sub.status === 'trial' && sub.trialEndsAt && (
-                        <p className="text-xs text-advist-gray900 mt-1">
-                          Fin essai: {new Date(sub.trialEndsAt).toLocaleDateString('fr-FR')}
-                        </p>
-                      )}
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="text-sm">
-                        <p className="text-advist-gray900">
-                          {new Date(sub.currentPeriodEnd).toLocaleDateString('fr-FR')}
-                        </p>
-                        <p className={`text-xs ${daysLeft <= 7 ? 'text-advist-gold-dark' : 'text-advist-blue-light'}`}>
-                          {daysLeft > 0 ? `${daysLeft}j restants` : 'Expiré'}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <p className="font-semibold text-advist-gray900">
-                        {formatCurrency(sub.plan.price)} FCFA
-                      </p>
-                      <p className="text-xs text-advist-blue-light">/mois</p>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedSubscription(sub);
-                            setShowDetailModal(true);
-                          }}
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="font-medium text-advist-gray900">{sub.plan.name}</span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.color}`}
                         >
-                          <Eye size={16} />
-                        </Button>
-
-                        {(sub.status === 'active' || sub.status === 'trial') && (
+                          <status.icon size={12} />
+                          {status.label}
+                        </div>
+                        {sub.status === 'past_due' && sub.gracePeriodEndsAt && (
+                          <p className="text-xs text-advist-gold-dark mt-1">
+                            Grâce jusqu'au{' '}
+                            {new Date(sub.gracePeriodEndsAt).toLocaleDateString('fr-FR')}
+                          </p>
+                        )}
+                        {sub.status === 'trial' && sub.trialEndsAt && (
+                          <p className="text-xs text-advist-gray900 mt-1">
+                            Fin essai: {new Date(sub.trialEndsAt).toLocaleDateString('fr-FR')}
+                          </p>
+                        )}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="text-sm">
+                          <p className="text-advist-gray900">
+                            {new Date(sub.currentPeriodEnd).toLocaleDateString('fr-FR')}
+                          </p>
+                          <p
+                            className={`text-xs ${daysLeft <= 7 ? 'text-advist-gold-dark' : 'text-advist-blue-light'}`}
+                          >
+                            {daysLeft > 0 ? `${daysLeft}j restants` : 'Expiré'}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <p className="font-semibold text-advist-gray900">
+                          {formatCurrency(sub.plan.price)} FCFA
+                        </p>
+                        <p className="text-xs text-advist-blue-light">/mois</p>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center justify-end gap-2">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-primary-900 hover:bg-primary-50"
                             onClick={() => {
                               setSelectedSubscription(sub);
-                              setShowChangePlanModal(true);
+                              setShowDetailModal(true);
                             }}
-                            title="Changer de plan"
                           >
-                            <ArrowUpRight size={16} />
+                            <Eye size={16} />
                           </Button>
-                        )}
 
-                        {sub.status === 'active' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-advist-gold-dark hover:bg-advist-gold-light"
-                            onClick={() => handleAction(sub, 'suspend')}
-                          >
-                            <Pause size={16} />
-                          </Button>
-                        )}
+                          {(sub.status === 'active' || sub.status === 'trial') && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-primary-900 hover:bg-primary-50"
+                              onClick={() => {
+                                setSelectedSubscription(sub);
+                                setShowChangePlanModal(true);
+                              }}
+                              title="Changer de plan"
+                            >
+                              <ArrowUpRight size={16} />
+                            </Button>
+                          )}
 
-                        {sub.status === 'suspended' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-advist-success hover:bg-green-50"
-                            onClick={() => handleAction(sub, 'reactivate')}
-                          >
-                            <Unlock size={16} />
-                          </Button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                          {sub.status === 'active' && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-advist-gold-dark hover:bg-advist-gold-light"
+                              onClick={() => handleAction(sub, 'suspend')}
+                            >
+                              <Pause size={16} />
+                            </Button>
+                          )}
+
+                          {sub.status === 'suspended' && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-advist-success hover:bg-green-50"
+                              onClick={() => handleAction(sub, 'reactivate')}
+                            >
+                              <Unlock size={16} />
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
@@ -468,7 +508,9 @@ export const SubscriptionsPage: React.FC = () => {
                 <Lock size={20} className="text-advist-error" />
                 <div>
                   <p className="font-medium text-advist-error">Compte suspendu</p>
-                  <p className="text-sm text-advist-error">L'organisation ne peut plus accéder à l'application</p>
+                  <p className="text-sm text-advist-error">
+                    L'organisation ne peut plus accéder à l'application
+                  </p>
                 </div>
               </div>
             )}
@@ -477,7 +519,9 @@ export const SubscriptionsPage: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-advist-bg rounded-xl">
                 <p className="text-sm text-advist-blue-light">Plan</p>
-                <p className="font-semibold text-advist-gray900">{selectedSubscription.plan.name}</p>
+                <p className="font-semibold text-advist-gray900">
+                  {selectedSubscription.plan.name}
+                </p>
               </div>
               <div className="p-4 bg-advist-bg rounded-xl">
                 <p className="text-sm text-advist-blue-light">Prix mensuel</p>
@@ -563,9 +607,11 @@ export const SubscriptionsPage: React.FC = () => {
         isOpen={showActionModal}
         onClose={() => setShowActionModal(false)}
         title={
-          actionType === 'suspend' ? 'Suspendre l\'abonnement' :
-          actionType === 'reactivate' ? 'Réactiver l\'abonnement' :
-          'Annuler l\'abonnement'
+          actionType === 'suspend'
+            ? "Suspendre l'abonnement"
+            : actionType === 'reactivate'
+              ? "Réactiver l'abonnement"
+              : "Annuler l'abonnement"
         }
         size="sm"
       >
@@ -577,8 +623,8 @@ export const SubscriptionsPage: React.FC = () => {
                 <div>
                   <p className="font-medium text-advist-gold-dark">Attention</p>
                   <p className="text-sm text-advist-gold-dark">
-                    La suspension bloquera l'accès de l'organisation à l'application.
-                    Les utilisateurs ne pourront plus se connecter.
+                    La suspension bloquera l'accès de l'organisation à l'application. Les
+                    utilisateurs ne pourront plus se connecter.
                   </p>
                 </div>
               </div>
@@ -629,8 +675,10 @@ export const SubscriptionsPage: React.FC = () => {
                   <Loader2 size={16} className="animate-spin mr-2" />
                   {actionType === 'suspend' ? 'Suspension...' : 'Réactivation...'}
                 </>
+              ) : actionType === 'suspend' ? (
+                'Suspendre'
               ) : (
-                actionType === 'suspend' ? 'Suspendre' : 'Réactiver'
+                'Réactiver'
               )}
             </Button>
           </div>

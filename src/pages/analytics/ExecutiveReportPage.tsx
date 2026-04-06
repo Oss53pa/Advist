@@ -11,18 +11,18 @@ import {
   Clock,
   DollarSign,
   FileText,
-  Users,
+  _Users,
   Award,
   AlertCircle,
   CheckCircle,
   Download,
-  Share2,
-  Calendar,
+  _Share2,
+  _Calendar,
   ChevronDown,
   ArrowUpRight,
   Lightbulb,
   Target,
-  Activity,
+  _Activity,
 } from 'lucide-react';
 import {
   analyticsService,
@@ -33,6 +33,7 @@ import {
   getStatusBgColor,
   getPercentileLabel,
 } from '../../services/analytics';
+import { PrintButton } from '../../shared/PrintEngine';
 
 type DateRange = '7d' | '30d' | '90d' | '365d' | 'custom';
 
@@ -56,7 +57,7 @@ export const ExecutiveReportPage: React.FC = () => {
       } else {
         await generateReport();
       }
-    } catch (err) {
+    } catch (_err) {
       // Mock data for demo
       setReport(getMockReport());
     } finally {
@@ -67,15 +68,20 @@ export const ExecutiveReportPage: React.FC = () => {
   const generateReport = async () => {
     setGenerating(true);
     try {
-      const reportType = dateRange === '7d' ? 'weekly' :
-                        dateRange === '30d' ? 'monthly' :
-                        dateRange === '90d' ? 'quarterly' : 'annual';
+      const reportType =
+        dateRange === '7d'
+          ? 'weekly'
+          : dateRange === '30d'
+            ? 'monthly'
+            : dateRange === '90d'
+              ? 'quarterly'
+              : 'annual';
 
       const newReport = await analyticsService.generateReport({
         reportType: reportType as ExecutiveReportType,
       });
       setReport(newReport);
-    } catch (err) {
+    } catch (_err) {
       setReport(getMockReport());
     } finally {
       setGenerating(false);
@@ -101,7 +107,7 @@ export const ExecutiveReportPage: React.FC = () => {
       <div className="space-y-6 animate-pulse">
         <div className="h-20 bg-advist-surface-dark rounded-xl"></div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-28 bg-advist-surface-dark rounded-xl"></div>
           ))}
         </div>
@@ -118,9 +124,7 @@ export const ExecutiveReportPage: React.FC = () => {
       <div className="text-center py-16">
         <BarChart3 size={48} className="mx-auto mb-4 text-advist-gray900/30" />
         <h2 className="text-lg font-medium text-advist-gray900">Aucun rapport disponible</h2>
-        <p className="text-advist-gray900/70 mt-1">
-          Générez votre premier rapport exécutif
-        </p>
+        <p className="text-advist-gray900/70 mt-1">Générez votre premier rapport exécutif</p>
         <button
           onClick={generateReport}
           disabled={generating}
@@ -158,7 +162,10 @@ export const ExecutiveReportPage: React.FC = () => {
               <option value="90d">90 derniers jours</option>
               <option value="365d">12 derniers mois</option>
             </select>
-            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-advist-gray900/50 pointer-events-none" />
+            <ChevronDown
+              size={16}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-advist-gray900/50 pointer-events-none"
+            />
           </div>
 
           <button
@@ -168,6 +175,57 @@ export const ExecutiveReportPage: React.FC = () => {
           >
             {generating ? 'Génération...' : 'Actualiser'}
           </button>
+
+          <PrintButton
+            config={{ title: 'Rapport exécutif', appName: 'Advist', orientation: 'landscape' }}
+          >
+            <div>
+              <h2 className="text-lg font-bold mb-4">
+                Rapport Exécutif — {report.periodStart} au {report.periodEnd}
+              </h2>
+              <p className="mb-4">{summary.headline}</p>
+              <table className="w-full text-sm mb-4">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Indicateur</th>
+                    <th className="text-left py-2">Valeur</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="py-2">Documents traités</td>
+                    <td className="py-2">{summary.keyMetrics.documentsProcessed}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-2">Heures économisées</td>
+                    <td className="py-2">{Math.round(summary.keyMetrics.hoursSaved)}h</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-2">Économies réalisées</td>
+                    <td className="py-2">{formatCurrency(summary.keyMetrics.costSaved)}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-2">Classement secteur</td>
+                    <td className="py-2">
+                      {getPercentileLabel(summary.keyMetrics.industryRanking)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              {report.actionItems.length > 0 && (
+                <>
+                  <h3 className="font-semibold mb-2">Actions recommandées</h3>
+                  <ul className="list-disc pl-5 text-sm">
+                    {report.actionItems.map((item, idx) => (
+                      <li key={idx}>
+                        {item.title} — {item.description}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          </PrintButton>
 
           <button
             onClick={downloadPDF}
@@ -197,10 +255,16 @@ export const ExecutiveReportPage: React.FC = () => {
               <FileText size={20} className="text-advist-gray900" />
             </div>
             {kpis.documents_processed?.trend !== 0 && (
-              <span className={`flex items-center gap-1 text-sm ${
-                kpis.documents_processed?.trend > 0 ? 'text-advist-success' : 'text-advist-error'
-              }`}>
-                {kpis.documents_processed?.trend > 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+              <span
+                className={`flex items-center gap-1 text-sm ${
+                  kpis.documents_processed?.trend > 0 ? 'text-advist-success' : 'text-advist-error'
+                }`}
+              >
+                {kpis.documents_processed?.trend > 0 ? (
+                  <TrendingUp size={14} />
+                ) : (
+                  <TrendingDown size={14} />
+                )}
                 {Math.abs(kpis.documents_processed?.trend || 0)}%
               </span>
             )}
@@ -260,9 +324,7 @@ export const ExecutiveReportPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Highlights & Concerns */}
         <div className="bg-white p-6 rounded-xl border border-advist-border">
-          <h2 className="text-lg font-semibold text-advist-gray900 mb-4">
-            Points clés
-          </h2>
+          <h2 className="text-lg font-semibold text-advist-gray900 mb-4">Points clés</h2>
 
           {/* Highlights */}
           {summary.highlights.length > 0 && (
@@ -292,23 +354,49 @@ export const ExecutiveReportPage: React.FC = () => {
               </p>
               <div className="space-y-2">
                 {summary.concerns.map((concern, idx) => (
-                  <div key={idx} className={`flex items-start gap-3 p-3 rounded-lg ${
-                    concern.severity === 'critical' ? 'bg-advist-gold-light' :
-                    concern.severity === 'warning' ? 'bg-advist-gold-light' : 'bg-advist-gold-light'
-                  }`}>
-                    <AlertCircle size={18} className={
-                      concern.severity === 'critical' ? 'text-advist-error' :
-                      concern.severity === 'warning' ? 'text-advist-gold-dark' : 'text-advist-gray900'
-                    } />
+                  <div
+                    key={idx}
+                    className={`flex items-start gap-3 p-3 rounded-lg ${
+                      concern.severity === 'critical'
+                        ? 'bg-advist-gold-light'
+                        : concern.severity === 'warning'
+                          ? 'bg-advist-gold-light'
+                          : 'bg-advist-gold-light'
+                    }`}
+                  >
+                    <AlertCircle
+                      size={18}
+                      className={
+                        concern.severity === 'critical'
+                          ? 'text-advist-error'
+                          : concern.severity === 'warning'
+                            ? 'text-advist-gold-dark'
+                            : 'text-advist-gray900'
+                      }
+                    />
                     <div>
-                      <p className={`text-sm font-medium ${
-                        concern.severity === 'critical' ? 'text-advist-error' :
-                        concern.severity === 'warning' ? 'text-advist-gold-dark' : 'text-advist-gray900'
-                      }`}>{concern.title}</p>
-                      <p className={`text-xs ${
-                        concern.severity === 'critical' ? 'text-advist-error/70' :
-                        concern.severity === 'warning' ? 'text-advist-gold-dark/70' : 'text-advist-gray900/70'
-                      }`}>{concern.description}</p>
+                      <p
+                        className={`text-sm font-medium ${
+                          concern.severity === 'critical'
+                            ? 'text-advist-error'
+                            : concern.severity === 'warning'
+                              ? 'text-advist-gold-dark'
+                              : 'text-advist-gray900'
+                        }`}
+                      >
+                        {concern.title}
+                      </p>
+                      <p
+                        className={`text-xs ${
+                          concern.severity === 'critical'
+                            ? 'text-advist-error/70'
+                            : concern.severity === 'warning'
+                              ? 'text-advist-gold-dark/70'
+                              : 'text-advist-gray900/70'
+                        }`}
+                      >
+                        {concern.description}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -325,18 +413,23 @@ export const ExecutiveReportPage: React.FC = () => {
 
           {report.benchmarkComparison.available ? (
             <>
-              <div className={`p-4 rounded-lg mb-4 ${getStatusBgColor(report.benchmarkComparison.overallStatus || 'average')}`}>
+              <div
+                className={`p-4 rounded-lg mb-4 ${getStatusBgColor(report.benchmarkComparison.overallStatus || 'average')}`}
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-advist-gray900">
                       {report.benchmarkComparison.statusMessage}
                     </p>
                     <p className="text-xs text-advist-gray900/60 mt-1">
-                      {report.benchmarkComparison.sectorInfo?.name} • {report.benchmarkComparison.sectorInfo?.sampleSize} organisations
+                      {report.benchmarkComparison.sectorInfo?.name} •{' '}
+                      {report.benchmarkComparison.sectorInfo?.sampleSize} organisations
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-2xl font-bold ${getStatusColor(report.benchmarkComparison.overallStatus || 'average')}`}>
+                    <p
+                      className={`text-2xl font-bold ${getStatusColor(report.benchmarkComparison.overallStatus || 'average')}`}
+                    >
                       {report.benchmarkComparison.overallPercentile}%
                     </p>
                   </div>
@@ -345,12 +438,13 @@ export const ExecutiveReportPage: React.FC = () => {
 
               <div className="space-y-3">
                 {report.benchmarkComparison.comparisons?.map((comp, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 border border-advist-border rounded-lg">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 border border-advist-border rounded-lg"
+                  >
                     <div>
                       <p className="text-sm font-medium text-advist-gray900">{comp.metric}</p>
-                      <p className="text-xs text-advist-gray900/50">
-                        Moyenne: {comp.industryAvg}
-                      </p>
+                      <p className="text-xs text-advist-gray900/50">Moyenne: {comp.industryAvg}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold text-advist-gray900">{comp.yourValue}</p>
@@ -418,9 +512,7 @@ export const ExecutiveReportPage: React.FC = () => {
         <div className="bg-white p-6 rounded-xl border border-advist-border">
           <div className="flex items-center gap-2 mb-4">
             <Lightbulb size={20} className="text-advist-gold" />
-            <h2 className="text-lg font-semibold text-advist-gray900">
-              Actions recommandées
-            </h2>
+            <h2 className="text-lg font-semibold text-advist-gray900">Actions recommandées</h2>
           </div>
           <div className="space-y-3">
             {report.actionItems.map((item, idx) => (
@@ -435,13 +527,20 @@ export const ExecutiveReportPage: React.FC = () => {
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                        item.priority === 'critical' ? 'bg-advist-gold-light text-advist-error' :
-                        item.priority === 'high' ? 'bg-advist-gold-light text-advist-gold-dark' :
-                        'bg-advist-gold-light text-advist-gray900'
-                      }`}>
-                        {item.priority === 'critical' ? 'Critique' :
-                         item.priority === 'high' ? 'Important' : 'Normal'}
+                      <span
+                        className={`px-2 py-0.5 rounded text-xs font-medium ${
+                          item.priority === 'critical'
+                            ? 'bg-advist-gold-light text-advist-error'
+                            : item.priority === 'high'
+                              ? 'bg-advist-gold-light text-advist-gold-dark'
+                              : 'bg-advist-gold-light text-advist-gray900'
+                        }`}
+                      >
+                        {item.priority === 'critical'
+                          ? 'Critique'
+                          : item.priority === 'high'
+                            ? 'Important'
+                            : 'Normal'}
                       </span>
                       <span className="text-xs text-advist-gray900/50">{item.category}</span>
                     </div>
@@ -455,9 +554,7 @@ export const ExecutiveReportPage: React.FC = () => {
                     Impact attendu: <span className="font-medium">{item.impact}</span>
                   </p>
                   {item.adoptionRate && (
-                    <p className="text-xs text-advist-gray900/50 mt-1">
-                      {item.adoptionRate}
-                    </p>
+                    <p className="text-xs text-advist-gray900/50 mt-1">{item.adoptionRate}</p>
                   )}
                 </div>
               </div>
@@ -488,8 +585,8 @@ function getMockReport(): ExecutiveReport {
       },
       highlights: [
         {
-          title: 'Gain d\'efficacité significatif',
-          description: 'Amélioration de 68% de l\'efficacité sur la période',
+          title: "Gain d'efficacité significatif",
+          description: "Amélioration de 68% de l'efficacité sur la période",
           icon: 'trending-up',
           color: 'green',
         },
@@ -515,7 +612,8 @@ function getMockReport(): ExecutiveReport {
           priority: 'high',
         },
       ],
-      headline: 'Depuis ADVIST : -68% temps validation = 234h économisées/mois = 1,4M FCFA économisés',
+      headline:
+        'Depuis ADVIST : -68% temps validation = 234h économisées/mois = 1,4M FCFA économisés',
     },
     kpiDashboard: {
       documents_processed: {
@@ -566,7 +664,8 @@ function getMockReport(): ExecutiveReport {
     },
     roiSummary: {
       available: true,
-      headline: 'Depuis ADVIST : -68% temps validation = 234h économisées/mois = 1,4M FCFA économisés',
+      headline:
+        'Depuis ADVIST : -68% temps validation = 234h économisées/mois = 1,4M FCFA économisés',
       totalHoursSaved: 234,
       totalCostSaved: 1400000,
       currency: 'XOF',
@@ -585,7 +684,8 @@ function getMockReport(): ExecutiveReport {
         priority: 'high',
         category: 'workflow',
         title: 'Activer la validation parallèle',
-        description: 'Permettre la validation simultanée par plusieurs approbateurs pour réduire les délais',
+        description:
+          'Permettre la validation simultanée par plusieurs approbateurs pour réduire les délais',
         impact: '+35% efficacité attendue',
         adoptionRate: '78% des top performers utilisent cette fonctionnalité',
       },
@@ -593,7 +693,8 @@ function getMockReport(): ExecutiveReport {
         priority: 'medium',
         category: 'quality',
         title: 'Analyser les causes de rejet',
-        description: 'Le taux de rejet a augmenté ce mois-ci, une analyse des causes est recommandée',
+        description:
+          'Le taux de rejet a augmenté ce mois-ci, une analyse des causes est recommandée',
         impact: 'Réduction potentielle des délais et coûts',
       },
     ],

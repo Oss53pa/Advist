@@ -1,5 +1,5 @@
 -- Subscription Plans
-CREATE TABLE subscription_plans (
+CREATE TABLE IF NOT EXISTS subscription_plans (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(100) UNIQUE NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE subscription_plans (
 );
 
 -- Subscriptions
-CREATE TABLE subscriptions (
+CREATE TABLE IF NOT EXISTS subscriptions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     plan_id UUID NOT NULL REFERENCES subscription_plans(id) ON DELETE RESTRICT,
@@ -38,7 +38,7 @@ CREATE TABLE subscriptions (
 );
 
 -- Invoices
-CREATE TABLE invoices (
+CREATE TABLE IF NOT EXISTS invoices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     subscription_id UUID REFERENCES subscriptions(id) ON DELETE SET NULL,
@@ -59,7 +59,7 @@ CREATE TABLE invoices (
 );
 
 -- Payments
-CREATE TABLE payments (
+CREATE TABLE IF NOT EXISTS payments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     invoice_id UUID REFERENCES invoices(id) ON DELETE SET NULL,
@@ -75,7 +75,7 @@ CREATE TABLE payments (
 );
 
 -- Billing History
-CREATE TABLE billing_history (
+CREATE TABLE IF NOT EXISTS billing_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     event_type VARCHAR(100) NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE billing_history (
 );
 
 -- Add-ons
-CREATE TABLE addons (
+CREATE TABLE IF NOT EXISTS addons (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(100) UNIQUE NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE addons (
 );
 
 -- Subscription Add-ons
-CREATE TABLE subscription_addons (
+CREATE TABLE IF NOT EXISTS subscription_addons (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     subscription_id UUID NOT NULL REFERENCES subscriptions(id) ON DELETE CASCADE,
     addon_id UUID NOT NULL REFERENCES addons(id) ON DELETE RESTRICT,

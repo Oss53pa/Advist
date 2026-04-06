@@ -48,10 +48,11 @@ export function useSupabaseStorage(bucket: string) {
 
         setProgress(100)
 
-        // Get public URL if bucket is public
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from(bucket).getPublicUrl(path)
+        // Get signed URL with TTL (P1-S004: never use permanent public URLs)
+        const { data: signedData } = await supabase.storage
+          .from(bucket)
+          .createSignedUrl(path, 3600)
+        const publicUrl = signedData?.signedUrl || ''
 
         return { path, publicUrl }
       } catch (err) {

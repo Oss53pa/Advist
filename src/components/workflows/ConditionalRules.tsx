@@ -1,6 +1,7 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generateSecureId } from '../../utils/encryption';
+import { supabase } from '../../lib/supabase';
 import {
   Plus,
   Trash2,
@@ -19,7 +20,7 @@ import {
   AlertTriangle,
   Check,
   X,
-  Settings,
+  _Settings,
 } from 'lucide-react';
 import { Button, Card, Modal, Input, Badge } from '../ui';
 
@@ -60,11 +61,36 @@ export interface ConditionalRulesProps {
 
 // Condition type configurations
 const CONDITION_TYPES = [
-  { value: 'amount', label: 'Montant', icon: DollarSign, description: 'Basé sur le montant du document' },
-  { value: 'confidentiality', label: 'Confidentialité', icon: Shield, description: 'Selon le niveau de confidentialité' },
-  { value: 'document_type', label: 'Type de document', icon: FileText, description: 'Selon la catégorie du document' },
-  { value: 'department', label: 'Département', icon: Building2, description: 'Selon le département concerné' },
-  { value: 'metadata', label: 'Métadonnée', icon: Tag, description: 'Basé sur une métadonnée personnalisée' },
+  {
+    value: 'amount',
+    label: 'Montant',
+    icon: DollarSign,
+    description: 'Basé sur le montant du document',
+  },
+  {
+    value: 'confidentiality',
+    label: 'Confidentialité',
+    icon: Shield,
+    description: 'Selon le niveau de confidentialité',
+  },
+  {
+    value: 'document_type',
+    label: 'Type de document',
+    icon: FileText,
+    description: 'Selon la catégorie du document',
+  },
+  {
+    value: 'department',
+    label: 'Département',
+    icon: Building2,
+    description: 'Selon le département concerné',
+  },
+  {
+    value: 'metadata',
+    label: 'Métadonnée',
+    icon: Tag,
+    description: 'Basé sur une métadonnée personnalisée',
+  },
 ];
 
 const OPERATORS = {
@@ -76,17 +102,17 @@ const OPERATORS = {
   ],
   confidentiality: [
     { value: 'equals', label: 'Est' },
-    { value: 'not_equals', label: 'N\'est pas' },
+    { value: 'not_equals', label: "N'est pas" },
     { value: 'in', label: 'Parmi' },
   ],
   document_type: [
     { value: 'equals', label: 'Est' },
-    { value: 'not_equals', label: 'N\'est pas' },
+    { value: 'not_equals', label: "N'est pas" },
     { value: 'in', label: 'Parmi' },
   ],
   department: [
     { value: 'equals', label: 'Est' },
-    { value: 'not_equals', label: 'N\'est pas' },
+    { value: 'not_equals', label: "N'est pas" },
     { value: 'in', label: 'Parmi' },
   ],
   metadata: [
@@ -104,38 +130,36 @@ const CONFIDENTIALITY_LEVELS = [
 ];
 
 const ACTION_TYPES = [
-  { value: 'add_step', label: 'Ajouter une étape', icon: Plus, description: 'Ajoute une étape supplémentaire au workflow' },
-  { value: 'add_assignee', label: 'Ajouter un validateur', icon: User, description: 'Ajoute un validateur supplémentaire' },
-  { value: 'skip_step', label: 'Ignorer une étape', icon: X, description: 'Saute une étape du workflow' },
-  { value: 'escalate', label: 'Escalader', icon: AlertTriangle, description: 'Escalade vers un responsable' },
-  { value: 'require_double_approval', label: 'Double validation', icon: Check, description: 'Requiert une double approbation' },
-];
-
-// Mock data
-const MOCK_USERS = [
-  { id: 1, name: 'Jean Dupont' },
-  { id: 2, name: 'Marie Martin' },
-  { id: 3, name: 'Pierre Bernard' },
-];
-
-const MOCK_ROLES = [
-  { id: 1, name: 'Manager' },
-  { id: 2, name: 'Directeur' },
-  { id: 3, name: 'DAF' },
-];
-
-const MOCK_DOC_TYPES = [
-  { id: 1, name: 'Contrat' },
-  { id: 2, name: 'Facture' },
-  { id: 3, name: 'Bon de commande' },
-  { id: 4, name: 'Note de frais' },
-];
-
-const MOCK_DEPARTMENTS = [
-  { id: 1, name: 'Direction Générale' },
-  { id: 2, name: 'Finance' },
-  { id: 3, name: 'RH' },
-  { id: 4, name: 'Juridique' },
+  {
+    value: 'add_step',
+    label: 'Ajouter une étape',
+    icon: Plus,
+    description: 'Ajoute une étape supplémentaire au workflow',
+  },
+  {
+    value: 'add_assignee',
+    label: 'Ajouter un validateur',
+    icon: User,
+    description: 'Ajoute un validateur supplémentaire',
+  },
+  {
+    value: 'skip_step',
+    label: 'Ignorer une étape',
+    icon: X,
+    description: 'Saute une étape du workflow',
+  },
+  {
+    value: 'escalate',
+    label: 'Escalader',
+    icon: AlertTriangle,
+    description: 'Escalade vers un responsable',
+  },
+  {
+    value: 'require_double_approval',
+    label: 'Double validation',
+    icon: Check,
+    description: 'Requiert une double approbation',
+  },
 ];
 
 export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
@@ -147,6 +171,67 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
   const [selectedRule, setSelectedRule] = useState<ConditionalRule | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [expandedRules, setExpandedRules] = useState<string[]>([]);
+
+  const [availableUsers, setAvailableUsers] = useState<Array<{ id: number; name: string }>>([]);
+  const [_availableRoles, setAvailableRoles] = useState<Array<{ id: number; name: string }>>([]);
+  const [availableDocTypes, setAvailableDocTypes] = useState<Array<{ id: number; name: string }>>(
+    []
+  );
+  const [availableDepartments, setAvailableDepartments] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single();
+      if (!profile) return;
+      const orgId = profile.organization_id;
+
+      const [usersRes, rolesRes, docTypesRes, deptsRes] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id, first_name, last_name')
+          .eq('organization_id', orgId)
+          .eq('is_active', true),
+        supabase.from('roles').select('id, name').eq('organization_id', orgId),
+        supabase.from('document_types').select('id, name').eq('organization_id', orgId),
+        supabase.from('departments').select('id, name').eq('organization_id', orgId),
+      ]);
+      setAvailableUsers(
+        (usersRes.data || []).map((u) => ({
+          id: Number(u.id) || u.id,
+          name: `${u.first_name} ${u.last_name}`,
+        })) as Array<{ id: number; name: string }>
+      );
+      setAvailableRoles(
+        (rolesRes.data || []).map((r) => ({ id: Number(r.id) || r.id, name: r.name })) as Array<{
+          id: number;
+          name: string;
+        }>
+      );
+      setAvailableDocTypes(
+        (docTypesRes.data || []).map((d) => ({ id: Number(d.id) || d.id, name: d.name })) as Array<{
+          id: number;
+          name: string;
+        }>
+      );
+      setAvailableDepartments(
+        (deptsRes.data || []).map((d) => ({ id: Number(d.id) || d.id, name: d.name })) as Array<{
+          id: number;
+          name: string;
+        }>
+      );
+    };
+    loadData();
+  }, []);
 
   const generateId = () => generateSecureId('rule');
 
@@ -199,11 +284,7 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
   };
 
   const handleToggleActive = (ruleId: string) => {
-    onChange(
-      rules.map((r) =>
-        r.id === ruleId ? { ...r, isActive: !r.isActive } : r
-      )
-    );
+    onChange(rules.map((r) => (r.id === ruleId ? { ...r, isActive: !r.isActive } : r)));
   };
 
   const handleSaveRule = (rule: ConditionalRule) => {
@@ -231,15 +312,18 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
     switch (condition.type) {
       case 'amount':
         return `${Number(condition.value).toLocaleString()} FCFA`;
-      case 'confidentiality':
+      case 'confidentiality': {
         const level = CONFIDENTIALITY_LEVELS.find((l) => l.value === condition.value);
         return level?.label || condition.value;
-      case 'document_type':
-        const docType = MOCK_DOC_TYPES.find((d) => d.id === Number(condition.value));
+      }
+      case 'document_type': {
+        const docType = availableDocTypes.find((d) => d.id === Number(condition.value));
         return docType?.name || condition.value;
-      case 'department':
-        const dept = MOCK_DEPARTMENTS.find((d) => d.id === Number(condition.value));
+      }
+      case 'department': {
+        const dept = availableDepartments.find((d) => d.id === Number(condition.value));
         return dept?.name || condition.value;
+      }
       default:
         return String(condition.value);
     }
@@ -408,8 +492,8 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
           <Zap size={40} className="mx-auto text-[#6B7280] mb-3" />
           <h4 className="font-medium text-[#1A1A2E]">Aucune règle conditionnelle</h4>
           <p className="text-sm text-[#6B7280] mt-1 mb-4">
-            Les règles conditionnelles permettent d'adapter automatiquement le workflow
-            selon les caractéristiques du document
+            Les règles conditionnelles permettent d'adapter automatiquement le workflow selon les
+            caractéristiques du document
           </p>
           {!readOnly && (
             <Button size="sm" onClick={handleAddRule}>
@@ -430,6 +514,9 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
           }}
           rule={selectedRule}
           onSave={handleSaveRule}
+          availableUsers={availableUsers}
+          availableDocTypes={availableDocTypes}
+          availableDepartments={availableDepartments}
         />
       )}
     </div>
@@ -442,8 +529,19 @@ const RuleEditModal: React.FC<{
   onClose: () => void;
   rule: ConditionalRule;
   onSave: (rule: ConditionalRule) => void;
-}> = ({ isOpen, onClose, rule, onSave }) => {
-  const { t } = useTranslation();
+  availableUsers: Array<{ id: number; name: string }>;
+  availableDocTypes: Array<{ id: number; name: string }>;
+  availableDepartments: Array<{ id: number; name: string }>;
+}> = ({
+  isOpen,
+  onClose,
+  rule,
+  onSave,
+  availableUsers,
+  availableDocTypes,
+  availableDepartments,
+}) => {
+  const { _t } = useTranslation();
   const [formData, setFormData] = useState<ConditionalRule>(rule);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -451,15 +549,11 @@ const RuleEditModal: React.FC<{
     onSave(formData);
   };
 
-  const operators = OPERATORS[formData.condition.type as keyof typeof OPERATORS] || OPERATORS.amount;
+  const operators =
+    OPERATORS[formData.condition.type as keyof typeof OPERATORS] || OPERATORS.amount;
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Configurer la règle conditionnelle"
-      size="lg"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Configurer la règle conditionnelle" size="lg">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <div className="grid grid-cols-2 gap-4">
@@ -503,18 +597,22 @@ const RuleEditModal: React.FC<{
               </label>
               <select
                 value={formData.condition.type}
-                onChange={(e) => setFormData((prev) => ({
-                  ...prev,
-                  condition: {
-                    ...prev.condition,
-                    type: e.target.value as RuleCondition['type'],
-                    value: '',
-                  },
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    condition: {
+                      ...prev.condition,
+                      type: e.target.value as RuleCondition['type'],
+                      value: '',
+                    },
+                  }))
+                }
                 className="w-full px-3 py-2 border border-advist-gold rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
               >
                 {CONDITION_TYPES.map((type) => (
-                  <option key={type.value} value={type.value}>{type.label}</option>
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -525,84 +623,102 @@ const RuleEditModal: React.FC<{
               </label>
               <select
                 value={formData.condition.operator}
-                onChange={(e) => setFormData((prev) => ({
-                  ...prev,
-                  condition: {
-                    ...prev.condition,
-                    operator: e.target.value as RuleCondition['operator'],
-                  },
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    condition: {
+                      ...prev.condition,
+                      operator: e.target.value as RuleCondition['operator'],
+                    },
+                  }))
+                }
                 className="w-full px-3 py-2 border border-advist-gold rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
               >
                 {operators.map((op) => (
-                  <option key={op.value} value={op.value}>{op.label}</option>
+                  <option key={op.value} value={op.value}>
+                    {op.label}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-advist-gray900 mb-1.5">
-                Valeur
-              </label>
+              <label className="block text-sm font-medium text-advist-gray900 mb-1.5">Valeur</label>
               {formData.condition.type === 'amount' ? (
                 <Input
                   type="number"
                   value={formData.condition.value as number}
-                  onChange={(e) => setFormData((prev) => ({
-                    ...prev,
-                    condition: { ...prev.condition, value: Number(e.target.value) },
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      condition: { ...prev.condition, value: Number(e.target.value) },
+                    }))
+                  }
                   placeholder="1000000"
                 />
               ) : formData.condition.type === 'confidentiality' ? (
                 <select
                   value={formData.condition.value as string}
-                  onChange={(e) => setFormData((prev) => ({
-                    ...prev,
-                    condition: { ...prev.condition, value: e.target.value },
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      condition: { ...prev.condition, value: e.target.value },
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-advist-gold rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
                 >
                   <option value="">Sélectionner...</option>
                   {CONFIDENTIALITY_LEVELS.map((level) => (
-                    <option key={level.value} value={level.value}>{level.label}</option>
+                    <option key={level.value} value={level.value}>
+                      {level.label}
+                    </option>
                   ))}
                 </select>
               ) : formData.condition.type === 'document_type' ? (
                 <select
                   value={formData.condition.value as string}
-                  onChange={(e) => setFormData((prev) => ({
-                    ...prev,
-                    condition: { ...prev.condition, value: e.target.value },
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      condition: { ...prev.condition, value: e.target.value },
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-advist-gold rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
                 >
                   <option value="">Sélectionner...</option>
-                  {MOCK_DOC_TYPES.map((type) => (
-                    <option key={type.id} value={type.id}>{type.name}</option>
+                  {availableDocTypes.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
                   ))}
                 </select>
               ) : formData.condition.type === 'department' ? (
                 <select
                   value={formData.condition.value as string}
-                  onChange={(e) => setFormData((prev) => ({
-                    ...prev,
-                    condition: { ...prev.condition, value: e.target.value },
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      condition: { ...prev.condition, value: e.target.value },
+                    }))
+                  }
                   className="w-full px-3 py-2 border border-advist-gold rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
                 >
                   <option value="">Sélectionner...</option>
-                  {MOCK_DEPARTMENTS.map((dept) => (
-                    <option key={dept.id} value={dept.id}>{dept.name}</option>
+                  {availableDepartments.map((dept) => (
+                    <option key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </option>
                   ))}
                 </select>
               ) : (
                 <Input
                   value={formData.condition.value as string}
-                  onChange={(e) => setFormData((prev) => ({
-                    ...prev,
-                    condition: { ...prev.condition, value: e.target.value },
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      condition: { ...prev.condition, value: e.target.value },
+                    }))
+                  }
                   placeholder="Valeur..."
                 />
               )}
@@ -626,19 +742,25 @@ const RuleEditModal: React.FC<{
                   <button
                     key={action.value}
                     type="button"
-                    onClick={() => setFormData((prev) => ({
-                      ...prev,
-                      action: { type: action.value as RuleAction['type'], config: {} },
-                    }))}
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        action: { type: action.value as RuleAction['type'], config: {} },
+                      }))
+                    }
                     className={`
                       flex items-center gap-2 p-3 rounded-lg border-2 transition-all text-left
-                      ${isSelected
-                        ? 'border-advist-success bg-white'
-                        : 'border-advist-success hover:border-advist-success bg-white/50'
+                      ${
+                        isSelected
+                          ? 'border-advist-success bg-white'
+                          : 'border-advist-success hover:border-advist-success bg-white/50'
                       }
                     `}
                   >
-                    <Icon size={18} className={isSelected ? 'text-advist-success' : 'text-advist-success'} />
+                    <Icon
+                      size={18}
+                      className={isSelected ? 'text-advist-success' : 'text-advist-success'}
+                    />
                     <div>
                       <p className="text-sm font-medium text-advist-success">{action.label}</p>
                       <p className="text-xs text-advist-success">{action.description}</p>
@@ -654,13 +776,15 @@ const RuleEditModal: React.FC<{
             <Input
               label="Nom de l'étape à ajouter"
               value={formData.action.config.stepName || ''}
-              onChange={(e) => setFormData((prev) => ({
-                ...prev,
-                action: {
-                  ...prev.action,
-                  config: { ...prev.action.config, stepName: e.target.value },
-                },
-              }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  action: {
+                    ...prev.action,
+                    config: { ...prev.action.config, stepName: e.target.value },
+                  },
+                }))
+              }
               placeholder="Ex: Validation Direction Générale"
             />
           )}
@@ -672,18 +796,22 @@ const RuleEditModal: React.FC<{
               </label>
               <select
                 value={formData.action.config.assigneeUserId || ''}
-                onChange={(e) => setFormData((prev) => ({
-                  ...prev,
-                  action: {
-                    ...prev.action,
-                    config: { ...prev.action.config, assigneeUserId: Number(e.target.value) },
-                  },
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    action: {
+                      ...prev.action,
+                      config: { ...prev.action.config, assigneeUserId: Number(e.target.value) },
+                    },
+                  }))
+                }
                 className="w-full px-3 py-2 border border-advist-success rounded-lg focus:ring-2 focus:ring-green-500 bg-white"
               >
                 <option value="">Sélectionner...</option>
-                {MOCK_USERS.map((user) => (
-                  <option key={user.id} value={user.id}>{user.name}</option>
+                {availableUsers.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -709,9 +837,7 @@ const RuleEditModal: React.FC<{
           <Button type="button" variant="ghost" onClick={onClose}>
             Annuler
           </Button>
-          <Button type="submit">
-            Enregistrer la règle
-          </Button>
+          <Button type="submit">Enregistrer la règle</Button>
         </div>
       </form>
     </Modal>

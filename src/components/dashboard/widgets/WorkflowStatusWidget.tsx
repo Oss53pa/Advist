@@ -3,7 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { GitBranch, ArrowRight, CheckCircle, Clock, XCircle, Loader } from 'lucide-react';
+import { ArrowRight, CheckCircle, Clock, XCircle, Loader } from 'lucide-react';
 import { WidgetConfig } from '../../../services/dashboard';
 
 interface WorkflowStatusWidgetProps {
@@ -34,7 +34,7 @@ export const WorkflowStatusWidget: React.FC<WorkflowStatusWidgetProps> = ({ conf
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 400));
+      await new Promise((resolve) => setTimeout(resolve, 400));
 
       const mockStats: WorkflowStats = {
         total: 24,
@@ -45,9 +45,27 @@ export const WorkflowStatusWidget: React.FC<WorkflowStatusWidgetProps> = ({ conf
           rejected: 2,
         },
         recent: [
-          { id: 1, documentTitle: 'Contrat Q4', status: 'in_progress', currentStep: 'Approbation DG', progress: 66 },
-          { id: 2, documentTitle: 'Budget 2025', status: 'pending', currentStep: 'Revue finance', progress: 33 },
-          { id: 3, documentTitle: 'Rapport annuel', status: 'in_progress', currentStep: 'Signature', progress: 80 },
+          {
+            id: 1,
+            documentTitle: 'Contrat Q4',
+            status: 'in_progress',
+            currentStep: 'Approbation DG',
+            progress: 66,
+          },
+          {
+            id: 2,
+            documentTitle: 'Budget 2025',
+            status: 'pending',
+            currentStep: 'Revue finance',
+            progress: 33,
+          },
+          {
+            id: 3,
+            documentTitle: 'Rapport annuel',
+            status: 'in_progress',
+            currentStep: 'Signature',
+            progress: 80,
+          },
         ],
       };
 
@@ -59,11 +77,34 @@ export const WorkflowStatusWidget: React.FC<WorkflowStatusWidgetProps> = ({ conf
   }, [config]);
 
   const getStatusConfig = (status: string) => {
-    const configs: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {
-      pending: { icon: <Clock size={14} />, color: 'text-advist-accent', bg: 'bg-advist-gold', label: 'En attente' },
-      in_progress: { icon: <Loader size={14} />, color: 'text-advist-gray900', bg: 'bg-advist-dark', label: 'En cours' },
-      completed: { icon: <CheckCircle size={14} />, color: 'text-advist-success', bg: 'bg-advist-success', label: 'Terminés' },
-      rejected: { icon: <XCircle size={14} />, color: 'text-advist-error', bg: 'bg-advist-error', label: 'Rejetés' },
+    const configs: Record<
+      string,
+      { icon: React.ReactNode; color: string; bg: string; label: string }
+    > = {
+      pending: {
+        icon: <Clock size={14} />,
+        color: 'text-advist-accent',
+        bg: 'bg-advist-gold',
+        label: 'En attente',
+      },
+      in_progress: {
+        icon: <Loader size={14} />,
+        color: 'text-advist-gray900',
+        bg: 'bg-advist-dark',
+        label: 'En cours',
+      },
+      completed: {
+        icon: <CheckCircle size={14} />,
+        color: 'text-advist-success',
+        bg: 'bg-advist-success',
+        label: 'Terminés',
+      },
+      rejected: {
+        icon: <XCircle size={14} />,
+        color: 'text-advist-error',
+        bg: 'bg-advist-error',
+        label: 'Rejetés',
+      },
     };
     return configs[status] || configs.pending;
   };
@@ -72,12 +113,12 @@ export const WorkflowStatusWidget: React.FC<WorkflowStatusWidgetProps> = ({ conf
     return (
       <div className="h-full flex flex-col gap-4">
         <div className="animate-pulse grid grid-cols-4 gap-2">
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-16 bg-advist-surface-dark rounded"></div>
           ))}
         </div>
         <div className="animate-pulse space-y-2 flex-1">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <div key={i} className="h-12 bg-advist-surface-dark rounded"></div>
           ))}
         </div>
@@ -94,13 +135,8 @@ export const WorkflowStatusWidget: React.FC<WorkflowStatusWidgetProps> = ({ conf
         {Object.entries(stats.byStatus).map(([status, count]) => {
           const config = getStatusConfig(status);
           return (
-            <div
-              key={status}
-              className="text-center p-2 rounded-lg bg-advist-surface-dark/30"
-            >
-              <div className={`${config.color} flex justify-center mb-1`}>
-                {config.icon}
-              </div>
+            <div key={status} className="text-center p-2 rounded-lg bg-advist-surface-dark/30">
+              <div className={`${config.color} flex justify-center mb-1`}>{config.icon}</div>
               <p className="text-lg font-bold text-advist-gray900">{count}</p>
               <p className="text-xs text-advist-gray900/50 truncate">{config.label}</p>
             </div>
@@ -113,7 +149,7 @@ export const WorkflowStatusWidget: React.FC<WorkflowStatusWidgetProps> = ({ conf
         <p className="text-xs font-medium text-advist-gray900/50 uppercase tracking-wider">
           En cours
         </p>
-        {stats.recent.map(workflow => {
+        {stats.recent.map((workflow) => {
           const config = getStatusConfig(workflow.status);
           return (
             <Link

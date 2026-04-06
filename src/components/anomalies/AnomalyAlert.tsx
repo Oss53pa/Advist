@@ -5,7 +5,7 @@ import {
   AlertCircle,
   Info,
   XCircle,
-  CheckCircle,
+  _CheckCircle,
   ChevronDown,
   ChevronUp,
   Calendar,
@@ -36,12 +36,15 @@ interface AnomalyAlertProps {
   showResolveActions?: boolean;
 }
 
-const SEVERITY_CONFIG: Record<AnomalySeverity, {
-  icon: React.ReactNode;
-  bgColor: string;
-  textColor: string;
-  borderColor: string;
-}> = {
+const SEVERITY_CONFIG: Record<
+  AnomalySeverity,
+  {
+    icon: React.ReactNode;
+    bgColor: string;
+    textColor: string;
+    borderColor: string;
+  }
+> = {
   info: {
     icon: <Info size={18} />,
     bgColor: 'bg-advist-gold-light',
@@ -85,24 +88,27 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
   compact = false,
   showResolveActions = true,
 }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [resolvingIds, setResolvingIds] = useState<Set<string>>(new Set());
   const [dismissingIds, setDismissingIds] = useState<Set<string>>(new Set());
   const [dismissReason, setDismissReason] = useState<Record<string, string>>({});
 
   // Filter out resolved anomalies
-  const activeAnomalies = anomalies.filter(a => !a.resolved);
+  const activeAnomalies = anomalies.filter((a) => !a.resolved);
 
   if (activeAnomalies.length === 0) {
     return null;
   }
 
   // Group anomalies by severity for summary
-  const bySeverity = activeAnomalies.reduce((acc, anomaly) => {
-    acc[anomaly.severity] = (acc[anomaly.severity] || 0) + 1;
-    return acc;
-  }, {} as Record<AnomalySeverity, number>);
+  const bySeverity = activeAnomalies.reduce(
+    (acc, anomaly) => {
+      acc[anomaly.severity] = (acc[anomaly.severity] || 0) + 1;
+      return acc;
+    },
+    {} as Record<AnomalySeverity, number>
+  );
 
   const toggleExpanded = (id: string) => {
     const newExpanded = new Set(expandedIds);
@@ -115,14 +121,14 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
   };
 
   const handleResolve = async (anomalyId: string) => {
-    setResolvingIds(prev => new Set(prev).add(anomalyId));
+    setResolvingIds((prev) => new Set(prev).add(anomalyId));
     try {
       await anomalyDetectionService.resolveAnomaly(anomalyId);
       onResolve?.(anomalyId);
     } catch (err) {
       console.error('Failed to resolve anomaly:', err);
     } finally {
-      setResolvingIds(prev => {
+      setResolvingIds((prev) => {
         const newSet = new Set(prev);
         newSet.delete(anomalyId);
         return newSet;
@@ -134,14 +140,14 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
     const reason = dismissReason[anomalyId];
     if (!reason) return;
 
-    setDismissingIds(prev => new Set(prev).add(anomalyId));
+    setDismissingIds((prev) => new Set(prev).add(anomalyId));
     try {
       await anomalyDetectionService.dismissAnomaly(anomalyId, reason);
       onDismiss?.(anomalyId);
     } catch (err) {
       console.error('Failed to dismiss anomaly:', err);
     } finally {
-      setDismissingIds(prev => {
+      setDismissingIds((prev) => {
         const newSet = new Set(prev);
         newSet.delete(anomalyId);
         return newSet;
@@ -151,17 +157,24 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
 
   // Compact view - just a summary banner
   if (compact) {
-    const highestSeverity = bySeverity.critical ? 'critical' :
-      bySeverity.error ? 'error' :
-      bySeverity.warning ? 'warning' : 'info';
+    const highestSeverity = bySeverity.critical
+      ? 'critical'
+      : bySeverity.error
+        ? 'error'
+        : bySeverity.warning
+          ? 'warning'
+          : 'info';
 
     const config = SEVERITY_CONFIG[highestSeverity];
 
     return (
-      <div className={`flex items-center gap-3 px-4 py-2 rounded-lg ${config.bgColor} ${config.borderColor} border`}>
+      <div
+        className={`flex items-center gap-3 px-4 py-2 rounded-lg ${config.bgColor} ${config.borderColor} border`}
+      >
         <span className={config.textColor}>{config.icon}</span>
         <span className={`text-sm font-medium ${config.textColor}`}>
-          {activeAnomalies.length} anomalie{activeAnomalies.length > 1 ? 's' : ''} détectée{activeAnomalies.length > 1 ? 's' : ''}
+          {activeAnomalies.length} anomalie{activeAnomalies.length > 1 ? 's' : ''} détectée
+          {activeAnomalies.length > 1 ? 's' : ''}
         </span>
         <div className="flex gap-2 ml-auto">
           {bySeverity.critical && (
@@ -193,7 +206,8 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
           <AlertTriangle size={20} className="text-advist-gold-dark" />
           <div>
             <h3 className="font-medium text-advist-gray900">
-              {activeAnomalies.length} anomalie{activeAnomalies.length > 1 ? 's' : ''} détectée{activeAnomalies.length > 1 ? 's' : ''}
+              {activeAnomalies.length} anomalie{activeAnomalies.length > 1 ? 's' : ''} détectée
+              {activeAnomalies.length > 1 ? 's' : ''}
             </h3>
             <p className="text-xs text-advist-blue-light">
               Vérifiez ces éléments avant de continuer
@@ -201,7 +215,7 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
           </div>
         </div>
         <div className="flex gap-2">
-          {(['critical', 'error', 'warning', 'info'] as AnomalySeverity[]).map(severity => {
+          {(['critical', 'error', 'warning', 'info'] as AnomalySeverity[]).map((severity) => {
             const count = bySeverity[severity];
             if (!count) return null;
             const config = SEVERITY_CONFIG[severity];
@@ -238,10 +252,10 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
                 <span className={config.textColor}>{config.icon}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className={`font-medium ${config.textColor}`}>
-                      {anomaly.title}
-                    </span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${config.bgColor} ${config.textColor} border ${config.borderColor}`}>
+                    <span className={`font-medium ${config.textColor}`}>{anomaly.title}</span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs ${config.bgColor} ${config.textColor} border ${config.borderColor}`}
+                    >
                       {CATEGORY_ICONS[anomaly.category]}
                       <span className="ml-1">{getCategoryLabel(anomaly.category)}</span>
                     </span>
@@ -271,13 +285,17 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
                     {anomaly.expectedValue && (
                       <div>
                         <p className="text-xs text-advist-blue-light">Valeur attendue</p>
-                        <p className="text-sm font-medium text-advist-success">{anomaly.expectedValue}</p>
+                        <p className="text-sm font-medium text-advist-success">
+                          {anomaly.expectedValue}
+                        </p>
                       </div>
                     )}
                     {anomaly.actualValue && (
                       <div>
                         <p className="text-xs text-advist-blue-light">Valeur actuelle</p>
-                        <p className="text-sm font-medium text-advist-error">{anomaly.actualValue}</p>
+                        <p className="text-sm font-medium text-advist-error">
+                          {anomaly.actualValue}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -312,10 +330,12 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({
                           type="text"
                           placeholder="Raison du rejet..."
                           value={dismissReason[anomaly.id] || ''}
-                          onChange={(e) => setDismissReason(prev => ({
-                            ...prev,
-                            [anomaly.id]: e.target.value,
-                          }))}
+                          onChange={(e) =>
+                            setDismissReason((prev) => ({
+                              ...prev,
+                              [anomaly.id]: e.target.value,
+                            }))
+                          }
                           className="flex-1 px-3 py-1 text-sm bg-advist-bg border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
                         />
                         <Button

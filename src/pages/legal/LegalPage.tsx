@@ -9,7 +9,7 @@ const legalContent = {
     lastUpdate: '1er janvier 2025',
     sections: [
       {
-        title: "1. Informations légales sur l'éditeur",
+        title: '1. Informations légales sur l\'éditeur',
         content: `Conformément aux dispositions de la loi n°2013-546 du 30 juillet 2013 relative aux transactions électroniques en Côte d'Ivoire et au Règlement (UE) 2016/679 (RGPD), nous vous informons que :
 
 Raison sociale : ATLAS-STUDIO SARL
@@ -22,7 +22,7 @@ Téléphone : +225 01 02 03 04 05
 Email : contact@advist.com
 
 Directeur de la publication : M. [Nom du Directeur Général]
-Responsable de la rédaction : M. [Nom du Responsable]`,
+Responsable de la rédaction : M. [Nom du Responsable]`
       },
       {
         title: '2. Hébergement des données',
@@ -43,7 +43,7 @@ Certifications de l'hébergeur :
 • PCI DSS Level 1
 • Conformité RGPD attestée
 
-Les données ne sont jamais transférées hors de l'Espace Économique Européen (EEE) sans garanties appropriées conformément au Chapitre V du RGPD.`,
+Les données ne sont jamais transférées hors de l'Espace Économique Européen (EEE) sans garanties appropriées conformément au Chapitre V du RGPD.`
       },
       {
         title: '3. Propriété intellectuelle',
@@ -60,7 +60,7 @@ Sont notamment protégés :
 • Les textes, graphismes, images et contenus multimédia
 • Les bases de données et leur structure
 
-Toute reproduction, représentation, modification, publication, transmission ou exploitation non autorisée est passible de poursuites conformément aux articles L.335-2 et suivants du Code de la Propriété Intellectuelle.`,
+Toute reproduction, représentation, modification, publication, transmission ou exploitation non autorisée est passible de poursuites conformément aux articles L.335-2 et suivants du Code de la Propriété Intellectuelle.`
       },
       {
         title: '4. Limitation de responsabilité',
@@ -77,7 +77,7 @@ Exclusions de responsabilité :
 • Dysfonctionnements liés à l'environnement technique de l'utilisateur
 • Contenus créés ou importés par les utilisateurs
 
-En tout état de cause, la responsabilité d'ATLAS-STUDIO est limitée au montant des sommes effectivement versées par l'utilisateur au cours des 12 derniers mois.`,
+En tout état de cause, la responsabilité d'ATLAS-STUDIO est limitée au montant des sommes effectivement versées par l'utilisateur au cours des 12 derniers mois.`
       },
       {
         title: '5. Cookies et traceurs',
@@ -91,15 +91,15 @@ Types de cookies utilisés :
 
 Durée de conservation : 13 mois maximum conformément aux recommandations CNIL.
 
-Gestion des préférences : Vous pouvez à tout moment modifier vos préférences via le bandeau cookies ou les paramètres de votre navigateur.`,
+Gestion des préférences : Vous pouvez à tout moment modifier vos préférences via le bandeau cookies ou les paramètres de votre navigateur.`
       },
       {
         title: '6. Accessibilité',
         content: `ATLAS-STUDIO s'engage à rendre la plateforme ADVIST accessible conformément au Référentiel Général d'Amélioration de l'Accessibilité (RGAA) et aux Web Content Accessibility Guidelines (WCAG) 2.1 niveau AA.
 
-En cas de difficulté d'accessibilité, contactez-nous : accessibilite@advist.com`,
-      },
-    ],
+En cas de difficulté d'accessibilité, contactez-nous : accessibilite@advist.com`
+      }
+    ]
   },
   privacy: {
     title: 'Politique de Confidentialité',
@@ -121,7 +121,7 @@ Adresse : ATLAS-STUDIO - DPO, BP 1234, Abidjan, Côte d'Ivoire
 
 Autorité de contrôle :
 • ARTCI (Autorité de Régulation des Télécommunications de Côte d'Ivoire)
-• CNIL (Commission Nationale de l'Informatique et des Libertés) pour les utilisateurs européens`,
+• CNIL (Commission Nationale de l'Informatique et des Libertés) pour les utilisateurs européens`
       },
       {
         title: '2. Données collectées et finalités',
@@ -145,7 +145,7 @@ Finalités : Fourniture du service, preuve de signature, audit trail
 DONNÉES DE SIGNATURE ÉLECTRONIQUE (Base légale : Obligation légale - Art. 6.1.c)
 • Certificat de signature, horodatage qualifié
 • Preuves de consentement, piste d'audit
-Finalités : Conformité eIDAS et OHADA, valeur probante`,
+Finalités : Conformité eIDAS et OHADA, valeur probante`
       },
       {
         title: '3. Destinataires des données',
@@ -167,7 +167,7 @@ TIERS AUTORISÉS
 • Autorités judiciaires sur réquisition légale
 • Commissaires aux comptes (obligations légales)
 
-AUCUNE vente ou location de données à des tiers à des fins commerciales.`,
+AUCUNE vente ou location de données à des tiers à des fins commerciales.`
       },
       {
         title: '4. Transferts internationaux',
@@ -183,7 +183,7 @@ En cas de transfert vers un pays tiers, nous garantissons un niveau de protectio
 
 ÉTATS-UNIS : Pour les services américains (ex: support technique), nous utilisons les CCT post-Schrems II avec mesures supplémentaires (chiffrement, pseudonymisation).
 
-Vous pouvez obtenir une copie des garanties appropriées en contactant notre DPO.`,
+Vous pouvez obtenir une copie des garanties appropriées en contactant notre DPO.`
       },
       {
         title: '5. Durées de conservation',
@@ -208,7 +208,7 @@ DONNÉES DE FACTURATION
 COOKIES
 • Durée : 13 mois maximum (Délibération CNIL n°2020-091)
 
-À l'expiration de ces délais, les données sont supprimées ou anonymisées de manière irréversible.`,
+À l'expiration de ces délais, les données sont supprimées ou anonymisées de manière irréversible.`
       },
       {
         title: '6. Vos droits',
@@ -244,7 +244,7 @@ EXERCICE DE VOS DROITS :
 • Délai de réponse : 1 mois (prolongeable de 2 mois si complexité)
 
 RÉCLAMATION :
-Vous pouvez introduire une réclamation auprès de l'ARTCI (Côte d'Ivoire) ou de la CNIL (France) si vous estimez que vos droits ne sont pas respectés.`,
+Vous pouvez introduire une réclamation auprès de l'ARTCI (Côte d'Ivoire) ou de la CNIL (France) si vous estimez que vos droits ne sont pas respectés.`
       },
       {
         title: '7. Sécurité des données',
@@ -269,7 +269,7 @@ CERTIFICATIONS
 • ISO 27001:2022 - Système de management de la sécurité de l'information
 • ISO 27701:2019 - Extension vie privée
 • SOC 2 Type II - Contrôles de sécurité
-• Conformité PCI DSS pour les paiements`,
+• Conformité PCI DSS pour les paiements`
       },
       {
         title: '8. Cookies et technologies similaires',
@@ -292,9 +292,9 @@ COOKIES DE FONCTIONNALITÉ (Consentement requis)
 
 AUCUN COOKIE PUBLICITAIRE OU DE TRAÇAGE TIERS
 
-Gestion des préférences : Accessible via le lien "Gérer les cookies" en pied de page.`,
-      },
-    ],
+Gestion des préférences : Accessible via le lien "Gérer les cookies" en pied de page.`
+      }
+    ]
   },
   cgu: {
     title: "Conditions Générales d'Utilisation",
@@ -317,7 +317,7 @@ En cas de contradiction, l'ordre de prévalence est le suivant :
 1. Conditions Particulières signées
 2. Présentes CGU
 3. Politique de Confidentialité
-4. Documentation technique`,
+4. Documentation technique`
       },
       {
         title: 'Article 2 - Définitions',
@@ -337,7 +337,7 @@ En cas de contradiction, l'ordre de prévalence est le suivant :
 
 "Utilisateur" : Toute personne physique disposant d'un accès à la plateforme.
 
-"Workflow" : Circuit de validation personnalisable définissant les étapes d'approbation d'un document.`,
+"Workflow" : Circuit de validation personnalisable définissant les étapes d'approbation d'un document.`
       },
       {
         title: 'Article 3 - Description du service',
@@ -362,7 +362,7 @@ Le service est conçu pour être conforme à :
 • Règlement (UE) 2016/679 (RGPD) sur la protection des données
 
 3.4 DISPONIBILITÉ
-ATLAS-STUDIO s'engage sur un taux de disponibilité de 99.9% (hors maintenance programmée). Les maintenances sont annoncées 48h à l'avance sauf urgence sécuritaire.`,
+ATLAS-STUDIO s'engage sur un taux de disponibilité de 99.9% (hors maintenance programmée). Les maintenances sont annoncées 48h à l'avance sauf urgence sécuritaire.`
       },
       {
         title: 'Article 4 - Inscription et compte utilisateur',
@@ -384,7 +384,7 @@ L'Utilisateur s'engage à :
 • Utiliser une adresse email professionnelle valide
 
 4.4 RESPONSABILITÉ
-L'Utilisateur est seul responsable de l'utilisation faite de son compte et des actions effectuées sous ses identifiants. ATLAS-STUDIO ne saurait être tenue responsable d'un accès non autorisé résultant d'une négligence de l'Utilisateur.`,
+L'Utilisateur est seul responsable de l'utilisation faite de son compte et des actions effectuées sous ses identifiants. ATLAS-STUDIO ne saurait être tenue responsable d'un accès non autorisé résultant d'une négligence de l'Utilisateur.`
       },
       {
         title: 'Article 5 - Signature électronique - Cadre juridique',
@@ -413,10 +413,10 @@ Chaque signature génère un certificat contenant :
 Les preuves de signature sont conservées pendant 10 ans minimum, conformément aux obligations légales de conservation des écrits électroniques.
 
 5.5 REFUS DE SIGNATURE
-Le signataire peut refuser de signer un document. Ce refus est tracé et notifié à l'expéditeur.`,
+Le signataire peut refuser de signer un document. Ce refus est tracé et notifié à l'expéditeur.`
       },
       {
-        title: "Article 6 - Obligations et responsabilités de l'utilisateur",
+        title: 'Article 6 - Obligations et responsabilités de l\'utilisateur',
         content: `6.1 USAGE CONFORME
 L'Utilisateur s'engage à utiliser le Service conformément à :
 • Sa destination (gestion documentaire et signature électronique)
@@ -441,7 +441,7 @@ L'Utilisateur garantit détenir tous les droits nécessaires sur les documents u
 En cas de violation des présentes obligations, ATLAS-STUDIO se réserve le droit de :
 • Suspendre temporairement l'accès au compte
 • Résilier le compte sans préavis ni indemnité
-• Engager des poursuites judiciaires le cas échéant`,
+• Engager des poursuites judiciaires le cas échéant`
       },
       {
         title: 'Article 7 - Tarification et paiement',
@@ -468,7 +468,7 @@ En cas de retard de paiement :
 • Suspension du service à J+30 (les documents restent accessibles en lecture seule)
 • Résiliation automatique à J+60
 
-Pénalités de retard : 3 fois le taux d'intérêt légal + indemnité forfaitaire de 40€ pour frais de recouvrement.`,
+Pénalités de retard : 3 fois le taux d'intérêt légal + indemnité forfaitaire de 40€ pour frais de recouvrement.`
       },
       {
         title: 'Article 8 - Propriété intellectuelle',
@@ -486,7 +486,7 @@ ATLAS-STUDIO concède à l'Utilisateur une licence d'utilisation non exclusive, 
 L'Utilisateur conserve l'intégralité de ses droits sur les documents uploadés. Il concède à ATLAS-STUDIO une licence limitée permettant le traitement technique nécessaire à la fourniture du Service (stockage, affichage, transmission).
 
 8.4 RETOUR D'EXPÉRIENCE
-Les suggestions d'amélioration soumises par les Utilisateurs peuvent être librement utilisées par ATLAS-STUDIO sans contrepartie.`,
+Les suggestions d'amélioration soumises par les Utilisateurs peuvent être librement utilisées par ATLAS-STUDIO sans contrepartie.`
       },
       {
         title: 'Article 9 - Limitation de responsabilité',
@@ -506,7 +506,7 @@ ATLAS-STUDIO ne saurait être tenue responsable :
 En tout état de cause, la responsabilité contractuelle d'ATLAS-STUDIO est limitée au montant des sommes effectivement versées par l'Utilisateur au cours des 12 mois précédant le fait générateur.
 
 9.4 DÉLAI DE RÉCLAMATION
-Toute réclamation doit être formulée dans un délai de 30 jours suivant la survenance du fait générateur, par email à support@advist.com.`,
+Toute réclamation doit être formulée dans un délai de 30 jours suivant la survenance du fait générateur, par email à support@advist.com.`
       },
       {
         title: 'Article 10 - Durée et résiliation',
@@ -530,7 +530,7 @@ ATLAS-STUDIO peut résilier l'accès :
 • Accès à la plateforme désactivé
 • Données exportables pendant 30 jours
 • Conservation des documents signés pendant 10 ans (obligation légale)
-• Facturation au prorata pour les abonnements annuels (hors résiliation pour faute)`,
+• Facturation au prorata pour les abonnements annuels (hors résiliation pour faute)`
       },
       {
         title: 'Article 11 - Protection des données personnelles',
@@ -538,7 +538,7 @@ ATLAS-STUDIO peut résilier l'accès :
 
 ATLAS-STUDIO s'engage à respecter le Règlement (UE) 2016/679 (RGPD) et la loi ivoirienne n°2013-450 sur la protection des données.
 
-Pour toute question relative à vos données personnelles, contactez notre DPO : dpo@advist.com`,
+Pour toute question relative à vos données personnelles, contactez notre DPO : dpo@advist.com`
       },
       {
         title: 'Article 12 - Dispositions générales',
@@ -569,13 +569,138 @@ ATLAS-STUDIO SARL
 Plateau, Rue du Commerce, Immeuble CCIA
 Abidjan, Côte d'Ivoire
 Email : legal@advist.com
-Téléphone : +225 01 02 03 04 05`,
-      },
-    ],
+Téléphone : +225 01 02 03 04 05`
+      }
+    ]
   },
+  signature: {
+    title: 'Politique de Signature Electronique',
+    icon: Shield,
+    lastUpdate: '1er avril 2026',
+    sections: [
+      {
+        title: '1. Cadre juridique applicable',
+        content: `La signature electronique proposee par ADVIST est conforme aux textes suivants :
+
+- Loi ivoirienne n\u00b02013-546 du 30 juillet 2013 relative aux transactions electroniques
+  Articles 9 a 15 : valeur juridique des signatures electroniques
+  Article 11 : presomption de fiabilite
+
+- Loi n\u00b02013-450 du 19 juin 2013 relative a la protection des donnees personnelles
+
+- Acte Uniforme OHADA sur le droit commercial general
+  Conservation des preuves de signature pendant 10 ans minimum
+
+- Reglement eIDAS (UE 910/2014) — reference technique pour la signature avancee`
+      },
+      {
+        title: '2. Niveaux de signature',
+        content: `ADVIST propose plusieurs niveaux de signature electronique :
+
+SIGNATURE SIMPLE
+- Identification par email
+- Horodatage serveur certifie
+- Sceau d'integrite SHA-256
+- Valeur probante : standard
+
+SIGNATURE AVANCEE (STANDARD)
+- Verification OTP par email obligatoire
+- Horodatage serveur certifie
+- Sceau d'integrite liant cryptographiquement la signature au document
+- Consentement explicite trace
+- Valeur probante : renforcee
+
+SIGNATURE RENFORCEE
+- Verification OTP par SMS sur numero mobile
+- Horodatage serveur certifie + TSA RFC 3161 (optionnel)
+- Sceau d'integrite cryptographique
+- Consentement explicite trace
+- Valeur probante : forte
+
+SIGNATURE QUALIFIEE
+- Certificat qualifie (eIDAS)
+- Verification d'identite en personne ou par video
+- Horodatage qualifie RFC 3161
+- Valeur probante : maximale (conforme OHADA Art. 17)`
+      },
+      {
+        title: '3. Processus de verification d\'identite',
+        content: `Avant toute signature, ADVIST verifie l'identite du signataire :
+
+VERIFICATION OTP (One-Time Password)
+- Un code a 6 chiffres est envoye par email ou SMS au signataire
+- Le code expire apres 10 minutes
+- Maximum 3 tentatives de saisie
+- Le code est stocke sous forme de hash SHA-256 (jamais en clair)
+- La preuve de verification est incluse dans le dossier de preuves
+
+CONSENTEMENT EXPLICITE
+- Avant de signer, le signataire doit :
+  (i) Confirmer son identite
+  (ii) Reconnaitre la valeur juridique de la signature electronique (Loi 2013-546)
+  (iii) Declarer avoir lu le document
+  (iv) Accepter les CGU d'ADVIST
+- Le texte de consentement est versionne et son hash est conserve`
+      },
+      {
+        title: '4. Integrite cryptographique',
+        content: `Chaque signature est protegee par un sceau d'integrite cryptographique :
+
+SCEAU D'INTEGRITE
+- Formule : SHA-256(hash_document + hash_signature + id_signataire + timestamp_serveur)
+- Ce sceau lie de maniere irrevocable la signature au document
+- Toute modification du document ou de la signature invalide le sceau
+
+HORODATAGE SERVEUR
+- Le timestamp est genere cote serveur (pas cote navigateur)
+- Il est incontestable car independant de l'horloge du signataire
+- Il est inclus dans le sceau d'integrite
+
+CHAINE DE SIGNATURES
+- Chaque signature reference le hash de la signature precedente
+- Cela cree une chaine inalterable de signatures`
+      },
+      {
+        title: '5. Conservation des preuves',
+        content: `ADVIST conserve les preuves de signature conformement aux exigences legales :
+
+DUREE DE CONSERVATION
+- Documents commerciaux : 10 ans minimum (Acte Uniforme OHADA)
+- La suppression est techniquement bloquee pendant la periode de retention
+- Un trigger PostgreSQL empeche toute suppression prematuree
+
+DOSSIER DE PREUVES AUTOPORTANT
+Chaque signature genere un dossier de preuves contenant :
+- Le document original et le document signe certifie (PDF)
+- Le compte-rendu de validation
+- La piste d'audit complete (JSON + PDF)
+- Les preuves de chaque signature (verification OTP, consentement)
+- Le manifest des hashes SHA-256
+- Un guide de verification pour juge/avocat
+- Un QR code vers le portail de verification publique
+
+PORTAIL DE VERIFICATION PUBLIQUE
+- Accessible sans compte ADVIST sur verify.advist.africa
+- Permet a un juge ou un avocat de verifier l'authenticite d'un document
+- Affiche le statut des signatures sans reveler le contenu du document`
+      },
+      {
+        title: '6. Contact',
+        content: `Pour toute question relative a la signature electronique :
+
+ATLAS-STUDIO SARL
+Plateau, Rue du Commerce, Immeuble CCIA
+Abidjan, Cote d'Ivoire
+
+Email : legal@advist.africa
+Telephone : +225 01 02 03 04 05
+DPO : dpo@advist.africa`
+      }
+    ]
+  }
 };
 
-type LegalType = 'mentions' | 'privacy' | 'cgu';
+type LegalType = 'mentions' | 'privacy' | 'cgu' | 'signature';
 
 export const LegalPage: React.FC = () => {
   const { type } = useParams<{ type: string }>();
@@ -583,12 +708,10 @@ export const LegalPage: React.FC = () => {
 
   if (!content) {
     return (
-      <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center">
+      <div className="min-h-screen bg-primary-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-light text-white mb-4">Page non trouvée</h1>
-          <Link to="/" className="text-[#C8A961] hover:underline">
-            Retour à l'accueil
-          </Link>
+          <h1 className="text-2xl font-bold text-primary-900 mb-4">Page non trouvée</h1>
+          <Link to="/" className="text-primary-900 hover:underline">Retour à l'accueil</Link>
         </div>
       </div>
     );
@@ -597,20 +720,20 @@ export const LegalPage: React.FC = () => {
   const Icon = content.icon;
 
   return (
-    <div className="min-h-screen bg-[#0A0A0B]">
+    <div className="min-h-screen bg-primary-50">
       {/* Header */}
-      <header className="bg-[#0A0A0B]/90 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10">
+      <header className="bg-white border-b border-primary-200 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#C8A961] to-[#C8A961]/70 rounded-xl flex items-center justify-center">
-                <span className="text-[#0A0A0B] font-medium">A</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-900 to-primary-700 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold">A</span>
               </div>
-              <span className="font-decorative text-2xl text-white">Advist</span>
+              <span className="font-decorative text-2xl text-primary-900">Advist</span>
             </Link>
             <Link
               to="/"
-              className="flex items-center gap-2 text-white/40 hover:text-white transition-colors"
+              className="flex items-center gap-2 text-primary-600 hover:text-primary-900 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Retour
@@ -621,18 +744,16 @@ export const LegalPage: React.FC = () => {
 
       {/* Content */}
       <main className="max-w-4xl mx-auto px-6 py-12">
-        <div className="bg-[#1A1A1D] rounded-2xl border border-white/5 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-primary-200 overflow-hidden">
           {/* Title */}
-          <div className="bg-[#0F0F11] px-8 py-8 text-white">
+          <div className="bg-gradient-to-r from-primary-900 to-primary-800 px-8 py-8 text-white">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center">
                 <Icon className="w-7 h-7" />
               </div>
               <div>
-                <h1 className="text-2xl font-light">{content.title}</h1>
-                <p className="text-white/40 text-sm mt-1">
-                  Dernière mise à jour : {content.lastUpdate}
-                </p>
+                <h1 className="text-2xl font-bold">{content.title}</h1>
+                <p className="text-primary-400 text-sm mt-1">Dernière mise à jour : {content.lastUpdate}</p>
               </div>
             </div>
           </div>
@@ -641,13 +762,13 @@ export const LegalPage: React.FC = () => {
           <div className="p-8 space-y-8">
             {content.sections.map((section, index) => (
               <section key={index}>
-                <h2 className="text-lg font-medium text-white mb-3 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center text-sm text-white/60">
+                <h2 className="text-lg font-semibold text-primary-900 mb-3 flex items-center gap-2">
+                  <span className="w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center text-sm text-primary-500">
                     {index + 1}
                   </span>
                   {section.title}
                 </h2>
-                <div className="text-white/40 whitespace-pre-line pl-8 leading-relaxed">
+                <div className="text-primary-600 whitespace-pre-line pl-8 leading-relaxed">
                   {section.content}
                 </div>
               </section>
@@ -655,11 +776,11 @@ export const LegalPage: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <div className="bg-white/5 px-8 py-6 border-t border-white/10">
+          <div className="bg-primary-50 px-8 py-6 border-t border-primary-200">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-white/40">
+              <p className="text-sm text-primary-500">
                 Pour toute question, contactez-nous à{' '}
-                <a href="mailto:legal@advist.com" className="text-[#C8A961] hover:underline">
+                <a href="mailto:legal@advist.com" className="text-primary-900 hover:underline">
                   legal@advist.com
                 </a>
               </p>
@@ -668,8 +789,8 @@ export const LegalPage: React.FC = () => {
                   <Link
                     key={key}
                     to={`/legal/${key}`}
-                    className={`text-white/40 hover:text-[#C8A961] transition-colors ${
-                      type === key ? 'font-medium text-[#C8A961]' : ''
+                    className={`text-primary-500 hover:text-primary-900 transition-colors ${
+                      type === key ? 'font-semibold text-primary-900' : ''
                     }`}
                   >
                     {value.title}

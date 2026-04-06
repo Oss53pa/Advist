@@ -5,8 +5,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   GitCompare,
-  ChevronLeft,
-  ChevronRight,
+  _ChevronLeft,
+  _ChevronRight,
   ZoomIn,
   ZoomOut,
   ArrowLeftRight,
@@ -21,7 +21,10 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { Button, Badge, Modal } from '../ui';
-import { documentsService, VersionComparison as VersionComparisonData, VersionChange } from '../../services/documents';
+import {
+  documentsService,
+  VersionComparison as VersionComparisonData,
+} from '../../services/documents';
 
 interface DocumentVersion {
   id: number;
@@ -97,23 +100,24 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
   }, [isOpen, fetchComparison]);
 
   // Transform API changes to display format
-  const diffs: DiffItem[] = comparison?.changes?.map((change, index) => ({
-    id: index + 1,
-    type: change.type,
-    page: change.page,
-    section: change.section || change.description,
-    oldText: change.old_content || null,
-    newText: change.new_content || null,
-    lineNumber: undefined,
-  })) || [];
+  const diffs: DiffItem[] =
+    comparison?.changes?.map((change, index) => ({
+      id: index + 1,
+      type: change.type,
+      page: change.page,
+      section: change.section || change.description,
+      oldText: change.old_content || null,
+      newText: change.new_content || null,
+      lineNumber: undefined,
+    })) || [];
 
-  const leftVersionData = versions.find(v => v.version === leftVersion);
-  const rightVersionData = versions.find(v => v.version === rightVersion);
+  const leftVersionData = versions.find((v) => v.version === leftVersion);
+  const rightVersionData = versions.find((v) => v.version === rightVersion);
 
   const stats = comparison?.summary || {
-    additions: diffs.filter(d => d.type === 'addition').length,
-    deletions: diffs.filter(d => d.type === 'deletion').length,
-    modifications: diffs.filter(d => d.type === 'modification').length,
+    additions: diffs.filter((d) => d.type === 'addition').length,
+    deletions: diffs.filter((d) => d.type === 'deletion').length,
+    modifications: diffs.filter((d) => d.type === 'modification').length,
   };
 
   const swapVersions = () => {
@@ -145,13 +149,7 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title=""
-      size="xl"
-      className="!max-w-7xl"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="" size="xl" className="!max-w-7xl">
       <div className="flex flex-col h-[80vh]">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-advist-border bg-gradient-to-r from-advist-navy to-primary-900 text-white -mx-6 -mt-6 px-6 pt-6 rounded-t-xl">
@@ -164,10 +162,7 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
               <p className="text-sm text-white/70">{documentTitle}</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -310,7 +305,9 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
           {isLoading && (
             <div className="flex items-center justify-center h-64">
               <Loader2 className="w-8 h-8 animate-spin text-advist-gold" />
-              <span className="ml-3 text-advist-text-secondary">Chargement de la comparaison...</span>
+              <span className="ml-3 text-advist-text-secondary">
+                Chargement de la comparaison...
+              </span>
             </div>
           )}
 
@@ -329,7 +326,9 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
           {!isLoading && !error && diffs.length === 0 && (
             <div className="flex flex-col items-center justify-center h-64 text-center">
               <Check className="w-12 h-12 text-advist-success mb-3" />
-              <p className="text-advist-text-secondary">Aucune différence détectée entre les versions</p>
+              <p className="text-advist-text-secondary">
+                Aucune différence détectée entre les versions
+              </p>
             </div>
           )}
 
@@ -376,7 +375,9 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
                         <span className="text-xs text-advist-text-secondary">{diff.section}</span>
                       </div>
                       {diff.oldText ? (
-                        <p className={`text-sm ${diff.type !== 'addition' ? 'text-advist-error line-through' : 'text-advist-gray900'}`}>
+                        <p
+                          className={`text-sm ${diff.type !== 'addition' ? 'text-advist-error line-through' : 'text-advist-gray900'}`}
+                        >
                           {diff.oldText}
                         </p>
                       ) : (
@@ -427,7 +428,9 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
                         <span className="text-xs text-advist-text-secondary">{diff.section}</span>
                       </div>
                       {diff.newText ? (
-                        <p className={`text-sm ${diff.type !== 'deletion' ? 'text-advist-success' : 'text-advist-gray900'}`}>
+                        <p
+                          className={`text-sm ${diff.type !== 'deletion' ? 'text-advist-success' : 'text-advist-gray900'}`}
+                        >
                           {diff.newText}
                         </p>
                       ) : (
@@ -447,16 +450,24 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
                   className={`p-4 rounded-xl border-2 ${getDiffTypeColor(diff.type)}`}
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      diff.type === 'addition' ? 'bg-green-50' :
-                      diff.type === 'deletion' ? 'bg-advist-gold-light' : 'bg-advist-gold-light'
-                    }`}>
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        diff.type === 'addition'
+                          ? 'bg-green-50'
+                          : diff.type === 'deletion'
+                            ? 'bg-advist-gold-light'
+                            : 'bg-advist-gold-light'
+                      }`}
+                    >
                       {getDiffIcon(diff.type)}
                     </div>
                     <div>
                       <span className="text-sm font-semibold capitalize">
-                        {diff.type === 'addition' ? 'Ajout' :
-                         diff.type === 'deletion' ? 'Suppression' : 'Modification'}
+                        {diff.type === 'addition'
+                          ? 'Ajout'
+                          : diff.type === 'deletion'
+                            ? 'Suppression'
+                            : 'Modification'}
                       </span>
                       {diff.page && (
                         <span className="text-xs text-advist-text-secondary ml-2">
@@ -464,14 +475,18 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
                         </span>
                       )}
                     </div>
-                    <span className="text-xs text-advist-text-secondary ml-auto">{diff.section}</span>
+                    <span className="text-xs text-advist-text-secondary ml-auto">
+                      {diff.section}
+                    </span>
                   </div>
 
                   {diff.type === 'modification' ? (
                     <div className="space-y-2">
                       <div className="p-2 bg-advist-gold-light rounded-lg">
                         <span className="text-xs text-advist-error font-medium">Avant:</span>
-                        <p className="text-sm text-advist-error line-through mt-1">{diff.oldText}</p>
+                        <p className="text-sm text-advist-error line-through mt-1">
+                          {diff.oldText}
+                        </p>
                       </div>
                       <div className="p-2 bg-green-50 rounded-lg">
                         <span className="text-xs text-advist-success font-medium">Apres:</span>

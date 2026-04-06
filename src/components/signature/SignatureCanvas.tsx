@@ -245,12 +245,19 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
           ref={svgRef}
           viewBox={`0 0 ${width} ${height}`}
           width="100%"
-          style={{ touchAction: 'none', display: 'block' }}
+          style={{
+            touchAction: 'none',
+            display: 'block',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            WebkitTouchCallout: 'none',
+          }}
           className="cursor-crosshair"
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
+          onContextMenu={(e) => e.preventDefault()}
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* White background for export */}

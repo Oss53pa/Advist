@@ -9,8 +9,8 @@ import {
   ArrowLeftRight,
   Plus,
   Trash2,
-  Settings,
-  Clock,
+  _Settings,
+  _Clock,
   Folder,
   FileText,
   Loader2,
@@ -44,10 +44,7 @@ const SYNC_DIRECTION_OPTIONS: { value: SyncDirection; label: string; icon: React
   { value: 'export_only', label: 'Export uniquement', icon: FileText },
 ];
 
-export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
-  connection,
-  onClose,
-}) => {
+export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({ connection, _onClose }) => {
   const { t } = useTranslation();
   const {
     syncMappings,
@@ -76,9 +73,7 @@ export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
     fetchSyncMappings();
   }, [fetchSyncMappings]);
 
-  const connectionMappings = syncMappings.filter(
-    (m) => m.connection_id === connection.id
-  );
+  const connectionMappings = syncMappings.filter((m) => m.connection_id === connection.id);
 
   const handleCreateMapping = async () => {
     try {
@@ -146,11 +141,7 @@ export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
         </Badge>
       );
     }
-    return (
-      <Badge variant="secondary">
-        {t('integrations.mapping.pending', 'En attente')}
-      </Badge>
-    );
+    return <Badge variant="secondary">{t('integrations.mapping.pending', 'En attente')}</Badge>;
   };
 
   return (
@@ -162,7 +153,10 @@ export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
             {t('integrations.mapping.title', 'Mappings de synchronisation')}
           </h2>
           <p className="text-sm text-advist-gray900/60 mt-1">
-            {t('integrations.mapping.description', 'Configurez les dossiers a synchroniser avec ADVIST')}
+            {t(
+              'integrations.mapping.description',
+              'Configurez les dossiers a synchroniser avec ADVIST'
+            )}
           </p>
         </div>
         <Button onClick={() => setShowCreateModal(true)}>
@@ -184,7 +178,10 @@ export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
               {t('integrations.mapping.empty', 'Aucun mapping configure')}
             </h3>
             <p className="text-sm text-advist-gray900/60 mb-4">
-              {t('integrations.mapping.emptyDescription', 'Creez un mapping pour synchroniser des dossiers entre votre systeme et ADVIST')}
+              {t(
+                'integrations.mapping.emptyDescription',
+                'Creez un mapping pour synchroniser des dossiers entre votre systeme et ADVIST'
+              )}
             </p>
             <Button onClick={() => setShowCreateModal(true)}>
               <Plus size={16} className="mr-2" />
@@ -203,9 +200,7 @@ export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
-                    <h4 className="font-medium text-advist-gray900 truncate">
-                      {mapping.name}
-                    </h4>
+                    <h4 className="font-medium text-advist-gray900 truncate">{mapping.name}</h4>
                     {getSyncStatusBadge(mapping)}
                   </div>
 
@@ -311,10 +306,7 @@ export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
                   </span>
                 )}
               </div>
-              <Button
-                variant="outline"
-                onClick={() => setShowFolderPicker(true)}
-              >
+              <Button variant="outline" onClick={() => setShowFolderPicker(true)}>
                 <Folder size={16} className="mr-2" />
                 {t('integrations.mapping.browse', 'Parcourir')}
               </Button>
@@ -335,20 +327,22 @@ export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
                     onClick={() => setNewMapping({ ...newMapping, sync_direction: option.value })}
                     className={`
                       p-3 rounded-xl border-2 text-left transition-all
-                      ${newMapping.sync_direction === option.value
-                        ? 'border-advist-primary bg-advist-primary/5'
-                        : 'border-advist-gray200 hover:border-advist-gray300'
+                      ${
+                        newMapping.sync_direction === option.value
+                          ? 'border-advist-primary bg-advist-primary/5'
+                          : 'border-advist-gray200 hover:border-advist-gray300'
                       }
                     `}
                   >
-                    <Icon size={20} className={`mb-2 ${
-                      newMapping.sync_direction === option.value
-                        ? 'text-advist-primary'
-                        : 'text-advist-gray900/60'
-                    }`} />
-                    <p className="text-sm font-medium text-advist-gray900">
-                      {option.label}
-                    </p>
+                    <Icon
+                      size={20}
+                      className={`mb-2 ${
+                        newMapping.sync_direction === option.value
+                          ? 'text-advist-primary'
+                          : 'text-advist-gray900/60'
+                      }`}
+                    />
+                    <p className="text-sm font-medium text-advist-gray900">{option.label}</p>
                   </button>
                 );
               })}
@@ -381,7 +375,10 @@ export const SyncMappingConfig: React.FC<SyncMappingConfigProps> = ({
                 {t('integrations.mapping.autoWorkflow', 'Workflow automatique')}
               </p>
               <p className="text-sm text-advist-gray900/60">
-                {t('integrations.mapping.autoWorkflowDesc', 'Demarrer automatiquement un workflow pour les nouveaux documents')}
+                {t(
+                  'integrations.mapping.autoWorkflowDesc',
+                  'Demarrer automatiquement un workflow pour les nouveaux documents'
+                )}
               </p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">

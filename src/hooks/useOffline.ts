@@ -99,7 +99,7 @@ export function useOffline(): UseOfflineResult {
 
       swRegistrationRef.current = registration;
 
-      console.log('Service Worker registered:', registration.scope);
+      console.info('Service Worker registered:', registration.scope);
 
       // Check for updates
       registration.addEventListener('updatefound', () => {
@@ -108,7 +108,7 @@ export function useOffline(): UseOfflineResult {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
               // New version available
-              console.log('New Service Worker available');
+              console.info('New Service Worker available');
               // Optionally show update notification
             }
           });
@@ -255,7 +255,7 @@ export function useOfflineData<T>(
         setData(offlineData);
         setIsStale(true);
       }
-    } catch (error) {
+    } catch (_error) {
       // Network failed, try offline
       console.warn('Network fetch failed, loading offline data');
       const offlineData = await offlineStorage.getAll<T>(storeName);

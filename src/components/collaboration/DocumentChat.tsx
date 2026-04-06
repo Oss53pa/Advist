@@ -9,8 +9,8 @@ import {
   X,
   FileText,
   Reply,
-  ChevronDown,
-  Paperclip,
+  _ChevronDown,
+  _Paperclip,
   GripVertical,
 } from 'lucide-react';
 import { Avatar } from '../ui/Avatar';
@@ -75,7 +75,7 @@ export const DocumentChat: React.FC<DocumentChatProps> = ({
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      setPosition(prev => ({
+      setPosition((prev) => ({
         x: Math.min(prev.x, window.innerWidth - (isOpen ? 330 : 60)),
         y: Math.min(prev.y, window.innerHeight - (isOpen ? 510 : 60)),
       }));
@@ -162,11 +162,7 @@ export const DocumentChat: React.FC<DocumentChatProps> = ({
   const handleSend = () => {
     if (!inputValue.trim()) return;
 
-    onSendMessage(
-      inputValue.trim(),
-      replyingTo?.id,
-      includePageRef ? currentPage : undefined
-    );
+    onSendMessage(inputValue.trim(), replyingTo?.id, includePageRef ? currentPage : undefined);
 
     setInputValue('');
     setReplyingTo(null);
@@ -247,7 +243,10 @@ export const DocumentChat: React.FC<DocumentChatProps> = ({
           <span className="font-semibold">Discussion</span>
         </div>
         <button
-          onClick={(e) => { e.stopPropagation(); onToggle(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
           className="p-1 hover:bg-white/10 rounded-lg transition-colors"
         >
           <X size={18} />
@@ -290,9 +289,7 @@ export const DocumentChat: React.FC<DocumentChatProps> = ({
                 style={{ animationDelay: '0.2s' }}
               />
             </div>
-            <span>
-              {typingUsers.map((u) => u.userName).join(', ')} écrit...
-            </span>
+            <span>{typingUsers.map((u) => u.userName).join(', ')} écrit...</span>
           </div>
         )}
 
@@ -363,27 +360,15 @@ interface MessageBubbleProps {
   formatTime: (date: string) => string;
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({
-  message,
-  onReply,
-  formatTime,
-}) => {
+const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onReply, formatTime }) => {
   return (
     <div className="group">
       <div className="flex items-start gap-2">
-        <Avatar
-          name={message.author.name}
-          src={message.author.avatar}
-          size="xs"
-        />
+        <Avatar name={message.author.name} src={message.author.avatar} size="xs" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-advist-gray900">
-              {message.author.name}
-            </span>
-            <span className="text-xs text-advist-text-muted">
-              {formatTime(message.createdAt)}
-            </span>
+            <span className="text-sm font-medium text-advist-gray900">{message.author.name}</span>
+            <span className="text-xs text-advist-text-muted">{formatTime(message.createdAt)}</span>
           </div>
 
           {/* Page reference */}
@@ -395,9 +380,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           )}
 
           {/* Message content */}
-          <p className="text-sm text-advist-gray900 mt-0.5 break-words">
-            {message.content}
-          </p>
+          <p className="text-sm text-advist-gray900 mt-0.5 break-words">{message.content}</p>
         </div>
 
         {/* Actions */}

@@ -44,7 +44,8 @@ async function mapSupabaseUser(supabaseUser: SupabaseUser): Promise<AuthResponse
   // Fetch profile with organization data
   const { data: profile } = await supabase
     .from('profiles')
-    .select(`
+    .select(
+      `
       first_name,
       last_name,
       organization_id,
@@ -52,7 +53,8 @@ async function mapSupabaseUser(supabaseUser: SupabaseUser): Promise<AuthResponse
         id,
         name
       )
-    `)
+    `
+    )
     .eq('id', supabaseUser.id)
     .single();
 
@@ -126,7 +128,9 @@ export const secureAuthService = {
    */
   async getCurrentUser(): Promise<AuthResponse['user'] | null> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return null;
       return mapSupabaseUser(user);
     } catch {
@@ -138,7 +142,9 @@ export const secureAuthService = {
    * Get current session.
    */
   async getSession(): Promise<Session | null> {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     return session;
   },
 
@@ -146,7 +152,9 @@ export const secureAuthService = {
    * Check if user is authenticated.
    */
   async isAuthenticated(): Promise<boolean> {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     return !!session;
   },
 
@@ -219,13 +227,15 @@ export const secureAuthService = {
    * Note: Supabase MFA is handled via supabase.auth.mfa
    */
   async verify2FA(code: string): Promise<AuthResponse> {
-    const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+    const { _data, error } = await supabase.auth.mfa.challengeAndVerify({
       factorId: code,
       code,
     });
     if (error) throw error;
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) throw new Error('No user after 2FA verification');
 
     return { user: await mapSupabaseUser(user) };
@@ -260,7 +270,9 @@ export const secureAuthService = {
    * Returns an unsubscribe function.
    */
   onAuthStateChange(callback: (event: string, session: Session | null) => void) {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(callback);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(callback);
     return subscription.unsubscribe;
   },
 };
@@ -297,7 +309,8 @@ export function getAuthErrorMessage(error: AuthError): string {
     'Invalid login credentials': 'Email ou mot de passe incorrect.',
     'Email not confirmed': 'Veuillez confirmer votre adresse email.',
     'User already registered': 'Un compte avec cet email existe déjà.',
-    'Password should be at least 6 characters': 'Le mot de passe doit contenir au moins 6 caractères.',
+    'Password should be at least 6 characters':
+      'Le mot de passe doit contenir au moins 6 caractères.',
     'Email rate limit exceeded': 'Trop de tentatives. Veuillez réessayer plus tard.',
   };
 

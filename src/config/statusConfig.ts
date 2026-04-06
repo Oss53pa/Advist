@@ -1,6 +1,13 @@
-import { CheckCircle, Clock, AlertTriangle, XCircle, Archive, Ban } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, Archive, Ban } from 'lucide-react';
 
-export type StatusType = 'active' | 'inactive' | 'pending' | 'completed' | 'rejected' | 'archived' | 'blocked';
+export type StatusType =
+  | 'active'
+  | 'inactive'
+  | 'pending'
+  | 'completed'
+  | 'rejected'
+  | 'archived'
+  | 'blocked';
 
 export interface StatusConfig {
   label: string;

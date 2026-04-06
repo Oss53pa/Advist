@@ -10,17 +10,17 @@ import {
   Shield,
   Download,
   RotateCcw,
-  Sparkles,
-  Lock,
-  Calendar,
+  _Sparkles,
+  _Lock,
+  _Calendar,
   User,
   AlertCircle,
   Play,
   Type,
   Pencil,
-  Check,
-  X,
-  Clock,
+  _Check,
+  _X,
+  _Clock,
   Award,
   Eye,
   ChevronRight,
@@ -37,7 +37,7 @@ export const InteractiveSignatureDemo: React.FC = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [signaturePosition, setSignaturePosition] = useState({ x: 50, y: 75 });
+  const [_signaturePosition, _setSignaturePosition] = useState({ x: 50, y: 75 });
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const documentInfo = {
@@ -62,7 +62,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
     ctx.lineJoin = 'round';
   }, [step]);
 
-  const getCanvasCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const getCanvasCoordinates = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
 
@@ -82,7 +84,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
     };
   };
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const startDrawing = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     e.preventDefault();
     setIsDrawing(true);
     const canvas = canvasRef.current;
@@ -128,7 +132,7 @@ export const InteractiveSignatureDemo: React.FC = () => {
 
   const handleConfirmSignature = async () => {
     setIsProcessing(true);
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 2000));
     setStep('complete');
     setIsProcessing(false);
   };
@@ -159,9 +163,7 @@ export const InteractiveSignatureDemo: React.FC = () => {
               <Shield className="w-4 h-4 text-white" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Signature électronique
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Signature électronique</h2>
           <p className="text-gray-500 max-w-md mx-auto">
             Signez un document en toute légalité avec certificat et horodatage automatique.
           </p>
@@ -174,7 +176,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
               <FileText className="w-8 h-8 text-red-500" />
             </div>
             <div className="flex-1">
-              <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Document à signer</p>
+              <p className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Document à signer
+              </p>
               <h3 className="font-semibold text-lg mb-3">{documentInfo.name}</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex items-center gap-2">
@@ -229,7 +233,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
       <div className="max-w-2xl mx-auto py-4">
         <div className="mb-6">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <span className="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+            <span className="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold">
+              1
+            </span>
             <span>Prévisualisation du document</span>
           </div>
           <h3 className="text-xl font-bold text-gray-900">Vérifiez le contenu</h3>
@@ -251,8 +257,8 @@ export const InteractiveSignatureDemo: React.FC = () => {
                 <strong>Entre les soussignés :</strong>
               </p>
               <p className="text-gray-600 mb-2 ml-4">
-                • <strong>ADVIST SAS</strong>, société par actions simplifiée au capital de 100 000 €,
-                dont le siège social est situé à Abidjan, Côte d'Ivoire, immatriculée au RCCM...
+                • <strong>ADVIST SAS</strong>, société par actions simplifiée au capital de 100 000
+                €, dont le siège social est situé à Abidjan, Côte d'Ivoire, immatriculée au RCCM...
               </p>
               <p className="text-gray-600 mb-4 ml-4">
                 • <strong>Société ABC</strong>, représentée par son Directeur Général...
@@ -304,7 +310,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
       <div className="max-w-2xl mx-auto py-4">
         <div className="mb-6">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <span className="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+            <span className="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold">
+              2
+            </span>
             <span>Création de votre signature</span>
           </div>
           <h3 className="text-xl font-bold text-gray-900">Signez le document</h3>
@@ -313,7 +321,10 @@ export const InteractiveSignatureDemo: React.FC = () => {
         {/* Signature Mode Selector */}
         <div className="flex gap-2 p-1 bg-gray-100 rounded-xl mb-6">
           <button
-            onClick={() => { setSignatureMode('draw'); clearCanvas(); }}
+            onClick={() => {
+              setSignatureMode('draw');
+              clearCanvas();
+            }}
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
               signatureMode === 'draw'
                 ? 'bg-white text-gray-900 shadow-sm'
@@ -324,7 +335,10 @@ export const InteractiveSignatureDemo: React.FC = () => {
             Dessiner
           </button>
           <button
-            onClick={() => { setSignatureMode('type'); setTypedSignature(''); }}
+            onClick={() => {
+              setSignatureMode('type');
+              setTypedSignature('');
+            }}
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
               signatureMode === 'type'
                 ? 'bg-white text-gray-900 shadow-sm'
@@ -342,8 +356,7 @@ export const InteractiveSignatureDemo: React.FC = () => {
             <p className="text-sm text-gray-600">
               {signatureMode === 'draw'
                 ? 'Dessinez votre signature avec la souris ou le doigt'
-                : 'Tapez votre nom complet'
-              }
+                : 'Tapez votre nom complet'}
             </p>
           </div>
 
@@ -396,7 +409,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
               />
               {typedSignature && (
                 <div className="mt-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
-                  <p className="text-xs text-gray-500 text-center mb-2">Aperçu de votre signature</p>
+                  <p className="text-xs text-gray-500 text-center mb-2">
+                    Aperçu de votre signature
+                  </p>
                   <p
                     className="text-3xl text-center text-gray-900"
                     style={{ fontFamily: "'Dancing Script', cursive" }}
@@ -416,8 +431,8 @@ export const InteractiveSignatureDemo: React.FC = () => {
             <div>
               <p className="text-sm font-medium text-gray-800 mb-1">Engagement légal</p>
               <p className="text-sm text-gray-700">
-                En signant, vous acceptez que cette signature électronique ait la même
-                valeur juridique qu'une signature manuscrite (règlement eIDAS).
+                En signant, vous acceptez que cette signature électronique ait la même valeur
+                juridique qu'une signature manuscrite (règlement eIDAS).
               </p>
             </div>
           </div>
@@ -450,7 +465,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
       <div className="max-w-2xl mx-auto py-4">
         <div className="mb-6">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <span className="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+            <span className="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold">
+              3
+            </span>
             <span>Validation finale</span>
           </div>
           <h3 className="text-xl font-bold text-gray-900">Confirmez votre signature</h3>
@@ -465,7 +482,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
               </div>
               <div>
                 <h4 className="font-medium text-gray-900">{documentInfo.name}</h4>
-                <p className="text-sm text-gray-500 mt-1">{documentInfo.client} • {documentInfo.pages} pages</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {documentInfo.client} • {documentInfo.pages} pages
+                </p>
               </div>
             </div>
           </div>
@@ -495,7 +514,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
             </div>
             <div className="flex items-center justify-between py-2 border-b border-gray-100">
               <span className="text-sm text-gray-500">Date et heure</span>
-              <span className="text-sm font-medium text-gray-900">{new Date().toLocaleString('fr-FR')}</span>
+              <span className="text-sm font-medium text-gray-900">
+                {new Date().toLocaleString('fr-FR')}
+              </span>
             </div>
             <div className="flex items-center justify-between py-2">
               <span className="text-sm text-gray-500">Certification</span>
@@ -547,7 +568,8 @@ export const InteractiveSignatureDemo: React.FC = () => {
 
         <h3 className="text-2xl font-bold text-gray-900 mb-2">Document signé !</h3>
         <p className="text-gray-500 mb-8 max-w-sm mx-auto">
-          Votre signature électronique a été appliquée avec succès. Le document est légalement valide.
+          Votre signature électronique a été appliquée avec succès. Le document est légalement
+          valide.
         </p>
 
         {/* Certificate Card */}

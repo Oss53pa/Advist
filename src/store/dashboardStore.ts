@@ -61,7 +61,7 @@ interface DashboardState {
 
 // Create default user dashboard locally
 const createDefaultDashboard = (): DashboardConfig => {
-  const template = DEFAULT_TEMPLATES.find(t => t.id === 'user-default');
+  const template = DEFAULT_TEMPLATES.find((t) => t.id === 'user-default');
   if (template) {
     return {
       id: 'local-default',
@@ -103,7 +103,7 @@ export const useDashboardStore = create<DashboardState>()(
         try {
           const dashboards = await dashboardService.getDashboards();
           set({ dashboards, isLoading: false });
-        } catch (error) {
+        } catch (_error) {
           // Fallback to local dashboards
           get().loadLocal();
           set({ isLoading: false });
@@ -116,7 +116,7 @@ export const useDashboardStore = create<DashboardState>()(
         try {
           const dashboard = await dashboardService.getDashboard(id);
           set({ currentDashboard: dashboard, isLoading: false });
-        } catch (error) {
+        } catch (_error) {
           set({
             error: 'Impossible de charger le tableau de bord',
             isLoading: false,
@@ -155,7 +155,7 @@ export const useDashboardStore = create<DashboardState>()(
               widgets: [],
             });
           }
-          set(state => ({
+          set((state) => ({
             dashboards: [...state.dashboards, dashboard],
             currentDashboard: dashboard,
             isLoading: false,
@@ -182,7 +182,7 @@ export const useDashboardStore = create<DashboardState>()(
 
         try {
           await dashboardService.updateDashboard(currentDashboard.id, data);
-        } catch (error) {
+        } catch (_error) {
           // Keep local changes, save to localStorage
           get().saveLocal();
         }
@@ -192,11 +192,11 @@ export const useDashboardStore = create<DashboardState>()(
       deleteDashboard: async (id: string) => {
         try {
           await dashboardService.deleteDashboard(id);
-          set(state => ({
-            dashboards: state.dashboards.filter(d => d.id !== id),
+          set((state) => ({
+            dashboards: state.dashboards.filter((d) => d.id !== id),
             currentDashboard: state.currentDashboard?.id === id ? null : state.currentDashboard,
           }));
-        } catch (error) {
+        } catch (_error) {
           set({ error: 'Impossible de supprimer le tableau de bord' });
         }
       },
@@ -205,13 +205,13 @@ export const useDashboardStore = create<DashboardState>()(
       setDefaultDashboard: async (id: string) => {
         try {
           await dashboardService.setDefaultDashboard(id);
-          set(state => ({
-            dashboards: state.dashboards.map(d => ({
+          set((state) => ({
+            dashboards: state.dashboards.map((d) => ({
               ...d,
               isDefault: d.id === id,
             })),
           }));
-        } catch (error) {
+        } catch (_error) {
           set({ error: 'Impossible de définir le tableau de bord par défaut' });
         }
       },
@@ -220,7 +220,7 @@ export const useDashboardStore = create<DashboardState>()(
       duplicateDashboard: async (id: string, name: string) => {
         try {
           const dashboard = await dashboardService.duplicateDashboard(id, name);
-          set(state => ({
+          set((state) => ({
             dashboards: [...state.dashboards, dashboard],
           }));
           return dashboard;
@@ -238,10 +238,8 @@ export const useDashboardStore = create<DashboardState>()(
         const widget = createWidget(type, title);
 
         // Find available position
-        const positions = currentDashboard.widgets.map(w => w.position);
-        const maxY = positions.length > 0
-          ? Math.max(...positions.map(p => p.y + p.h))
-          : 0;
+        const positions = currentDashboard.widgets.map((w) => w.position);
+        const maxY = positions.length > 0 ? Math.max(...positions.map((p) => p.y + p.h)) : 0;
 
         widget.position.y = maxY;
 
@@ -262,7 +260,7 @@ export const useDashboardStore = create<DashboardState>()(
         set({
           currentDashboard: {
             ...currentDashboard,
-            widgets: currentDashboard.widgets.map(w =>
+            widgets: currentDashboard.widgets.map((w) =>
               w.id === widgetId ? { ...w, ...config } : w
             ),
             updatedAt: new Date().toISOString(),
@@ -278,7 +276,7 @@ export const useDashboardStore = create<DashboardState>()(
         set({
           currentDashboard: {
             ...currentDashboard,
-            widgets: currentDashboard.widgets.filter(w => w.id !== widgetId),
+            widgets: currentDashboard.widgets.filter((w) => w.id !== widgetId),
             updatedAt: new Date().toISOString(),
           },
           selectedWidgetId: null,
@@ -293,7 +291,7 @@ export const useDashboardStore = create<DashboardState>()(
         set({
           currentDashboard: {
             ...currentDashboard,
-            widgets: currentDashboard.widgets.map(w =>
+            widgets: currentDashboard.widgets.map((w) =>
               w.id === widgetId ? { ...w, position } : w
             ),
             updatedAt: new Date().toISOString(),
@@ -306,12 +304,12 @@ export const useDashboardStore = create<DashboardState>()(
         const { currentDashboard } = get();
         if (!currentDashboard) return;
 
-        const positionMap = new Map(positions.map(p => [p.widgetId, p.position]));
+        const positionMap = new Map(positions.map((p) => [p.widgetId, p.position]));
 
         set({
           currentDashboard: {
             ...currentDashboard,
-            widgets: currentDashboard.widgets.map(w => {
+            widgets: currentDashboard.widgets.map((w) => {
               const newPosition = positionMap.get(w.id);
               return newPosition ? { ...w, position: newPosition } : w;
             }),
@@ -322,7 +320,7 @@ export const useDashboardStore = create<DashboardState>()(
 
       // Set widget data
       setWidgetData: (widgetId: string, data: unknown) => {
-        set(state => ({
+        set((state) => ({
           widgetData: {
             ...state.widgetData,
             [widgetId]: data,
@@ -351,7 +349,7 @@ export const useDashboardStore = create<DashboardState>()(
         try {
           await dashboardService.updateDashboard(currentDashboard.id, currentDashboard);
           set({ isEditing: false, isLoading: false });
-        } catch (error) {
+        } catch (_error) {
           get().saveLocal();
           set({ isEditing: false, isLoading: false });
         }

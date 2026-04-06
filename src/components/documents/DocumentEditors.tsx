@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { sanitizeHtml } from '../../utils/sanitize';
 import {
   Bold,
@@ -19,13 +19,13 @@ import {
   Undo,
   Redo,
   Save,
-  FileText,
-  Type,
-  Palette,
+  _FileText,
+  _Type,
+  _Palette,
   Plus,
-  Minus,
+  _Minus,
   Lock,
-  Unlock,
+  _Unlock,
   Calculator,
   ChevronDown,
 } from 'lucide-react';
@@ -293,7 +293,7 @@ export const WordEditor: React.FC<WordEditorProps> = ({
             </button>
             <button
               onClick={() => {
-                const url = prompt('URL de l\'image:');
+                const url = prompt("URL de l'image:");
                 if (url) execCommand('insertImage', url);
               }}
               className="p-2 hover:bg-advist-border rounded"
@@ -302,7 +302,12 @@ export const WordEditor: React.FC<WordEditorProps> = ({
               <Image size={16} />
             </button>
             <button
-              onClick={() => execCommand('insertHTML', '<table border="1" style="border-collapse: collapse; width: 100%;"><tr><td style="padding: 8px;">Cellule 1</td><td style="padding: 8px;">Cellule 2</td></tr><tr><td style="padding: 8px;">Cellule 3</td><td style="padding: 8px;">Cellule 4</td></tr></table>')}
+              onClick={() =>
+                execCommand(
+                  'insertHTML',
+                  '<table border="1" style="border-collapse: collapse; width: 100%;"><tr><td style="padding: 8px;">Cellule 1</td><td style="padding: 8px;">Cellule 2</td></tr><tr><td style="padding: 8px;">Cellule 3</td><td style="padding: 8px;">Cellule 4</td></tr></table>'
+                )
+              }
               className="p-2 hover:bg-advist-border rounded"
               title="Insérer un tableau"
             >
@@ -354,7 +359,11 @@ export const WordEditor: React.FC<WordEditorProps> = ({
       <div className="flex items-center justify-between px-4 py-2 bg-advist-surface-dark border-t border-advist-border text-xs text-advist-text-secondary">
         <div className="flex items-center gap-4">
           <span>Mode: {readOnly ? 'Lecture seule' : 'Édition'}</span>
-          {isModified && <Badge variant="warning" size="sm">Modifications non enregistrées</Badge>}
+          {isModified && (
+            <Badge variant="warning" size="sm">
+              Modifications non enregistrées
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <span>Format: DOCX</span>
@@ -396,9 +405,21 @@ const generateSampleData = (): ExcelCell[][] => {
   // Headers row
   data.push([
     { value: 'Description', isFormula: false, style: { bold: true, backgroundColor: '#E5E7EB' } },
-    { value: 'Quantité', isFormula: false, style: { bold: true, backgroundColor: '#E5E7EB', align: 'center' } },
-    { value: 'Prix Unitaire', isFormula: false, style: { bold: true, backgroundColor: '#E5E7EB', align: 'right' } },
-    { value: 'Total', isFormula: false, style: { bold: true, backgroundColor: '#E5E7EB', align: 'right' } },
+    {
+      value: 'Quantité',
+      isFormula: false,
+      style: { bold: true, backgroundColor: '#E5E7EB', align: 'center' },
+    },
+    {
+      value: 'Prix Unitaire',
+      isFormula: false,
+      style: { bold: true, backgroundColor: '#E5E7EB', align: 'right' },
+    },
+    {
+      value: 'Total',
+      isFormula: false,
+      style: { bold: true, backgroundColor: '#E5E7EB', align: 'right' },
+    },
     { value: 'Notes', isFormula: false, style: { bold: true, backgroundColor: '#E5E7EB' } },
   ]);
 
@@ -418,7 +439,13 @@ const generateSampleData = (): ExcelCell[][] => {
       { value: item.desc, isFormula: false },
       { value: item.qty, isFormula: false, format: 'number', style: { align: 'center' } },
       { value: item.price, isFormula: false, format: 'currency', style: { align: 'right' } },
-      { value: (parseInt(item.qty) * parseInt(item.price)).toString(), formula: `=B${rowNum}*C${rowNum}`, isFormula: true, format: 'currency', style: { align: 'right', backgroundColor: '#FEF3C7' } },
+      {
+        value: (parseInt(item.qty) * parseInt(item.price)).toString(),
+        formula: `=B${rowNum}*C${rowNum}`,
+        isFormula: true,
+        format: 'currency',
+        style: { align: 'right', backgroundColor: '#FEF3C7' },
+      },
       { value: item.notes, isFormula: false },
     ]);
   });
@@ -429,7 +456,12 @@ const generateSampleData = (): ExcelCell[][] => {
       { value: '', isFormula: false },
       { value: '', isFormula: false, style: { align: 'center' } },
       { value: '', isFormula: false, style: { align: 'right' } },
-      { value: '', formula: `=B${items.length + 2 + i}*C${items.length + 2 + i}`, isFormula: true, style: { align: 'right', backgroundColor: '#FEF3C7' } },
+      {
+        value: '',
+        formula: `=B${items.length + 2 + i}*C${items.length + 2 + i}`,
+        isFormula: true,
+        style: { align: 'right', backgroundColor: '#FEF3C7' },
+      },
       { value: '', isFormula: false },
     ]);
   }
@@ -440,7 +472,13 @@ const generateSampleData = (): ExcelCell[][] => {
     { value: 'TOTAL HT', isFormula: false, style: { bold: true, backgroundColor: '#DBEAFE' } },
     { value: '', isFormula: false, style: { backgroundColor: '#DBEAFE' } },
     { value: '', isFormula: false, style: { backgroundColor: '#DBEAFE' } },
-    { value: '14800', formula: `=SOMME(D2:D${totalRowNum - 1})`, isFormula: true, format: 'currency', style: { bold: true, align: 'right', backgroundColor: '#DBEAFE' } },
+    {
+      value: '14800',
+      formula: `=SOMME(D2:D${totalRowNum - 1})`,
+      isFormula: true,
+      format: 'currency',
+      style: { bold: true, align: 'right', backgroundColor: '#DBEAFE' },
+    },
     { value: '', isFormula: false, style: { backgroundColor: '#DBEAFE' } },
   ]);
 
@@ -449,16 +487,32 @@ const generateSampleData = (): ExcelCell[][] => {
     { value: 'TVA (20%)', isFormula: false, style: { backgroundColor: '#F3F4F6' } },
     { value: '', isFormula: false, style: { backgroundColor: '#F3F4F6' } },
     { value: '', isFormula: false, style: { backgroundColor: '#F3F4F6' } },
-    { value: '2960', formula: `=D${totalRowNum}*0.20`, isFormula: true, format: 'currency', style: { align: 'right', backgroundColor: '#F3F4F6' } },
+    {
+      value: '2960',
+      formula: `=D${totalRowNum}*0.20`,
+      isFormula: true,
+      format: 'currency',
+      style: { align: 'right', backgroundColor: '#F3F4F6' },
+    },
     { value: '', isFormula: false, style: { backgroundColor: '#F3F4F6' } },
   ]);
 
   // Total TTC row
   data.push([
-    { value: 'TOTAL TTC', isFormula: false, style: { bold: true, backgroundColor: '#10B981', textColor: 'white' } },
+    {
+      value: 'TOTAL TTC',
+      isFormula: false,
+      style: { bold: true, backgroundColor: '#10B981', textColor: 'white' },
+    },
     { value: '', isFormula: false, style: { backgroundColor: '#10B981' } },
     { value: '', isFormula: false, style: { backgroundColor: '#10B981' } },
-    { value: '17760', formula: `=D${totalRowNum}+D${totalRowNum + 1}`, isFormula: true, format: 'currency', style: { bold: true, align: 'right', backgroundColor: '#10B981', textColor: 'white' } },
+    {
+      value: '17760',
+      formula: `=D${totalRowNum}+D${totalRowNum + 1}`,
+      isFormula: true,
+      format: 'currency',
+      style: { bold: true, align: 'right', backgroundColor: '#10B981', textColor: 'white' },
+    },
     { value: '', isFormula: false, style: { backgroundColor: '#10B981' } },
   ]);
 
@@ -473,7 +527,7 @@ export const ExcelEditor: React.FC<ExcelEditorProps> = ({
   const [data, setData] = useState<ExcelCell[][]>(initialData || generateSampleData());
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [isModified, setIsModified] = useState(false);
-  const [showFormulaBar, setShowFormulaBar] = useState(true);
+  const [showFormulaBar, _setShowFormulaBar] = useState(true);
 
   const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const columnWidths = [200, 100, 120, 120, 200, 100, 100, 100];
@@ -498,8 +552,8 @@ export const ExcelEditor: React.FC<ExcelEditorProps> = ({
   const recalculateFormulas = (currentData: ExcelCell[][]) => {
     // This is a simplified formula recalculation
     // In a real implementation, you'd use a proper formula parser
-    const newData = currentData.map((row, rowIdx) =>
-      row.map((cell, colIdx) => {
+    const newData = currentData.map((row, _rowIdx) =>
+      row.map((cell, _colIdx) => {
         if (cell.isFormula && cell.formula) {
           // Simple multiplication formula: =B2*C2
           const match = cell.formula.match(/=([A-Z])(\d+)\*([A-Z])(\d+)/);
@@ -608,11 +662,17 @@ export const ExcelEditor: React.FC<ExcelEditorProps> = ({
             <div className="w-px h-6 bg-advist-surface-dark mx-2" />
 
             {/* Row/Column operations */}
-            <button className="flex items-center gap-1 px-2 py-1.5 hover:bg-advist-border rounded text-sm" title="Insérer une ligne">
+            <button
+              className="flex items-center gap-1 px-2 py-1.5 hover:bg-advist-border rounded text-sm"
+              title="Insérer une ligne"
+            >
               <Plus size={14} />
               Ligne
             </button>
-            <button className="flex items-center gap-1 px-2 py-1.5 hover:bg-advist-border rounded text-sm" title="Insérer une colonne">
+            <button
+              className="flex items-center gap-1 px-2 py-1.5 hover:bg-advist-border rounded text-sm"
+              title="Insérer une colonne"
+            >
               <Plus size={14} />
               Colonne
             </button>
@@ -634,11 +694,14 @@ export const ExcelEditor: React.FC<ExcelEditorProps> = ({
       {showFormulaBar && selectedCell && (
         <div className="flex items-center gap-2 px-4 py-2 bg-advist-surface-dark border-b border-advist-border">
           <span className="font-mono text-sm bg-white px-2 py-1 border border-advist-border rounded min-w-[60px] text-center">
-            {columns[selectedCell.col]}{selectedCell.row + 1}
+            {columns[selectedCell.col]}
+            {selectedCell.row + 1}
           </span>
           <Calculator size={16} className="text-advist-text-muted" />
           <div className="flex-1 font-mono text-sm bg-white px-3 py-1 border border-advist-border rounded">
-            {data[selectedCell.row]?.[selectedCell.col]?.formula || data[selectedCell.row]?.[selectedCell.col]?.value || ''}
+            {data[selectedCell.row]?.[selectedCell.col]?.formula ||
+              data[selectedCell.row]?.[selectedCell.col]?.value ||
+              ''}
           </div>
         </div>
       )}
@@ -683,7 +746,9 @@ export const ExcelEditor: React.FC<ExcelEditorProps> = ({
                   >
                     {cell.isFormula ? (
                       <div className="px-2 py-1 flex items-center justify-between">
-                        <span style={{ textAlign: cell.style?.align }}>{formatCellValue(cell)}</span>
+                        <span style={{ textAlign: cell.style?.align }}>
+                          {formatCellValue(cell)}
+                        </span>
                         <Lock size={12} className="text-advist-gold flex-shrink-0 ml-1" />
                       </div>
                     ) : (
@@ -708,14 +773,19 @@ export const ExcelEditor: React.FC<ExcelEditorProps> = ({
       <div className="flex items-center justify-between px-4 py-2 bg-advist-surface-dark border-t border-advist-border text-xs text-advist-text-secondary">
         <div className="flex items-center gap-4">
           <span>Mode: {readOnly ? 'Lecture seule' : 'Édition'}</span>
-          {isModified && <Badge variant="warning" size="sm">Modifications non enregistrées</Badge>}
+          {isModified && (
+            <Badge variant="warning" size="sm">
+              Modifications non enregistrées
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <span>Format: XLSX</span>
           <span>Feuille 1 / 1</span>
           {selectedCell && (
             <span>
-              Cellule: {columns[selectedCell.col]}{selectedCell.row + 1}
+              Cellule: {columns[selectedCell.col]}
+              {selectedCell.row + 1}
               {data[selectedCell.row]?.[selectedCell.col]?.isFormula && ' (Formule)'}
             </span>
           )}
