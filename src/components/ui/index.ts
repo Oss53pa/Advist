@@ -13,7 +13,7 @@ export { Input } from './Input';
 export { Card, CardHeader, CardContent, CardFooter } from './Card';
 export { Badge, StatusBadge } from './Badge';
 export { Modal, ConfirmModal } from './Modal';
-// Avatar & AvatarGroup: import directly from './Avatar' to avoid barrel re-export issues
+export { Avatar, AvatarGroup } from './Avatar';
 export { LanguageSwitcher } from './LanguageSwitcher';
 export { Toggle } from './Toggle';
 export { SelectionButton } from './SelectionButton';
