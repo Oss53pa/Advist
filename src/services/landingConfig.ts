@@ -159,7 +159,7 @@ async function uploadLandingImage(file: File, folder: string): Promise<string> {
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const result = await uploadFile(LANDING_BUCKET, path, file, { upsert: false });
   if (!result) throw new Error('Landing image upload failed');
-  return getPublicUrl(LANDING_BUCKET, result.path);
+  return await getPublicUrl(LANDING_BUCKET, result.path);
 }
 
 // =========================================================================

@@ -58,7 +58,7 @@ async function uploadMarketingFile(
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const result = await uploadFile(MARKETING_BUCKET, path, file, { upsert: false });
   if (!result) throw new Error('File upload failed');
-  return getPublicUrl(MARKETING_BUCKET, result.path);
+  return await getPublicUrl(MARKETING_BUCKET, result.path);
 }
 
 // =========================================================================

@@ -18,6 +18,7 @@ import { Badge } from '../ui/Badge';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import SignaturePad, { SignatureData } from './SignaturePad';
+import { ConsentScreen } from './ConsentScreen';
 
 export interface SignatureRequest {
   id: string;
@@ -36,13 +37,13 @@ export interface SignatureModalProps {
   isOpen: boolean;
   onClose: () => void;
   request: SignatureRequest;
-  onSign: (signatureData: SignatureData, pin?: string) => Promise<void>;
+  onSign: (signatureData: SignatureData, pin?: string, consentId?: string) => Promise<void>;
   onRefuse: (reason: string) => Promise<void>;
   savedSignatures?: SignatureData[];
   requirePin?: boolean;
 }
 
-type Step = 'overview' | 'select-signature' | 'create-signature' | 'confirm' | 'pin' | 'success' | 'refuse';
+type Step = 'overview' | 'consent' | 'select-signature' | 'create-signature' | 'confirm' | 'pin' | 'success' | 'refuse';
 
 export const SignatureModal: React.FC<SignatureModalProps> = ({
   isOpen,
@@ -60,6 +61,7 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
   const [pinError, setPinError] = useState('');
   const [refuseReason, setRefuseReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [consentId, setConsentId] = useState<string | null>(null);
 
   // Reset state when modal opens
   useEffect(() => {
@@ -69,6 +71,7 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
       setPin('');
       setPinError('');
       setRefuseReason('');
+      setConsentId(null);
     }
   }, [isOpen]);
 
@@ -137,7 +140,7 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
 
     setIsSubmitting(true);
     try {
-      await onSign(selectedSignature, requirePin ? pin : undefined);
+      await onSign(selectedSignature, requirePin ? pin : undefined, consentId || undefined);
       setCurrentStep('success');
     } catch (error) {
       console.error('Signature failed:', error);
@@ -237,13 +240,28 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
               </Button>
               <Button
                 className="flex-1"
-                onClick={() => setCurrentStep('select-signature')}
+                onClick={() => setCurrentStep('consent')}
               >
                 {t('signature.proceed', 'Procéder à la signature')}
                 <ChevronRight size={16} className="ml-2" />
               </Button>
             </div>
           </div>
+        );
+
+      case 'consent':
+        return (
+          <ConsentScreen
+            documentId={request.documentId}
+            documentTitle={request.documentName}
+            signerName=""
+            signerEmail=""
+            onConsent={(id) => {
+              setConsentId(id);
+              setCurrentStep('select-signature');
+            }}
+            onCancel={() => setCurrentStep('overview')}
+          />
         );
 
       case 'select-signature':
@@ -499,6 +517,8 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
     switch (currentStep) {
       case 'overview':
         return t('signature.modalTitle', 'Demande de signature');
+      case 'consent':
+        return 'Consentement obligatoire';
       case 'select-signature':
         return t('signature.selectSignature', 'Choisir une signature');
       case 'create-signature':

@@ -60,6 +60,7 @@ VALUES (
 -- ============================================
 
 -- Documents: org members can read, uploaders can write
+DROP POLICY IF EXISTS "documents_bucket_select" ON storage.objects;
 CREATE POLICY "documents_bucket_select" ON storage.objects FOR SELECT USING (
     bucket_id = 'documents' AND (
         EXISTS (
@@ -70,6 +71,7 @@ CREATE POLICY "documents_bucket_select" ON storage.objects FOR SELECT USING (
     )
 );
 
+DROP POLICY IF EXISTS "documents_bucket_insert" ON storage.objects;
 CREATE POLICY "documents_bucket_insert" ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'documents' AND (
         EXISTS (
@@ -80,6 +82,7 @@ CREATE POLICY "documents_bucket_insert" ON storage.objects FOR INSERT WITH CHECK
     )
 );
 
+DROP POLICY IF EXISTS "documents_bucket_delete" ON storage.objects;
 CREATE POLICY "documents_bucket_delete" ON storage.objects FOR DELETE USING (
     bucket_id = 'documents' AND (
         auth.uid()::text = (storage.foldername(name))[2]
@@ -88,32 +91,39 @@ CREATE POLICY "documents_bucket_delete" ON storage.objects FOR DELETE USING (
 );
 
 -- Avatars: anyone can read, users can update their own
+DROP POLICY IF EXISTS "avatars_bucket_select" ON storage.objects;
 CREATE POLICY "avatars_bucket_select" ON storage.objects FOR SELECT USING (
     bucket_id = 'avatars'
 );
 
+DROP POLICY IF EXISTS "avatars_bucket_insert" ON storage.objects;
 CREATE POLICY "avatars_bucket_insert" ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]
 );
 
+DROP POLICY IF EXISTS "avatars_bucket_update" ON storage.objects;
 CREATE POLICY "avatars_bucket_update" ON storage.objects FOR UPDATE USING (
     bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]
 );
 
 -- Signatures: user sees own only
+DROP POLICY IF EXISTS "signatures_bucket_select" ON storage.objects;
 CREATE POLICY "signatures_bucket_select" ON storage.objects FOR SELECT USING (
     bucket_id = 'signatures' AND auth.uid()::text = (storage.foldername(name))[1]
 );
 
+DROP POLICY IF EXISTS "signatures_bucket_insert" ON storage.objects;
 CREATE POLICY "signatures_bucket_insert" ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'signatures' AND auth.uid()::text = (storage.foldername(name))[1]
 );
 
 -- Org assets: org members read, admins write
+DROP POLICY IF EXISTS "org_assets_bucket_select" ON storage.objects;
 CREATE POLICY "org_assets_bucket_select" ON storage.objects FOR SELECT USING (
     bucket_id = 'org-assets'
 );
 
+DROP POLICY IF EXISTS "org_assets_bucket_insert" ON storage.objects;
 CREATE POLICY "org_assets_bucket_insert" ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'org-assets' AND public.is_org_admin()
 );

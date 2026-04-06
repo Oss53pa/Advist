@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"per.emitter\\\\|per-emitter\\\\|emitter.*limit\\\\|signature.*limit\" /c/devs/Advist/.claude/worktrees/goofy-elgamal/src --include=*.ts --include=*.tsx)",
+      "Bash(find /c/devs/Advist/.claude/worktrees/goofy-elgamal -type f -path */edge-functions/* -o -path */supabase/functions/*)",
+      "Bash(grep -l \"MOCK_\\\\|mockData\\\\|DEMO_\" /c/devs/Advist/.claude/worktrees/goofy-elgamal/src/pages/superadmin/*.tsx /c/devs/Advist/.claude/worktrees/goofy-elgamal/src/pages/superadmin/**/*.tsx)",
+      "Bash(grep -r \"localStorage\\\\|sessionStorage\" /c/devs/Advist/.claude/worktrees/goofy-elgamal/src --include=*.ts --include=*.tsx)"
+    ]
+  }
+}

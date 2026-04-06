@@ -20,6 +20,7 @@ import {
   Info,
 } from 'lucide-react';
 import { Button, Modal, Badge } from '../../components/ui';
+import { PrintButton } from '../../shared/PrintEngine';
 import { PaymentForm, PaymentFormData } from '../../components/payment';
 import { AddonCard } from '../../components/billing/AddonCard';
 import { PlanDetailsModal } from '../../components/billing/PlanDetailsModal';
@@ -206,11 +207,38 @@ export const ClientBillingPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-advist-gray900">Facturation</h1>
-        <p className="text-advist-blue-light mt-1">
-          Gérez votre abonnement et vos paiements
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-advist-gray900">Facturation</h1>
+          <p className="text-advist-blue-light mt-1">
+            Gérez votre abonnement et vos paiements
+          </p>
+        </div>
+        <PrintButton config={{ title: 'Facturation', appName: 'Advist' }}>
+          <div>
+            <h2 className="text-lg font-bold mb-4">Historique des factures</h2>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2">N° Facture</th>
+                  <th className="text-left py-2">Période</th>
+                  <th className="text-left py-2">Montant</th>
+                  <th className="text-left py-2">Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mockInvoices.map((inv) => (
+                  <tr key={inv.id} className="border-b">
+                    <td className="py-2">{inv.invoiceNumber}</td>
+                    <td className="py-2">{new Date(inv.periodStart).toLocaleDateString('fr-FR')} - {new Date(inv.periodEnd).toLocaleDateString('fr-FR')}</td>
+                    <td className="py-2">{formatCurrency(inv.total)} FCFA</td>
+                    <td className="py-2">{inv.status === 'paid' ? 'Payée' : inv.status === 'pending' ? 'En attente' : inv.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </PrintButton>
       </div>
 
       {/* Alert for pending invoices */}

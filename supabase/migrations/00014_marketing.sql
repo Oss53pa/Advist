@@ -1,5 +1,5 @@
 -- Social Accounts
-CREATE TABLE social_accounts (
+CREATE TABLE IF NOT EXISTS social_accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     platform social_platform NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE social_accounts (
 );
 
 -- Post Templates
-CREATE TABLE post_templates (
+CREATE TABLE IF NOT EXISTS post_templates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE post_templates (
 );
 
 -- Publications
-CREATE TABLE publications (
+CREATE TABLE IF NOT EXISTS publications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     social_account_id UUID NOT NULL REFERENCES social_accounts(id) ON DELETE CASCADE,
@@ -51,7 +51,7 @@ CREATE TABLE publications (
 );
 
 -- Publication Results (analytics)
-CREATE TABLE publication_results (
+CREATE TABLE IF NOT EXISTS publication_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     publication_id UUID NOT NULL REFERENCES publications(id) ON DELETE CASCADE,
     impressions INTEGER DEFAULT 0,
@@ -65,7 +65,7 @@ CREATE TABLE publication_results (
 );
 
 -- Blog Posts
-CREATE TABLE blog_posts (
+CREATE TABLE IF NOT EXISTS blog_posts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     title VARCHAR(500) NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE blog_posts (
 );
 
 -- Newsletter Subscribers
-CREATE TABLE newsletter_subscribers (
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     email VARCHAR(255) NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE newsletter_subscribers (
 );
 
 -- Newsletters
-CREATE TABLE newsletters (
+CREATE TABLE IF NOT EXISTS newsletters (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     subject VARCHAR(500) NOT NULL,

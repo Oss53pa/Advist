@@ -1,5 +1,5 @@
 -- Document Types
-CREATE TABLE document_types (
+CREATE TABLE IF NOT EXISTS document_types (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE document_types (
 );
 
 -- Folders
-CREATE TABLE folders (
+CREATE TABLE IF NOT EXISTS folders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE folders (
 );
 
 -- Documents
-CREATE TABLE documents (
+CREATE TABLE IF NOT EXISTS documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     document_type_id UUID REFERENCES document_types(id) ON DELETE SET NULL,
@@ -53,7 +53,7 @@ CREATE TABLE documents (
     tags TEXT[] DEFAULT '{}',
     metadata JSONB DEFAULT '{}',
     content_text TEXT, -- extracted text for full-text search
-    content_embedding vector(1536), -- for AI/RAG (pgvector)
+    -- content_embedding: added separately via DO block if pgvector is available
     created_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
     updated_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
     approved_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
@@ -71,7 +71,7 @@ CREATE TABLE documents (
 );
 
 -- Document Versions
-CREATE TABLE document_versions (
+CREATE TABLE IF NOT EXISTS document_versions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     version_number INTEGER NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE document_versions (
 );
 
 -- Document Access (per-document permissions)
-CREATE TABLE document_access (
+CREATE TABLE IF NOT EXISTS document_access (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
@@ -103,7 +103,7 @@ CREATE TABLE document_access (
 );
 
 -- Document Annotations
-CREATE TABLE document_annotations (
+CREATE TABLE IF NOT EXISTS document_annotations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -123,7 +123,7 @@ CREATE TABLE document_annotations (
 );
 
 -- Document Comments
-CREATE TABLE document_comments (
+CREATE TABLE IF NOT EXISTS document_comments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -137,7 +137,7 @@ CREATE TABLE document_comments (
 );
 
 -- Document-Folder junction (documents can be in multiple folders)
-CREATE TABLE document_folders (
+CREATE TABLE IF NOT EXISTS document_folders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     folder_id UUID NOT NULL REFERENCES folders(id) ON DELETE CASCADE,
@@ -147,7 +147,7 @@ CREATE TABLE document_folders (
 );
 
 -- Projects
-CREATE TABLE projects (
+CREATE TABLE IF NOT EXISTS projects (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -163,7 +163,7 @@ CREATE TABLE projects (
 );
 
 -- Project Members
-CREATE TABLE project_members (
+CREATE TABLE IF NOT EXISTS project_members (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -173,7 +173,7 @@ CREATE TABLE project_members (
 );
 
 -- Project Documents
-CREATE TABLE project_documents (
+CREATE TABLE IF NOT EXISTS project_documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
@@ -183,7 +183,7 @@ CREATE TABLE project_documents (
 );
 
 -- Project Workflows
-CREATE TABLE project_workflows (
+CREATE TABLE IF NOT EXISTS project_workflows (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     workflow_template_id UUID, -- FK added after workflows table created
@@ -194,7 +194,7 @@ CREATE TABLE project_workflows (
 );
 
 -- Project Timeline
-CREATE TABLE project_timeline (
+CREATE TABLE IF NOT EXISTS project_timeline (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     event_type VARCHAR(100) NOT NULL,

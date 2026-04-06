@@ -38,6 +38,7 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { Card, Button, Input, Badge, StatusBadge, Avatar, Modal } from '../../components/ui';
+import { PrintButton } from '../../shared/PrintEngine';
 import { documentsService } from '../../services';
 import type { Document, DocumentFolder, DocumentLink, DocumentComment, DocumentModification } from '../../types';
 
@@ -116,6 +117,28 @@ export const DocumentsPage: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-2">
+          <PrintButton config={{ title: 'Liste des documents', appName: 'Advist' }}>
+            <div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Document</th>
+                    <th className="text-left py-2">Statut</th>
+                    <th className="text-left py-2">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {enhancedDocuments.map((doc) => (
+                    <tr key={doc.id} className="border-b">
+                      <td className="py-2">{doc.title}</td>
+                      <td className="py-2">{doc.status}</td>
+                      <td className="py-2">{new Date(doc.created_at).toLocaleDateString('fr-FR')}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </PrintButton>
           <Button variant="outline" onClick={() => setShowFolderModal(true)} leftIcon={<FolderPlus size={18} />}>
             {t('documents.newFolder', 'Nouveau dossier')}
           </Button>

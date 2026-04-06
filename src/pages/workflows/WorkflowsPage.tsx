@@ -30,6 +30,7 @@ import {
   Save,
 } from 'lucide-react';
 import { Card, Button, Badge, AvatarGroup, Modal, Input } from '../../components/ui';
+import { PrintButton } from '../../shared/PrintEngine';
 import { WorkflowEditor, type WorkflowStep } from '../../components/workflows/WorkflowEditor';
 import {
   ConditionalRules,
@@ -64,9 +65,17 @@ export const WorkflowsPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-advist-gray900">{t('workflows.title')}</h1>
           <p className="text-advist-gray900/80 mt-1">{t('workflows.subtitle')}</p>
         </div>
-        <Button leftIcon={<Plus size={18} />} onClick={handleNewTemplate}>
-          {t('workflows.newTemplate')}
-        </Button>
+        <div className="flex items-center gap-2">
+          <PrintButton config={{ title: 'Circuits de validation', appName: 'Advist' }}>
+            <div>
+              <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>{t('workflows.title')}</h2>
+              <p>{t('workflows.subtitle')}</p>
+            </div>
+          </PrintButton>
+          <Button leftIcon={<Plus size={18} />} onClick={handleNewTemplate}>
+            {t('workflows.newTemplate')}
+          </Button>
+        </div>
       </div>
 
       {/* Tabs */}

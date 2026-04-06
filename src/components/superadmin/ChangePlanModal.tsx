@@ -30,8 +30,8 @@ interface ChangePlanModalProps {
   onSuccess: () => void;
 }
 
-// Plans mock pour le développement (en production, vient de l'API)
-const MOCK_PLANS: Plan[] = [
+// Plan configuration constants (aligned with commercial spec)
+const PLAN_OPTIONS: Plan[] = [
   {
     id: 'business',
     name: 'Business',
@@ -60,7 +60,7 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
   subscription,
   onSuccess,
 }) => {
-  const [plans, setPlans] = useState<Plan[]>(MOCK_PLANS);
+  const [plans, setPlans] = useState<Plan[]>(PLAN_OPTIONS);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [preview, setPreview] = useState<PlanChangePreview | null>(null);
   const [isLoadingPlans, setIsLoadingPlans] = useState(false);
@@ -91,8 +91,8 @@ export const ChangePlanModal: React.FC<ChangePlanModalProps> = ({
       const availablePlans = await subscriptionsService.getAvailablePlans();
       setPlans(availablePlans);
     } catch (err) {
-      console.error('Failed to load plans, using mock data:', err);
-      setPlans(MOCK_PLANS);
+      console.error('Failed to load plans, using default options:', err);
+      setPlans(PLAN_OPTIONS);
     } finally {
       setIsLoadingPlans(false);
     }

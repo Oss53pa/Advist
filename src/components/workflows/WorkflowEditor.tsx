@@ -1,6 +1,7 @@
-﻿import React, { useState, useCallback, useRef } from 'react';
+﻿import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generateSecureId } from '../../utils/encryption';
+import { supabase } from '../../lib/supabase';
 import {
   Plus,
   Trash2,
@@ -75,28 +76,6 @@ export interface WorkflowEditorProps {
   readOnly?: boolean;
 }
 
-// Mock data for assignees
-const MOCK_USERS = [
-  { id: 1, name: 'Jean Dupont', role: 'Manager' },
-  { id: 2, name: 'Marie Martin', role: 'Directeur RH' },
-  { id: 3, name: 'Pierre Bernard', role: 'DAF' },
-  { id: 4, name: 'Sophie Petit', role: 'Directeur Juridique' },
-];
-
-const MOCK_ROLES = [
-  { id: 1, name: 'Manager' },
-  { id: 2, name: 'Directeur' },
-  { id: 3, name: 'Validateur Finance' },
-  { id: 4, name: 'Responsable RH' },
-];
-
-const MOCK_DEPARTMENTS = [
-  { id: 1, name: 'Direction Générale' },
-  { id: 2, name: 'Finance' },
-  { id: 3, name: 'Ressources Humaines' },
-  { id: 4, name: 'Juridique' },
-];
-
 const STEP_TYPES = [
   { value: 'consultation', label: 'Consultation', icon: Eye, color: 'bg-advist-surface-dark text-advist-gray900', description: 'Pour information uniquement' },
   { value: 'validation', label: 'Validation', icon: CheckCircle, color: 'bg-green-50 text-advist-success', description: 'Approuve ou rejette' },
@@ -116,6 +95,30 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
   const [showStepModal, setShowStepModal] = useState(false);
   const [draggedStep, setDraggedStep] = useState<string | null>(null);
   const [showAddStepMenu, setShowAddStepMenu] = useState(false);
+
+  const [availableUsers, setAvailableUsers] = useState<Array<{id: number; name: string; role: string}>>([]);
+  const [availableRoles, setAvailableRoles] = useState<Array<{id: number; name: string}>>([]);
+  const [availableDepartments, setAvailableDepartments] = useState<Array<{id: number; name: string}>>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single();
+      if (!profile) return;
+      const orgId = profile.organization_id;
+
+      const [usersRes, rolesRes, deptsRes] = await Promise.all([
+        supabase.from('profiles').select('id, first_name, last_name, email, role').eq('organization_id', orgId).eq('is_active', true),
+        supabase.from('roles').select('id, name').eq('organization_id', orgId),
+        supabase.from('departments').select('id, name').eq('organization_id', orgId),
+      ]);
+      setAvailableUsers((usersRes.data || []).map(u => ({ id: Number(u.id) || u.id, name: `${u.first_name} ${u.last_name}`, role: u.role || '' })) as Array<{id: number; name: string; role: string}>);
+      setAvailableRoles((rolesRes.data || []).map(r => ({ id: Number(r.id) || r.id, name: r.name })) as Array<{id: number; name: string}>);
+      setAvailableDepartments((deptsRes.data || []).map(d => ({ id: Number(d.id) || d.id, name: d.name })) as Array<{id: number; name: string}>);
+    };
+    loadData();
+  }, []);
 
   // Generate unique ID
   const generateId = () => generateSecureId('step');
@@ -218,11 +221,11 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
 
     switch (step.assigneeType) {
       case 'user':
-        return MOCK_USERS.find((u) => u.id === step.assigneeId)?.name || 'Non assigné';
+        return availableUsers.find((u) => u.id === step.assigneeId)?.name || 'Non assigné';
       case 'role':
-        return MOCK_ROLES.find((r) => r.id === step.assigneeId)?.name || 'Non assigné';
+        return availableRoles.find((r) => r.id === step.assigneeId)?.name || 'Non assigné';
       case 'department':
-        return MOCK_DEPARTMENTS.find((d) => d.id === step.assigneeId)?.name || 'Non assigné';
+        return availableDepartments.find((d) => d.id === step.assigneeId)?.name || 'Non assigné';
       default:
         return 'Non assigné';
     }
@@ -453,6 +456,9 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
           }}
           step={selectedStep}
           onSave={handleSaveStep}
+          availableUsers={availableUsers}
+          availableRoles={availableRoles}
+          availableDepartments={availableDepartments}
         />
       )}
     </div>
@@ -572,7 +578,10 @@ const StepEditModal: React.FC<{
   onClose: () => void;
   step: WorkflowStep;
   onSave: (step: WorkflowStep) => void;
-}> = ({ isOpen, onClose, step, onSave }) => {
+  availableUsers: Array<{id: number; name: string; role: string}>;
+  availableRoles: Array<{id: number; name: string}>;
+  availableDepartments: Array<{id: number; name: string}>;
+}> = ({ isOpen, onClose, step, onSave, availableUsers, availableRoles, availableDepartments }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<WorkflowStep>(step);
 
@@ -711,7 +720,7 @@ const StepEditModal: React.FC<{
                   value=""
                   onChange={(e) => {
                     const userId = Number(e.target.value);
-                    const user = MOCK_USERS.find((u) => u.id === userId);
+                    const user = availableUsers.find((u) => u.id === userId);
                     if (user && !formData.assignees?.some((a) => a.id === userId)) {
                       setFormData((prev) => ({
                         ...prev,
@@ -723,7 +732,7 @@ const StepEditModal: React.FC<{
                   className="w-full px-3 py-2.5 border-0 focus:ring-0 text-sm"
                 >
                   <option value="">+ Ajouter un utilisateur...</option>
-                  {MOCK_USERS.filter((u) => !formData.assignees?.some((a) => a.id === u.id)).map((u) => (
+                  {availableUsers.filter((u) => !formData.assignees?.some((a) => a.id === u.id)).map((u) => (
                     <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
                   ))}
                 </select>
@@ -743,7 +752,7 @@ const StepEditModal: React.FC<{
                 className="w-full px-3 py-2.5 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#FBBF24]"
               >
                 <option value={0}>Sélectionner un rôle...</option>
-                {MOCK_ROLES.map((r) => (
+                {availableRoles.map((r) => (
                   <option key={r.id} value={r.id}>{r.name}</option>
                 ))}
               </select>
@@ -763,7 +772,7 @@ const StepEditModal: React.FC<{
                 className="w-full px-3 py-2.5 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#FBBF24]"
               >
                 <option value={0}>Sélectionner un département...</option>
-                {MOCK_DEPARTMENTS.map((d) => (
+                {availableDepartments.map((d) => (
                   <option key={d.id} value={d.id}>{d.name}</option>
                 ))}
               </select>
@@ -878,7 +887,7 @@ const StepEditModal: React.FC<{
                 value={formData.backupAssignee.userId || 0}
                 onChange={(e) => {
                   const userId = Number(e.target.value);
-                  const user = MOCK_USERS.find((u) => u.id === userId);
+                  const user = availableUsers.find((u) => u.id === userId);
                   setFormData((prev) => ({
                     ...prev,
                     backupAssignee: {
@@ -891,7 +900,7 @@ const StepEditModal: React.FC<{
                 className="w-full px-3 py-2.5 border border-advist-gold rounded-lg focus:ring-2 focus:ring-primary-400 bg-white"
               >
                 <option value={0}>Sélectionner un remplaçant...</option>
-                {MOCK_USERS.map((u) => (
+                {availableUsers.map((u) => (
                   <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
                 ))}
               </select>

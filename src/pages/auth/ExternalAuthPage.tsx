@@ -53,17 +53,22 @@ export default function ExternalAuthPage() {
         throw new Error(otpError.message);
       }
 
-      // Configure plan tier from JWT
+      // Fetch plan tier from Supabase (server-side source of truth)
+      // Never trust JWT payload for plan tier — it is unverified client-side
       try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const plan = (payload.plan || '').toLowerCase();
-        if (plan.includes('entreprise') || plan.includes('enterprise') || plan.includes('pro')) {
-          localStorage.setItem('advist_plan_tier', 'enterprise');
-        } else {
-          localStorage.setItem('advist_plan_tier', 'business');
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('organization:organizations(plan)')
+            .eq('id', user.id)
+            .single();
+
+          const plan = (profile?.organization as { plan?: string } | null)?.plan || 'business';
+          localStorage.setItem('advist_plan_tier', plan.toLowerCase());
         }
       } catch {
-        localStorage.setItem('advist_plan_tier', 'business');
+        // Non-blocking: plan will be resolved on next page load from tenant store
       }
 
       navigate('/user', { replace: true });

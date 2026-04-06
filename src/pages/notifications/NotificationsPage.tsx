@@ -1,28 +1,24 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bell,
   Check,
   CheckCheck,
   Trash2,
-  Filter,
   Search,
   FileText,
   GitBranch,
   PenTool,
   Users,
   AlertCircle,
-  Info,
   Settings,
   Mail,
   Clock,
   MoreVertical,
   BellOff,
-  BellRing,
   Smartphone,
   Monitor,
   Volume2,
-  VolumeX,
   Calendar,
   ArrowRight,
   Eye,
@@ -31,13 +27,15 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
-  X,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
-import { Input } from '../../components/ui/Input';
+import { PrintButton } from '../../shared/PrintEngine';
+import { supabase } from '../../lib/supabase';
+import { useAuthStore } from '../../store';
 
 interface Notification {
   id: number;
@@ -96,134 +94,20 @@ interface NotificationPreferences {
   };
 }
 
-// Mock data with v2 enhanced fields
-const MOCK_NOTIFICATIONS: Notification[] = [
-  {
-    id: 1,
-    type: 'signature',
-    priority: 'high',
-    subject: 'Nouvelle demande de signature urgente',
-    body: 'Vous avez reçu une demande de signature pour le document "Contrat de prestation - Client ABC"',
-    status: 'unread',
-    created_at: '2024-11-28T10:30:00',
-    action_url: '/app/signatures',
-    sender: { id: 2, name: 'Marie Dupont' },
-    is_actionable: true,
-    action_type: 'sign',
-    deadline: '2024-11-29T18:00:00',
-    document_title: 'Contrat de prestation - Client ABC',
-  },
-  {
-    id: 2,
-    type: 'workflow',
-    priority: 'high',
-    subject: 'Workflow en attente de votre validation',
-    body: 'Le workflow "Validation contrat Q4" nécessite votre approbation à l\'étape 2',
-    status: 'unread',
-    created_at: '2024-11-28T09:15:00',
-    action_url: '/app/workflows/1',
-    sender: { id: 3, name: 'Pierre Martin' },
-    is_actionable: true,
-    action_type: 'approve',
-    deadline: '2024-11-29T12:00:00',
-    workflow_name: 'Validation contrat Q4',
-  },
-  {
-    id: 3,
-    type: 'document',
-    priority: 'medium',
-    subject: 'Document mis à jour',
-    body: 'Marie Martin a modifié le document "Rapport financier novembre 2024"',
-    status: 'unread',
-    created_at: '2024-11-28T08:45:00',
-    action_url: '/app/documents/1',
-    sender: { id: 2, name: 'Marie Martin' },
-    is_actionable: true,
-    action_type: 'review',
-    document_title: 'Rapport financier novembre 2024',
-  },
-  {
-    id: 4,
-    type: 'signature',
-    priority: 'medium',
-    subject: 'Rappel: Signature en attente',
-    body: 'Le document "Budget prévisionnel 2025" attend votre signature depuis 2 jours',
-    status: 'unread',
-    created_at: '2024-11-28T07:00:00',
-    action_url: '/app/signatures',
-    is_actionable: true,
-    action_type: 'sign',
-    deadline: '2024-11-28T18:00:00',
-    document_title: 'Budget prévisionnel 2025',
-  },
-  {
-    id: 5,
-    type: 'user',
-    priority: 'low',
-    subject: 'Nouvel utilisateur ajouté',
-    body: 'Lucas Robert a rejoint votre organisation avec le rôle Utilisateur',
-    status: 'read',
-    created_at: '2024-11-27T14:30:00',
-    action_url: '/app/users',
-    sender: { id: 1, name: 'Système' },
-  },
-  {
-    id: 6,
-    type: 'workflow',
-    priority: 'low',
-    subject: 'Workflow terminé',
-    body: 'Le workflow "Approbation budget 2025" a été complété avec succès',
-    status: 'read',
-    created_at: '2024-11-27T11:00:00',
-    action_url: '/app/workflows/2',
-    workflow_name: 'Approbation budget 2025',
-  },
-  {
-    id: 7,
-    type: 'system',
-    priority: 'low',
-    subject: 'Maintenance planifiée',
-    body: 'Une maintenance est prévue le 30 novembre de 02h00 à 04h00 (heure de Paris)',
-    status: 'read',
-    created_at: '2024-11-26T09:00:00',
-  },
-  {
-    id: 8,
-    type: 'signature',
-    priority: 'low',
-    subject: 'Signature complétée',
-    body: 'Pierre Bernard a signé le document "Accord de confidentialité"',
-    status: 'read',
-    created_at: '2024-11-26T08:30:00',
-    action_url: '/app/documents/3',
-    sender: { id: 4, name: 'Pierre Bernard' },
-    document_title: 'Accord de confidentialité',
-  },
-  {
-    id: 9,
-    type: 'document',
-    priority: 'low',
-    subject: 'Document partagé',
-    body: 'Sophie Petit a partagé le document "Présentation commerciale" avec vous',
-    status: 'read',
-    created_at: '2024-11-25T17:20:00',
-    action_url: '/app/documents/4',
-    sender: { id: 5, name: 'Sophie Petit' },
-    is_actionable: true,
-    action_type: 'view',
-    document_title: 'Présentation commerciale',
-  },
-  {
-    id: 10,
-    type: 'workflow',
-    priority: 'medium',
-    subject: 'Workflow rappelé',
-    body: 'Le workflow "Validation procédure qualité" a été rappelé par son initiateur',
-    status: 'archived',
-    created_at: '2024-11-24T16:00:00',
-    workflow_name: 'Validation procédure qualité',
-  },
-];
+// Notification type mapping from DB enum to component types
+const DB_TYPE_MAP: Record<string, Notification['type']> = {
+  document: 'document',
+  workflow: 'workflow',
+  task: 'workflow',
+  info: 'system',
+  warning: 'system',
+  error: 'system',
+  success: 'system',
+  system: 'system',
+  mention: 'user',
+  comment: 'document',
+  share: 'document',
+};
 
 // v2: Default notification preferences
 const DEFAULT_PREFERENCES: NotificationPreferences = {
@@ -267,6 +151,7 @@ const TYPE_CONFIG = {
   system: { icon: Settings, color: 'gray', label: 'Systeme' },
 } as const;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const PRIORITY_CONFIG = {
   low: { color: 'gray' as const, label: 'Basse' },
   medium: { color: 'yellow' as const, label: 'Moyenne' },
@@ -275,7 +160,11 @@ const PRIORITY_CONFIG = {
 
 export const NotificationsPage: React.FC = () => {
   const { t } = useTranslation();
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const { user } = useAuthStore();
+  const userId = user?.id;
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -286,6 +175,95 @@ export const NotificationsPage: React.FC = () => {
   const [groupByDate, setGroupByDate] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(['today', 'yesterday', 'thisWeek']);
+
+  useEffect(() => {
+    if (!userId) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchNotifications = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('notifications')
+          .select(`
+            id,
+            type,
+            title,
+            message,
+            data,
+            link,
+            is_read,
+            is_archived,
+            read_at,
+            created_at,
+            sender:sender_id (
+              id,
+              first_name,
+              last_name
+            )
+          `)
+          .eq('recipient_id', userId)
+          .order('created_at', { ascending: false })
+          .limit(100);
+
+        if (error) {
+          console.error('Error fetching notifications:', error);
+          setNotifications([]);
+          return;
+        }
+
+        const mapped: Notification[] = (data || []).map((row: any, index: number) => {
+          const meta = row.data || {};
+          const dbType = row.type || 'info';
+          const mappedType = DB_TYPE_MAP[dbType] || 'system';
+
+          const senderProfile = row.sender as any;
+          const sender = senderProfile
+            ? {
+                id: index,
+                name: `${senderProfile.first_name || ''} ${senderProfile.last_name || ''}`.trim() || 'Systeme',
+              }
+            : undefined;
+
+          const status: Notification['status'] = row.is_archived
+            ? 'archived'
+            : row.is_read
+            ? 'read'
+            : 'unread';
+
+          return {
+            id: index + 1, // Use numeric id for selection compatibility
+            type: mappedType,
+            priority: (meta.priority as Notification['priority']) || 'low',
+            subject: row.title || '',
+            body: row.message || '',
+            status,
+            created_at: row.created_at,
+            action_url: row.link || undefined,
+            metadata: meta,
+            sender,
+            is_actionable: meta.is_actionable || false,
+            action_type: meta.action_type || undefined,
+            deadline: meta.deadline || undefined,
+            document_title: meta.document_title || undefined,
+            workflow_name: meta.workflow_name || undefined,
+            _dbId: row.id, // Keep the real UUID for mutations
+          } as Notification & { _dbId: string };
+        });
+
+        setNotifications(mapped);
+      } catch (err) {
+        console.error('Error fetching notifications:', err);
+        setNotifications([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [userId]);
 
   const filteredNotifications = notifications.filter((notif) => {
     const matchesSearch =
@@ -339,52 +317,89 @@ export const NotificationsPage: React.FC = () => {
     );
   };
 
-  const handleMarkAsRead = (id: number) => {
+  // Helper to get the real DB UUID for a notification by its numeric id
+  const getDbId = (numericId: number): string | undefined => {
+    const notif = notifications.find((n) => n.id === numericId) as any;
+    return notif?._dbId;
+  };
+
+  const handleMarkAsRead = async (id: number) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, status: 'read' as const } : n))
     );
+    const dbId = getDbId(id);
+    if (dbId) {
+      await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).eq('id', dbId);
+    }
   };
 
-  const handleMarkAllAsRead = () => {
+  const handleMarkAllAsRead = async () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, status: 'read' as const })));
+    if (userId) {
+      await supabase
+        .from('notifications')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .eq('recipient_id', userId)
+        .eq('is_read', false);
+    }
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
+    const dbId = getDbId(id);
+    if (dbId) {
+      await supabase.from('notifications').delete().eq('id', dbId);
+    }
   };
 
   // v2: Archive notification instead of delete
-  const handleArchive = (id: number) => {
+  const handleArchive = async (id: number) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, status: 'archived' as const } : n))
     );
+    const dbId = getDbId(id);
+    if (dbId) {
+      await supabase.from('notifications').update({ is_archived: true }).eq('id', dbId);
+    }
   };
 
   // v2: Archive selected notifications
-  const handleArchiveSelected = () => {
+  const handleArchiveSelected = async () => {
+    const dbIds = selectedNotifications.map(getDbId).filter(Boolean) as string[];
     setNotifications((prev) =>
       prev.map((n) =>
         selectedNotifications.includes(n.id) ? { ...n, status: 'archived' as const } : n
       )
     );
     setSelectedNotifications([]);
+    if (dbIds.length > 0) {
+      await supabase.from('notifications').update({ is_archived: true }).in('id', dbIds);
+    }
   };
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = async () => {
+    const dbIds = selectedNotifications.map(getDbId).filter(Boolean) as string[];
     setNotifications((prev) =>
       prev.filter((n) => !selectedNotifications.includes(n.id))
     );
     setSelectedNotifications([]);
+    if (dbIds.length > 0) {
+      await supabase.from('notifications').delete().in('id', dbIds);
+    }
   };
 
   // v2: Mark selected as read
-  const handleMarkSelectedAsRead = () => {
+  const handleMarkSelectedAsRead = async () => {
+    const dbIds = selectedNotifications.map(getDbId).filter(Boolean) as string[];
     setNotifications((prev) =>
       prev.map((n) =>
         selectedNotifications.includes(n.id) ? { ...n, status: 'read' as const } : n
       )
     );
     setSelectedNotifications([]);
+    if (dbIds.length > 0) {
+      await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).in('id', dbIds);
+    }
   };
 
   const handleSelectAll = () => {
@@ -451,6 +466,30 @@ export const NotificationsPage: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <PrintButton config={{ title: 'Notifications', appName: 'Advist' }}>
+            <div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Sujet</th>
+                    <th className="text-left py-2">Type</th>
+                    <th className="text-left py-2">Statut</th>
+                    <th className="text-left py-2">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {notifications.map((n) => (
+                    <tr key={n.id} className="border-b">
+                      <td className="py-2">{n.subject}</td>
+                      <td className="py-2">{n.type}</td>
+                      <td className="py-2">{n.status}</td>
+                      <td className="py-2">{new Date(n.created_at).toLocaleDateString('fr-FR')}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </PrintButton>
           {/* v2: Settings button */}
           <Button variant="outline" size="sm" onClick={() => setShowPreferencesModal(true)}>
             <Settings size={16} className="mr-2" />
@@ -618,6 +657,14 @@ export const NotificationsPage: React.FC = () => {
       </Card>
 
       {/* v2: Notifications List with grouping */}
+      {isLoading ? (
+        <Card className="p-12">
+          <div className="flex flex-col items-center justify-center">
+            <Loader2 size={32} className="animate-spin text-advist-gold mb-4" />
+            <p className="text-advist-gray900">{t('common.loading')}</p>
+          </div>
+        </Card>
+      ) : (
       <Card className="overflow-hidden">
         {/* Select All Header */}
         <div className="flex items-center justify-between px-4 py-3 bg-advist-bg/50 border-b border-advist-bg">
@@ -722,6 +769,7 @@ export const NotificationsPage: React.FC = () => {
           </div>
         )}
       </Card>
+      )}
 
       {/* v2: Quick Settings Summary */}
       <Card className="p-4">

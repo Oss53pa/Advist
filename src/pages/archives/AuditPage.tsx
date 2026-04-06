@@ -1,36 +1,34 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Shield,
   Search,
-  Filter,
   Download,
   Eye,
   Calendar,
   User,
-  Clock,
-  FileText,
   Edit,
   Trash2,
   LogIn,
   LogOut,
   UserPlus,
-  Settings,
-  Key,
   AlertTriangle,
   CheckCircle,
   XCircle,
   RefreshCw,
-  ChevronDown,
   ChevronRight,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
+import { supabase } from '../../lib/supabase';
+import { useAuthStore } from '../../store';
+import { PrintButton } from '../../shared/PrintEngine';
 
 interface AuditLog {
-  id: number;
+  id: string;
   action: string;
   action_type: 'create' | 'read' | 'update' | 'delete' | 'login' | 'logout' | 'export' | 'share';
   resource_type: string;
@@ -45,129 +43,6 @@ interface AuditLog {
   details?: Record<string, unknown>;
   changes?: { field: string; old_value: string; new_value: string }[];
 }
-
-// Mock data
-const MOCK_AUDIT_LOGS: AuditLog[] = [
-  {
-    id: 1,
-    action: 'Connexion reussie',
-    action_type: 'login',
-    resource_type: 'Session',
-    resource_id: 'sess_123',
-    resource_name: 'Session utilisateur',
-    user_name: 'Jean Dupont',
-    user_email: 'jean.dupont@advist.com',
-    ip_address: '192.168.1.100',
-    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    timestamp: '2024-11-27T10:30:00',
-    status: 'success',
-  },
-  {
-    id: 2,
-    action: 'Document modifie',
-    action_type: 'update',
-    resource_type: 'Document',
-    resource_id: 'doc_456',
-    resource_name: 'Contrat Client ABC',
-    user_name: 'Marie Martin',
-    user_email: 'marie.martin@advist.com',
-    ip_address: '192.168.1.101',
-    user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
-    timestamp: '2024-11-27T10:15:00',
-    status: 'success',
-    changes: [
-      { field: 'title', old_value: 'Contrat Client', new_value: 'Contrat Client ABC' },
-      { field: 'status', old_value: 'draft', new_value: 'pending' },
-    ],
-  },
-  {
-    id: 3,
-    action: 'Workflow cree',
-    action_type: 'create',
-    resource_type: 'Workflow',
-    resource_id: 'wf_789',
-    resource_name: 'Validation contrat Q4',
-    user_name: 'Pierre Bernard',
-    user_email: 'pierre.bernard@advist.com',
-    ip_address: '192.168.1.102',
-    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    timestamp: '2024-11-27T09:45:00',
-    status: 'success',
-  },
-  {
-    id: 4,
-    action: 'Tentative de connexion echouee',
-    action_type: 'login',
-    resource_type: 'Session',
-    resource_id: 'sess_124',
-    resource_name: 'Session utilisateur',
-    user_name: 'Utilisateur inconnu',
-    user_email: 'unknown@example.com',
-    ip_address: '203.0.113.50',
-    user_agent: 'Mozilla/5.0',
-    timestamp: '2024-11-27T09:30:00',
-    status: 'failure',
-  },
-  {
-    id: 5,
-    action: 'Document supprime',
-    action_type: 'delete',
-    resource_type: 'Document',
-    resource_id: 'doc_321',
-    resource_name: 'Brouillon - Note interne',
-    user_name: 'Sophie Petit',
-    user_email: 'sophie.petit@advist.com',
-    ip_address: '192.168.1.103',
-    user_agent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0)',
-    timestamp: '2024-11-27T09:00:00',
-    status: 'success',
-  },
-  {
-    id: 6,
-    action: 'Document exporte',
-    action_type: 'export',
-    resource_type: 'Document',
-    resource_id: 'doc_654',
-    resource_name: 'Rapport financier',
-    user_name: 'Jean Dupont',
-    user_email: 'jean.dupont@advist.com',
-    ip_address: '192.168.1.100',
-    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    timestamp: '2024-11-26T17:30:00',
-    status: 'success',
-  },
-  {
-    id: 7,
-    action: 'Utilisateur ajoute',
-    action_type: 'create',
-    resource_type: 'User',
-    resource_id: 'usr_987',
-    resource_name: 'Lucas Robert',
-    user_name: 'Jean Dupont',
-    user_email: 'jean.dupont@advist.com',
-    ip_address: '192.168.1.100',
-    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    timestamp: '2024-11-26T16:00:00',
-    status: 'success',
-  },
-  {
-    id: 8,
-    action: 'Parametres modifies',
-    action_type: 'update',
-    resource_type: 'Settings',
-    resource_id: 'org_001',
-    resource_name: 'Organisation ADVIST',
-    user_name: 'Jean Dupont',
-    user_email: 'jean.dupont@advist.com',
-    ip_address: '192.168.1.100',
-    user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    timestamp: '2024-11-26T15:30:00',
-    status: 'warning',
-    changes: [
-      { field: 'two_factor_enabled', old_value: 'false', new_value: 'true' },
-    ],
-  },
-];
 
 const ACTION_TYPE_CONFIG = {
   create: { icon: UserPlus, color: 'green', label: 'Creation' },
@@ -188,6 +63,11 @@ const STATUS_CONFIG = {
 
 export const AuditPage: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
+
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedActionType, setSelectedActionType] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -199,7 +79,90 @@ export const AuditPage: React.FC = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
-  const filteredLogs = MOCK_AUDIT_LOGS.filter((log) => {
+  useEffect(() => {
+    if (!orgId) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchAuditLogs = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('audit_logs')
+          .select(`
+            id,
+            action,
+            resource_type,
+            resource_id,
+            resource_name,
+            details,
+            ip_address,
+            user_agent,
+            created_at,
+            user:user_id (
+              id,
+              first_name,
+              last_name,
+              email
+            )
+          `)
+          .eq('organization_id', orgId)
+          .order('created_at', { ascending: false })
+          .limit(200);
+
+        if (error) {
+          console.error('Error fetching audit logs:', error);
+          setAuditLogs([]);
+          return;
+        }
+
+        const mapped: AuditLog[] = (data || []).map((row: any) => {
+          const details = row.details || {};
+          // The action column is the audit_action enum value (create, read, update, etc.)
+          const actionType = row.action as AuditLog['action_type'];
+          // Derive a human-readable label from action + resource
+          const actionLabel = details.label || `${row.action} ${row.resource_type || ''}`.trim();
+          // Derive status from details or default to success
+          const status: AuditLog['status'] = details.status || 'success';
+
+          const profile = row.user as any;
+          const userName = profile
+            ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || profile.email
+            : 'Utilisateur inconnu';
+          const userEmail = profile?.email || '';
+
+          return {
+            id: row.id,
+            action: actionLabel,
+            action_type: actionType,
+            resource_type: row.resource_type || '',
+            resource_id: row.resource_id || '',
+            resource_name: row.resource_name || '',
+            user_name: userName,
+            user_email: userEmail,
+            ip_address: row.ip_address || '',
+            user_agent: row.user_agent || '',
+            timestamp: row.created_at,
+            status,
+            details: details,
+            changes: details.changes || undefined,
+          };
+        });
+
+        setAuditLogs(mapped);
+      } catch (err) {
+        console.error('Error fetching audit logs:', err);
+        setAuditLogs([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAuditLogs();
+  }, [orgId]);
+
+  const filteredLogs = auditLogs.filter((log) => {
     const matchesSearch =
       log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.user_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -209,17 +172,21 @@ export const AuditPage: React.FC = () => {
     const matchesStatus = selectedStatus === 'all' || log.status === selectedStatus;
     const matchesResource =
       selectedResource === 'all' || log.resource_type === selectedResource;
-    return matchesSearch && matchesActionType && matchesStatus && matchesResource;
+    const matchesDateStart =
+      !dateRange.start || new Date(log.timestamp) >= new Date(dateRange.start);
+    const matchesDateEnd =
+      !dateRange.end || new Date(log.timestamp) <= new Date(dateRange.end + 'T23:59:59');
+    return matchesSearch && matchesActionType && matchesStatus && matchesResource && matchesDateStart && matchesDateEnd;
   });
 
   const stats = {
-    total: MOCK_AUDIT_LOGS.length,
-    success: MOCK_AUDIT_LOGS.filter((l) => l.status === 'success').length,
-    failure: MOCK_AUDIT_LOGS.filter((l) => l.status === 'failure').length,
-    warning: MOCK_AUDIT_LOGS.filter((l) => l.status === 'warning').length,
+    total: auditLogs.length,
+    success: auditLogs.filter((l) => l.status === 'success').length,
+    failure: auditLogs.filter((l) => l.status === 'failure').length,
+    warning: auditLogs.filter((l) => l.status === 'warning').length,
   };
 
-  const resourceTypes = [...new Set(MOCK_AUDIT_LOGS.map((l) => l.resource_type))];
+  const resourceTypes = [...new Set(auditLogs.map((l) => l.resource_type).filter(Boolean))];
 
   const handleViewDetails = (log: AuditLog) => {
     setSelectedLog(log);
@@ -237,6 +204,34 @@ export const AuditPage: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <PrintButton config={{ title: 'Piste d\'audit', subtitle: 'Journal de traçabilité', appName: 'Advist' }}>
+            <div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Date/Heure</th>
+                    <th className="text-left py-2">Action</th>
+                    <th className="text-left py-2">Utilisateur</th>
+                    <th className="text-left py-2">Ressource</th>
+                    <th className="text-left py-2">IP</th>
+                    <th className="text-left py-2">Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredLogs.map((log) => (
+                    <tr key={log.id} className="border-b">
+                      <td className="py-1">{new Date(log.timestamp).toLocaleString('fr-FR')}</td>
+                      <td className="py-1">{log.action}</td>
+                      <td className="py-1">{log.user_name}</td>
+                      <td className="py-1">{log.resource_name}</td>
+                      <td className="py-1">{log.ip_address}</td>
+                      <td className="py-1">{STATUS_CONFIG[log.status].label}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </PrintButton>
           <Button variant="outline" size="sm">
             <Download size={16} className="mr-2" />
             {t('common.export')}
@@ -354,6 +349,14 @@ export const AuditPage: React.FC = () => {
       </Card>
 
       {/* Audit Logs Table */}
+      {isLoading ? (
+        <Card className="p-12">
+          <div className="flex flex-col items-center justify-center">
+            <Loader2 size={32} className="animate-spin text-advist-gold mb-4" />
+            <p className="text-advist-gray900">{t('common.loading')}</p>
+          </div>
+        </Card>
+      ) : (
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -406,6 +409,7 @@ export const AuditPage: React.FC = () => {
           </div>
         )}
       </Card>
+      )}
 
       {/* Detail Modal */}
       {selectedLog && (

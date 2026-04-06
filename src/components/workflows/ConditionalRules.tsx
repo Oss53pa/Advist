@@ -1,6 +1,7 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generateSecureId } from '../../utils/encryption';
+import { supabase } from '../../lib/supabase';
 import {
   Plus,
   Trash2,
@@ -111,33 +112,6 @@ const ACTION_TYPES = [
   { value: 'require_double_approval', label: 'Double validation', icon: Check, description: 'Requiert une double approbation' },
 ];
 
-// Mock data
-const MOCK_USERS = [
-  { id: 1, name: 'Jean Dupont' },
-  { id: 2, name: 'Marie Martin' },
-  { id: 3, name: 'Pierre Bernard' },
-];
-
-const MOCK_ROLES = [
-  { id: 1, name: 'Manager' },
-  { id: 2, name: 'Directeur' },
-  { id: 3, name: 'DAF' },
-];
-
-const MOCK_DOC_TYPES = [
-  { id: 1, name: 'Contrat' },
-  { id: 2, name: 'Facture' },
-  { id: 3, name: 'Bon de commande' },
-  { id: 4, name: 'Note de frais' },
-];
-
-const MOCK_DEPARTMENTS = [
-  { id: 1, name: 'Direction Générale' },
-  { id: 2, name: 'Finance' },
-  { id: 3, name: 'RH' },
-  { id: 4, name: 'Juridique' },
-];
-
 export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
   rules,
   onChange,
@@ -147,6 +121,33 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
   const [selectedRule, setSelectedRule] = useState<ConditionalRule | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [expandedRules, setExpandedRules] = useState<string[]>([]);
+
+  const [availableUsers, setAvailableUsers] = useState<Array<{id: number; name: string}>>([]);
+  const [availableRoles, setAvailableRoles] = useState<Array<{id: number; name: string}>>([]);
+  const [availableDocTypes, setAvailableDocTypes] = useState<Array<{id: number; name: string}>>([]);
+  const [availableDepartments, setAvailableDepartments] = useState<Array<{id: number; name: string}>>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single();
+      if (!profile) return;
+      const orgId = profile.organization_id;
+
+      const [usersRes, rolesRes, docTypesRes, deptsRes] = await Promise.all([
+        supabase.from('profiles').select('id, first_name, last_name').eq('organization_id', orgId).eq('is_active', true),
+        supabase.from('roles').select('id, name').eq('organization_id', orgId),
+        supabase.from('document_types').select('id, name').eq('organization_id', orgId),
+        supabase.from('departments').select('id, name').eq('organization_id', orgId),
+      ]);
+      setAvailableUsers((usersRes.data || []).map(u => ({ id: Number(u.id) || u.id, name: `${u.first_name} ${u.last_name}` })) as Array<{id: number; name: string}>);
+      setAvailableRoles((rolesRes.data || []).map(r => ({ id: Number(r.id) || r.id, name: r.name })) as Array<{id: number; name: string}>);
+      setAvailableDocTypes((docTypesRes.data || []).map(d => ({ id: Number(d.id) || d.id, name: d.name })) as Array<{id: number; name: string}>);
+      setAvailableDepartments((deptsRes.data || []).map(d => ({ id: Number(d.id) || d.id, name: d.name })) as Array<{id: number; name: string}>);
+    };
+    loadData();
+  }, []);
 
   const generateId = () => generateSecureId('rule');
 
@@ -235,10 +236,10 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
         const level = CONFIDENTIALITY_LEVELS.find((l) => l.value === condition.value);
         return level?.label || condition.value;
       case 'document_type':
-        const docType = MOCK_DOC_TYPES.find((d) => d.id === Number(condition.value));
+        const docType = availableDocTypes.find((d) => d.id === Number(condition.value));
         return docType?.name || condition.value;
       case 'department':
-        const dept = MOCK_DEPARTMENTS.find((d) => d.id === Number(condition.value));
+        const dept = availableDepartments.find((d) => d.id === Number(condition.value));
         return dept?.name || condition.value;
       default:
         return String(condition.value);
@@ -430,6 +431,9 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
           }}
           rule={selectedRule}
           onSave={handleSaveRule}
+          availableUsers={availableUsers}
+          availableDocTypes={availableDocTypes}
+          availableDepartments={availableDepartments}
         />
       )}
     </div>
@@ -442,7 +446,10 @@ const RuleEditModal: React.FC<{
   onClose: () => void;
   rule: ConditionalRule;
   onSave: (rule: ConditionalRule) => void;
-}> = ({ isOpen, onClose, rule, onSave }) => {
+  availableUsers: Array<{id: number; name: string}>;
+  availableDocTypes: Array<{id: number; name: string}>;
+  availableDepartments: Array<{id: number; name: string}>;
+}> = ({ isOpen, onClose, rule, onSave, availableUsers, availableDocTypes, availableDepartments }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<ConditionalRule>(rule);
 
@@ -578,7 +585,7 @@ const RuleEditModal: React.FC<{
                   className="w-full px-3 py-2 border border-advist-gold rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
                 >
                   <option value="">Sélectionner...</option>
-                  {MOCK_DOC_TYPES.map((type) => (
+                  {availableDocTypes.map((type) => (
                     <option key={type.id} value={type.id}>{type.name}</option>
                   ))}
                 </select>
@@ -592,7 +599,7 @@ const RuleEditModal: React.FC<{
                   className="w-full px-3 py-2 border border-advist-gold rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
                 >
                   <option value="">Sélectionner...</option>
-                  {MOCK_DEPARTMENTS.map((dept) => (
+                  {availableDepartments.map((dept) => (
                     <option key={dept.id} value={dept.id}>{dept.name}</option>
                   ))}
                 </select>
@@ -682,7 +689,7 @@ const RuleEditModal: React.FC<{
                 className="w-full px-3 py-2 border border-advist-success rounded-lg focus:ring-2 focus:ring-green-500 bg-white"
               >
                 <option value="">Sélectionner...</option>
-                {MOCK_USERS.map((user) => (
+                {availableUsers.map((user) => (
                   <option key={user.id} value={user.id}>{user.name}</option>
                 ))}
               </select>

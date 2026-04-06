@@ -98,6 +98,9 @@ const ClientBillingPage = lazy(() => import('./pages/billing/ClientBillingPage')
 const ExternalUserPage = lazy(() => import('./pages/external/ExternalUserPage'));
 const ValidationReportPage = lazy(() => import('./pages/reports/ValidationReportPage'));
 
+// Page de verification publique (Module 4)
+const VerifyPage = lazy(() => import('./pages/verify/VerifyPage'));
+
 // Pages légales et ressources
 const LegalPage = lazy(() => import('./pages/legal/LegalPage'));
 const ResourcePage = lazy(() => import('./pages/resources/ResourcePage'));
@@ -252,6 +255,10 @@ function App() {
                 {/* External User Interface (no auth required) */}
                 <Route path="/external/:token" element={<ExternalUserPage />} />
                 <Route path="/external" element={<ExternalUserPage />} />
+
+                {/* Public Verification Portal (Module 4 — no auth required) */}
+                <Route path="/verify/:code" element={<VerifyPage />} />
+                <Route path="/verify" element={<VerifyPage />} />
 
                 {/* Public Validation Report (shareable, no auth required) */}
                 <Route path="/reports/validation/:reportId" element={<ValidationReportPage />} />

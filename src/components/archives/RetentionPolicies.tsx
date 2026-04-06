@@ -63,11 +63,18 @@ const DOCUMENT_TYPES = [
 ];
 
 // Default policies
+/**
+ * Default policies — Module 7 (Valeur Probante)
+ * La politique OHADA 10 ans est la politique par defaut pour les documents signes.
+ * Un trigger PostgreSQL (migration 00028) empeche toute suppression pendant la retention.
+ * Les documents signes via signatureService.signDocument() se voient automatiquement
+ * appliquer la retention via documentRetentionService.applyDefaultRetention().
+ */
 const DEFAULT_POLICIES: RetentionPolicy[] = [
   {
     id: 'policy_1',
     name: 'Conservation légale OHADA',
-    description: 'Politique conforme aux exigences OHADA pour les documents commerciaux',
+    description: 'Politique conforme aux exigences OHADA pour les documents commerciaux. Trigger anti-suppression actif (migration 00028).',
     isActive: true,
     isDefault: true,
     documentTypes: ['contract', 'invoice', 'legal'],

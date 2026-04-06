@@ -6,12 +6,9 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
   FileText,
-  CheckCircle,
-  Clock,
   PenTool,
   Shield,
   Download,
-  Printer,
   AlertTriangle,
   Hash,
   QrCode,
@@ -20,9 +17,10 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { Button, Badge } from '../../components/ui';
+import { PrintButton } from '../../shared/PrintEngine';
 import { WorkflowViewer } from '../../components/workflows';
 import validationReportService from '../../services/validationReport';
-import type { ValidationReportData, ValidationStep } from '../../components/workflows/ValidationReport';
+import type { ValidationReportData } from '../../components/workflows/ValidationReport';
 import type { WorkflowData } from '../../components/workflows/WorkflowViewer';
 
 const ValidationReportPage: React.FC = () => {
@@ -65,7 +63,7 @@ const ValidationReportPage: React.FC = () => {
           setReport(reportData);
           setIsVerified(false); // Requires verification for full access
         }
-      } catch (err) {
+      } catch {
         setError('Impossible de charger le rapport');
       } finally {
         setLoading(false);
@@ -89,7 +87,7 @@ const ValidationReportPage: React.FC = () => {
       } else {
         setError(result.message || 'Code invalide');
       }
-    } catch (err) {
+    } catch {
       setError('Erreur de vérification');
     } finally {
       setVerifying(false);
@@ -120,149 +118,6 @@ const ValidationReportPage: React.FC = () => {
     } finally {
       setIsGeneratingPDF(false);
     }
-  }, [report]);
-
-  // Print handler - Opens a new window with compact format
-  const handlePrint = useCallback(() => {
-    if (!reportRef.current || !report) return;
-
-    // Get the report HTML content
-    const reportContent = reportRef.current.innerHTML;
-
-    // Create a new window for printing
-    const printWindow = window.open('', 'PrintValidationReport', 'width=800,height=600');
-    if (!printWindow) {
-      alert('Veuillez autoriser les popups pour imprimer le rapport');
-      return;
-    }
-
-    // Write compact print document
-    printWindow.document.write(`<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>Rapport de Validation - ${report.referenceNumber}</title>
-<style>
-@page { size: A4 portrait; margin: 8mm 10mm; }
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-body { font-family: Arial, sans-serif; font-size: 8pt; line-height: 1.2; color: #333; background: white; }
-h1 { font-size: 14pt; margin-bottom: 2mm; }
-h2 { font-size: 10pt; margin-bottom: 2mm; }
-h3 { font-size: 9pt; }
-.text-center { text-align: center; }
-.font-bold { font-weight: bold; }
-.font-semibold { font-weight: 600; }
-.font-medium { font-weight: 500; }
-.font-mono { font-family: monospace; font-size: 7pt; }
-.text-2xl { font-size: 14pt; }
-.text-lg { font-size: 10pt; }
-.text-sm { font-size: 7pt; }
-.text-xs { font-size: 6pt; }
-.text-3xl { font-size: 12pt; }
-.mb-1, .mb-2 { margin-bottom: 1mm; }
-.mb-3, .mb-4 { margin-bottom: 2mm; }
-.mb-6 { margin-bottom: 3mm; }
-.mt-1, .mt-2 { margin-top: 1mm; }
-.mt-4 { margin-top: 2mm; }
-.p-2 { padding: 1.5mm; }
-.p-3 { padding: 2mm; }
-.p-4 { padding: 2.5mm; }
-.p-6 { padding: 3mm; }
-.px-4 { padding-left: 2.5mm; padding-right: 2.5mm; }
-.px-6 { padding-left: 3mm; padding-right: 3mm; }
-.py-2 { padding-top: 1.5mm; padding-bottom: 1.5mm; }
-.py-3 { padding-top: 2mm; padding-bottom: 2mm; }
-.pb-4, .pb-6 { padding-bottom: 2mm; }
-.pt-4 { padding-top: 2mm; }
-.space-y-6 > * + * { margin-top: 3mm; }
-.space-y-4 > * + * { margin-top: 2mm; }
-.space-y-3 > * + * { margin-top: 1.5mm; }
-.space-y-2 > * + * { margin-top: 1mm; }
-.gap-1 { gap: 0.5mm; }
-.gap-2 { gap: 1mm; }
-.gap-3 { gap: 1.5mm; }
-.gap-4 { gap: 2mm; }
-.gap-6 { gap: 3mm; }
-.flex { display: flex; }
-.flex-1 { flex: 1; }
-.flex-wrap { flex-wrap: wrap; }
-.flex-shrink-0 { flex-shrink: 0; }
-.items-center { align-items: center; }
-.items-start { align-items: flex-start; }
-.justify-between { justify-content: space-between; }
-.justify-center { justify-content: center; }
-.inline-flex { display: inline-flex; }
-.inline-block { display: inline-block; }
-.grid { display: grid; }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); gap: 2mm; }
-.grid-cols-4 { grid-template-columns: repeat(4, 1fr); gap: 1.5mm; }
-.col-span-2 { grid-column: span 2; }
-.rounded-xl, .rounded-xl { border-radius: 2px; }
-.rounded-full { border-radius: 50%; }
-.border { border: 0.5pt solid #ddd; }
-.border-2 { border: 1pt solid #ddd; }
-.border-b { border-bottom: 0.5pt solid #ddd; }
-.border-b-2 { border-bottom: 1pt solid #333; }
-.border-t { border-top: 0.5pt solid #ddd; }
-.bg-white { background: white; }
-.bg-advist-surface-dark, [class*="bg-advist-bg"] { background: #f5f5f5; }
-.bg-advist-gold-light { background: #eff6ff; }
-.bg-green-50 { background: #f0fdf4; }
-.bg-advist-gold-light { background: #fffbeb; }
-.bg-advist-surface-dark { background: #faf5ff; }
-.bg-advist-gold-light { background: #fef2f2; }
-[class*="bg-advist-dark"], .bg-gradient-to-r { background: advist-navy; color: white; }
-.text-white { color: white; }
-[class*="text-advist-gray900"] { color: #333; }
-[class*="text-advist-gray900"] { color: #555; }
-[class*="text-advist-blue-light"] { color: #888; }
-.text-advist-gray900, .text-advist-gray900, .text-advist-gray900 { color: #2563eb; }
-.text-advist-success, .text-advist-success, .text-advist-success { color: #16a34a; }
-.text-advist-gold-dark, .text-advist-gold-dark, .text-advist-gold-dark { color: #F59E0B; }
-.text-advist-gray900, .text-advist-gray900 { color: #7c3aed; }
-.text-advist-error, .text-advist-error { color: #F59E0B; }
-.border-advist-success { border-color: #bbf7d0; }
-.border-advist-gold { border-color: #bfdbfe; }
-.border-advist-gold { border-color: #fde68a; }
-[class*="border-advist-bg"] { border-color: #ddd; }
-.overflow-hidden { overflow: hidden; }
-.break-all { word-break: break-all; }
-.tracking-wider { letter-spacing: 0.03em; }
-.w-6, .h-6 { width: 4mm; height: 4mm; }
-.w-8, .h-8 { width: 5mm; height: 5mm; }
-.w-24, .h-24 { width: 18mm; height: 18mm; }
-img { max-width: 100%; height: auto; }
-.max-h-16 { max-height: 10mm; }
-.max-h-24 { max-height: 15mm; }
-.h-12 { height: 8mm; }
-svg { width: 3mm; height: 3mm; }
-[class*="size-"] { width: 3mm; height: 3mm; }
-/* Badge compact */
-[class*="bg-advist-surface-dark"], [class*="bg-green-50"], [class*="bg-green-50"], [class*="bg-advist-gold-light"], [class*="bg-advist-gold-light"], [class*="bg-advist-gold-light"], [class*="bg-advist-surface-dark"] {
-  padding: 0.5mm 1.5mm; border-radius: 1px; font-size: 6pt; font-weight: 500; display: inline-block;
-}
-.bg-advist-surface-dark { background: #f3e8ff; color: #7c3aed; }
-.bg-green-50 { background: #dcfce7; color: #16a34a; }
-.bg-green-50 { background: #d1fae5; color: #047857; }
-.bg-advist-gold-light { background: #dbeafe; color: #2563eb; }
-.bg-advist-gold-light { background: #ffedd5; color: #ea580c; }
-.bg-advist-gold-light { background: #FDE68A; color: #F59E0B; }
-.bg-advist-surface-dark { background: #f3f4f6; color: #4b5563; }
-/* Hide buttons */
-button, .no-print, .print\\:hidden { display: none !important; }
-</style>
-</head>
-<body>${reportContent}</body>
-</html>`);
-
-    printWindow.document.close();
-
-    // Print after content loads
-    setTimeout(() => {
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
-    }, 250);
   }, [report]);
 
   // Helper functions
@@ -410,10 +265,17 @@ button, .no-print, .print\\:hidden { display: none !important; }
             </Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handlePrint}>
-              <Printer size={16} className="mr-1" />
-              Imprimer
-            </Button>
+            <PrintButton config={{ title: 'Compte Rendu de Validation', appName: 'Advist' }}>
+              <div>
+                <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>RAPPORT DE VALIDATION</h2>
+                <p>Référence : {report.referenceNumber}</p>
+                <p>Document : {report.document.title} — {report.document.type} — v{report.document.version}</p>
+                <p>Workflow : {report.workflow.name} — {report.workflow.status === 'completed' ? 'Terminé' : 'En cours'}</p>
+                <p>Initié par : {report.workflow.initiatedBy.name}</p>
+                <p>Étapes : {report.steps.length} — Approuvées : {report.steps.filter(s => s.status === 'approved').length} — Rejetées : {report.steps.filter(s => s.status === 'rejected').length}</p>
+                {report.verificationCode && <p>Code de vérification : {report.verificationCode}</p>}
+              </div>
+            </PrintButton>
             <Button
               variant="primary"
               size="sm"

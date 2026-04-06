@@ -1,5 +1,6 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { supabase } from '../../lib/supabase';
 import {
   Users,
   Plus,
@@ -15,6 +16,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { Button, Input, Card, Badge, Modal, Avatar, StatsCard, PageHeader, SearchInput, FilterSelect, ViewModeToggle } from '../../components/ui';
+import { PrintButton } from '../../shared/PrintEngine';
 
 interface TeamMember {
   id: number;
@@ -29,77 +31,6 @@ interface TeamMember {
   created_at: string;
   last_login?: string;
 }
-
-// Mock data
-const MOCK_USERS: TeamMember[] = [
-  {
-    id: 1,
-    first_name: 'Jean',
-    last_name: 'Dupont',
-    email: 'jean.dupont@advist.com',
-    phone: '+33 6 12 34 56 78',
-    role: 'admin',
-    department: 'Direction',
-    status: 'active',
-    created_at: '2024-01-15',
-    last_login: '2024-11-27',
-  },
-  {
-    id: 2,
-    first_name: 'Marie',
-    last_name: 'Martin',
-    email: 'marie.martin@advist.com',
-    phone: '+33 6 23 45 67 89',
-    role: 'manager',
-    department: 'Ressources Humaines',
-    status: 'active',
-    created_at: '2024-02-20',
-    last_login: '2024-11-26',
-  },
-  {
-    id: 3,
-    first_name: 'Pierre',
-    last_name: 'Bernard',
-    email: 'pierre.bernard@advist.com',
-    role: 'validator',
-    department: 'Finance',
-    status: 'active',
-    created_at: '2024-03-10',
-    last_login: '2024-11-25',
-  },
-  {
-    id: 4,
-    first_name: 'Sophie',
-    last_name: 'Petit',
-    email: 'sophie.petit@advist.com',
-    role: 'user',
-    department: 'Marketing',
-    status: 'active',
-    created_at: '2024-04-05',
-    last_login: '2024-11-24',
-  },
-  {
-    id: 5,
-    first_name: 'Lucas',
-    last_name: 'Robert',
-    email: 'lucas.robert@advist.com',
-    role: 'user',
-    department: 'Technique',
-    status: 'pending',
-    created_at: '2024-11-20',
-  },
-  {
-    id: 6,
-    first_name: 'Emma',
-    last_name: 'Moreau',
-    email: 'emma.moreau@advist.com',
-    role: 'user',
-    department: 'Commercial',
-    status: 'inactive',
-    created_at: '2024-05-15',
-    last_login: '2024-09-10',
-  },
-];
 
 const ROLE_CONFIG = {
   admin: { label: 'Administrateur', color: 'red' as const, icon: Shield },
@@ -123,8 +54,39 @@ export const UsersPage: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<TeamMember | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [users, setUsers] = useState<TeamMember[]>([]);
 
-  const filteredUsers = MOCK_USERS.filter((user) => {
+  useEffect(() => {
+    const loadUsers = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single();
+      if (!profile) return;
+      const orgId = profile.organization_id;
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email, phone, role, department, is_active, avatar_url, created_at, last_login')
+        .eq('organization_id', orgId);
+
+      setUsers((data || []).map(u => ({
+        id: u.id,
+        first_name: u.first_name || '',
+        last_name: u.last_name || '',
+        email: u.email || '',
+        phone: u.phone || undefined,
+        role: (u.role as TeamMember['role']) || 'user',
+        department: u.department || undefined,
+        status: u.is_active === false ? 'inactive' : (u.last_login ? 'active' : 'pending') as TeamMember['status'],
+        avatar: u.avatar_url || undefined,
+        created_at: u.created_at || '',
+        last_login: u.last_login || undefined,
+      })) as TeamMember[]);
+    };
+    loadUsers();
+  }, []);
+
+  const filteredUsers = users.filter((user) => {
     const matchesSearch =
       `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -135,10 +97,10 @@ export const UsersPage: React.FC = () => {
   });
 
   const stats = {
-    total: MOCK_USERS.length,
-    active: MOCK_USERS.filter((u) => u.status === 'active').length,
-    pending: MOCK_USERS.filter((u) => u.status === 'pending').length,
-    admins: MOCK_USERS.filter((u) => u.role === 'admin').length,
+    total: users.length,
+    active: users.filter((u) => u.status === 'active').length,
+    pending: users.filter((u) => u.status === 'pending').length,
+    admins: users.filter((u) => u.role === 'admin').length,
   };
 
   const handleEditUser = (user: TeamMember) => {
@@ -154,6 +116,30 @@ export const UsersPage: React.FC = () => {
         subtitle={t('users.subtitle')}
         actions={
           <>
+            <PrintButton config={{ title: 'Gestion des utilisateurs', appName: 'Advist' }}>
+              <div>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2">Nom</th>
+                      <th className="text-left py-2">Email</th>
+                      <th className="text-left py-2">Rôle</th>
+                      <th className="text-left py-2">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredUsers.map((user) => (
+                      <tr key={user.id} className="border-b">
+                        <td className="py-2">{user.first_name} {user.last_name}</td>
+                        <td className="py-2">{user.email}</td>
+                        <td className="py-2">{ROLE_CONFIG[user.role].label}</td>
+                        <td className="py-2">{STATUS_CONFIG[user.status].label}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </PrintButton>
             <Button variant="outline" size="sm">
               <Upload size={16} className="mr-2" />
               {t('common.import')}
@@ -489,7 +475,7 @@ const CreateUserModal: React.FC<{
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Creating user:', formData);
+    console.error('Creating user:', formData);
     onClose();
   };
 
@@ -598,7 +584,7 @@ const EditUserModal: React.FC<{
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Updating user:', formData);
+    console.error('Updating user:', formData);
     onClose();
   };
 

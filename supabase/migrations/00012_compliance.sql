@@ -1,7 +1,7 @@
 -- GDPR/eIDAS Compliance Tables
 
 -- Consent Purposes
-CREATE TABLE consent_purposes (
+CREATE TABLE IF NOT EXISTS consent_purposes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE consent_purposes (
 );
 
 -- Consents
-CREATE TABLE consents (
+CREATE TABLE IF NOT EXISTS consents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     purpose_id UUID NOT NULL REFERENCES consent_purposes(id) ON DELETE CASCADE,
@@ -32,7 +32,7 @@ CREATE TABLE consents (
 );
 
 -- Data Subject Requests
-CREATE TABLE data_subject_requests (
+CREATE TABLE IF NOT EXISTS data_subject_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
@@ -52,7 +52,7 @@ CREATE TABLE data_subject_requests (
 );
 
 -- Processing Activities (GDPR Article 30)
-CREATE TABLE processing_activities (
+CREATE TABLE IF NOT EXISTS processing_activities (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE processing_activities (
 );
 
 -- Data Breaches
-CREATE TABLE data_breaches (
+CREATE TABLE IF NOT EXISTS data_breaches (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     title VARCHAR(500) NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE data_breaches (
 );
 
 -- Privacy Impact Assessments
-CREATE TABLE privacy_impact_assessments (
+CREATE TABLE IF NOT EXISTS privacy_impact_assessments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     title VARCHAR(500) NOT NULL,
@@ -114,7 +114,7 @@ CREATE TABLE privacy_impact_assessments (
 );
 
 -- eIDAS: Signature Proof Files
-CREATE TABLE signature_proof_files (
+CREATE TABLE IF NOT EXISTS signature_proof_files (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_signature_id UUID NOT NULL REFERENCES document_signatures(id) ON DELETE CASCADE,
     proof_type VARCHAR(100) NOT NULL,
@@ -128,7 +128,7 @@ CREATE TABLE signature_proof_files (
 );
 
 -- eIDAS: Qualified Timestamps
-CREATE TABLE qualified_timestamps (
+CREATE TABLE IF NOT EXISTS qualified_timestamps (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     resource_type VARCHAR(100) NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE qualified_timestamps (
 );
 
 -- eIDAS: Electronic Seals
-CREATE TABLE electronic_seals (
+CREATE TABLE IF NOT EXISTS electronic_seals (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     seal_certificate TEXT NOT NULL,
@@ -157,7 +157,7 @@ CREATE TABLE electronic_seals (
 );
 
 -- eIDAS: Registered Deliveries
-CREATE TABLE registered_deliveries (
+CREATE TABLE IF NOT EXISTS registered_deliveries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     document_id UUID REFERENCES documents(id) ON DELETE SET NULL,
@@ -175,7 +175,7 @@ CREATE TABLE registered_deliveries (
 );
 
 -- eIDAS: Qualified Archives
-CREATE TABLE qualified_archives (
+CREATE TABLE IF NOT EXISTS qualified_archives (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE RESTRICT,
@@ -192,7 +192,7 @@ CREATE TABLE qualified_archives (
 );
 
 -- eIDAS: Attribute Attestations
-CREATE TABLE attribute_attestations (
+CREATE TABLE IF NOT EXISTS attribute_attestations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     attribute_type VARCHAR(100) NOT NULL,

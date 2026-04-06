@@ -1,5 +1,5 @@
 -- Collaboration Sessions
-CREATE TABLE collaboration_sessions (
+CREATE TABLE IF NOT EXISTS collaboration_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     is_active BOOLEAN DEFAULT true,
@@ -9,7 +9,7 @@ CREATE TABLE collaboration_sessions (
 );
 
 -- Collaboration Presence
-CREATE TABLE collaboration_presence (
+CREATE TABLE IF NOT EXISTS collaboration_presence (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     session_id UUID NOT NULL REFERENCES collaboration_sessions(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -22,7 +22,7 @@ CREATE TABLE collaboration_presence (
 );
 
 -- Collaboration Chat Messages
-CREATE TABLE collaboration_chat_messages (
+CREATE TABLE IF NOT EXISTS collaboration_chat_messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     session_id UUID NOT NULL REFERENCES collaboration_sessions(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -33,7 +33,7 @@ CREATE TABLE collaboration_chat_messages (
 );
 
 -- Collaboration Cursors (real-time cursor positions)
-CREATE TABLE collaboration_cursors (
+CREATE TABLE IF NOT EXISTS collaboration_cursors (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     session_id UUID NOT NULL REFERENCES collaboration_sessions(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -46,7 +46,7 @@ CREATE TABLE collaboration_cursors (
 );
 
 -- Document Shares (share by link)
-CREATE TABLE document_shares (
+CREATE TABLE IF NOT EXISTS document_shares (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     created_by UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,

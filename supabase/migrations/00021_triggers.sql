@@ -47,6 +47,7 @@ BEGIN
         'ai_conversations', 'electronic_seals',
         'salesforce_mappings'
     ]) LOOP
+        EXECUTE format('DROP TRIGGER IF EXISTS set_updated_at ON %I', tbl);
         EXECUTE format(
             'CREATE TRIGGER set_updated_at BEFORE UPDATE ON %I FOR EACH ROW EXECUTE FUNCTION public.update_updated_at()',
             tbl
@@ -77,6 +78,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
@@ -107,6 +109,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS check_document_quota ON documents;
 CREATE TRIGGER check_document_quota
     BEFORE INSERT ON documents
     FOR EACH ROW EXECUTE FUNCTION public.check_org_document_quota();
@@ -128,10 +131,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_storage_on_document_insert ON documents;
 CREATE TRIGGER update_storage_on_document_insert
     AFTER INSERT ON documents
     FOR EACH ROW EXECUTE FUNCTION public.update_org_storage_usage();
 
+DROP TRIGGER IF EXISTS update_storage_on_document_delete ON documents;
 CREATE TRIGGER update_storage_on_document_delete
     AFTER DELETE ON documents
     FOR EACH ROW EXECUTE FUNCTION public.update_org_storage_usage();
@@ -170,6 +175,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS chain_audit_log_trigger ON audit_logs;
 CREATE TRIGGER chain_audit_log_trigger
     BEFORE INSERT ON audit_logs
     FOR EACH ROW EXECUTE FUNCTION public.chain_audit_log();
@@ -244,6 +250,7 @@ BEGIN
     FOR tbl IN SELECT unnest(ARRAY[
         'documents', 'workflow_instances', 'document_signatures'
     ]) LOOP
+        EXECUTE format('DROP TRIGGER IF EXISTS audit_%s ON %I', tbl, tbl);
         EXECUTE format(
             'CREATE TRIGGER audit_%s AFTER INSERT OR UPDATE OR DELETE ON %I FOR EACH ROW EXECUTE FUNCTION public.auto_audit_log()',
             tbl, tbl

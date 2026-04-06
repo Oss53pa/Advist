@@ -572,10 +572,135 @@ Email : legal@advist.com
 Téléphone : +225 01 02 03 04 05`
       }
     ]
+  },
+  signature: {
+    title: 'Politique de Signature Electronique',
+    icon: Shield,
+    lastUpdate: '1er avril 2026',
+    sections: [
+      {
+        title: '1. Cadre juridique applicable',
+        content: `La signature electronique proposee par ADVIST est conforme aux textes suivants :
+
+- Loi ivoirienne n\u00b02013-546 du 30 juillet 2013 relative aux transactions electroniques
+  Articles 9 a 15 : valeur juridique des signatures electroniques
+  Article 11 : presomption de fiabilite
+
+- Loi n\u00b02013-450 du 19 juin 2013 relative a la protection des donnees personnelles
+
+- Acte Uniforme OHADA sur le droit commercial general
+  Conservation des preuves de signature pendant 10 ans minimum
+
+- Reglement eIDAS (UE 910/2014) — reference technique pour la signature avancee`
+      },
+      {
+        title: '2. Niveaux de signature',
+        content: `ADVIST propose plusieurs niveaux de signature electronique :
+
+SIGNATURE SIMPLE
+- Identification par email
+- Horodatage serveur certifie
+- Sceau d'integrite SHA-256
+- Valeur probante : standard
+
+SIGNATURE AVANCEE (STANDARD)
+- Verification OTP par email obligatoire
+- Horodatage serveur certifie
+- Sceau d'integrite liant cryptographiquement la signature au document
+- Consentement explicite trace
+- Valeur probante : renforcee
+
+SIGNATURE RENFORCEE
+- Verification OTP par SMS sur numero mobile
+- Horodatage serveur certifie + TSA RFC 3161 (optionnel)
+- Sceau d'integrite cryptographique
+- Consentement explicite trace
+- Valeur probante : forte
+
+SIGNATURE QUALIFIEE
+- Certificat qualifie (eIDAS)
+- Verification d'identite en personne ou par video
+- Horodatage qualifie RFC 3161
+- Valeur probante : maximale (conforme OHADA Art. 17)`
+      },
+      {
+        title: '3. Processus de verification d\'identite',
+        content: `Avant toute signature, ADVIST verifie l'identite du signataire :
+
+VERIFICATION OTP (One-Time Password)
+- Un code a 6 chiffres est envoye par email ou SMS au signataire
+- Le code expire apres 10 minutes
+- Maximum 3 tentatives de saisie
+- Le code est stocke sous forme de hash SHA-256 (jamais en clair)
+- La preuve de verification est incluse dans le dossier de preuves
+
+CONSENTEMENT EXPLICITE
+- Avant de signer, le signataire doit :
+  (i) Confirmer son identite
+  (ii) Reconnaitre la valeur juridique de la signature electronique (Loi 2013-546)
+  (iii) Declarer avoir lu le document
+  (iv) Accepter les CGU d'ADVIST
+- Le texte de consentement est versionne et son hash est conserve`
+      },
+      {
+        title: '4. Integrite cryptographique',
+        content: `Chaque signature est protegee par un sceau d'integrite cryptographique :
+
+SCEAU D'INTEGRITE
+- Formule : SHA-256(hash_document + hash_signature + id_signataire + timestamp_serveur)
+- Ce sceau lie de maniere irrevocable la signature au document
+- Toute modification du document ou de la signature invalide le sceau
+
+HORODATAGE SERVEUR
+- Le timestamp est genere cote serveur (pas cote navigateur)
+- Il est incontestable car independant de l'horloge du signataire
+- Il est inclus dans le sceau d'integrite
+
+CHAINE DE SIGNATURES
+- Chaque signature reference le hash de la signature precedente
+- Cela cree une chaine inalterable de signatures`
+      },
+      {
+        title: '5. Conservation des preuves',
+        content: `ADVIST conserve les preuves de signature conformement aux exigences legales :
+
+DUREE DE CONSERVATION
+- Documents commerciaux : 10 ans minimum (Acte Uniforme OHADA)
+- La suppression est techniquement bloquee pendant la periode de retention
+- Un trigger PostgreSQL empeche toute suppression prematuree
+
+DOSSIER DE PREUVES AUTOPORTANT
+Chaque signature genere un dossier de preuves contenant :
+- Le document original et le document signe certifie (PDF)
+- Le compte-rendu de validation
+- La piste d'audit complete (JSON + PDF)
+- Les preuves de chaque signature (verification OTP, consentement)
+- Le manifest des hashes SHA-256
+- Un guide de verification pour juge/avocat
+- Un QR code vers le portail de verification publique
+
+PORTAIL DE VERIFICATION PUBLIQUE
+- Accessible sans compte ADVIST sur verify.advist.africa
+- Permet a un juge ou un avocat de verifier l'authenticite d'un document
+- Affiche le statut des signatures sans reveler le contenu du document`
+      },
+      {
+        title: '6. Contact',
+        content: `Pour toute question relative a la signature electronique :
+
+ATLAS-STUDIO SARL
+Plateau, Rue du Commerce, Immeuble CCIA
+Abidjan, Cote d'Ivoire
+
+Email : legal@advist.africa
+Telephone : +225 01 02 03 04 05
+DPO : dpo@advist.africa`
+      }
+    ]
   }
 };
 
-type LegalType = 'mentions' | 'privacy' | 'cgu';
+type LegalType = 'mentions' | 'privacy' | 'cgu' | 'signature';
 
 export const LegalPage: React.FC = () => {
   const { type } = useParams<{ type: string }>();

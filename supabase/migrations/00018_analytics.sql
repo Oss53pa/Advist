@@ -1,5 +1,5 @@
 -- Organization Profiles (analytics)
-CREATE TABLE organization_profiles (
+CREATE TABLE IF NOT EXISTS organization_profiles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     industry VARCHAR(100),
@@ -16,7 +16,7 @@ CREATE TABLE organization_profiles (
 );
 
 -- Organization Metrics
-CREATE TABLE organization_metrics (
+CREATE TABLE IF NOT EXISTS organization_metrics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     metric_date DATE NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE organization_metrics (
 );
 
 -- Industry Benchmarks
-CREATE TABLE industry_benchmarks (
+CREATE TABLE IF NOT EXISTS industry_benchmarks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     industry VARCHAR(100) NOT NULL,
     metric_type VARCHAR(100) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE industry_benchmarks (
 );
 
 -- Organization Benchmark Positions
-CREATE TABLE organization_benchmark_positions (
+CREATE TABLE IF NOT EXISTS organization_benchmark_positions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     benchmark_id UUID NOT NULL REFERENCES industry_benchmarks(id) ON DELETE CASCADE,
@@ -58,7 +58,7 @@ CREATE TABLE organization_benchmark_positions (
 );
 
 -- ROI Calculations
-CREATE TABLE roi_calculations (
+CREATE TABLE IF NOT EXISTS roi_calculations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     calculation_date DATE NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE roi_calculations (
 );
 
 -- Best Practices
-CREATE TABLE best_practices (
+CREATE TABLE IF NOT EXISTS best_practices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(500) NOT NULL,
     description TEXT NOT NULL,
@@ -90,7 +90,7 @@ CREATE TABLE best_practices (
 );
 
 -- Organization Best Practices (tracking)
-CREATE TABLE organization_best_practices (
+CREATE TABLE IF NOT EXISTS organization_best_practices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     best_practice_id UUID NOT NULL REFERENCES best_practices(id) ON DELETE CASCADE,
@@ -105,7 +105,7 @@ CREATE TABLE organization_best_practices (
 );
 
 -- Executive Reports
-CREATE TABLE executive_reports (
+CREATE TABLE IF NOT EXISTS executive_reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     title VARCHAR(500) NOT NULL,

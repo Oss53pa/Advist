@@ -1,5 +1,5 @@
 -- User Signatures (stored signature images/data)
-CREATE TABLE user_signatures (
+CREATE TABLE IF NOT EXISTS user_signatures (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE user_signatures (
 );
 
 -- Signature Certificates
-CREATE TABLE signature_certificates (
+CREATE TABLE IF NOT EXISTS signature_certificates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
@@ -31,12 +31,15 @@ CREATE TABLE signature_certificates (
 );
 
 -- Add FK from user_signatures to signature_certificates
-ALTER TABLE user_signatures
-    ADD CONSTRAINT fk_user_signatures_certificate
-    FOREIGN KEY (certificate_id) REFERENCES signature_certificates(id) ON DELETE SET NULL;
+DO $$ BEGIN
+    ALTER TABLE user_signatures
+        ADD CONSTRAINT fk_user_signatures_certificate
+        FOREIGN KEY (certificate_id) REFERENCES signature_certificates(id) ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Document Signatures (actual signature instances on documents)
-CREATE TABLE document_signatures (
+CREATE TABLE IF NOT EXISTS document_signatures (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -63,7 +66,7 @@ CREATE TABLE document_signatures (
 );
 
 -- Signature Audit Log
-CREATE TABLE signature_audit_log (
+CREATE TABLE IF NOT EXISTS signature_audit_log (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_signature_id UUID NOT NULL REFERENCES document_signatures(id) ON DELETE CASCADE,
     action VARCHAR(100) NOT NULL,
@@ -75,7 +78,7 @@ CREATE TABLE signature_audit_log (
 );
 
 -- Qualified Certificates (eIDAS)
-CREATE TABLE qualified_certificates (
+CREATE TABLE IF NOT EXISTS qualified_certificates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     provider VARCHAR(255) NOT NULL,
@@ -90,7 +93,7 @@ CREATE TABLE qualified_certificates (
 );
 
 -- Identity Verification Sessions
-CREATE TABLE identity_verification_sessions (
+CREATE TABLE IF NOT EXISTS identity_verification_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     provider VARCHAR(255) NOT NULL,

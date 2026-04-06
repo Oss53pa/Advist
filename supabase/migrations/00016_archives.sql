@@ -1,5 +1,5 @@
 -- Retention Policies
-CREATE TABLE retention_policies (
+CREATE TABLE IF NOT EXISTS retention_policies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE retention_policies (
 );
 
 -- Archived Documents
-CREATE TABLE archived_documents (
+CREATE TABLE IF NOT EXISTS archived_documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE RESTRICT,
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
@@ -36,7 +36,7 @@ CREATE TABLE archived_documents (
 );
 
 -- Archive Jobs
-CREATE TABLE archive_jobs (
+CREATE TABLE IF NOT EXISTS archive_jobs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     policy_id UUID REFERENCES retention_policies(id) ON DELETE SET NULL,

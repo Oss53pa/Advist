@@ -1,9 +1,6 @@
 # Supabase Configuration for ADVIST
 # See: https://supabase.com/docs/guides/cli/config
 
-[project]
-id = "advist"
-
 [api]
 enabled = true
 port = 54321
@@ -17,7 +14,7 @@ enabled = false
 [db]
 port = 54322
 shadow_port = 54320
-major_version = 15
+major_version = 17
 
 [db.pooler]
 enabled = false

@@ -66,6 +66,7 @@ import {
   Modal,
   Input,
 } from '../../components/ui';
+import { PrintButton } from '../../shared/PrintEngine';
 import { WordEditor, ExcelEditor, VersionComparison, AIDocumentAnalysis, DocumentTranslator, ValidationWorkflowPanel, ValidationStatusBadge } from '../../components/documents';
 import type { ValidationStatus } from '../../components/documents';
 import { ValidationReport, ValidationReportPreview } from '../../components/workflows';
@@ -1442,9 +1443,18 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({ embedded
               <Bookmark size={18} />
             )}
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => window.print()}>
-            <Printer size={18} />
-          </Button>
+          <PrintButton
+            config={{ title: 'Détail du document', appName: 'Advist' }}
+            className="p-2 hover:bg-advist-bg rounded-xl transition-all duration-240 text-advist-blue-light hover:text-advist-gray900"
+          >
+            <div>
+              <h1 style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>{document.title}</h1>
+              <p>Version : v{document.current_version} — {document.total_pages} pages — {formatFileSize(document.file_size)}</p>
+              <p>Statut : {document.status}</p>
+              <p>Type : {document.document_type}</p>
+              {document.ohada_compliant && <p>Conforme OHADA — Certificat : {document.ohada_certificate_id}</p>}
+            </div>
+          </PrintButton>
           <Button variant="outline" size="sm" leftIcon={<Download size={16} />}>
             Télécharger
           </Button>

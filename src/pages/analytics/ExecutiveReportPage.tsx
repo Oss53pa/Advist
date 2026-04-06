@@ -33,6 +33,7 @@ import {
   getStatusBgColor,
   getPercentileLabel,
 } from '../../services/analytics';
+import { PrintButton } from '../../shared/PrintEngine';
 
 type DateRange = '7d' | '30d' | '90d' | '365d' | 'custom';
 
@@ -168,6 +169,37 @@ export const ExecutiveReportPage: React.FC = () => {
           >
             {generating ? 'Génération...' : 'Actualiser'}
           </button>
+
+          <PrintButton config={{ title: 'Rapport exécutif', appName: 'Advist', orientation: 'landscape' }}>
+            <div>
+              <h2 className="text-lg font-bold mb-4">Rapport Exécutif — {report.periodStart} au {report.periodEnd}</h2>
+              <p className="mb-4">{summary.headline}</p>
+              <table className="w-full text-sm mb-4">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Indicateur</th>
+                    <th className="text-left py-2">Valeur</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b"><td className="py-2">Documents traités</td><td className="py-2">{summary.keyMetrics.documentsProcessed}</td></tr>
+                  <tr className="border-b"><td className="py-2">Heures économisées</td><td className="py-2">{Math.round(summary.keyMetrics.hoursSaved)}h</td></tr>
+                  <tr className="border-b"><td className="py-2">Économies réalisées</td><td className="py-2">{formatCurrency(summary.keyMetrics.costSaved)}</td></tr>
+                  <tr className="border-b"><td className="py-2">Classement secteur</td><td className="py-2">{getPercentileLabel(summary.keyMetrics.industryRanking)}</td></tr>
+                </tbody>
+              </table>
+              {report.actionItems.length > 0 && (
+                <>
+                  <h3 className="font-semibold mb-2">Actions recommandées</h3>
+                  <ul className="list-disc pl-5 text-sm">
+                    {report.actionItems.map((item, idx) => (
+                      <li key={idx}>{item.title} — {item.description}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          </PrintButton>
 
           <button
             onClick={downloadPDF}
