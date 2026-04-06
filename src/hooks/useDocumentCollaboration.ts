@@ -70,7 +70,9 @@ export interface CollaborationActions {
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
 
-export function useDocumentCollaboration(documentId: string): CollaborationState & CollaborationActions {
+export function useDocumentCollaboration(
+  documentId: string
+): CollaborationState & CollaborationActions {
   const { accessToken } = useAuthStore();
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
@@ -92,7 +94,7 @@ export function useDocumentCollaboration(documentId: string): CollaborationState
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
-      console.log('Collaboration WebSocket connected');
+      console.info('Collaboration WebSocket connected');
       setIsConnected(true);
 
       // Start ping interval to keep connection alive
@@ -113,7 +115,7 @@ export function useDocumentCollaboration(documentId: string): CollaborationState
     };
 
     ws.onclose = (event) => {
-      console.log('Collaboration WebSocket closed:', event.code);
+      console.info('Collaboration WebSocket closed:', event.code);
       setIsConnected(false);
 
       if (pingIntervalRef.current) {
@@ -185,9 +187,7 @@ export function useDocumentCollaboration(documentId: string): CollaborationState
 
       case 'page_changed':
         setParticipants((prev) =>
-          prev.map((p) =>
-            p.id === data.user_id ? { ...p, page: data.page } : p
-          )
+          prev.map((p) => (p.id === data.user_id ? { ...p, page: data.page } : p))
         );
         break;
 
@@ -202,17 +202,13 @@ export function useDocumentCollaboration(documentId: string): CollaborationState
             return [...prev, { userId: data.user_id, userName: data.user_name }];
           });
         } else {
-          setTypingUsers((prev) =>
-            prev.filter((u) => u.userId !== data.user_id)
-          );
+          setTypingUsers((prev) => prev.filter((u) => u.userId !== data.user_id));
         }
         break;
 
       case 'edit_state':
         setParticipants((prev) =>
-          prev.map((p) =>
-            p.id === data.user_id ? { ...p, isEditing: data.is_editing } : p
-          )
+          prev.map((p) => (p.id === data.user_id ? { ...p, isEditing: data.is_editing } : p))
         );
         break;
 
@@ -327,7 +323,4 @@ export default useDocumentCollaboration;
  * provides the same functionality without requiring a separate WebSocket server.
  */
 export { useRealtimeCollaboration } from './useSupabaseRealtime';
-export type {
-  RealtimeParticipant,
-  RealtimeChatMessage,
-} from './useSupabaseRealtime';
+export type { RealtimeParticipant, RealtimeChatMessage } from './useSupabaseRealtime';

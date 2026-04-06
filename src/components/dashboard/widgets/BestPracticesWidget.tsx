@@ -10,17 +10,13 @@ import {
   CheckCircle,
   Clock,
   Play,
-  ChevronRight,
+  _ChevronRight,
   TrendingUp,
   Star,
   Users,
 } from 'lucide-react';
 import { WidgetConfig } from '../../../services/dashboard';
-import {
-  analyticsService,
-  BestPractice,
-  BestPracticeStatus,
-} from '../../../services/analytics';
+import { analyticsService, BestPractice, BestPracticeStatus } from '../../../services/analytics';
 
 interface BestPracticesWidgetProps {
   config: WidgetConfig;
@@ -30,7 +26,11 @@ const priorityColors: Record<string, { bg: string; text: string; border: string 
   critical: { bg: 'bg-advist-gold-light', text: 'text-advist-error', border: 'border-advist-gold' },
   high: { bg: 'bg-advist-gold-light', text: 'text-advist-gold-dark', border: 'border-advist-gold' },
   medium: { bg: 'bg-advist-gold-light', text: 'text-advist-gray900', border: 'border-advist-gold' },
-  low: { bg: 'bg-advist-surface-dark', text: 'text-advist-gray900', border: 'border-advist-border' },
+  low: {
+    bg: 'bg-advist-surface-dark',
+    text: 'text-advist-gray900',
+    border: 'border-advist-border',
+  },
 };
 
 const statusIcons: Record<BestPracticeStatus, React.ReactNode> = {
@@ -51,13 +51,14 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
       try {
         const data = await analyticsService.getBestPractices(4);
         setPractices(data);
-      } catch (err) {
+      } catch (_err) {
         // Mock data for demo
         setPractices([
           {
             id: '1',
             title: 'Validation parallèle',
-            description: 'Permettre la validation simultanée par plusieurs approbateurs pour réduire les délais.',
+            description:
+              'Permettre la validation simultanée par plusieurs approbateurs pour réduire les délais.',
             category: 'workflow',
             priority: 'high',
             expectedTimeSavingPct: 35,
@@ -65,7 +66,11 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
             adoptionRate: 78,
             successRate: 92,
             implementationSteps: [
-              { step: 1, title: 'Configurer', description: 'Activer l\'option dans les paramètres de workflow' },
+              {
+                step: 1,
+                title: 'Configurer',
+                description: "Activer l'option dans les paramètres de workflow",
+              },
               { step: 2, title: 'Former', description: 'Former les équipes à la nouvelle méthode' },
             ],
             adoptionStatus: 'not_adopted',
@@ -73,7 +78,8 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
           {
             id: '2',
             title: 'Modèles de documents',
-            description: 'Utiliser des modèles standardisés pour réduire les erreurs et accélérer la création.',
+            description:
+              'Utiliser des modèles standardisés pour réduire les erreurs et accélérer la création.',
             category: 'efficiency',
             priority: 'medium',
             expectedTimeSavingPct: 25,
@@ -86,7 +92,8 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
           {
             id: '3',
             title: 'Notifications intelligentes',
-            description: 'Activer les rappels automatiques pour les documents en attente depuis trop longtemps.',
+            description:
+              'Activer les rappels automatiques pour les documents en attente depuis trop longtemps.',
             category: 'workflow',
             priority: 'medium',
             expectedTimeSavingPct: 20,
@@ -99,7 +106,8 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
           {
             id: '4',
             title: 'Signature mobile',
-            description: 'Permettre la signature depuis mobile pour accélérer les validations urgentes.',
+            description:
+              'Permettre la signature depuis mobile pour accélérer les validations urgentes.',
             category: 'signature',
             priority: 'high',
             expectedTimeSavingPct: 45,
@@ -121,10 +129,8 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
   const handleStartPractice = async (practiceId: string) => {
     try {
       await analyticsService.updateBestPracticeStatus(practiceId, 'in_progress');
-      setPractices(prev =>
-        prev.map(p =>
-          p.id === practiceId ? { ...p, adoptionStatus: 'in_progress' } : p
-        )
+      setPractices((prev) =>
+        prev.map((p) => (p.id === practiceId ? { ...p, adoptionStatus: 'in_progress' } : p))
       );
     } catch (err) {
       console.error('Failed to update practice status:', err);
@@ -134,7 +140,7 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
   if (loading) {
     return (
       <div className="h-full flex flex-col gap-3 animate-pulse">
-        {[1, 2, 3, 4].map(i => (
+        {[1, 2, 3, 4].map((i) => (
           <div key={i} className="h-20 bg-advist-surface-dark rounded-lg"></div>
         ))}
       </div>
@@ -142,7 +148,7 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
   }
 
   // Filter out dismissed practices
-  const visiblePractices = practices.filter(p => p.adoptionStatus !== 'dismissed');
+  const visiblePractices = practices.filter((p) => p.adoptionStatus !== 'dismissed');
 
   return (
     <div className="h-full flex flex-col">
@@ -158,7 +164,7 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
 
       {/* Practices List */}
       <div className="flex-1 space-y-2 overflow-y-auto">
-        {visiblePractices.map(practice => {
+        {visiblePractices.map((practice) => {
           const colors = priorityColors[practice.priority];
           const isImplemented = practice.adoptionStatus === 'implemented';
           const isInProgress = practice.adoptionStatus === 'in_progress';
@@ -170,21 +176,23 @@ export const BestPracticesWidget: React.FC<BestPracticesWidgetProps> = ({ config
                 isImplemented
                   ? 'bg-green-50 border-advist-success'
                   : isInProgress
-                  ? 'bg-advist-gold-light border-advist-gold'
-                  : `${colors.bg} ${colors.border}`
+                    ? 'bg-advist-gold-light border-advist-gold'
+                    : `${colors.bg} ${colors.border}`
               }`}
             >
               <div className="flex items-start gap-3">
-                <div className="mt-0.5">
-                  {statusIcons[practice.adoptionStatus]}
-                </div>
+                <div className="mt-0.5">{statusIcons[practice.adoptionStatus]}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <p className={`text-sm font-medium ${
-                      isImplemented ? 'text-advist-success' :
-                      isInProgress ? 'text-advist-gray900' :
-                      colors.text
-                    }`}>
+                    <p
+                      className={`text-sm font-medium ${
+                        isImplemented
+                          ? 'text-advist-success'
+                          : isInProgress
+                            ? 'text-advist-gray900'
+                            : colors.text
+                      }`}
+                    >
                       {practice.title}
                     </p>
                     {practice.adoptionStatus === 'not_adopted' && (

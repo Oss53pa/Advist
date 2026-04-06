@@ -9,7 +9,7 @@ interface CalendarWidgetProps {
   config: WidgetConfig;
 }
 
-export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ config }) => {
+export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ _config }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // Mock deadlines data
@@ -44,8 +44,20 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ config }) => {
   const firstDay = getFirstDayOfMonth(currentDate);
   const today = new Date();
 
-  const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+  const monthNames = [
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+  ];
 
   const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
@@ -66,7 +78,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ config }) => {
 
       {/* Day names */}
       <div className="grid grid-cols-7 gap-1 mb-2">
-        {dayNames.map(day => (
+        {dayNames.map((day) => (
           <div key={day} className="text-center text-xs text-advist-gray900/50 font-medium">
             {day.charAt(0)}
           </div>
@@ -101,7 +113,9 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ config }) => {
             >
               {day}
               {hasDeadline && (
-                <div className={`absolute bottom-0.5 w-1 h-1 rounded-full ${isToday ? 'bg-white' : 'bg-advist-red'}`} />
+                <div
+                  className={`absolute bottom-0.5 w-1 h-1 rounded-full ${isToday ? 'bg-white' : 'bg-advist-red'}`}
+                />
               )}
             </button>
           );

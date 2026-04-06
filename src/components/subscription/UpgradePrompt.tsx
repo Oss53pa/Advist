@@ -39,7 +39,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
 
   const daysRemaining = getDaysRemaining();
   const isTrialEnding = currentTenant.status === 'trial' && daysRemaining <= 5;
-  const isQuotaNearLimit = currentTenant.plan === 'business';
+  const _isQuotaNearLimit = currentTenant.plan === 'business';
 
   const handleDismiss = () => {
     setIsDismissed(true);
@@ -52,7 +52,9 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
 
   if (variant === 'banner') {
     return (
-      <div className={`relative px-4 py-3 ${isTrialEnding ? 'bg-primary-900' : 'bg-gradient-to-r from-primary-900 to-primary-800'} text-white`}>
+      <div
+        className={`relative px-4 py-3 ${isTrialEnding ? 'bg-primary-900' : 'bg-gradient-to-r from-primary-900 to-primary-800'} text-white`}
+      >
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             {isTrialEnding ? (
@@ -86,7 +88,11 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
             <Link to={`/checkout?plan=${recommendedPlan}`}>
               <Button
                 size="sm"
-                className={isTrialEnding ? 'bg-white text-primary-900 hover:bg-primary-100' : 'bg-primary-900 hover:bg-primary-400'}
+                className={
+                  isTrialEnding
+                    ? 'bg-white text-primary-900 hover:bg-primary-100'
+                    : 'bg-primary-900 hover:bg-primary-400'
+                }
               >
                 <Zap size={14} className="mr-1" />
                 Passer à {planInfo.name}
@@ -122,7 +128,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
             </h4>
             <p className="text-sm text-primary-600 mt-1">
               {isTrialEnding
-                ? 'Souscrivez maintenant pour garder l\'accès à vos documents.'
+                ? "Souscrivez maintenant pour garder l'accès à vos documents."
                 : 'Passez au plan supérieur pour débloquer plus de capacité.'}
             </p>
             <div className="flex gap-2 mt-3">
@@ -154,14 +160,12 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden">
         {/* Header */}
-        <div className={`p-6 ${isTrialEnding ? 'bg-primary-900' : 'bg-gradient-to-r from-primary-900 to-primary-800'} text-white`}>
+        <div
+          className={`p-6 ${isTrialEnding ? 'bg-primary-900' : 'bg-gradient-to-r from-primary-900 to-primary-800'} text-white`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {isTrialEnding ? (
-                <Clock size={24} />
-              ) : (
-                <TrendingUp size={24} />
-              )}
+              {isTrialEnding ? <Clock size={24} /> : <TrendingUp size={24} />}
               <div>
                 <h2 className="text-xl font-bold">
                   {isTrialEnding
@@ -271,13 +275,13 @@ export const TrialBadge: React.FC = () => {
   return (
     <div
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-        isUrgent
-          ? 'bg-red-100 text-red-700'
-          : 'bg-primary-100 text-primary-700'
+        isUrgent ? 'bg-red-100 text-red-700' : 'bg-primary-100 text-primary-700'
       }`}
     >
       <Clock size={12} />
-      {daysRemaining === 0 ? 'Dernier jour' : `${daysRemaining}j restant${daysRemaining > 1 ? 's' : ''}`}
+      {daysRemaining === 0
+        ? 'Dernier jour'
+        : `${daysRemaining}j restant${daysRemaining > 1 ? 's' : ''}`}
     </div>
   );
 };
@@ -292,7 +296,12 @@ interface QuotaWarningProps {
   unit?: string;
 }
 
-export const QuotaWarning: React.FC<QuotaWarningProps> = ({ quotaName, current, max, unit = '' }) => {
+export const QuotaWarning: React.FC<QuotaWarningProps> = ({
+  quotaName,
+  current,
+  max,
+  unit = '',
+}) => {
   if (max === -1) return null; // Unlimited
 
   const percentage = Math.round((current / max) * 100);
@@ -307,8 +316,8 @@ export const QuotaWarning: React.FC<QuotaWarningProps> = ({ quotaName, current, 
         isExceeded
           ? 'bg-red-50 text-red-700 border border-red-200'
           : isCritical
-          ? 'bg-primary-50 text-primary-700 border border-primary-200'
-          : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+            ? 'bg-primary-50 text-primary-700 border border-primary-200'
+            : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
       }`}
     >
       <AlertTriangle size={14} />

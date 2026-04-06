@@ -4,7 +4,7 @@ import { publicBlogApi } from '../../services/marketing';
 import type { BlogPost } from '../../types';
 import {
   Search,
-  Calendar,
+  _Calendar,
   Eye,
   Clock,
   ArrowRight,
@@ -15,14 +15,14 @@ import {
   GraduationCap,
   Lock,
   TrendingUp,
-  Filter,
+  _Filter,
   ChevronLeft,
   ChevronRight,
   Star,
   Users,
   FileText,
   Sparkles,
-  Tag,
+  _Tag,
 } from 'lucide-react';
 
 // Categories
@@ -37,10 +37,28 @@ const blogCategories = [
 
 // Authors
 const blogAuthors = [
-  { id: 1, name: 'Dr. Aminata Diallo', role: 'Experte Juridique OHADA', avatar: 'AD', color: 'bg-green-500' },
+  {
+    id: 1,
+    name: 'Dr. Aminata Diallo',
+    role: 'Experte Juridique OHADA',
+    avatar: 'AD',
+    color: 'bg-green-500',
+  },
   { id: 2, name: 'Marc Kouassi', role: 'Directeur Produit', avatar: 'MK', color: 'bg-primary-600' },
-  { id: 3, name: 'Sophie Mensah', role: 'Consultante Conformité', avatar: 'SM', color: 'bg-orange-500' },
-  { id: 4, name: 'Jean-Pierre Ndiaye', role: 'Expert Digitalisation', avatar: 'JN', color: 'bg-purple-500' },
+  {
+    id: 3,
+    name: 'Sophie Mensah',
+    role: 'Consultante Conformité',
+    avatar: 'SM',
+    color: 'bg-orange-500',
+  },
+  {
+    id: 4,
+    name: 'Jean-Pierre Ndiaye',
+    role: 'Expert Digitalisation',
+    avatar: 'JN',
+    color: 'bg-purple-500',
+  },
 ];
 
 // Mock blog posts
@@ -49,7 +67,8 @@ const mockBlogPosts = [
     id: 1,
     slug: 'signature-electronique-valeur-juridique-afrique',
     title: 'La signature électronique a-t-elle une valeur juridique en Afrique ?',
-    excerpt: 'Découvrez le cadre légal de la signature électronique dans l\'espace OHADA et comment elle est reconnue dans 17 pays africains. Guide complet sur la conformité et les bonnes pratiques pour sécuriser vos transactions.',
+    excerpt:
+      "Découvrez le cadre légal de la signature électronique dans l'espace OHADA et comment elle est reconnue dans 17 pays africains. Guide complet sur la conformité et les bonnes pratiques pour sécuriser vos transactions.",
     content: '',
     category: 'juridique',
     categoryLabel: 'Juridique',
@@ -66,7 +85,8 @@ const mockBlogPosts = [
     id: 2,
     slug: 'digitaliser-processus-validation-entreprise',
     title: '5 étapes pour digitaliser vos processus de validation documentaire',
-    excerpt: 'Transformez vos workflows papier en circuits de validation numériques efficaces. Réduisez vos délais de traitement de 70% grâce à l\'automatisation intelligente.',
+    excerpt:
+      "Transformez vos workflows papier en circuits de validation numériques efficaces. Réduisez vos délais de traitement de 70% grâce à l'automatisation intelligente.",
     content: '',
     category: 'productivite',
     categoryLabel: 'Productivité',
@@ -83,7 +103,8 @@ const mockBlogPosts = [
     id: 3,
     slug: 'conformite-eidas-entreprises-internationales',
     title: 'Conformité eIDAS 2.0 : ce que les entreprises doivent savoir en 2025',
-    excerpt: 'Le règlement européen eIDAS évolue avec des changements majeurs. Anticipez les nouvelles exigences et assurez la conformité de vos signatures électroniques.',
+    excerpt:
+      'Le règlement européen eIDAS évolue avec des changements majeurs. Anticipez les nouvelles exigences et assurez la conformité de vos signatures électroniques.',
     content: '',
     category: 'conformite',
     categoryLabel: 'Conformité',
@@ -100,7 +121,8 @@ const mockBlogPosts = [
     id: 4,
     slug: 'guide-complet-parapheur-electronique',
     title: 'Guide complet : Maîtriser le parapheur électronique en 10 minutes',
-    excerpt: 'Apprenez à créer, gérer et suivre vos circuits de validation comme un pro. Tutoriel pas à pas avec captures d\'écran et astuces d\'experts.',
+    excerpt:
+      "Apprenez à créer, gérer et suivre vos circuits de validation comme un pro. Tutoriel pas à pas avec captures d'écran et astuces d'experts.",
     content: '',
     category: 'tutoriel',
     categoryLabel: 'Tutoriel',
@@ -117,7 +139,8 @@ const mockBlogPosts = [
     id: 5,
     slug: 'securite-documents-sensibles-entreprise',
     title: 'Comment protéger vos documents sensibles : les meilleures pratiques',
-    excerpt: 'Chiffrement, contrôle d\'accès, audit trail... Découvrez les stratégies essentielles pour garantir la sécurité de vos documents confidentiels.',
+    excerpt:
+      "Chiffrement, contrôle d'accès, audit trail... Découvrez les stratégies essentielles pour garantir la sécurité de vos documents confidentiels.",
     content: '',
     category: 'securite',
     categoryLabel: 'Sécurité',
@@ -134,7 +157,8 @@ const mockBlogPosts = [
     id: 6,
     slug: 'roi-gestion-documentaire-digitale',
     title: 'Calculer le ROI de votre transformation documentaire digitale',
-    excerpt: 'Méthodes et outils pour mesurer l\'impact réel de la dématérialisation sur votre entreprise. Études de cas et calculateur gratuit inclus.',
+    excerpt:
+      "Méthodes et outils pour mesurer l'impact réel de la dématérialisation sur votre entreprise. Études de cas et calculateur gratuit inclus.",
     content: '',
     category: 'productivite',
     categoryLabel: 'Productivité',
@@ -151,7 +175,8 @@ const mockBlogPosts = [
     id: 7,
     slug: 'archivage-electronique-normes-nf-z42-013',
     title: 'Archivage électronique : comprendre la norme NF Z42-013',
-    excerpt: 'Tout savoir sur la norme française d\'archivage électronique et comment l\'implémenter dans votre organisation pour garantir l\'intégrité de vos documents.',
+    excerpt:
+      "Tout savoir sur la norme française d'archivage électronique et comment l'implémenter dans votre organisation pour garantir l'intégrité de vos documents.",
     content: '',
     category: 'conformite',
     categoryLabel: 'Conformité',
@@ -168,7 +193,8 @@ const mockBlogPosts = [
     id: 8,
     slug: 'signature-electronique-mobile-bonnes-pratiques',
     title: 'Signature électronique sur mobile : guide des bonnes pratiques',
-    excerpt: 'Comment signer des documents en toute sécurité depuis votre smartphone. Conseils pratiques et pièges à éviter pour une expérience mobile optimale.',
+    excerpt:
+      'Comment signer des documents en toute sécurité depuis votre smartphone. Conseils pratiques et pièges à éviter pour une expérience mobile optimale.',
     content: '',
     category: 'tutoriel',
     categoryLabel: 'Tutoriel',
@@ -185,7 +211,8 @@ const mockBlogPosts = [
     id: 9,
     slug: 'integration-api-signature-electronique',
     title: 'Intégrer une API de signature électronique : guide technique',
-    excerpt: 'Documentation technique complète pour intégrer Advist dans vos applications. Exemples de code, webhooks et bonnes pratiques d\'intégration.',
+    excerpt:
+      "Documentation technique complète pour intégrer Advist dans vos applications. Exemples de code, webhooks et bonnes pratiques d'intégration.",
     content: '',
     category: 'tutoriel',
     categoryLabel: 'Tutoriel',
@@ -231,7 +258,8 @@ export const BlogPage: React.FC = () => {
   // Filter posts
   const filteredPosts = displayPosts.filter((post: any) => {
     const matchesCategory = activeCategory === 'all' || post.category === activeCategory;
-    const matchesSearch = !searchQuery ||
+    const matchesSearch =
+      !searchQuery ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -268,22 +296,40 @@ export const BlogPage: React.FC = () => {
               <span className="font-decorative text-2xl font-bold text-primary-900">Advist</span>
             </Link>
             <nav className="hidden md:flex items-center gap-1">
-              <Link to="/#features" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#features"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Fonctionnalités
               </Link>
-              <Link to="/#how-it-works" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#how-it-works"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Comment ça marche
               </Link>
-              <Link to="/#demo" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#demo"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Démo
               </Link>
-              <Link to="/#pricing" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#pricing"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Tarifs
               </Link>
-              <Link to="/blog" className="px-4 py-2 text-sm font-medium text-primary-900 bg-primary-100 rounded-lg">
+              <Link
+                to="/blog"
+                className="px-4 py-2 text-sm font-medium text-primary-900 bg-primary-100 rounded-lg"
+              >
                 Blog
               </Link>
-              <Link to="/#contact" className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all">
+              <Link
+                to="/#contact"
+                className="px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-900 hover:bg-primary-100 rounded-lg transition-all"
+              >
                 Contact
               </Link>
             </nav>
@@ -315,12 +361,15 @@ export const BlogPage: React.FC = () => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Blog & <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-300 to-primary-400">Actualités</span>
+            Blog &{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-300 to-primary-400">
+              Actualités
+            </span>
           </h1>
 
           <p className="text-lg md:text-xl text-primary-200 max-w-2xl mx-auto mb-10">
-            Guides pratiques, analyses d'experts et actualités sur la gestion documentaire,
-            la signature électronique et la transformation digitale en Afrique
+            Guides pratiques, analyses d'experts et actualités sur la gestion documentaire, la
+            signature électronique et la transformation digitale en Afrique
           </p>
 
           {/* Search Bar */}
@@ -390,7 +439,9 @@ export const BlogPage: React.FC = () => {
             <div className="mb-12">
               <article className="group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl border border-primary-100 transition-all duration-500">
                 <div className="grid grid-cols-1 lg:grid-cols-2">
-                  <div className={`relative h-64 lg:h-auto bg-gradient-to-br ${(featuredPost as any).gradient || 'from-green-500 to-emerald-600'} overflow-hidden`}>
+                  <div
+                    className={`relative h-64 lg:h-auto bg-gradient-to-br ${(featuredPost as any).gradient || 'from-green-500 to-emerald-600'} overflow-hidden`}
+                  >
                     <div className="absolute inset-0">
                       <div className="absolute top-10 left-10 w-32 h-32 border-2 border-white/20 rounded-full" />
                       <div className="absolute bottom-10 right-10 w-48 h-48 border-2 border-white/20 rounded-full" />
@@ -437,19 +488,28 @@ export const BlogPage: React.FC = () => {
 
                     {(featuredPost as any).author && (
                       <div className="flex items-center gap-3 mb-6">
-                        <div className={`w-10 h-10 ${(featuredPost as any).author.color} rounded-full flex items-center justify-center text-white font-bold text-sm`}>
+                        <div
+                          className={`w-10 h-10 ${(featuredPost as any).author.color} rounded-full flex items-center justify-center text-white font-bold text-sm`}
+                        >
                           {(featuredPost as any).author.avatar}
                         </div>
                         <div>
-                          <p className="font-semibold text-primary-900 text-sm">{(featuredPost as any).author.name}</p>
-                          <p className="text-xs text-primary-500">{(featuredPost as any).author.role}</p>
+                          <p className="font-semibold text-primary-900 text-sm">
+                            {(featuredPost as any).author.name}
+                          </p>
+                          <p className="text-xs text-primary-500">
+                            {(featuredPost as any).author.role}
+                          </p>
                         </div>
                         <span className="ml-auto text-sm text-primary-400">
-                          {new Date((featuredPost as any).published_at).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })}
+                          {new Date((featuredPost as any).published_at).toLocaleDateString(
+                            'fr-FR',
+                            {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                            }
+                          )}
                         </span>
                       </div>
                     )}
@@ -457,7 +517,10 @@ export const BlogPage: React.FC = () => {
                     {(featuredPost as any).tags && (
                       <div className="flex flex-wrap gap-2 mb-6">
                         {(featuredPost as any).tags.slice(0, 4).map((tag: string, i: number) => (
-                          <span key={i} className="px-2 py-1 bg-primary-50 text-primary-600 text-xs font-medium rounded-full">
+                          <span
+                            key={i}
+                            className="px-2 py-1 bg-primary-50 text-primary-600 text-xs font-medium rounded-full"
+                          >
                             #{tag}
                           </span>
                         ))}
@@ -480,8 +543,14 @@ export const BlogPage: React.FC = () => {
           {/* Results info */}
           <div className="flex items-center justify-between mb-8">
             <p className="text-primary-600">
-              <span className="font-semibold text-primary-900">{filteredPosts.length}</span> article{filteredPosts.length > 1 ? 's' : ''} trouvé{filteredPosts.length > 1 ? 's' : ''}
-              {searchQuery && <span> pour "<span className="font-medium">{searchQuery}</span>"</span>}
+              <span className="font-semibold text-primary-900">{filteredPosts.length}</span> article
+              {filteredPosts.length > 1 ? 's' : ''} trouvé{filteredPosts.length > 1 ? 's' : ''}
+              {searchQuery && (
+                <span>
+                  {' '}
+                  pour "<span className="font-medium">{searchQuery}</span>"
+                </span>
+              )}
             </p>
             {searchQuery && (
               <button
@@ -497,7 +566,10 @@ export const BlogPage: React.FC = () => {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-white rounded-2xl overflow-hidden border border-primary-100 animate-pulse">
+                <div
+                  key={i}
+                  className="bg-white rounded-2xl overflow-hidden border border-primary-100 animate-pulse"
+                >
                   <div className="h-48 bg-primary-100" />
                   <div className="p-6">
                     <div className="h-4 bg-primary-100 rounded w-1/4 mb-4" />
@@ -517,7 +589,9 @@ export const BlogPage: React.FC = () => {
                     key={post.id}
                     className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-primary-100 hover:border-primary-200 transition-all duration-500"
                   >
-                    <div className={`relative h-48 bg-gradient-to-br ${post.gradient || 'from-primary-100 to-primary-200'} overflow-hidden`}>
+                    <div
+                      className={`relative h-48 bg-gradient-to-br ${post.gradient || 'from-primary-100 to-primary-200'} overflow-hidden`}
+                    >
                       <div className="absolute inset-0 opacity-20">
                         <div className="absolute top-4 left-4 w-16 h-16 border-2 border-white rounded-full" />
                         <div className="absolute bottom-4 right-4 w-24 h-24 border-2 border-white rounded-full" />
@@ -538,12 +612,16 @@ export const BlogPage: React.FC = () => {
                     <div className="p-6">
                       <div className="flex items-center gap-3 mb-4">
                         {post.author && (
-                          <div className={`w-8 h-8 ${post.author.color} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
+                          <div
+                            className={`w-8 h-8 ${post.author.color} rounded-full flex items-center justify-center text-white text-xs font-bold`}
+                          >
                             {post.author.avatar}
                           </div>
                         )}
                         <div className="flex-1">
-                          <p className="text-xs font-medium text-primary-900">{post.author?.name}</p>
+                          <p className="text-xs font-medium text-primary-900">
+                            {post.author?.name}
+                          </p>
                           <p className="text-xs text-primary-400">
                             {new Date(post.published_at).toLocaleDateString('fr-FR', {
                               day: 'numeric',
@@ -562,14 +640,15 @@ export const BlogPage: React.FC = () => {
                         {post.title}
                       </h3>
 
-                      <p className="text-primary-600 text-sm line-clamp-2 mb-4">
-                        {post.excerpt}
-                      </p>
+                      <p className="text-primary-600 text-sm line-clamp-2 mb-4">{post.excerpt}</p>
 
                       {post.tags && (
                         <div className="flex flex-wrap gap-1 mb-4">
                           {post.tags.slice(0, 3).map((tag: string, i: number) => (
-                            <span key={i} className="px-2 py-0.5 bg-primary-50 text-primary-500 text-xs rounded-full">
+                            <span
+                              key={i}
+                              className="px-2 py-0.5 bg-primary-50 text-primary-500 text-xs rounded-full"
+                            >
                               #{tag}
                             </span>
                           ))}
@@ -594,7 +673,9 @@ export const BlogPage: React.FC = () => {
                 <Search className="w-8 h-8 text-primary-400" />
               </div>
               <h3 className="text-xl font-semibold text-primary-900 mb-2">Aucun article trouvé</h3>
-              <p className="text-primary-600 mb-6">Essayez avec d'autres mots-clés ou explorez nos catégories</p>
+              <p className="text-primary-600 mb-6">
+                Essayez avec d'autres mots-clés ou explorez nos catégories
+              </p>
               <button
                 onClick={() => {
                   setSearchQuery('');
@@ -611,7 +692,7 @@ export const BlogPage: React.FC = () => {
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-12">
               <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
                 className="p-2 rounded-lg border border-primary-200 text-primary-600 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
@@ -633,7 +714,7 @@ export const BlogPage: React.FC = () => {
               ))}
 
               <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
                 className="p-2 rounded-lg border border-primary-200 text-primary-600 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
@@ -680,10 +761,16 @@ export const BlogPage: React.FC = () => {
               © 2025 Advist by Atlas Studio. Tous droits réservés.
             </p>
             <div className="flex items-center gap-6">
-              <Link to="/legal/privacy" className="text-sm text-primary-400 hover:text-white transition-colors">
+              <Link
+                to="/legal/privacy"
+                className="text-sm text-primary-400 hover:text-white transition-colors"
+              >
                 Confidentialité
               </Link>
-              <Link to="/legal/cgu" className="text-sm text-primary-400 hover:text-white transition-colors">
+              <Link
+                to="/legal/cgu"
+                className="text-sm text-primary-400 hover:text-white transition-colors"
+              >
                 CGU
               </Link>
             </div>

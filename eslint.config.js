@@ -26,7 +26,7 @@ export default tseslint.config(
       // Forbid console.log in production - use logger utility instead
       'no-console': ['error', { allow: ['warn', 'error', 'info', 'debug'] }],
       // TypeScript specific rules
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       // Disable broken rule (incompatible with ESLint 9.39+)
       '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',

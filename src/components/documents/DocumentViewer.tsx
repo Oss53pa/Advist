@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useCallback } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ZoomIn,
@@ -18,13 +18,13 @@ import {
   Stamp,
   PenTool,
   Type,
-  Square,
-  Circle,
+  _Square,
+  _Circle,
   Trash2,
   Undo,
   Redo,
   Save,
-  X,
+  _X,
   Move,
   Loader2,
   CheckCircle,
@@ -98,7 +98,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   annotations = [],
   onAnnotationAdd,
   onAnnotationDelete,
-  onAnnotationUpdate,
+  _onAnnotationUpdate,
   onSign,
   readOnly = false,
   showAnnotationTools = true,
@@ -107,10 +107,10 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
 }) => {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const _canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(document.totalPages || 1);
+  const [totalPages, _setTotalPages] = useState(document.totalPages || 1);
   const [zoom, setZoom] = useState(100);
   const [rotation, setRotation] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -118,8 +118,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [selectedStamp, setSelectedStamp] = useState(STAMPS[0]);
   const [localAnnotations, setLocalAnnotations] = useState<Annotation[]>(annotations);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [drawingPath, setDrawingPath] = useState<{ x: number; y: number }[]>([]);
+  const [_isDrawing, _setIsDrawing] = useState(false);
+  const [_drawingPath, _setDrawingPath] = useState<{ x: number; y: number }[]>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
   const [commentText, setCommentText] = useState('');
@@ -244,9 +244,14 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   // Handle comment submission
   const handleCommentSubmit = () => {
     if (commentText.trim()) {
-      addAnnotation(activeTool === 'text' ? 'text' : 'comment', commentPosition.x, commentPosition.y, {
-        content: commentText,
-      });
+      addAnnotation(
+        activeTool === 'text' ? 'text' : 'comment',
+        commentPosition.x,
+        commentPosition.y,
+        {
+          content: commentText,
+        }
+      );
       setCommentText('');
       setShowCommentInput(false);
     }
@@ -301,10 +306,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             title={document.name}
           />
           {/* Annotation overlay */}
-          <div
-            className="absolute inset-0 pointer-events-auto"
-            onClick={handleCanvasClick}
-          >
+          <div className="absolute inset-0 pointer-events-auto" onClick={handleCanvasClick}>
             {renderAnnotations()}
           </div>
         </div>
@@ -319,10 +321,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             alt={document.name}
             className="max-w-full max-h-full object-contain"
           />
-          <div
-            className="absolute inset-0 pointer-events-auto"
-            onClick={handleCanvasClick}
-          >
+          <div className="absolute inset-0 pointer-events-auto" onClick={handleCanvasClick}>
             {renderAnnotations()}
           </div>
         </div>
@@ -353,7 +352,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     return (
       <div className="flex flex-col items-center justify-center h-full text-advist-gray900">
         <File size={64} className="mb-4 opacity-50" />
-        <p className="text-lg font-medium">{t('viewer.unsupportedFormat', 'Format non supporté pour la prévisualisation')}</p>
+        <p className="text-lg font-medium">
+          {t('viewer.unsupportedFormat', 'Format non supporté pour la prévisualisation')}
+        </p>
         <p className="text-sm mt-2">{document.mimeType}</p>
         <Button variant="outline" className="mt-4" onClick={handleDownload}>
           <Download size={16} className="mr-2" />
@@ -417,7 +418,10 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             {annotation.type === 'stamp' && (
               <div
                 className="px-4 py-2 rounded font-bold text-white text-sm uppercase transform -rotate-12 shadow-lg"
-                style={{ backgroundColor: STAMPS.find((s) => s.id === annotation.data?.stampId)?.color || '#6B7280' }}
+                style={{
+                  backgroundColor:
+                    STAMPS.find((s) => s.id === annotation.data?.stampId)?.color || '#6B7280',
+                }}
               >
                 {annotation.data?.label || annotation.content}
               </div>
@@ -459,7 +463,11 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                 autoFocus
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
-                placeholder={activeTool === 'text' ? t('viewer.enterText', 'Entrez le texte...') : t('viewer.enterComment', 'Entrez votre commentaire...')}
+                placeholder={
+                  activeTool === 'text'
+                    ? t('viewer.enterText', 'Entrez le texte...')
+                    : t('viewer.enterComment', 'Entrez votre commentaire...')
+                }
                 className="w-full p-2 border border-advist-bg rounded text-sm resize-none"
                 rows={3}
               />
@@ -512,28 +520,48 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             </button>
           </div>
 
-          <button onClick={handleRotate} className="p-2 hover:bg-advist-dark/70 rounded" title={t('viewer.rotate', 'Rotation')}>
+          <button
+            onClick={handleRotate}
+            className="p-2 hover:bg-advist-dark/70 rounded"
+            title={t('viewer.rotate', 'Rotation')}
+          >
             <RotateCw size={18} />
           </button>
 
           <div className="w-px h-6 bg-advist-dark/70" />
 
-          <button onClick={handleDownload} className="p-2 hover:bg-advist-dark/70 rounded" title={t('viewer.download', 'Télécharger')}>
+          <button
+            onClick={handleDownload}
+            className="p-2 hover:bg-advist-dark/70 rounded"
+            title={t('viewer.download', 'Télécharger')}
+          >
             <Download size={18} />
           </button>
 
-          <button onClick={handlePrint} className="p-2 hover:bg-advist-dark/70 rounded" title={t('viewer.print', 'Imprimer')}>
+          <button
+            onClick={handlePrint}
+            className="p-2 hover:bg-advist-dark/70 rounded"
+            title={t('viewer.print', 'Imprimer')}
+          >
             <Printer size={18} />
           </button>
 
-          <button onClick={toggleFullscreen} className="p-2 hover:bg-advist-dark/70 rounded" title={t('viewer.fullscreen', 'Plein écran')}>
+          <button
+            onClick={toggleFullscreen}
+            className="p-2 hover:bg-advist-dark/70 rounded"
+            title={t('viewer.fullscreen', 'Plein écran')}
+          >
             {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
           </button>
 
           {onSign && (
             <>
               <div className="w-px h-6 bg-advist-dark/70" />
-              <Button size="sm" onClick={onSign} className="bg-advist-gold-light hover:bg-advist-gold-light/80">
+              <Button
+                size="sm"
+                onClick={onSign}
+                className="bg-advist-gold-light hover:bg-advist-gold-light/80"
+              >
                 <PenTool size={14} className="mr-1" />
                 {t('viewer.sign', 'Signer')}
               </Button>
@@ -601,7 +629,9 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           {activeTool === 'stamp' && (
             <select
               value={selectedStamp.id}
-              onChange={(e) => setSelectedStamp(STAMPS.find((s) => s.id === e.target.value) || STAMPS[0])}
+              onChange={(e) =>
+                setSelectedStamp(STAMPS.find((s) => s.id === e.target.value) || STAMPS[0])
+              }
               className="px-3 py-1.5 bg-white border border-advist-border rounded-lg text-sm"
             >
               {STAMPS.map((stamp) => (
@@ -639,29 +669,38 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             onClick={handleSaveAnnotations}
             disabled={isSaving}
             leftIcon={
-              isSaving ? <Loader2 size={14} className="animate-spin" /> :
-              saveStatus === 'success' ? <CheckCircle size={14} className="text-advist-success" /> :
-              saveStatus === 'error' ? <AlertCircle size={14} className="text-advist-error" /> :
-              <Save size={14} />
+              isSaving ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : saveStatus === 'success' ? (
+                <CheckCircle size={14} className="text-advist-success" />
+              ) : saveStatus === 'error' ? (
+                <AlertCircle size={14} className="text-advist-error" />
+              ) : (
+                <Save size={14} />
+              )
             }
             className={
-              saveStatus === 'success' ? 'bg-advist-success hover:bg-advist-success' :
-              saveStatus === 'error' ? 'bg-advist-error hover:bg-advist-error' : ''
+              saveStatus === 'success'
+                ? 'bg-advist-success hover:bg-advist-success'
+                : saveStatus === 'error'
+                  ? 'bg-advist-error hover:bg-advist-error'
+                  : ''
             }
           >
-            {isSaving ? t('viewer.saving', 'Enregistrement...') :
-             saveStatus === 'success' ? t('viewer.saved', 'Enregistré') :
-             saveStatus === 'error' ? t('viewer.saveError', 'Erreur') :
-             t('viewer.saveAnnotations', 'Enregistrer')}
+            {isSaving
+              ? t('viewer.saving', 'Enregistrement...')
+              : saveStatus === 'success'
+                ? t('viewer.saved', 'Enregistré')
+                : saveStatus === 'error'
+                  ? t('viewer.saveError', 'Erreur')
+                  : t('viewer.saveAnnotations', 'Enregistrer')}
           </Button>
         </div>
       )}
 
       {/* Document content */}
       <div className="flex-1 overflow-auto bg-advist-surface-dark relative">
-        <div className="min-h-full flex items-center justify-center p-4">
-          {renderDocument()}
-        </div>
+        <div className="min-h-full flex items-center justify-center p-4">{renderDocument()}</div>
       </div>
 
       {/* Bottom pagination */}

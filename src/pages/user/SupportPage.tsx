@@ -18,7 +18,7 @@ import type {
   SupportTicket,
   SupportMessage,
   SupportTicketCategory,
-  SupportTicketPriority,
+  _SupportTicketPriority,
   SupportTicketStatus,
 } from '../../types';
 
@@ -28,7 +28,7 @@ const mockUserTickets: SupportTicket[] = [
     id: '1',
     ticket_id: 'SUP-A1B2C3D4',
     title: 'Probleme de connexion',
-    description: 'Je n\'arrive plus a me connecter depuis ce matin.',
+    description: "Je n'arrive plus a me connecter depuis ce matin.",
     category: 'technical',
     priority: 'high',
     status: 'in_progress',
@@ -66,7 +66,8 @@ const mockMessages: SupportMessage[] = [
     author: '1',
     author_name: 'Moi',
     author_email: 'moi@example.com',
-    content: 'Je n\'arrive plus a me connecter depuis ce matin. Le message d\'erreur indique "Identifiants invalides".',
+    content:
+      'Je n\'arrive plus a me connecter depuis ce matin. Le message d\'erreur indique "Identifiants invalides".',
     is_internal: false,
     created_at: '2024-12-29T08:30:00Z',
   },
@@ -76,7 +77,8 @@ const mockMessages: SupportMessage[] = [
     author: 'admin',
     author_name: 'Support ADVIST',
     author_email: 'support@advist.com',
-    content: 'Bonjour, merci pour votre signalement. Nous avons identifie le probleme et travaillons sur une solution. Pouvez-vous essayer de reinitialiser votre mot de passe en attendant ?',
+    content:
+      'Bonjour, merci pour votre signalement. Nous avons identifie le probleme et travaillons sur une solution. Pouvez-vous essayer de reinitialiser votre mot de passe en attendant ?',
     is_internal: false,
     created_at: '2024-12-29T10:00:00Z',
   },
@@ -101,17 +103,47 @@ export const UserSupportPage: React.FC = () => {
   const getStatusInfo = (status: SupportTicketStatus) => {
     switch (status) {
       case 'new':
-        return { icon: AlertCircle, color: 'text-primary-900', bg: 'bg-primary-50', label: t('support.status.new') };
+        return {
+          icon: AlertCircle,
+          color: 'text-primary-900',
+          bg: 'bg-primary-50',
+          label: t('support.status.new'),
+        };
       case 'in_progress':
-        return { icon: Loader2, color: 'text-advist-gold-dark', bg: 'bg-advist-gold-light', label: t('support.status.inProgress') };
+        return {
+          icon: Loader2,
+          color: 'text-advist-gold-dark',
+          bg: 'bg-advist-gold-light',
+          label: t('support.status.inProgress'),
+        };
       case 'waiting':
-        return { icon: Pause, color: 'text-orange-600', bg: 'bg-orange-50', label: t('support.status.waiting') };
+        return {
+          icon: Pause,
+          color: 'text-orange-600',
+          bg: 'bg-orange-50',
+          label: t('support.status.waiting'),
+        };
       case 'resolved':
-        return { icon: CheckCircle, color: 'text-advist-success', bg: 'bg-green-50', label: t('support.status.resolved') };
+        return {
+          icon: CheckCircle,
+          color: 'text-advist-success',
+          bg: 'bg-green-50',
+          label: t('support.status.resolved'),
+        };
       case 'closed':
-        return { icon: XCircle, color: 'text-primary-500', bg: 'bg-primary-100', label: t('support.status.closed') };
+        return {
+          icon: XCircle,
+          color: 'text-primary-500',
+          bg: 'bg-primary-100',
+          label: t('support.status.closed'),
+        };
       default:
-        return { icon: AlertCircle, color: 'text-primary-500', bg: 'bg-primary-100', label: status };
+        return {
+          icon: AlertCircle,
+          color: 'text-primary-500',
+          bg: 'bg-primary-100',
+          label: status,
+        };
     }
   };
 
@@ -192,9 +224,7 @@ export const UserSupportPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">{t('support.title')}</h1>
-          <p className="text-advist-blue-light mt-1">
-            {t('support.userSubtitle')}
-          </p>
+          <p className="text-advist-blue-light mt-1">{t('support.userSubtitle')}</p>
         </div>
 
         <Button onClick={() => setShowCreateModal(true)}>
@@ -250,8 +280,12 @@ export const UserSupportPage: React.FC = () => {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-mono text-xs text-advist-blue-light">{ticket.ticket_id}</span>
-                      <span className={`px-2 py-0.5 text-xs font-medium rounded ${status.bg} ${status.color}`}>
+                      <span className="font-mono text-xs text-advist-blue-light">
+                        {ticket.ticket_id}
+                      </span>
+                      <span
+                        className={`px-2 py-0.5 text-xs font-medium rounded ${status.bg} ${status.color}`}
+                      >
                         {status.label}
                       </span>
                     </div>
@@ -293,11 +327,16 @@ export const UserSupportPage: React.FC = () => {
                 <div>
                   <h3 className="font-semibold text-advist-gray900">{selectedTicket.title}</h3>
                   <p className="text-sm text-advist-blue-light mt-1">
-                    {getCategoryLabel(selectedTicket.category)} - {formatDate(selectedTicket.created_at)}
+                    {getCategoryLabel(selectedTicket.category)} -{' '}
+                    {formatDate(selectedTicket.created_at)}
                   </p>
                 </div>
-                <div className={`px-3 py-1.5 rounded-lg ${getStatusInfo(selectedTicket.status).bg}`}>
-                  <span className={`text-sm font-medium ${getStatusInfo(selectedTicket.status).color}`}>
+                <div
+                  className={`px-3 py-1.5 rounded-lg ${getStatusInfo(selectedTicket.status).bg}`}
+                >
+                  <span
+                    className={`text-sm font-medium ${getStatusInfo(selectedTicket.status).color}`}
+                  >
                     {getStatusInfo(selectedTicket.status).label}
                   </span>
                 </div>
@@ -306,7 +345,9 @@ export const UserSupportPage: React.FC = () => {
 
             {/* Description */}
             <div>
-              <h4 className="text-sm font-medium text-advist-gray900 mb-2">{t('common.description')}</h4>
+              <h4 className="text-sm font-medium text-advist-gray900 mb-2">
+                {t('common.description')}
+              </h4>
               <p className="text-sm text-advist-gray900 p-3 bg-advist-bg/50 rounded-xl">
                 {selectedTicket.description}
               </p>
@@ -314,7 +355,9 @@ export const UserSupportPage: React.FC = () => {
 
             {/* Messages */}
             <div>
-              <h4 className="text-sm font-medium text-advist-gray900 mb-3">{t('support.conversation')}</h4>
+              <h4 className="text-sm font-medium text-advist-gray900 mb-3">
+                {t('support.conversation')}
+              </h4>
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {messages.length === 0 ? (
                   <p className="text-sm text-advist-blue-light text-center py-4">
@@ -332,7 +375,9 @@ export const UserSupportPage: React.FC = () => {
                         <span className="text-sm font-medium text-advist-gray900">
                           {message.author === 'admin' ? t('support.supportTeam') : t('support.you')}
                         </span>
-                        <span className="text-xs text-advist-blue-light">{formatDate(message.created_at)}</span>
+                        <span className="text-xs text-advist-blue-light">
+                          {formatDate(message.created_at)}
+                        </span>
                       </div>
                       <p className="text-sm text-advist-gray900">{message.content}</p>
                     </div>
@@ -378,7 +423,9 @@ export const UserSupportPage: React.FC = () => {
           />
 
           <div>
-            <label className="block text-sm font-medium text-advist-gray900 mb-1.5">{t('common.description')}</label>
+            <label className="block text-sm font-medium text-advist-gray900 mb-1.5">
+              {t('common.description')}
+            </label>
             <textarea
               value={createForm.description}
               onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
@@ -390,10 +437,14 @@ export const UserSupportPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-advist-gray900 mb-1.5">{t('support.form.category')}</label>
+            <label className="block text-sm font-medium text-advist-gray900 mb-1.5">
+              {t('support.form.category')}
+            </label>
             <select
               value={createForm.category}
-              onChange={(e) => setCreateForm({ ...createForm, category: e.target.value as SupportTicketCategory })}
+              onChange={(e) =>
+                setCreateForm({ ...createForm, category: e.target.value as SupportTicketCategory })
+              }
               className="w-full px-4 py-2.5 border border-advist-bg rounded-xl focus:ring-2 focus:ring-advist-gold"
             >
               <option value="technical">{t('support.categoryOptions.technical')}</option>
@@ -406,7 +457,10 @@ export const UserSupportPage: React.FC = () => {
             <Button variant="ghost" onClick={() => setShowCreateModal(false)}>
               {t('common.cancel')}
             </Button>
-            <Button onClick={handleCreateTicket} disabled={!createForm.title || !createForm.description}>
+            <Button
+              onClick={handleCreateTicket}
+              disabled={!createForm.title || !createForm.description}
+            >
               <Plus size={16} className="mr-2" />
               {t('common.send')}
             </Button>

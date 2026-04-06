@@ -68,13 +68,17 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   onDocumentCreated,
 }) => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'document' | 'annexes' | 'metadata' | 'workflow' | 'signatories'>('document');
+  const [activeTab, setActiveTab] = useState<
+    'document' | 'annexes' | 'metadata' | 'workflow' | 'signatories'
+  >('document');
 
   // Document state
   const [documentTitle, setDocumentTitle] = useState('');
   const [documentType, setDocumentType] = useState('');
   const [selectedFolder, setSelectedFolder] = useState<number | ''>('');
-  const [confidentiality, setConfidentiality] = useState<'public' | 'internal' | 'confidential' | 'secret'>('internal');
+  const [confidentiality, setConfidentiality] = useState<
+    'public' | 'internal' | 'confidential' | 'secret'
+  >('internal');
   const [description, setDescription] = useState('');
   const [enableTrackChanges, setEnableTrackChanges] = useState(false);
   const [mainFile, setMainFile] = useState<UploadedFile | null>(null);
@@ -99,7 +103,13 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
 
   // External signatories state
   const [externalSignatories, setExternalSignatories] = useState<ExternalSignatory[]>([]);
-  const [newSignatory, setNewSignatory] = useState({ email: '', firstName: '', lastName: '', company: '', role: 'signer' as const });
+  const [newSignatory, setNewSignatory] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    company: '',
+    role: 'signer' as const,
+  });
 
   // Mock workflows
   const workflows = [
@@ -109,16 +119,21 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   ];
 
   // Mock metadata fields based on document type
-  const metadataFields = documentType === '1' ? [
-    { id: 'client', name: 'Client', type: 'text', required: true },
-    { id: 'contractNumber', name: 'Numero de contrat', type: 'text', required: true },
-    { id: 'startDate', name: 'Date de debut', type: 'date', required: false },
-    { id: 'endDate', name: 'Date de fin', type: 'date', required: false },
-  ] : documentType === '2' ? [
-    { id: 'supplier', name: 'Fournisseur', type: 'text', required: true },
-    { id: 'invoiceNumber', name: 'Numero de facture', type: 'text', required: true },
-    { id: 'dueDate', name: 'Date d\'echeance', type: 'date', required: true },
-  ] : [];
+  const metadataFields =
+    documentType === '1'
+      ? [
+          { id: 'client', name: 'Client', type: 'text', required: true },
+          { id: 'contractNumber', name: 'Numero de contrat', type: 'text', required: true },
+          { id: 'startDate', name: 'Date de debut', type: 'date', required: false },
+          { id: 'endDate', name: 'Date de fin', type: 'date', required: false },
+        ]
+      : documentType === '2'
+        ? [
+            { id: 'supplier', name: 'Fournisseur', type: 'text', required: true },
+            { id: 'invoiceNumber', name: 'Numero de facture', type: 'text', required: true },
+            { id: 'dueDate', name: "Date d'echeance", type: 'date', required: true },
+          ]
+        : [];
 
   const handleDrag = (e: React.DragEvent, isAnnex = false) => {
     e.preventDefault();
@@ -193,11 +208,11 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   };
 
   const removeAnnex = (id: string) => {
-    setAnnexes(annexes.filter(a => a.id !== id));
+    setAnnexes(annexes.filter((a) => a.id !== id));
   };
 
   const updateAnnexDescription = (id: string, description: string) => {
-    setAnnexes(annexes.map(a => a.id === id ? { ...a, description } : a));
+    setAnnexes(annexes.map((a) => (a.id === id ? { ...a, description } : a)));
   };
 
   const addTag = () => {
@@ -208,22 +223,25 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   };
 
   const removeTag = (tag: string) => {
-    setTags(tags.filter(t => t !== tag));
+    setTags(tags.filter((t) => t !== tag));
   };
 
   const addExternalSignatory = () => {
     if (newSignatory.email && newSignatory.firstName && newSignatory.lastName) {
-      setExternalSignatories([...externalSignatories, {
-        ...newSignatory,
-        id: `sig_${Date.now()}`,
-        order: externalSignatories.length + 1,
-      }]);
+      setExternalSignatories([
+        ...externalSignatories,
+        {
+          ...newSignatory,
+          id: `sig_${Date.now()}`,
+          order: externalSignatories.length + 1,
+        },
+      ]);
       setNewSignatory({ email: '', firstName: '', lastName: '', company: '', role: 'signer' });
     }
   };
 
   const removeSignatory = (id: string) => {
-    setExternalSignatories(externalSignatories.filter(s => s.id !== id));
+    setExternalSignatories(externalSignatories.filter((s) => s.id !== id));
   };
 
   const formatFileSize = (bytes: number) => {
@@ -231,7 +249,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
 
   const handleSubmit = () => {
@@ -254,7 +272,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
       fastTrack,
       externalSignatories,
     };
-    console.log('Submitting document:', documentData);
+    console.info('Submitting document:', documentData);
     if (onDocumentCreated) {
       onDocumentCreated(documentData);
     }
@@ -264,15 +282,32 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   const tabs = [
     { key: 'document', label: t('documents.tabs.document', 'Document'), count: mainFile ? 1 : 0 },
     { key: 'annexes', label: t('documents.tabs.annexes', 'Annexes'), count: annexes.length },
-    { key: 'metadata', label: t('documents.tabs.metadata', 'Metadonnees'), count: tags.length + metadataValues.filter(m => m.value).length },
-    { key: 'workflow', label: t('documents.tabs.workflow', 'Workflow'), count: selectedWorkflow ? 1 : 0 },
-    { key: 'signatories', label: t('documents.tabs.signatories', 'Signataires'), count: externalSignatories.length },
+    {
+      key: 'metadata',
+      label: t('documents.tabs.metadata', 'Metadonnees'),
+      count: tags.length + metadataValues.filter((m) => m.value).length,
+    },
+    {
+      key: 'workflow',
+      label: t('documents.tabs.workflow', 'Workflow'),
+      count: selectedWorkflow ? 1 : 0,
+    },
+    {
+      key: 'signatories',
+      label: t('documents.tabs.signatories', 'Signataires'),
+      count: externalSignatories.length,
+    },
   ];
 
   const isValid = mainFile && documentTitle.trim();
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('documents.newDocument', 'Nouveau document')} size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('documents.newDocument', 'Nouveau document')}
+      size="xl"
+    >
       <div className="flex flex-col h-[70vh]">
         {/* Tabs */}
         <div className="border-b border-advist-border flex-shrink-0">
@@ -283,9 +318,10 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                 onClick={() => setActiveTab(tab.key as typeof activeTab)}
                 className={`
                   flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-240 relative
-                  ${activeTab === tab.key
-                    ? 'text-advist-gray900 border-b-2 border-advist-dark'
-                    : 'text-advist-gray900/80 hover:text-advist-gray900'
+                  ${
+                    activeTab === tab.key
+                      ? 'text-advist-gray900 border-b-2 border-advist-dark'
+                      : 'text-advist-gray900/80 hover:text-advist-gray900'
                   }
                 `}
               >
@@ -327,7 +363,9 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                     <option value="1">{t('documents.types.contract', 'Contrat')}</option>
                     <option value="2">{t('documents.types.invoice', 'Facture')}</option>
                     <option value="3">{t('documents.types.report', 'Rapport')}</option>
-                    <option value="4">{t('documents.types.purchaseOrder', 'Bon de commande')}</option>
+                    <option value="4">
+                      {t('documents.types.purchaseOrder', 'Bon de commande')}
+                    </option>
                     <option value="5">{t('documents.types.amendment', 'Avenant')}</option>
                     <option value="6">{t('documents.types.internalNote', 'Note interne')}</option>
                   </select>
@@ -339,12 +377,16 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   </label>
                   <select
                     value={selectedFolder}
-                    onChange={(e) => setSelectedFolder(e.target.value ? Number(e.target.value) : '')}
+                    onChange={(e) =>
+                      setSelectedFolder(e.target.value ? Number(e.target.value) : '')
+                    }
                     className="w-full px-4 py-2 border border-advist-blue-light rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
                   >
                     <option value="">{t('documents.noFolder', 'Aucun dossier')}</option>
                     {folders.map((folder) => (
-                      <option key={folder.id} value={folder.id}>{folder.name}</option>
+                      <option key={folder.id} value={folder.id}>
+                        {folder.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -357,10 +399,26 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {[
-                    { value: 'public', label: t('documents.confidentialityLevels.public', 'Public'), icon: '🌍' },
-                    { value: 'internal', label: t('documents.confidentialityLevels.internal', 'Interne'), icon: '🏢' },
-                    { value: 'confidential', label: t('documents.confidentialityLevels.confidential', 'Confidentiel'), icon: '🔒' },
-                    { value: 'secret', label: t('documents.confidentialityLevels.secret', 'Secret'), icon: '🔐' },
+                    {
+                      value: 'public',
+                      label: t('documents.confidentialityLevels.public', 'Public'),
+                      icon: '🌍',
+                    },
+                    {
+                      value: 'internal',
+                      label: t('documents.confidentialityLevels.internal', 'Interne'),
+                      icon: '🏢',
+                    },
+                    {
+                      value: 'confidential',
+                      label: t('documents.confidentialityLevels.confidential', 'Confidentiel'),
+                      icon: '🔒',
+                    },
+                    {
+                      value: 'secret',
+                      label: t('documents.confidentialityLevels.secret', 'Secret'),
+                      icon: '🔐',
+                    },
                   ].map((level) => (
                     <button
                       key={level.value}
@@ -391,7 +449,9 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-advist-gray900">{mainFile.name}</p>
-                      <p className="text-sm text-advist-blue-light">{formatFileSize(mainFile.size)}</p>
+                      <p className="text-sm text-advist-blue-light">
+                        {formatFileSize(mainFile.size)}
+                      </p>
                     </div>
                     <Button
                       variant="ghost"
@@ -424,10 +484,15 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                     <FileText size={48} className="mx-auto text-advist-blue-light mb-4" />
                     <p className="text-advist-gray900">
                       {t('documents.upload.dragDrop', 'Glissez-deposez votre fichier ici ou')}{' '}
-                      <span className="font-medium underline">{t('documents.upload.browse', 'parcourir')}</span>
+                      <span className="font-medium underline">
+                        {t('documents.upload.browse', 'parcourir')}
+                      </span>
                     </p>
                     <p className="text-sm text-advist-blue-light mt-2">
-                      {t('documents.upload.supportedFormats', 'PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX jusqu\'a 100 MB')}
+                      {t(
+                        'documents.upload.supportedFormats',
+                        "PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX jusqu'a 100 MB"
+                      )}
                     </p>
                   </div>
                 )}
@@ -443,9 +508,14 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   className="rounded border-advist-border text-advist-gray900 focus:ring-advist-gold"
                 />
                 <label htmlFor="trackChanges" className="flex-1 cursor-pointer">
-                  <span className="font-medium text-advist-gray900">{t('documents.upload.trackChanges', 'Activer le suivi des modifications')}</span>
+                  <span className="font-medium text-advist-gray900">
+                    {t('documents.upload.trackChanges', 'Activer le suivi des modifications')}
+                  </span>
                   <p className="text-xs text-advist-gray900/80">
-                    {t('documents.upload.trackChangesDesc', 'Toutes les modifications seront tracees avec identification de l\'auteur')}
+                    {t(
+                      'documents.upload.trackChangesDesc',
+                      "Toutes les modifications seront tracees avec identification de l'auteur"
+                    )}
                   </p>
                 </label>
                 <History size={20} className="text-advist-blue-light" />
@@ -460,7 +530,10 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full px-4 py-2 border border-advist-blue-light rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
-                  placeholder={t('documents.upload.descriptionPlaceholder', 'Description du document...')}
+                  placeholder={t(
+                    'documents.upload.descriptionPlaceholder',
+                    'Description du document...'
+                  )}
                 />
               </div>
             </div>
@@ -470,28 +543,42 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
           {activeTab === 'annexes' && (
             <div className="space-y-4">
               <div className="p-3 bg-advist-gold-light rounded-xl text-sm text-advist-gray900">
-                <strong>{t('documents.upload.attachments', 'Pieces jointes:')}</strong> {t('documents.upload.attachmentsDesc', 'Ajoutez les annexes, avenants ou documents complementaires lies a ce document principal.')}
+                <strong>{t('documents.upload.attachments', 'Pieces jointes:')}</strong>{' '}
+                {t(
+                  'documents.upload.attachmentsDesc',
+                  'Ajoutez les annexes, avenants ou documents complementaires lies a ce document principal.'
+                )}
               </div>
 
               {/* Annexes list */}
               {annexes.length > 0 && (
                 <div className="space-y-3">
                   {annexes.map((annex, index) => (
-                    <div key={annex.id} className="flex items-start gap-3 p-4 border border-advist-border rounded-xl">
+                    <div
+                      key={annex.id}
+                      className="flex items-start gap-3 p-4 border border-advist-border rounded-xl"
+                    >
                       <div className="p-2 bg-advist-surface-dark rounded-xl">
                         <FileText size={20} className="text-advist-gray900/80" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" size="sm">{t('documents.upload.annex', 'Annexe')} {index + 1}</Badge>
+                          <Badge variant="outline" size="sm">
+                            {t('documents.upload.annex', 'Annexe')} {index + 1}
+                          </Badge>
                           <p className="font-medium text-advist-gray900">{annex.name}</p>
-                          <span className="text-xs text-advist-blue-light">({formatFileSize(annex.size)})</span>
+                          <span className="text-xs text-advist-blue-light">
+                            ({formatFileSize(annex.size)})
+                          </span>
                         </div>
                         <input
                           type="text"
                           value={annex.description}
                           onChange={(e) => updateAnnexDescription(annex.id, e.target.value)}
-                          placeholder={t('documents.upload.annexDescPlaceholder', 'Description de l\'annexe...')}
+                          placeholder={t(
+                            'documents.upload.annexDescPlaceholder',
+                            "Description de l'annexe..."
+                          )}
                           className="w-full mt-2 px-3 py-1.5 text-sm border border-advist-border rounded focus:outline-none focus:ring-1 focus:ring-advist-gold"
                         />
                       </div>
@@ -528,9 +615,14 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   onChange={(e) => handleFileSelect(e, true)}
                 />
                 <Plus size={32} className="mx-auto text-advist-blue-light mb-2" />
-                <p className="text-advist-gray900 font-medium">{t('documents.upload.addAnnexes', 'Ajouter des annexes')}</p>
+                <p className="text-advist-gray900 font-medium">
+                  {t('documents.upload.addAnnexes', 'Ajouter des annexes')}
+                </p>
                 <p className="text-sm text-advist-blue-light mt-1">
-                  {t('documents.upload.dropOrClick', 'Glissez-deposez ou cliquez pour ajouter des fichiers')}
+                  {t(
+                    'documents.upload.dropOrClick',
+                    'Glissez-deposez ou cliquez pour ajouter des fichiers'
+                  )}
                 </p>
               </div>
 
@@ -548,14 +640,15 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
             <div className="space-y-6">
               {/* Tags */}
               <div>
-                <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                  Tags
-                </label>
+                <label className="block text-sm font-medium text-advist-gray900 mb-2">Tags</label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="flex items-center gap-1">
                       {tag}
-                      <button onClick={() => removeTag(tag)} className="ml-1 hover:text-advist-error">
+                      <button
+                        onClick={() => removeTag(tag)}
+                        className="ml-1 hover:text-advist-error"
+                      >
                         <X size={12} />
                       </button>
                     </Badge>
@@ -609,19 +702,24 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                         key={field.id}
                         label={`${field.name}${field.required ? ' *' : ''}`}
                         type={field.type}
-                        value={metadataValues.find(m => m.fieldId === field.id)?.value || ''}
+                        value={metadataValues.find((m) => m.fieldId === field.id)?.value || ''}
                         onChange={(e) => {
-                          const existing = metadataValues.find(m => m.fieldId === field.id);
+                          const existing = metadataValues.find((m) => m.fieldId === field.id);
                           if (existing) {
-                            setMetadataValues(metadataValues.map(m =>
-                              m.fieldId === field.id ? { ...m, value: e.target.value } : m
-                            ));
+                            setMetadataValues(
+                              metadataValues.map((m) =>
+                                m.fieldId === field.id ? { ...m, value: e.target.value } : m
+                              )
+                            );
                           } else {
-                            setMetadataValues([...metadataValues, {
-                              fieldId: field.id,
-                              fieldName: field.name,
-                              value: e.target.value,
-                            }]);
+                            setMetadataValues([
+                              ...metadataValues,
+                              {
+                                fieldId: field.id,
+                                fieldName: field.name,
+                                value: e.target.value,
+                              },
+                            ]);
                           }
                         }}
                       />
@@ -651,8 +749,17 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                           : 'border-advist-border hover:border-advist-blue-light'
                       }`}
                     >
-                      <div className={`p-2 rounded-xl ${selectedWorkflow === String(workflow.id) ? 'bg-advist-dark' : 'bg-advist-surface-dark'}`}>
-                        <Zap size={20} className={selectedWorkflow === String(workflow.id) ? 'text-white' : 'text-advist-gray900'} />
+                      <div
+                        className={`p-2 rounded-xl ${selectedWorkflow === String(workflow.id) ? 'bg-advist-dark' : 'bg-advist-surface-dark'}`}
+                      >
+                        <Zap
+                          size={20}
+                          className={
+                            selectedWorkflow === String(workflow.id)
+                              ? 'text-white'
+                              : 'text-advist-gray900'
+                          }
+                        />
                       </div>
                       <div className="flex-1">
                         <p className="font-medium text-advist-gray900">{workflow.name}</p>
@@ -674,7 +781,9 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                       className="rounded border-advist-border text-advist-gray900 focus:ring-advist-gold"
                     />
                     <label htmlFor="launchNow" className="flex-1 cursor-pointer">
-                      <span className="font-medium text-advist-gray900">Lancer le workflow immediatement</span>
+                      <span className="font-medium text-advist-gray900">
+                        Lancer le workflow immediatement
+                      </span>
                       <p className="text-xs text-advist-gray900/80">
                         Le workflow demarrera des la creation du document
                       </p>
@@ -714,26 +823,44 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
           {activeTab === 'signatories' && (
             <div className="space-y-6">
               <div className="p-3 bg-advist-gold-light rounded-xl text-sm text-advist-gray900">
-                <strong>Signataires externes:</strong> Ajoutez les personnes externes a votre organisation qui doivent signer ou valider ce document.
+                <strong>Signataires externes:</strong> Ajoutez les personnes externes a votre
+                organisation qui doivent signer ou valider ce document.
               </div>
 
               {/* List of external signatories */}
               {externalSignatories.length > 0 && (
                 <div className="space-y-2">
                   {externalSignatories.map((sig, index) => (
-                    <div key={sig.id} className="flex items-center gap-3 p-3 border border-advist-border rounded-xl">
+                    <div
+                      key={sig.id}
+                      className="flex items-center gap-3 p-3 border border-advist-border rounded-xl"
+                    >
                       <div className="w-8 h-8 rounded-full bg-advist-gold-light/20 flex items-center justify-center text-advist-gray900 font-medium">
                         {index + 1}
                       </div>
                       <div className="flex-1">
                         <p className="font-medium text-advist-gray900">
                           {sig.firstName} {sig.lastName}
-                          {sig.company && <span className="text-advist-blue-light"> - {sig.company}</span>}
+                          {sig.company && (
+                            <span className="text-advist-blue-light"> - {sig.company}</span>
+                          )}
                         </p>
                         <p className="text-sm text-advist-blue-light">{sig.email}</p>
                       </div>
-                      <Badge variant={sig.role === 'signer' ? 'default' : sig.role === 'validator' ? 'warning' : 'secondary'}>
-                        {sig.role === 'signer' ? 'Signataire' : sig.role === 'validator' ? 'Validateur' : 'Observateur'}
+                      <Badge
+                        variant={
+                          sig.role === 'signer'
+                            ? 'default'
+                            : sig.role === 'validator'
+                              ? 'warning'
+                              : 'secondary'
+                        }
+                      >
+                        {sig.role === 'signer'
+                          ? 'Signataire'
+                          : sig.role === 'validator'
+                            ? 'Validateur'
+                            : 'Observateur'}
                       </Badge>
                       <Button
                         variant="ghost"
@@ -755,7 +882,9 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   <Input
                     label="Prenom"
                     value={newSignatory.firstName}
-                    onChange={(e) => setNewSignatory({ ...newSignatory, firstName: e.target.value })}
+                    onChange={(e) =>
+                      setNewSignatory({ ...newSignatory, firstName: e.target.value })
+                    }
                     placeholder="Jean"
                   />
                   <Input
@@ -781,9 +910,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-1">
-                    Role
-                  </label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-1">Role</label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { value: 'signer', label: 'Signataire', desc: 'Doit signer le document' },
@@ -793,14 +920,21 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                       <button
                         key={role.value}
                         type="button"
-                        onClick={() => setNewSignatory({ ...newSignatory, role: role.value as ExternalSignatory['role'] })}
+                        onClick={() =>
+                          setNewSignatory({
+                            ...newSignatory,
+                            role: role.value as ExternalSignatory['role'],
+                          })
+                        }
                         className={`p-3 rounded-xl border-2 text-left transition-all ${
                           newSignatory.role === role.value
                             ? 'border-advist-dark bg-advist-surface-dark'
                             : 'border-advist-border hover:border-advist-blue-light'
                         }`}
                       >
-                        <span className="text-sm font-medium text-advist-gray900 block">{role.label}</span>
+                        <span className="text-sm font-medium text-advist-gray900 block">
+                          {role.label}
+                        </span>
                         <span className="text-xs text-advist-blue-light">{role.desc}</span>
                       </button>
                     ))}
@@ -809,7 +943,9 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                 <Button
                   variant="outline"
                   onClick={addExternalSignatory}
-                  disabled={!newSignatory.email || !newSignatory.firstName || !newSignatory.lastName}
+                  disabled={
+                    !newSignatory.email || !newSignatory.firstName || !newSignatory.lastName
+                  }
                   className="w-full"
                 >
                   <UserPlus size={16} className="mr-2" />
@@ -831,17 +967,14 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
         {/* Footer */}
         <div className="flex justify-between items-center pt-4 border-t border-advist-border flex-shrink-0 px-4 pb-4">
           <div className="text-sm text-advist-blue-light">
-            {mainFile ? '1 fichier' : '0 fichier'} • {annexes.length} annexe(s) • {externalSignatories.length} signataire(s) externe(s)
+            {mainFile ? '1 fichier' : '0 fichier'} • {annexes.length} annexe(s) •{' '}
+            {externalSignatories.length} signataire(s) externe(s)
           </div>
           <div className="flex gap-3">
             <Button variant="ghost" onClick={onClose}>
               Annuler
             </Button>
-            <Button
-              leftIcon={<Plus size={18} />}
-              onClick={handleSubmit}
-              disabled={!isValid}
-            >
+            <Button leftIcon={<Plus size={18} />} onClick={handleSubmit} disabled={!isValid}>
               Creer le document
             </Button>
           </div>

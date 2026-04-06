@@ -4,21 +4,9 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  DollarSign,
-  Clock,
-  TrendingUp,
-  ArrowRight,
-  Zap,
-  PiggyBank,
-  FileCheck,
-} from 'lucide-react';
+import { DollarSign, Clock, TrendingUp, ArrowRight, Zap, PiggyBank, FileCheck } from 'lucide-react';
 import { WidgetConfig } from '../../../services/dashboard';
-import {
-  analyticsService,
-  ROIData,
-  formatCurrency,
-} from '../../../services/analytics';
+import { analyticsService, ROIData, formatCurrency } from '../../../services/analytics';
 
 interface ROIWidgetProps {
   config: WidgetConfig;
@@ -34,7 +22,7 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
       try {
         const roiData = await analyticsService.getROI();
         setData(roiData);
-      } catch (err) {
+      } catch (_err) {
         // Mock data for demo
         setData({
           period: {
@@ -43,7 +31,8 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
             days: 30,
           },
           summary: {
-            headline: 'Depuis ADVIST : -68% temps validation = 234h économisées/mois = 1,4M FCFA économisés',
+            headline:
+              'Depuis ADVIST : -68% temps validation = 234h économisées/mois = 1,4M FCFA économisés',
             totalHoursSaved: 234,
             totalCostSaved: 1400000,
             efficiencyGain: 68,
@@ -69,7 +58,7 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
             totalHoursPerMonth: 234,
           },
           costSavings: {
-            labor: { amount: 1200000, description: 'Économies main d\'œuvre' },
+            labor: { amount: 1200000, description: "Économies main d'œuvre" },
             errors: { amount: 150000, description: 'Erreurs évitées' },
             paper: { amount: 50000, description: 'Économies papier' },
             total: 1400000,
@@ -116,7 +105,7 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
       <div className="h-full flex flex-col gap-4 animate-pulse">
         <div className="h-24 bg-advist-surface-dark rounded-lg"></div>
         <div className="grid grid-cols-2 gap-3 flex-1">
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-20 bg-advist-surface-dark rounded-lg"></div>
           ))}
         </div>
@@ -128,9 +117,7 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-4">
         <PiggyBank size={40} className="text-advist-gray900/30 mb-3" />
-        <p className="text-sm text-advist-gray900/70">
-          Pas assez de données pour calculer le ROI
-        </p>
+        <p className="text-sm text-advist-gray900/70">Pas assez de données pour calculer le ROI</p>
         <p className="text-xs text-advist-gray900/50 mt-1">
           Continuez à utiliser ADVIST pour voir vos économies
         </p>
@@ -147,9 +134,13 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
           <span className="text-sm font-medium opacity-90">Impact ADVIST</span>
         </div>
         <p className="text-sm leading-relaxed">
-          <span className="text-advist-success font-bold">-{data.summary.efficiencyGain}%</span> temps validation = {' '}
-          <span className="font-bold">{Math.round(data.summary.totalHoursSaved)}h</span> économisées = {' '}
-          <span className="text-advist-gold font-bold">{formatCurrency(data.summary.totalCostSaved, data.summary.currency)}</span>
+          <span className="text-advist-success font-bold">-{data.summary.efficiencyGain}%</span>{' '}
+          temps validation ={' '}
+          <span className="font-bold">{Math.round(data.summary.totalHoursSaved)}h</span> économisées
+          ={' '}
+          <span className="text-advist-gold font-bold">
+            {formatCurrency(data.summary.totalCostSaved, data.summary.currency)}
+          </span>
         </p>
       </div>
 
@@ -164,9 +155,7 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
           <p className="text-2xl font-bold text-advist-gray900">
             {Math.round(data.timeSavings.totalHours)}h
           </p>
-          <p className="text-xs text-advist-gray900/70">
-            ce mois
-          </p>
+          <p className="text-xs text-advist-gray900/70">ce mois</p>
         </div>
 
         {/* Cost Saved */}
@@ -178,9 +167,7 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
           <p className="text-2xl font-bold text-advist-success">
             {formatCurrency(data.costSavings!.total, data.summary.currency)}
           </p>
-          <p className="text-xs text-advist-success/70">
-            ce mois
-          </p>
+          <p className="text-xs text-advist-success/70">ce mois</p>
         </div>
 
         {/* Efficiency Gain */}
@@ -189,12 +176,8 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
             <TrendingUp size={16} className="text-advist-gray900" />
             <span className="text-xs font-medium text-advist-gray900">Efficacité</span>
           </div>
-          <p className="text-2xl font-bold text-advist-gray900">
-            +{data.summary.efficiencyGain}%
-          </p>
-          <p className="text-xs text-advist-gray900/70">
-            vs processus manuel
-          </p>
+          <p className="text-2xl font-bold text-advist-gray900">+{data.summary.efficiencyGain}%</p>
+          <p className="text-xs text-advist-gray900/70">vs processus manuel</p>
         </div>
 
         {/* Documents Processed */}
@@ -203,12 +186,8 @@ export const ROIWidget: React.FC<ROIWidgetProps> = ({ config }) => {
             <FileCheck size={16} className="text-advist-gold-dark" />
             <span className="text-xs font-medium text-advist-gold-dark">Documents</span>
           </div>
-          <p className="text-2xl font-bold text-advist-gold-dark">
-            {data.documentsProcessed}
-          </p>
-          <p className="text-xs text-advist-gold-dark/70">
-            traités
-          </p>
+          <p className="text-2xl font-bold text-advist-gold-dark">{data.documentsProcessed}</p>
+          <p className="text-xs text-advist-gold-dark/70">traités</p>
         </div>
       </div>
 

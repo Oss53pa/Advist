@@ -84,10 +84,10 @@ interface ValidationWorkflowPanelProps {
 }
 
 export const ValidationWorkflowPanel: React.FC<ValidationWorkflowPanelProps> = ({
-  documentId,
+  _documentId,
   validationSummary,
   validationHistory = [],
-  currentUserId,
+  _currentUserId,
   isOwner,
   canReview,
   onSubmitForReview,
@@ -154,19 +154,11 @@ export const ValidationWorkflowPanel: React.FC<ValidationWorkflowPanelProps> = (
                 rows={3}
               />
               <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={() => handleAction('submit')}
-                  disabled={isLoading}
-                >
+                <Button size="sm" onClick={() => handleAction('submit')} disabled={isLoading}>
                   <Send size={14} className="mr-1" />
                   Confirmer la soumission
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setActiveAction(null)}
-                >
+                <Button size="sm" variant="outline" onClick={() => setActiveAction(null)}>
                   Annuler
                 </Button>
               </div>
@@ -212,8 +204,8 @@ export const ValidationWorkflowPanel: React.FC<ValidationWorkflowPanelProps> = (
                     activeAction === 'reject'
                       ? 'Raison du rejet (requis)'
                       : activeAction === 'request_changes'
-                      ? 'Commentaires sur les modifications (requis)'
-                      : 'Commentaires (optionnel)'
+                        ? 'Commentaires sur les modifications (requis)'
+                        : 'Commentaires (optionnel)'
                   }
                   className="w-full px-3 py-2 border rounded-md text-sm resize-none"
                   rows={3}
@@ -293,9 +285,7 @@ export const ValidationWorkflowPanel: React.FC<ValidationWorkflowPanelProps> = (
               Soumis par <strong>{submitted_by.name}</strong>
             </span>
             <Clock size={14} className="ml-2" />
-            <span>
-              {formatRelativeTime(submitted_at)}
-            </span>
+            <span>{formatRelativeTime(submitted_at)}</span>
           </div>
         )}
 
@@ -307,9 +297,7 @@ export const ValidationWorkflowPanel: React.FC<ValidationWorkflowPanelProps> = (
               <strong>{completed_by.name}</strong>
             </span>
             <Clock size={14} className="ml-2" />
-            <span>
-              {formatRelativeTime(completed_at)}
-            </span>
+            <span>{formatRelativeTime(completed_at)}</span>
           </div>
         )}
 
@@ -351,20 +339,13 @@ export const ValidationWorkflowPanel: React.FC<ValidationWorkflowPanelProps> = (
 
   const renderHistory = () => {
     if (validationHistory.length === 0) {
-      return (
-        <p className="text-sm text-gray-500 text-center py-4">
-          Aucun historique disponible
-        </p>
-      );
+      return <p className="text-sm text-gray-500 text-center py-4">Aucun historique disponible</p>;
     }
 
     return (
       <div className="space-y-3 max-h-64 overflow-y-auto">
         {validationHistory.map((entry, index) => (
-          <div
-            key={index}
-            className="flex gap-3 p-2 rounded-md hover:bg-gray-50"
-          >
+          <div key={index} className="flex gap-3 p-2 rounded-md hover:bg-gray-50">
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
               {entry.type === 'comment' ? (
                 <MessageSquare size={14} className="text-gray-600" />
@@ -374,22 +355,14 @@ export const ValidationWorkflowPanel: React.FC<ValidationWorkflowPanelProps> = (
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 text-sm">
-                <span className="font-medium">
-                  {entry.user?.name || 'Système'}
-                </span>
-                <span className="text-gray-400">
-                  {formatRelativeTime(entry.timestamp)}
-                </span>
+                <span className="font-medium">{entry.user?.name || 'Système'}</span>
+                <span className="text-gray-400">{formatRelativeTime(entry.timestamp)}</span>
               </div>
               <p className="text-sm text-gray-600 truncate">
-                {entry.type === 'comment'
-                  ? entry.content
-                  : entry.action || entry.comment}
+                {entry.type === 'comment' ? entry.content : entry.action || entry.comment}
               </p>
               {entry.context && entry.context.section_id && (
-                <span className="text-xs text-blue-600">
-                  Section: {entry.context.section_id}
-                </span>
+                <span className="text-xs text-blue-600">Section: {entry.context.section_id}</span>
               )}
             </div>
           </div>

@@ -3,34 +3,34 @@ import { useTranslation } from 'react-i18next';
 import {
   Users,
   Search,
-  Filter,
+  _Filter,
   Download,
   RefreshCw,
   MoreVertical,
-  Mail,
+  _Mail,
   Phone,
   Building2,
   Shield,
   ShieldCheck,
-  ShieldAlert,
+  _ShieldAlert,
   UserCheck,
   UserX,
-  UserCog,
+  _UserCog,
   Eye,
   Ban,
   Key,
   Clock,
-  Calendar,
+  _Calendar,
   CheckCircle,
   XCircle,
-  AlertTriangle,
+  _AlertTriangle,
   ChevronLeft,
   ChevronRight,
   Smartphone,
-  Globe,
+  _Globe,
   LogIn,
   Trash2,
-  Edit,
+  _Edit,
   Send,
 } from 'lucide-react';
 import { Card, Button, Badge, Modal, Avatar } from '../../components/ui';
@@ -83,7 +83,7 @@ const mockUsers: GlobalUser[] = [
     phone: '+225 01 02 03 04 05',
     role: 'admin',
     status: 'active',
-    tenant: { id: 't2', name: 'Orange Côte d\'Ivoire', plan: 'Enterprise' },
+    tenant: { id: 't2', name: "Orange Côte d'Ivoire", plan: 'Enterprise' },
     mfaEnabled: true,
     lastLogin: new Date(Date.now() - 1000 * 60 * 120),
     createdAt: new Date('2024-02-20'),
@@ -169,14 +169,19 @@ const mockUsers: GlobalUser[] = [
 ];
 
 const userStats = [
-  { label: 'Total utilisateurs', value: '1,234', icon: Users, color: 'bg-primary-50 text-primary-900' },
+  {
+    label: 'Total utilisateurs',
+    value: '1,234',
+    icon: Users,
+    color: 'bg-primary-50 text-primary-900',
+  },
   { label: 'Actifs (30j)', value: '892', icon: UserCheck, color: 'bg-green-50 text-primary-900' },
   { label: 'Suspendus', value: '23', icon: UserX, color: 'bg-red-50 text-red-600' },
   { label: '2FA activé', value: '89%', icon: Smartphone, color: 'bg-primary-50 text-primary-900' },
 ];
 
 export const SuperAdminUsersPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTenant, setFilterTenant] = useState('all');
@@ -195,7 +200,7 @@ export const SuperAdminUsersPage: React.FC = () => {
   const formatTimeAgo = (date?: Date) => {
     if (!date) return 'Jamais';
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    if (seconds < 60) return 'À l\'instant';
+    if (seconds < 60) return "À l'instant";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `Il y a ${minutes}min`;
     const hours = Math.floor(minutes / 60);
@@ -329,7 +334,10 @@ export const SuperAdminUsersPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-4">
           {/* Search */}
           <div className="relative flex-1 min-w-[250px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400" />
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400"
+            />
             <input
               type="text"
               placeholder="Rechercher par nom, email ou organisation..."
@@ -396,7 +404,9 @@ export const SuperAdminUsersPage: React.FC = () => {
                   Organisation
                 </th>
                 <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">Rôle</th>
-                <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">Statut</th>
+                <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">
+                  Statut
+                </th>
                 <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">2FA</th>
                 <th className="text-left py-3 px-4 text-sm font-medium text-primary-600">
                   Dernière connexion
@@ -404,7 +414,9 @@ export const SuperAdminUsersPage: React.FC = () => {
                 <th className="text-center py-3 px-4 text-sm font-medium text-primary-600">
                   Activité
                 </th>
-                <th className="text-right py-3 px-4 text-sm font-medium text-primary-600">Actions</th>
+                <th className="text-right py-3 px-4 text-sm font-medium text-primary-600">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-primary-100">
@@ -445,9 +457,13 @@ export const SuperAdminUsersPage: React.FC = () => {
                   </td>
                   <td className="py-4 px-4 text-center">
                     <div className="text-xs text-primary-500">
-                      <span className="font-medium text-primary-900">{user.loginCount}</span> connexions
+                      <span className="font-medium text-primary-900">{user.loginCount}</span>{' '}
+                      connexions
                       <br />
-                      <span className="font-medium text-primary-900">{user.documentsCreated}</span> docs
+                      <span className="font-medium text-primary-900">
+                        {user.documentsCreated}
+                      </span>{' '}
+                      docs
                     </div>
                   </td>
                   <td className="py-4 px-4 text-right">
@@ -550,11 +566,15 @@ export const SuperAdminUsersPage: React.FC = () => {
                 <p className="text-xs text-primary-500">Connexions</p>
               </div>
               <div className="p-4 bg-primary-50 rounded-xl text-center">
-                <p className="text-2xl font-bold text-primary-900">{selectedUser.documentsCreated}</p>
+                <p className="text-2xl font-bold text-primary-900">
+                  {selectedUser.documentsCreated}
+                </p>
                 <p className="text-xs text-primary-500">Documents</p>
               </div>
               <div className="p-4 bg-primary-50 rounded-xl text-center">
-                <p className="text-2xl font-bold text-primary-900">{selectedUser.signaturesCount}</p>
+                <p className="text-2xl font-bold text-primary-900">
+                  {selectedUser.signaturesCount}
+                </p>
                 <p className="text-xs text-primary-500">Signatures</p>
               </div>
             </div>
@@ -568,7 +588,9 @@ export const SuperAdminUsersPage: React.FC = () => {
               </div>
               <div className="p-3 bg-primary-50 rounded-xl">
                 <p className="text-xs text-primary-500">Dernière connexion</p>
-                <p className="font-medium text-primary-900">{formatTimeAgo(selectedUser.lastLogin)}</p>
+                <p className="font-medium text-primary-900">
+                  {formatTimeAgo(selectedUser.lastLogin)}
+                </p>
               </div>
               <div className="p-3 bg-primary-50 rounded-xl">
                 <p className="text-xs text-primary-500">Date création</p>

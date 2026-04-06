@@ -138,11 +138,14 @@ const DEFAULT_THRESHOLDS: BehaviorThresholds = {
 };
 
 // Simulated user patterns for demo
-const userPatterns: Map<number, {
-  normalHours: { start: number; end: number };
-  normalLocations: GeoLocation[];
-  averageValidationTime: number;
-}> = new Map();
+const userPatterns: Map<
+  number,
+  {
+    normalHours: { start: number; end: number };
+    normalLocations: GeoLocation[];
+    averageValidationTime: number;
+  }
+> = new Map();
 
 class BehavioralAnalysisService {
   private thresholds: BehaviorThresholds = DEFAULT_THRESHOLDS;
@@ -160,7 +163,7 @@ class BehavioralAnalysisService {
     userPatterns.set(1, {
       normalHours: { start: 8, end: 18 },
       normalLocations: [
-        { latitude: 5.3600, longitude: -4.0083, city: 'Abidjan', country: 'Côte d\'Ivoire' },
+        { latitude: 5.36, longitude: -4.0083, city: 'Abidjan', country: "Côte d'Ivoire" },
       ],
       averageValidationTime: 120, // 2 minutes average
     });
@@ -204,13 +207,18 @@ class BehavioralAnalysisService {
         type: 'unusual_location',
         severity: 'critical',
         title: 'Connexion depuis une localisation inhabituelle',
-        description: 'Connexion depuis Lagos alors que l\'utilisateur est habituellement à Abidjan',
+        description: "Connexion depuis Lagos alors que l'utilisateur est habituellement à Abidjan",
         userId: 1,
         userName: 'Amadou Traoré',
         timestamp: new Date(Date.now() - 1800000), // 30 min ago
         metadata: {
           location: { latitude: 6.5244, longitude: 3.3792, city: 'Lagos', country: 'Nigeria' },
-          previousLocation: { latitude: 5.3600, longitude: -4.0083, city: 'Abidjan', country: 'Côte d\'Ivoire' },
+          previousLocation: {
+            latitude: 5.36,
+            longitude: -4.0083,
+            city: 'Abidjan',
+            country: "Côte d'Ivoire",
+          },
           ipAddress: '197.210.xxx.xxx',
         },
         status: 'active',
@@ -239,13 +247,13 @@ class BehavioralAnalysisService {
   onAlert(callback: (alert: BehaviorAlert) => void): () => void {
     this.listeners.push(callback);
     return () => {
-      this.listeners = this.listeners.filter(l => l !== callback);
+      this.listeners = this.listeners.filter((l) => l !== callback);
     };
   }
 
   private emitAlert(alert: BehaviorAlert) {
     this.alerts.unshift(alert);
-    this.listeners.forEach(l => l(alert));
+    this.listeners.forEach((l) => l(alert));
   }
 
   /**
@@ -296,8 +304,8 @@ class BehavioralAnalysisService {
     accessTime: Date = new Date()
   ): BehaviorAlert | null {
     const hour = accessTime.getHours();
-    const isUnusualHour = hour >= this.thresholds.unusualHoursStart ||
-                          hour < this.thresholds.unusualHoursEnd;
+    const isUnusualHour =
+      hour >= this.thresholds.unusualHoursStart || hour < this.thresholds.unusualHoursEnd;
 
     if (isUnusualHour) {
       const alert: BehaviorAlert = {
@@ -335,13 +343,16 @@ class BehavioralAnalysisService {
     const pattern = userPatterns.get(userId);
 
     // Check if location is unusual for this user
-    const isUnusualLocation = pattern?.normalLocations.every(loc => {
+    const isUnusualLocation = pattern?.normalLocations.every((loc) => {
       const distance = this.calculateDistance(currentLocation, loc);
       return distance > this.thresholds.maxDistanceKm;
     });
 
-    if (isUnusualLocation || (previousLocation &&
-        this.calculateDistance(currentLocation, previousLocation) > this.thresholds.maxDistanceKm)) {
+    if (
+      isUnusualLocation ||
+      (previousLocation &&
+        this.calculateDistance(currentLocation, previousLocation) > this.thresholds.maxDistanceKm)
+    ) {
       const alert: BehaviorAlert = {
         id: `alert-${Date.now()}`,
         type: 'unusual_location',
@@ -373,15 +384,18 @@ class BehavioralAnalysisService {
     const R = 6371; // Earth's radius in km
     const dLat = this.toRad(loc2.latitude - loc1.latitude);
     const dLon = this.toRad(loc2.longitude - loc1.longitude);
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(this.toRad(loc1.latitude)) * Math.cos(this.toRad(loc2.latitude)) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRad(loc1.latitude)) *
+        Math.cos(this.toRad(loc2.latitude)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
 
   private toRad(deg: number): number {
-    return deg * Math.PI / 180;
+    return (deg * Math.PI) / 180;
   }
 
   /**
@@ -431,16 +445,16 @@ class BehavioralAnalysisService {
     let filtered = [...this.alerts];
 
     if (filters?.severity) {
-      filtered = filtered.filter(a => a.severity === filters.severity);
+      filtered = filtered.filter((a) => a.severity === filters.severity);
     }
     if (filters?.type) {
-      filtered = filtered.filter(a => a.type === filters.type);
+      filtered = filtered.filter((a) => a.type === filters.type);
     }
     if (filters?.status) {
-      filtered = filtered.filter(a => a.status === filters.status);
+      filtered = filtered.filter((a) => a.status === filters.status);
     }
     if (filters?.userId) {
-      filtered = filtered.filter(a => a.userId === filters.userId);
+      filtered = filtered.filter((a) => a.userId === filters.userId);
     }
 
     return filtered;
@@ -462,24 +476,25 @@ class BehavioralAnalysisService {
 
     return {
       total: this.alerts.length,
-      active: this.alerts.filter(a => a.status === 'active').length,
+      active: this.alerts.filter((a) => a.status === 'active').length,
       bySeverity: {
-        low: this.alerts.filter(a => a.severity === 'low').length,
-        medium: this.alerts.filter(a => a.severity === 'medium').length,
-        high: this.alerts.filter(a => a.severity === 'high').length,
-        critical: this.alerts.filter(a => a.severity === 'critical').length,
+        low: this.alerts.filter((a) => a.severity === 'low').length,
+        medium: this.alerts.filter((a) => a.severity === 'medium').length,
+        high: this.alerts.filter((a) => a.severity === 'high').length,
+        critical: this.alerts.filter((a) => a.severity === 'critical').length,
       },
       byType: {
-        fast_validation: this.alerts.filter(a => a.type === 'fast_validation').length,
-        unusual_hour: this.alerts.filter(a => a.type === 'unusual_hour').length,
-        unusual_location: this.alerts.filter(a => a.type === 'unusual_location').length,
-        bulk_download: this.alerts.filter(a => a.type === 'bulk_download').length,
-        repeated_failures: this.alerts.filter(a => a.type === 'repeated_failures').length,
-        permission_escalation: this.alerts.filter(a => a.type === 'permission_escalation').length,
-        suspicious_modification: this.alerts.filter(a => a.type === 'suspicious_modification').length,
-        access_pattern: this.alerts.filter(a => a.type === 'access_pattern').length,
+        fast_validation: this.alerts.filter((a) => a.type === 'fast_validation').length,
+        unusual_hour: this.alerts.filter((a) => a.type === 'unusual_hour').length,
+        unusual_location: this.alerts.filter((a) => a.type === 'unusual_location').length,
+        bulk_download: this.alerts.filter((a) => a.type === 'bulk_download').length,
+        repeated_failures: this.alerts.filter((a) => a.type === 'repeated_failures').length,
+        permission_escalation: this.alerts.filter((a) => a.type === 'permission_escalation').length,
+        suspicious_modification: this.alerts.filter((a) => a.type === 'suspicious_modification')
+          .length,
+        access_pattern: this.alerts.filter((a) => a.type === 'access_pattern').length,
       },
-      last24h: this.alerts.filter(a => a.timestamp.getTime() > dayAgo).length,
+      last24h: this.alerts.filter((a) => a.timestamp.getTime() > dayAgo).length,
       trend: 'stable',
     };
   }
@@ -488,7 +503,7 @@ class BehavioralAnalysisService {
    * Resolve an alert
    */
   resolveAlert(alertId: string, resolvedBy: string, note?: string): BehaviorAlert | null {
-    const alert = this.alerts.find(a => a.id === alertId);
+    const alert = this.alerts.find((a) => a.id === alertId);
     if (alert) {
       alert.status = 'resolved';
       alert.resolvedAt = new Date();
@@ -502,7 +517,7 @@ class BehavioralAnalysisService {
    * Mark alert as false positive
    */
   markAsFalsePositive(alertId: string, resolvedBy: string, reason: string): BehaviorAlert | null {
-    const alert = this.alerts.find(a => a.id === alertId);
+    const alert = this.alerts.find((a) => a.id === alertId);
     if (alert) {
       alert.status = 'false_positive';
       alert.resolvedAt = new Date();
@@ -515,17 +530,15 @@ class BehavioralAnalysisService {
   /**
    * Generate forensic report for legal purposes
    */
-  generateForensicReport(
-    dateFrom: Date,
-    dateTo: Date,
-    generatedBy: string
-  ): ForensicReport {
+  generateForensicReport(dateFrom: Date, dateTo: Date, generatedBy: string): ForensicReport {
     const relevantAlerts = this.alerts.filter(
-      a => a.timestamp >= dateFrom && a.timestamp <= dateTo
+      (a) => a.timestamp >= dateFrom && a.timestamp <= dateTo
     );
 
-    const affectedUserIds = new Set(relevantAlerts.map(a => a.userId));
-    const affectedDocIds = new Set(relevantAlerts.filter(a => a.documentId).map(a => a.documentId));
+    const affectedUserIds = new Set(relevantAlerts.map((a) => a.userId));
+    const affectedDocIds = new Set(
+      relevantAlerts.filter((a) => a.documentId).map((a) => a.documentId)
+    );
 
     const report: ForensicReport = {
       id: `forensic-${Date.now()}`,
@@ -535,11 +548,11 @@ class BehavioralAnalysisService {
       dateRange: { from: dateFrom, to: dateTo },
       alerts: relevantAlerts,
       userActivities: this.activities.filter(
-        a => a.timestamp >= dateFrom && a.timestamp <= dateTo
+        (a) => a.timestamp >= dateFrom && a.timestamp <= dateTo
       ),
       summary: {
         totalAlerts: relevantAlerts.length,
-        criticalAlerts: relevantAlerts.filter(a => a.severity === 'critical').length,
+        criticalAlerts: relevantAlerts.filter((a) => a.severity === 'critical').length,
         affectedUsers: affectedUserIds.size,
         affectedDocuments: affectedDocIds.size,
         recommendations: this.generateRecommendations(relevantAlerts),
@@ -559,10 +572,10 @@ class BehavioralAnalysisService {
   private generateRecommendations(alerts: BehaviorAlert[]): string[] {
     const recommendations: string[] = [];
 
-    const hasFastValidation = alerts.some(a => a.type === 'fast_validation');
-    const hasUnusualLocation = alerts.some(a => a.type === 'unusual_location');
-    const hasBulkDownload = alerts.some(a => a.type === 'bulk_download');
-    const hasUnusualHours = alerts.some(a => a.type === 'unusual_hour');
+    const hasFastValidation = alerts.some((a) => a.type === 'fast_validation');
+    const hasUnusualLocation = alerts.some((a) => a.type === 'unusual_location');
+    const hasBulkDownload = alerts.some((a) => a.type === 'bulk_download');
+    const hasUnusualHours = alerts.some((a) => a.type === 'unusual_hour');
 
     if (hasFastValidation) {
       recommendations.push('Implémenter un délai minimum obligatoire avant validation');
@@ -570,7 +583,9 @@ class BehavioralAnalysisService {
     }
 
     if (hasUnusualLocation) {
-      recommendations.push('Activer l\'authentification à deux facteurs (2FA) pour tous les utilisateurs');
+      recommendations.push(
+        "Activer l'authentification à deux facteurs (2FA) pour tous les utilisateurs"
+      );
       recommendations.push('Mettre en place une restriction géographique des connexions');
     }
 
@@ -580,19 +595,19 @@ class BehavioralAnalysisService {
     }
 
     if (hasUnusualHours) {
-      recommendations.push('Restreindre les heures d\'accès au système');
+      recommendations.push("Restreindre les heures d'accès au système");
       recommendations.push('Notifier les responsables pour les activités hors heures ouvrées');
     }
 
     return recommendations;
   }
 
-  private generateAuditTrail(from: Date, to: Date): AuditEntry[] {
+  private generateAuditTrail(_from: Date, _to: Date): AuditEntry[] {
     // Generate chain of audit entries with cryptographic links
     return [];
   }
 
-  private generateHash(data: any): string {
+  private generateHash(_data: any): string {
     return generateSecureHash();
   }
 

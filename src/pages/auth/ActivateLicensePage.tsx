@@ -9,7 +9,7 @@ import {
   Shield,
   CheckCircle,
   XCircle,
-  AlertTriangle,
+  _AlertTriangle,
   ArrowLeft,
   Loader2,
   Building2,
@@ -122,9 +122,7 @@ export const ActivateLicensePage: React.FC = () => {
             <Key className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">{t('auth.activateLicense.title')}</h1>
-          <p className="text-primary-400">
-            {t('auth.activateLicense.subtitle')}
-          </p>
+          <p className="text-primary-400">{t('auth.activateLicense.subtitle')}</p>
         </div>
 
         {/* Main Card */}
@@ -137,7 +135,10 @@ export const ActivateLicensePage: React.FC = () => {
                   {t('auth.activateLicense.licenseKey')}
                 </label>
                 <div className="relative">
-                  <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" size={20} />
+                  <Key
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400"
+                    size={20}
+                  />
                   <input
                     type="text"
                     value={licenseKey}
@@ -156,9 +157,7 @@ export const ActivateLicensePage: React.FC = () => {
                     <span className="text-sm">{error}</span>
                   </div>
                 )}
-                <p className="mt-2 text-xs text-primary-500">
-                  {t('auth.activateLicense.format')}
-                </p>
+                <p className="mt-2 text-xs text-primary-500">{t('auth.activateLicense.format')}</p>
               </div>
 
               <Button
@@ -208,8 +207,12 @@ export const ActivateLicensePage: React.FC = () => {
                   <CheckCircle className="text-primary-900" size={24} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-primary-900">{t('auth.activateLicense.validLicense')}</h3>
-                  <p className="text-sm text-primary-500">{t('auth.activateLicense.readyToActivate')}</p>
+                  <h3 className="font-semibold text-primary-900">
+                    {t('auth.activateLicense.validLicense')}
+                  </h3>
+                  <p className="text-sm text-primary-500">
+                    {t('auth.activateLicense.readyToActivate')}
+                  </p>
                 </div>
               </div>
 
@@ -227,7 +230,9 @@ export const ActivateLicensePage: React.FC = () => {
                     {t('auth.activateLicense.maxUsers')}
                   </span>
                   <span className="font-semibold text-primary-900">
-                    {validatedLicense.maxUsers === -1 ? t('auth.activateLicense.unlimited') : validatedLicense.maxUsers}
+                    {validatedLicense.maxUsers === -1
+                      ? t('auth.activateLicense.unlimited')
+                      : validatedLicense.maxUsers}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -253,7 +258,9 @@ export const ActivateLicensePage: React.FC = () => {
               </div>
 
               <div className="bg-primary-50 rounded-xl p-4 mb-6">
-                <h4 className="font-medium text-primary-900 mb-2">{t('auth.activateLicense.includedFeatures')}</h4>
+                <h4 className="font-medium text-primary-900 mb-2">
+                  {t('auth.activateLicense.includedFeatures')}
+                </h4>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     'SSO & SAML',
@@ -275,7 +282,8 @@ export const ActivateLicensePage: React.FC = () => {
                 <div className="flex items-center gap-2 p-3 bg-primary-100 rounded-lg mb-6">
                   <Building2 size={16} className="text-primary-500" />
                   <span className="text-sm text-primary-600">
-                    {t('auth.activateLicense.willBeActivatedFor')} <strong>{currentTenant.name}</strong>
+                    {t('auth.activateLicense.willBeActivatedFor')}{' '}
+                    <strong>{currentTenant.name}</strong>
                   </span>
                 </div>
               )}

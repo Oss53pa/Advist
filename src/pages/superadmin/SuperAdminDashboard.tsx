@@ -6,15 +6,15 @@ import {
   Users,
   FileText,
   Server,
-  Shield,
-  Globe,
+  _Shield,
+  _Globe,
   TrendingUp,
   TrendingDown,
   AlertTriangle,
   Activity,
   Database,
   HardDrive,
-  Cpu,
+  _Cpu,
   Clock,
   ArrowRight,
   Plus,
@@ -27,7 +27,7 @@ import {
   BarChart3,
   Zap,
 } from 'lucide-react';
-import { Button, Badge, Avatar, Modal } from '../../components/ui';
+import { Button, Modal } from '../../components/ui';
 import { PaymentNotificationsWidget } from '../../components/superadmin';
 
 // Mock data for tenants/organizations
@@ -79,7 +79,7 @@ const mockTenants = [
   },
   {
     id: 4,
-    name: 'Orange Côte d\'Ivoire',
+    name: "Orange Côte d'Ivoire",
     slug: 'orange-ci',
     plan: 'enterprise',
     status: 'active',
@@ -165,7 +165,7 @@ const recentAlerts = [
 export const SuperAdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [selectedTenant, setSelectedTenant] = useState<typeof mockTenants[0] | null>(null);
+  const [selectedTenant, setSelectedTenant] = useState<(typeof mockTenants)[0] | null>(null);
   const [showTenantModal, setShowTenantModal] = useState(false);
 
   const getPlanBadge = (plan: string) => {
@@ -244,7 +244,9 @@ export const SuperAdminDashboard: React.FC = () => {
                   ) : (
                     <TrendingDown size={14} className="text-advist-error" />
                   )}
-                  <span className={`text-sm font-medium ${metric.trend === 'up' ? 'text-advist-success' : 'text-advist-error'}`}>
+                  <span
+                    className={`text-sm font-medium ${metric.trend === 'up' ? 'text-advist-success' : 'text-advist-error'}`}
+                  >
                     {metric.change}
                   </span>
                   <span className="text-xs text-advist-blue-light">ce mois</span>
@@ -306,7 +308,10 @@ export const SuperAdminDashboard: React.FC = () => {
                   const status = getStatusBadge(tenant.status);
                   const storagePercent = (tenant.storage / tenant.maxStorage) * 100;
                   return (
-                    <tr key={tenant.id} className="hover:bg-advist-bg/50 transition-all duration-240">
+                    <tr
+                      key={tenant.id}
+                      className="hover:bg-advist-bg/50 transition-all duration-240"
+                    >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-advist-dark rounded-xl flex items-center justify-center text-white font-semibold">
@@ -319,7 +324,9 @@ export const SuperAdminDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-xl capitalize ${getPlanBadge(tenant.plan)}`}>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-xl capitalize ${getPlanBadge(tenant.plan)}`}
+                        >
                           {tenant.plan}
                         </span>
                       </td>
@@ -333,12 +340,18 @@ export const SuperAdminDashboard: React.FC = () => {
                         <div>
                           <div className="flex items-center justify-between text-xs mb-1">
                             <span className="text-advist-gray900">{tenant.storage} GB</span>
-                            <span className="text-advist-blue-light">{Math.round(storagePercent)}%</span>
+                            <span className="text-advist-blue-light">
+                              {Math.round(storagePercent)}%
+                            </span>
                           </div>
                           <div className="w-24 h-1.5 bg-advist-bg rounded-full">
                             <div
                               className={`h-full rounded-full ${
-                                storagePercent > 80 ? 'bg-advist-error' : storagePercent > 60 ? 'bg-advist-gold' : 'bg-advist-success'
+                                storagePercent > 80
+                                  ? 'bg-advist-error'
+                                  : storagePercent > 60
+                                    ? 'bg-advist-gold'
+                                    : 'bg-advist-success'
                               }`}
                               style={{ width: `${storagePercent}%` }}
                             />
@@ -390,13 +403,23 @@ export const SuperAdminDashboard: React.FC = () => {
 
             <div className="space-y-3">
               {Object.entries(systemHealth).map(([name, data]) => (
-                <div key={name} className="flex items-center justify-between p-3 bg-advist-bg rounded-xl">
+                <div
+                  key={name}
+                  className="flex items-center justify-between p-3 bg-advist-bg rounded-xl"
+                >
                   <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      data.status === 'healthy' ? 'bg-advist-success' :
-                      data.status === 'warning' ? 'bg-advist-gold' : 'bg-advist-error'
-                    }`} />
-                    <span className="text-sm font-medium text-advist-gray900 capitalize">{name}</span>
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        data.status === 'healthy'
+                          ? 'bg-advist-success'
+                          : data.status === 'warning'
+                            ? 'bg-advist-gold'
+                            : 'bg-advist-error'
+                      }`}
+                    />
+                    <span className="text-sm font-medium text-advist-gray900 capitalize">
+                      {name}
+                    </span>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-advist-blue-light">{data.latency}</p>
@@ -415,9 +438,7 @@ export const SuperAdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <AlertTriangle size={18} className="text-[#F8F868]" />
-                <h2 className="font-semibold">
-                  {t('superadmin.alerts', 'Alertes récentes')}
-                </h2>
+                <h2 className="font-semibold">{t('superadmin.alerts', 'Alertes récentes')}</h2>
               </div>
               <span className="px-2 py-1 bg-[#F8F868] text-advist-gray900 text-xs font-bold rounded-xl">
                 {recentAlerts.length}
@@ -486,7 +507,9 @@ export const SuperAdminDashboard: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-advist-bg rounded-xl">
                 <p className="text-sm text-advist-blue-light">Plan</p>
-                <p className="font-semibold text-advist-gray900 capitalize">{selectedTenant.plan}</p>
+                <p className="font-semibold text-advist-gray900 capitalize">
+                  {selectedTenant.plan}
+                </p>
               </div>
               <div className="p-4 bg-advist-bg rounded-xl">
                 <p className="text-sm text-advist-blue-light">Pays</p>
@@ -511,12 +534,16 @@ export const SuperAdminDashboard: React.FC = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span>Utilisateurs</span>
-                    <span>{selectedTenant.users}/{selectedTenant.maxUsers}</span>
+                    <span>
+                      {selectedTenant.users}/{selectedTenant.maxUsers}
+                    </span>
                   </div>
                   <div className="h-2 bg-advist-bg rounded-full">
                     <div
                       className="h-full bg-advist-dark rounded-full"
-                      style={{ width: `${(selectedTenant.users / selectedTenant.maxUsers) * 100}%` }}
+                      style={{
+                        width: `${(selectedTenant.users / selectedTenant.maxUsers) * 100}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -532,14 +559,20 @@ export const SuperAdminDashboard: React.FC = () => {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span>Stockage</span>
-                    <span>{selectedTenant.storage} GB / {selectedTenant.maxStorage} GB</span>
+                    <span>
+                      {selectedTenant.storage} GB / {selectedTenant.maxStorage} GB
+                    </span>
                   </div>
                   <div className="h-2 bg-advist-bg rounded-full">
                     <div
                       className={`h-full rounded-full ${
-                        (selectedTenant.storage / selectedTenant.maxStorage) > 0.8 ? 'bg-advist-error' : 'bg-advist-success'
+                        selectedTenant.storage / selectedTenant.maxStorage > 0.8
+                          ? 'bg-advist-error'
+                          : 'bg-advist-success'
                       }`}
-                      style={{ width: `${(selectedTenant.storage / selectedTenant.maxStorage) * 100}%` }}
+                      style={{
+                        width: `${(selectedTenant.storage / selectedTenant.maxStorage) * 100}%`,
+                      }}
                     />
                   </div>
                 </div>

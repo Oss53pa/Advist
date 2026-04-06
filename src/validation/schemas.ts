@@ -58,7 +58,20 @@ export const VALIDATION_RULES = {
       'image/gif',
       'image/webp',
     ],
-    ALLOWED_EXTENSIONS: ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.jpg', '.jpeg', '.png', '.gif', '.webp'],
+    ALLOWED_EXTENSIONS: [
+      '.pdf',
+      '.doc',
+      '.docx',
+      '.xls',
+      '.xlsx',
+      '.ppt',
+      '.pptx',
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.webp',
+    ],
   },
 } as const;
 
@@ -118,10 +131,14 @@ export const emailSchema = z
 export const passwordSchema = z
   .string({ required_error: VALIDATION_MESSAGES.PASSWORD_REQUIRED })
   .min(VALIDATION_RULES.PASSWORD.MIN_LENGTH, VALIDATION_MESSAGES.PASSWORD_MIN_LENGTH)
-  .max(VALIDATION_RULES.PASSWORD.MAX_LENGTH, `Le mot de passe ne peut pas dépasser ${VALIDATION_RULES.PASSWORD.MAX_LENGTH} caractères`)
+  .max(
+    VALIDATION_RULES.PASSWORD.MAX_LENGTH,
+    `Le mot de passe ne peut pas dépasser ${VALIDATION_RULES.PASSWORD.MAX_LENGTH} caractères`
+  )
   .regex(/[A-Z]/, VALIDATION_MESSAGES.PASSWORD_UPPERCASE)
   .regex(/[a-z]/, VALIDATION_MESSAGES.PASSWORD_LOWERCASE)
   .regex(/[0-9]/, VALIDATION_MESSAGES.PASSWORD_NUMBER)
+  // eslint-disable-next-line no-useless-escape
   .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, VALIDATION_MESSAGES.PASSWORD_SPECIAL);
 
 /**

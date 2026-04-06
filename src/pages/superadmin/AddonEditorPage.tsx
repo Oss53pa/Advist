@@ -7,9 +7,9 @@ import {
   Check,
   X,
   Save,
-  RotateCcw,
+  _RotateCcw,
   Edit,
-  Eye,
+  _Eye,
   ToggleLeft,
   ToggleRight,
   AlertCircle,
@@ -49,7 +49,7 @@ const DEFAULT_ADDON: AddonFormData = {
 };
 
 export const AddonEditorPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [addons, setAddons] = useState<Addon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -188,9 +188,7 @@ export const AddonEditorPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Gestion des Add-ons
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Gestion des Add-ons</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
             Configurez les options payantes disponibles pour les abonnements
           </p>
@@ -216,9 +214,7 @@ export const AddonEditorPage: React.FC = () => {
       {addons.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
           <Package className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
-            Aucun add-on
-          </h3>
+          <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">Aucun add-on</h3>
           <p className="mt-2 text-gray-500 dark:text-gray-400">
             Commencez par creer votre premier add-on payant.
           </p>
@@ -246,9 +242,13 @@ export const AddonEditorPage: React.FC = () => {
                   </div>
                   <div className="flex gap-2">
                     {addon.is_active ? (
-                      <Badge variant="success" size="sm">Actif</Badge>
+                      <Badge variant="success" size="sm">
+                        Actif
+                      </Badge>
                     ) : (
-                      <Badge variant="default" size="sm">Inactif</Badge>
+                      <Badge variant="default" size="sm">
+                        Inactif
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -264,15 +264,11 @@ export const AddonEditorPage: React.FC = () => {
 
                 {/* Pricing */}
                 <div className="space-y-2">
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase">
-                    Tarification
-                  </h4>
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase">Tarification</h4>
                   <div className="space-y-1">
                     {Object.entries(addon.pricing || {}).map(([plan, price]) => (
                       <div key={plan} className="flex justify-between text-sm">
-                        <span className="text-gray-600 dark:text-gray-400 capitalize">
-                          {plan}
-                        </span>
+                        <span className="text-gray-600 dark:text-gray-400 capitalize">{plan}</span>
                         <span className="font-semibold text-gray-900 dark:text-white">
                           {formatPrice(price as number)} {addon.currency}/mois
                         </span>
@@ -289,7 +285,10 @@ export const AddonEditorPage: React.FC = () => {
                     </h4>
                     <ul className="space-y-1">
                       {addon.features.slice(0, 3).map((feature, i) => (
-                        <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                        <li
+                          key={i}
+                          className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"
+                        >
                           <Check size={14} className="text-green-500 flex-shrink-0" />
                           {feature}
                         </li>
@@ -315,11 +314,7 @@ export const AddonEditorPage: React.FC = () => {
                   <Edit size={16} className="mr-1" />
                   Modifier
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleToggleActive(addon)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleToggleActive(addon)}>
                   {addon.is_active ? (
                     <ToggleRight size={20} className="text-green-500" />
                   ) : (
@@ -349,7 +344,7 @@ export const AddonEditorPage: React.FC = () => {
           setShowModal(false);
           setSelectedAddon(null);
         }}
-        title={selectedAddon?.id ? 'Modifier l\'add-on' : 'Nouvel add-on'}
+        title={selectedAddon?.id ? "Modifier l'add-on" : 'Nouvel add-on'}
         size="lg"
       >
         {selectedAddon && (
@@ -389,7 +384,9 @@ export const AddonEditorPage: React.FC = () => {
               </label>
               <textarea
                 value={selectedAddon.description}
-                onChange={(e) => setSelectedAddon({ ...selectedAddon, description: e.target.value })}
+                onChange={(e) =>
+                  setSelectedAddon({ ...selectedAddon, description: e.target.value })
+                }
                 placeholder="Description de l'add-on..."
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -404,19 +401,19 @@ export const AddonEditorPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 {AVAILABLE_PLANS.map((plan) => (
                   <div key={plan.code}>
-                    <label className="block text-xs text-gray-500 mb-1">
-                      {plan.name}
-                    </label>
+                    <label className="block text-xs text-gray-500 mb-1">{plan.name}</label>
                     <input
                       type="number"
                       value={selectedAddon.pricing[plan.code] || 0}
-                      onChange={(e) => setSelectedAddon({
-                        ...selectedAddon,
-                        pricing: {
-                          ...selectedAddon.pricing,
-                          [plan.code]: parseInt(e.target.value) || 0,
-                        },
-                      })}
+                      onChange={(e) =>
+                        setSelectedAddon({
+                          ...selectedAddon,
+                          pricing: {
+                            ...selectedAddon.pricing,
+                            [plan.code]: parseInt(e.target.value) || 0,
+                          },
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
@@ -462,11 +459,11 @@ export const AddonEditorPage: React.FC = () => {
 
             {/* Status */}
             <div className="flex items-center gap-3">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Statut
-              </label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Statut</label>
               <button
-                onClick={() => setSelectedAddon({ ...selectedAddon, is_active: !selectedAddon.is_active })}
+                onClick={() =>
+                  setSelectedAddon({ ...selectedAddon, is_active: !selectedAddon.is_active })
+                }
                 className="flex items-center gap-2"
               >
                 {selectedAddon.is_active ? (
@@ -494,7 +491,10 @@ export const AddonEditorPage: React.FC = () => {
               >
                 Annuler
               </Button>
-              <Button onClick={handleSave} disabled={saving || !selectedAddon.code || !selectedAddon.name}>
+              <Button
+                onClick={handleSave}
+                disabled={saving || !selectedAddon.code || !selectedAddon.name}
+              >
                 {saving ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />

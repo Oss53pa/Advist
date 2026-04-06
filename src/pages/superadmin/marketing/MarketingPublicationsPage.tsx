@@ -9,7 +9,7 @@ import {
   Search,
   Filter,
   MoreVertical,
-  Edit,
+  _Edit,
   Trash2,
   Send,
   Clock,
@@ -21,7 +21,12 @@ import {
   Image as ImageIcon,
 } from 'lucide-react';
 import { publicationsApi, templatesApi } from '../../../services/marketing';
-import type { Publication, PublicationCreateData, PostTemplate, SocialPlatform } from '../../../types';
+import type {
+  Publication,
+  PublicationCreateData,
+  PostTemplate,
+  SocialPlatform,
+} from '../../../types';
 
 const platformIcons: Record<string, string> = {
   facebook: 'https://cdn.simpleicons.org/facebook',
@@ -188,7 +193,9 @@ export default function MarketingPublicationsPage() {
       failed: 'bg-red-100 text-red-700',
     };
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${styles[status] || styles.draft}`}>
+      <span
+        className={`px-2 py-1 text-xs font-medium rounded-full ${styles[status] || styles.draft}`}
+      >
         {t(`superadmin.marketing.status.${status}`)}
       </span>
     );
@@ -213,7 +220,9 @@ export default function MarketingPublicationsPage() {
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-primary-900">{t('superadmin.marketing.publications.title')}</h1>
+            <h1 className="text-2xl font-bold text-primary-900">
+              {t('superadmin.marketing.publications.title')}
+            </h1>
             <p className="text-primary-500">{t('superadmin.marketing.publications.subtitle')}</p>
           </div>
         </div>
@@ -262,7 +271,9 @@ export default function MarketingPublicationsPage() {
           </div>
         ) : publications.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-primary-500">{t('superadmin.marketing.publications.noPublicationFound')}</p>
+            <p className="text-primary-500">
+              {t('superadmin.marketing.publications.noPublicationFound')}
+            </p>
             <button
               onClick={() => setShowCreateModal(true)}
               className="mt-4 text-primary-900 hover:text-primary-800"
@@ -340,7 +351,9 @@ export default function MarketingPublicationsPage() {
                   <td className="px-6 py-4 text-right">
                     <div className="relative">
                       <button
-                        onClick={() => setActionMenu(actionMenu === publication.id ? null : publication.id)}
+                        onClick={() =>
+                          setActionMenu(actionMenu === publication.id ? null : publication.id)
+                        }
                         className="text-primary-400 hover:text-primary-600"
                       >
                         <MoreVertical className="h-5 w-5" />
@@ -395,7 +408,9 @@ export default function MarketingPublicationsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-primary-200">
-              <h2 className="text-xl font-semibold text-primary-900">{t('superadmin.marketing.publications.newPublicationTitle')}</h2>
+              <h2 className="text-xl font-semibold text-primary-900">
+                {t('superadmin.marketing.publications.newPublicationTitle')}
+              </h2>
               <button
                 onClick={() => {
                   setShowCreateModal(false);
@@ -562,14 +577,24 @@ export default function MarketingPublicationsPage() {
               </button>
               <button
                 onClick={() => handleCreatePublication(false)}
-                disabled={!formData.title || !formData.content || formData.platforms.length === 0 || submitting}
+                disabled={
+                  !formData.title ||
+                  !formData.content ||
+                  formData.platforms.length === 0 ||
+                  submitting
+                }
                 className="px-4 py-2 border border-primary-900 text-primary-900 rounded-lg hover:bg-primary-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t('superadmin.marketing.publications.saveDraft')}
               </button>
               <button
                 onClick={() => handleCreatePublication(true)}
-                disabled={!formData.title || !formData.content || formData.platforms.length === 0 || submitting}
+                disabled={
+                  !formData.title ||
+                  !formData.content ||
+                  formData.platforms.length === 0 ||
+                  submitting
+                }
                 className="flex items-center gap-2 px-4 py-2 bg-primary-900 text-white rounded-lg hover:bg-primary-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="h-4 w-4" />
@@ -585,7 +610,9 @@ export default function MarketingPublicationsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-primary-200">
-              <h2 className="text-xl font-semibold text-primary-900">{selectedPublication.title}</h2>
+              <h2 className="text-xl font-semibold text-primary-900">
+                {selectedPublication.title}
+              </h2>
               <button
                 onClick={() => {
                   setShowDetailModal(false);
@@ -602,18 +629,25 @@ export default function MarketingPublicationsPage() {
                 <div className="flex items-center gap-4">
                   {getStatusBadge(selectedPublication.status)}
                   <span className="text-sm text-primary-500">
-                    {t('superadmin.marketing.publications.createdOn')} {new Date(selectedPublication.created_at).toLocaleDateString('fr-FR')}
+                    {t('superadmin.marketing.publications.createdOn')}{' '}
+                    {new Date(selectedPublication.created_at).toLocaleDateString('fr-FR')}
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-primary-700 mb-2">{t('superadmin.marketing.publications.contentLabel')}</h3>
-                  <p className="text-primary-900 whitespace-pre-wrap">{selectedPublication.content}</p>
+                  <h3 className="text-sm font-medium text-primary-700 mb-2">
+                    {t('superadmin.marketing.publications.contentLabel')}
+                  </h3>
+                  <p className="text-primary-900 whitespace-pre-wrap">
+                    {selectedPublication.content}
+                  </p>
                 </div>
 
                 {selectedPublication.media_url && (
                   <div>
-                    <h3 className="text-sm font-medium text-primary-700 mb-2">{t('superadmin.marketing.publications.mediaLabel')}</h3>
+                    <h3 className="text-sm font-medium text-primary-700 mb-2">
+                      {t('superadmin.marketing.publications.mediaLabel')}
+                    </h3>
                     <img
                       src={selectedPublication.media_url}
                       alt="Media"
@@ -623,7 +657,9 @@ export default function MarketingPublicationsPage() {
                 )}
 
                 <div>
-                  <h3 className="text-sm font-medium text-primary-700 mb-2">{t('superadmin.marketing.publications.platformsColumn')}</h3>
+                  <h3 className="text-sm font-medium text-primary-700 mb-2">
+                    {t('superadmin.marketing.publications.platformsColumn')}
+                  </h3>
                   <div className="flex gap-2">
                     {selectedPublication.platforms.map((platform) => (
                       <div
@@ -642,7 +678,9 @@ export default function MarketingPublicationsPage() {
 
                 {selectedPublication.results && selectedPublication.results.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium text-primary-700 mb-2">{t('superadmin.marketing.publications.results')}</h3>
+                    <h3 className="text-sm font-medium text-primary-700 mb-2">
+                      {t('superadmin.marketing.publications.results')}
+                    </h3>
                     <div className="space-y-2">
                       {selectedPublication.results.map((result) => (
                         <div
@@ -665,7 +703,8 @@ export default function MarketingPublicationsPage() {
                             {result.status === 'success' ? (
                               <>
                                 <span className="text-sm text-primary-500">
-                                  {result.metrics.likes || 0} likes, {result.metrics.comments || 0} commentaires
+                                  {result.metrics.likes || 0} likes, {result.metrics.comments || 0}{' '}
+                                  commentaires
                                 </span>
                                 {result.external_url && (
                                   <a
@@ -679,7 +718,9 @@ export default function MarketingPublicationsPage() {
                                 )}
                               </>
                             ) : (
-                              <span className="text-sm text-red-600">{result.error_message || t('superadmin.marketing.status.failed')}</span>
+                              <span className="text-sm text-red-600">
+                                {result.error_message || t('superadmin.marketing.status.failed')}
+                              </span>
                             )}
                           </div>
                         </div>

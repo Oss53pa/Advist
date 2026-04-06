@@ -12,7 +12,7 @@ import {
   Link2,
   Loader2,
   Check,
-  X,
+  _X,
   AlertTriangle,
   Eye,
   EyeOff,
@@ -32,19 +32,22 @@ interface ConnectionSetupModalProps {
   existingConnectionId?: string;
 }
 
-const PROVIDER_CONFIG: Record<IntegrationProvider, {
-  name: string;
-  icon: React.ElementType;
-  color: string;
-  authType: 'oauth' | 'credentials' | 'both';
-  fields?: Array<{
-    key: string;
-    label: string;
-    type: 'text' | 'password' | 'url';
-    required: boolean;
-    placeholder?: string;
-  }>;
-}> = {
+const PROVIDER_CONFIG: Record<
+  IntegrationProvider,
+  {
+    name: string;
+    icon: React.ElementType;
+    color: string;
+    authType: 'oauth' | 'credentials' | 'both';
+    fields?: Array<{
+      key: string;
+      label: string;
+      type: 'text' | 'password' | 'url';
+      required: boolean;
+      placeholder?: string;
+    }>;
+  }
+> = {
   microsoft_365: {
     name: 'Microsoft 365',
     icon: Cloud,
@@ -63,8 +66,14 @@ const PROVIDER_CONFIG: Record<IntegrationProvider, {
     color: 'text-green-600',
     authType: 'credentials',
     fields: [
-      { key: 'api_url', label: 'URL du serveur', type: 'url', required: true, placeholder: 'https://sage100.example.com/api' },
-      { key: 'username', label: 'Nom d\'utilisateur', type: 'text', required: true },
+      {
+        key: 'api_url',
+        label: 'URL du serveur',
+        type: 'url',
+        required: true,
+        placeholder: 'https://sage100.example.com/api',
+      },
+      { key: 'username', label: "Nom d'utilisateur", type: 'text', required: true },
       { key: 'password', label: 'Mot de passe', type: 'password', required: true },
       { key: 'company_code', label: 'Code societe', type: 'text', required: false },
     ],
@@ -75,8 +84,14 @@ const PROVIDER_CONFIG: Record<IntegrationProvider, {
     color: 'text-green-700',
     authType: 'credentials',
     fields: [
-      { key: 'api_url', label: 'URL OData', type: 'url', required: true, placeholder: 'https://sagex3.example.com/odata' },
-      { key: 'username', label: 'Nom d\'utilisateur', type: 'text', required: true },
+      {
+        key: 'api_url',
+        label: 'URL OData',
+        type: 'url',
+        required: true,
+        placeholder: 'https://sagex3.example.com/odata',
+      },
+      { key: 'username', label: "Nom d'utilisateur", type: 'text', required: true },
       { key: 'password', label: 'Mot de passe', type: 'password', required: true },
       { key: 'company_code', label: 'Code dossier', type: 'text', required: true },
     ],
@@ -93,8 +108,14 @@ const PROVIDER_CONFIG: Record<IntegrationProvider, {
     color: 'text-blue-800',
     authType: 'credentials',
     fields: [
-      { key: 'api_url', label: 'URL Service Layer', type: 'url', required: true, placeholder: 'https://sapb1.example.com:50000/b1s/v1' },
-      { key: 'username', label: 'Nom d\'utilisateur', type: 'text', required: true },
+      {
+        key: 'api_url',
+        label: 'URL Service Layer',
+        type: 'url',
+        required: true,
+        placeholder: 'https://sapb1.example.com:50000/b1s/v1',
+      },
+      { key: 'username', label: "Nom d'utilisateur", type: 'text', required: true },
       { key: 'password', label: 'Mot de passe', type: 'password', required: true },
       { key: 'company_code', label: 'Base de donnees', type: 'text', required: true },
     ],
@@ -105,8 +126,14 @@ const PROVIDER_CONFIG: Record<IntegrationProvider, {
     color: 'text-blue-900',
     authType: 'both',
     fields: [
-      { key: 'api_url', label: 'URL OData', type: 'url', required: true, placeholder: 'https://s4hana.example.com/sap/opu/odata/sap' },
-      { key: 'username', label: 'Nom d\'utilisateur', type: 'text', required: true },
+      {
+        key: 'api_url',
+        label: 'URL OData',
+        type: 'url',
+        required: true,
+        placeholder: 'https://s4hana.example.com/sap/opu/odata/sap',
+      },
+      { key: 'username', label: "Nom d'utilisateur", type: 'text', required: true },
       { key: 'password', label: 'Mot de passe', type: 'password', required: true },
     ],
   },
@@ -175,11 +202,7 @@ export const ConnectionSetupModal: React.FC<ConnectionSetupModalProps> = ({
       const authUrl = await startOAuthFlow(connectionId, redirectUri);
 
       // Open OAuth popup
-      const popup = window.open(
-        authUrl,
-        'oauth_popup',
-        'width=600,height=700,scrollbars=yes'
-      );
+      const popup = window.open(authUrl, 'oauth_popup', 'width=600,height=700,scrollbars=yes');
 
       // Listen for OAuth callback
       const handleMessage = async (event: MessageEvent) => {
@@ -254,13 +277,8 @@ export const ConnectionSetupModal: React.FC<ConnectionSetupModalProps> = ({
         <Button variant="outline" onClick={handleClose}>
           {t('common.cancel', 'Annuler')}
         </Button>
-        <Button
-          onClick={handleCreateConnection}
-          disabled={!connectionName.trim() || isConnecting}
-        >
-          {isConnecting ? (
-            <Loader2 size={16} className="animate-spin mr-2" />
-          ) : null}
+        <Button onClick={handleCreateConnection} disabled={!connectionName.trim() || isConnecting}>
+          {isConnecting ? <Loader2 size={16} className="animate-spin mr-2" /> : null}
           {t('common.continue', 'Continuer')}
         </Button>
       </div>
@@ -277,7 +295,10 @@ export const ConnectionSetupModal: React.FC<ConnectionSetupModalProps> = ({
           {t('integrations.setup.connectWith', 'Connecter avec')} {config.name}
         </h3>
         <p className="text-sm text-advist-gray900/60 max-w-sm mx-auto">
-          {t('integrations.setup.oauthDescription', 'Vous allez etre redirige vers la page de connexion pour autoriser ADVIST')}
+          {t(
+            'integrations.setup.oauthDescription',
+            'Vous allez etre redirige vers la page de connexion pour autoriser ADVIST'
+          )}
         </p>
       </div>
 
@@ -314,11 +335,7 @@ export const ConnectionSetupModal: React.FC<ConnectionSetupModalProps> = ({
       )}
 
       <div className="flex flex-col gap-3">
-        <Button
-          onClick={handleOAuthConnect}
-          disabled={isConnecting}
-          className="w-full"
-        >
+        <Button onClick={handleOAuthConnect} disabled={isConnecting} className="w-full">
           {isConnecting ? (
             <Loader2 size={16} className="animate-spin mr-2" />
           ) : (
@@ -334,11 +351,7 @@ export const ConnectionSetupModal: React.FC<ConnectionSetupModalProps> = ({
               <span className="text-sm text-advist-gray900/60">ou</span>
               <div className="flex-1 h-px bg-advist-gray200" />
             </div>
-            <Button
-              variant="outline"
-              onClick={() => setStep('credentials')}
-              className="w-full"
-            >
+            <Button variant="outline" onClick={() => setStep('credentials')} className="w-full">
               <Key size={16} className="mr-2" />
               {t('integrations.setup.useCredentials', 'Utiliser des identifiants')}
             </Button>
@@ -407,13 +420,16 @@ export const ConnectionSetupModal: React.FC<ConnectionSetupModalProps> = ({
       <div className="flex justify-between pt-4 border-t border-advist-gray200">
         <Button
           variant="ghost"
-          onClick={() => config.authType === 'both' ? setStep('auth') : setStep('name')}
+          onClick={() => (config.authType === 'both' ? setStep('auth') : setStep('name'))}
         >
           {t('common.back', 'Retour')}
         </Button>
         <Button
           onClick={handleCredentialsConnect}
-          disabled={isConnecting || !config.fields?.filter(f => f.required).every(f => credentials[f.key])}
+          disabled={
+            isConnecting ||
+            !config.fields?.filter((f) => f.required).every((f) => credentials[f.key])
+          }
         >
           {isConnecting ? (
             <Loader2 size={16} className="animate-spin mr-2" />
@@ -436,14 +452,15 @@ export const ConnectionSetupModal: React.FC<ConnectionSetupModalProps> = ({
           {t('integrations.setup.success', 'Connexion reussie!')}
         </h3>
         <p className="text-sm text-advist-gray900/60 max-w-sm mx-auto">
-          {t('integrations.setup.successDescription', 'Votre connexion a ete configuree avec succes. Vous pouvez maintenant configurer les mappings de synchronisation.')}
+          {t(
+            'integrations.setup.successDescription',
+            'Votre connexion a ete configuree avec succes. Vous pouvez maintenant configurer les mappings de synchronisation.'
+          )}
         </p>
       </div>
 
       <div className="flex justify-center">
-        <Button onClick={handleClose}>
-          {t('common.done', 'Terminer')}
-        </Button>
+        <Button onClick={handleClose}>{t('common.done', 'Terminer')}</Button>
       </div>
     </div>
   );
@@ -452,7 +469,7 @@ export const ConnectionSetupModal: React.FC<ConnectionSetupModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t('integrations.setup.title', 'Configurer l\'integration')}
+      title={t('integrations.setup.title', "Configurer l'integration")}
       size="md"
     >
       {step === 'name' && renderNameStep()}

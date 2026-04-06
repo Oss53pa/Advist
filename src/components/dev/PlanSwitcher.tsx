@@ -11,8 +11,15 @@ import {
   Shield,
   Settings,
 } from 'lucide-react';
-import { useTenantStore, PlanType, getPlanInfo, PLAN_ORDER, PLAN_FEATURES, createTenant } from '../../stores/tenantStore';
-import { PLAN_ICONS, PLAN_THEME, getPlanTheme } from '../../hooks/usePlanTheme';
+import {
+  useTenantStore,
+  PlanType,
+  getPlanInfo,
+  PLAN_ORDER,
+  PLAN_FEATURES,
+  createTenant,
+} from '../../stores/tenantStore';
+import { PLAN_ICONS, getPlanTheme } from '../../hooks/usePlanTheme';
 import type { TenantFeatures } from '../../stores/tenantStore';
 
 /**
@@ -84,14 +91,20 @@ export const PlanSwitcher: React.FC = () => {
             <div className={`px-4 py-3 ${theme.bgGradient} border-b`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-xs ${theme.textOnBg} opacity-80 uppercase tracking-wider`}>{t('dev.planSwitcher.testMode', 'Mode test')}</p>
-                  <p className={`text-sm font-semibold ${theme.textOnBg}`}>{t('dev.planSwitcher.changePlan', 'Changer de plan')}</p>
+                  <p className={`text-xs ${theme.textOnBg} opacity-80 uppercase tracking-wider`}>
+                    {t('dev.planSwitcher.testMode', 'Mode test')}
+                  </p>
+                  <p className={`text-sm font-semibold ${theme.textOnBg}`}>
+                    {t('dev.planSwitcher.changePlan', 'Changer de plan')}
+                  </p>
                 </div>
                 <button
                   onClick={() => setShowFeatures(!showFeatures)}
                   className={`text-xs ${theme.textOnBg} opacity-80 hover:opacity-100 font-medium`}
                 >
-                  {showFeatures ? t('dev.planSwitcher.hideFeatures', 'Masquer fonctionnalités') : t('dev.planSwitcher.showFeatures', 'Voir fonctionnalités')}
+                  {showFeatures
+                    ? t('dev.planSwitcher.hideFeatures', 'Masquer fonctionnalités')
+                    : t('dev.planSwitcher.showFeatures', 'Voir fonctionnalités')}
                 </button>
               </div>
             </div>
@@ -119,13 +132,17 @@ export const PlanSwitcher: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-primary-900">{info.name}</span>
                         {info.popular && (
-                          <span className={`px-1.5 py-0.5 ${planTheme.badge} text-[10px] font-bold rounded`}>
+                          <span
+                            className={`px-1.5 py-0.5 ${planTheme.badge} text-[10px] font-bold rounded`}
+                          >
                             {t('dev.planSwitcher.popular', 'POPULAIRE')}
                           </span>
                         )}
                       </div>
                       <p className="text-xs text-primary-500">
-                        {info.price === '0' ? t('dev.planSwitcher.free', 'Gratuit') : `${info.price} ${info.period}`}
+                        {info.price === '0'
+                          ? t('dev.planSwitcher.free', 'Gratuit')
+                          : `${info.price} ${info.period}`}
                       </p>
                     </div>
                     {isActive && <Check size={18} className={planTheme.text} />}
@@ -138,7 +155,10 @@ export const PlanSwitcher: React.FC = () => {
             {showFeatures && (
               <div className={`border-t bg-gray-50 px-3 py-3 max-h-[400px] overflow-y-auto`}>
                 <p className={`text-xs font-semibold text-gray-700 mb-3`}>
-                  {t('dev.planSwitcher.planFeatures', { plan: planInfo.name, defaultValue: `Fonctionnalités du plan ${planInfo.name}` })}
+                  {t('dev.planSwitcher.planFeatures', {
+                    plan: planInfo.name,
+                    defaultValue: `Fonctionnalités du plan ${planInfo.name}`,
+                  })}
                 </p>
                 <FeaturesList plan={currentPlan} />
               </div>
@@ -147,7 +167,10 @@ export const PlanSwitcher: React.FC = () => {
             {/* Footer */}
             <div className={`px-4 py-2 ${theme.bgMedium} border-t ${theme.borderLight}`}>
               <p className={`text-[10px] ${theme.text} text-center`}>
-                {t('dev.planSwitcher.devOnlyNote', 'Mode développement uniquement - Les changements sont temporaires')}
+                {t(
+                  'dev.planSwitcher.devOnlyNote',
+                  'Mode développement uniquement - Les changements sont temporaires'
+                )}
               </p>
             </div>
           </div>
@@ -162,7 +185,7 @@ export const PlanSwitcher: React.FC = () => {
  */
 const FeaturesList: React.FC<{ plan: PlanType }> = ({ plan }) => {
   const features = PLAN_FEATURES[plan];
-  const theme = getPlanTheme(plan);
+  const _theme = getPlanTheme(plan);
 
   // Catégories de fonctionnalités avec icônes
   const categories = [
@@ -279,7 +302,10 @@ const FeaturesList: React.FC<{ plan: PlanType }> = ({ plan }) => {
           ).length;
 
           return (
-            <div key={category.title} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div
+              key={category.title}
+              className="bg-white rounded-lg border border-gray-200 overflow-hidden"
+            >
               {/* Category Header */}
               <div className="flex items-center gap-2 px-2.5 py-1.5 bg-gray-50 border-b border-gray-100">
                 <div className={`p-1 rounded ${category.color}`}>

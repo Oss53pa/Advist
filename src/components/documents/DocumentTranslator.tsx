@@ -3,7 +3,7 @@ import {
   Languages,
   ChevronDown,
   ChevronUp,
-  RefreshCw,
+  _RefreshCw,
   Check,
   Copy,
   ArrowRight,
@@ -15,7 +15,11 @@ import {
   Volume2,
   Download,
 } from 'lucide-react';
-import { translationService, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../../services/translation';
+import {
+  translationService,
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage,
+} from '../../services/translation';
 
 interface TranslatedContent {
   title: string;
@@ -30,7 +34,10 @@ interface DocumentTranslatorProps {
   documentContent?: string;
   documentSummary?: string;
   annotations?: { id: string; content: string }[];
-  onTranslationComplete?: (translation: TranslatedContent, targetLanguage: SupportedLanguage) => void;
+  onTranslationComplete?: (
+    translation: TranslatedContent,
+    targetLanguage: SupportedLanguage
+  ) => void;
 }
 
 export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
@@ -62,7 +69,9 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
   const detectLanguage = async () => {
     setIsDetecting(true);
     try {
-      const detected = await translationService.detectLanguage(`${documentTitle  } ${  documentContent}`);
+      const detected = await translationService.detectLanguage(
+        `${documentTitle} ${documentContent}`
+      );
       setSourceLanguage(detected);
       // Set target to a different language
       if (detected === 'fr') {
@@ -143,7 +152,7 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
   };
 
   const getLanguageInfo = (code: SupportedLanguage) => {
-    return SUPPORTED_LANGUAGES.find(lang => lang.code === code);
+    return SUPPORTED_LANGUAGES.find((lang) => lang.code === code);
   };
 
   const LanguageSelector = ({
@@ -163,7 +172,9 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
 
     return (
       <div className="relative flex-1">
-        <label className="block text-xs text-advist-text-secondary dark:text-advist-text-muted mb-1">{label}</label>
+        <label className="block text-xs text-advist-text-secondary dark:text-advist-text-muted mb-1">
+          {label}
+        </label>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-advist-surface-dark dark:bg-advist-dark border border-advist-border dark:border-primary-600 rounded-lg hover:bg-advist-surface-dark dark:hover:bg-advist-surface-dark transition-colors"
@@ -171,11 +182,18 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
           <div className="flex items-center gap-2">
             <span className="text-lg">{selectedLang?.flag}</span>
             <div className="text-left">
-              <p className="text-sm font-medium text-advist-gray900 dark:text-white">{selectedLang?.nativeName}</p>
-              <p className="text-xs text-advist-text-secondary dark:text-advist-text-muted">{selectedLang?.region}</p>
+              <p className="text-sm font-medium text-advist-gray900 dark:text-white">
+                {selectedLang?.nativeName}
+              </p>
+              <p className="text-xs text-advist-text-secondary dark:text-advist-text-muted">
+                {selectedLang?.region}
+              </p>
             </div>
           </div>
-          <ChevronDown size={16} className={`text-advist-text-muted transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown
+            size={16}
+            className={`text-advist-text-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          />
         </button>
 
         {isOpen && (
@@ -196,8 +214,12 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
                 >
                   <span className="text-lg">{lang.flag}</span>
                   <div className="flex-1 text-left">
-                    <p className="text-sm font-medium text-advist-gray900 dark:text-white">{lang.nativeName}</p>
-                    <p className="text-xs text-advist-text-secondary dark:text-advist-text-muted">{lang.name} - {lang.region}</p>
+                    <p className="text-sm font-medium text-advist-gray900 dark:text-white">
+                      {lang.nativeName}
+                    </p>
+                    <p className="text-xs text-advist-text-secondary dark:text-advist-text-muted">
+                      {lang.name} - {lang.region}
+                    </p>
                   </div>
                   {value === lang.code && <Check size={16} className="text-advist-gray900" />}
                 </button>
@@ -221,7 +243,9 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
             <Languages className="w-5 h-5 text-white" />
           </div>
           <div className="text-left">
-            <h3 className="font-semibold text-advist-gray900 dark:text-white">Traduction Automatique</h3>
+            <h3 className="font-semibold text-advist-gray900 dark:text-white">
+              Traduction Automatique
+            </h3>
             <p className="text-sm text-advist-text-secondary dark:text-advist-text-muted">
               FR, EN, Bambara, Wolof et plus
             </p>
@@ -251,7 +275,10 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
               className="p-2.5 mb-0.5 bg-advist-surface-dark dark:bg-advist-dark rounded-lg hover:bg-advist-border dark:hover:bg-advist-surface-dark transition-colors"
               title="Inverser les langues"
             >
-              <ArrowRight size={18} className="text-advist-text-secondary dark:text-advist-text-muted" />
+              <ArrowRight
+                size={18}
+                className="text-advist-text-secondary dark:text-advist-text-muted"
+              />
             </button>
 
             <LanguageSelector
@@ -374,8 +401,12 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
                         <div className="flex items-start gap-2">
                           <span className="text-xs text-advist-text-muted">#{idx + 1}</span>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs text-advist-text-muted line-through">{annotation.original}</p>
-                            <p className="text-sm text-advist-gray900 dark:text-white">{annotation.translated}</p>
+                            <p className="text-xs text-advist-text-muted line-through">
+                              {annotation.original}
+                            </p>
+                            <p className="text-sm text-advist-gray900 dark:text-white">
+                              {annotation.translated}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -408,8 +439,15 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
                 <button
                   onClick={() => {
                     // Use browser's speech synthesis API
-                    const utterance = new SpeechSynthesisUtterance(`${translatedContent.title  }. ${  translatedContent.summary || ''}`);
-                    utterance.lang = targetLanguage === 'fr' ? 'fr-FR' : targetLanguage === 'en' ? 'en-US' : targetLanguage;
+                    const utterance = new SpeechSynthesisUtterance(
+                      `${translatedContent.title}. ${translatedContent.summary || ''}`
+                    );
+                    utterance.lang =
+                      targetLanguage === 'fr'
+                        ? 'fr-FR'
+                        : targetLanguage === 'en'
+                          ? 'en-US'
+                          : targetLanguage;
                     window.speechSynthesis.cancel(); // Stop any ongoing speech
                     window.speechSynthesis.speak(utterance);
                   }}
@@ -431,7 +469,8 @@ export const DocumentTranslator: React.FC<DocumentTranslatorProps> = ({
                   Langues supportées
                 </p>
                 <p className="text-xs text-advist-gray900 dark:text-advist-gold mt-1">
-                  Français, English, Bambara (Mali), Wolof (Sénégal), Dioula (Côte d'Ivoire), Lingala (RDC)
+                  Français, English, Bambara (Mali), Wolof (Sénégal), Dioula (Côte d'Ivoire),
+                  Lingala (RDC)
                 </p>
               </div>
             </div>

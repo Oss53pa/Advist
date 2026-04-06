@@ -6,18 +6,18 @@ import {
   GitBranch,
   Plus,
   Upload,
-  X,
+  _X,
   PenTool,
   Eye,
   Clock,
   ArrowRight,
   Calendar,
   Sparkles,
-  Zap,
+  _Zap,
   BarChart3,
   Cloud,
 } from 'lucide-react';
-import { Modal, Button } from '../components/ui';
+import { Modal } from '../components/ui';
 import { NewDocumentForm } from '../components/documents/NewDocumentForm';
 import { SmartCalendar } from '../components/calendar';
 import { useAuthStore } from '../store';
@@ -91,9 +91,9 @@ const pendingDocuments = [
 ];
 
 export const UserDashboard: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const { user } = useAuthStore();
-  const { currentTenant } = useTenantStore();
+  const { _currentTenant } = useTenantStore();
   const navigate = useNavigate();
   const [showNewDocModal, setShowNewDocModal] = useState(false);
 
@@ -126,7 +126,9 @@ export const UserDashboard: React.FC = () => {
         <div className="bg-white rounded-xl border border-advist-border p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-3xl font-bold text-advist-gray900">{userStats.documentsThisMonth}</p>
+              <p className="text-3xl font-bold text-advist-gray900">
+                {userStats.documentsThisMonth}
+              </p>
               <p className="text-sm text-advist-gray900/70 mt-1">Documents ce mois</p>
             </div>
             <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
@@ -138,7 +140,9 @@ export const UserDashboard: React.FC = () => {
         <div className="bg-white rounded-xl border border-advist-border p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-3xl font-bold text-advist-gray900">{userStats.pendingSignatures}</p>
+              <p className="text-3xl font-bold text-advist-gray900">
+                {userStats.pendingSignatures}
+              </p>
               <p className="text-sm text-advist-gray900/70 mt-1">À signer</p>
             </div>
             <div className="w-12 h-12 bg-advist-gold-light/20 rounded-xl flex items-center justify-center">
@@ -162,7 +166,9 @@ export const UserDashboard: React.FC = () => {
         <div className="bg-white rounded-xl border border-advist-border p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-3xl font-bold text-advist-gray900">{userStats.completedThisWeek}</p>
+              <p className="text-3xl font-bold text-advist-gray900">
+                {userStats.completedThisWeek}
+              </p>
               <p className="text-sm text-advist-gray900/70 mt-1">Complétés cette semaine</p>
             </div>
             <div className="w-12 h-12 bg-advist-dark rounded-xl flex items-center justify-center">
@@ -260,13 +266,16 @@ export const UserDashboard: React.FC = () => {
                 className="block p-4 border border-advist-border rounded-xl hover:border-advist-dark hover:shadow-sm transition-all group"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <span className={`
+                  <span
+                    className={`
                     px-2 py-0.5 rounded text-xs font-medium
-                    ${doc.priority === 'high'
-                      ? 'bg-advist-warning-light text-advist-warning'
-                      : 'bg-advist-gold-light/20 text-advist-gray900'
+                    ${
+                      doc.priority === 'high'
+                        ? 'bg-advist-warning-light text-advist-warning'
+                        : 'bg-advist-gold-light/20 text-advist-gray900'
                     }
-                  `}>
+                  `}
+                  >
                     {doc.priority === 'high' ? 'Urgent' : doc.type}
                   </span>
                   <div className="flex items-center gap-1 text-xs text-advist-blue-light">
@@ -314,12 +323,18 @@ export const UserDashboard: React.FC = () => {
                 <Sparkles size={20} className="text-primary-900" />
               </div>
               <div>
-                <h3 className="font-semibold text-advist-gray900" style={{ fontFamily: "'Grand Hotel', cursive" }}>Proph3t</h3>
+                <h3
+                  className="font-semibold text-advist-gray900"
+                  style={{ fontFamily: "'Grand Hotel', cursive" }}
+                >
+                  Proph3t
+                </h3>
                 <PlanRequiredBadge feature="aiAssistant" />
               </div>
             </div>
             <p className="text-sm text-advist-gray900/70 mb-4">
-              Utilisez l'IA pour analyser vos documents, extraire des informations et générer des résumés automatiques.
+              Utilisez l'IA pour analyser vos documents, extraire des informations et générer des
+              résumés automatiques.
             </p>
             <button className="w-full py-2 bg-primary-100 text-primary-800 rounded-lg font-medium hover:bg-primary-200 transition-colors">
               Ouvrir l'assistant
@@ -340,7 +355,8 @@ export const UserDashboard: React.FC = () => {
               </div>
             </div>
             <p className="text-sm text-advist-gray900/70 mb-4">
-              Synchronisez vos documents avec Google Drive, OneDrive, Dropbox et autres services cloud.
+              Synchronisez vos documents avec Google Drive, OneDrive, Dropbox et autres services
+              cloud.
             </p>
             <button className="w-full py-2 bg-primary-100 text-primary-800 rounded-lg font-medium hover:bg-primary-200 transition-colors">
               Connecter un service

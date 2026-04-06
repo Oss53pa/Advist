@@ -8,7 +8,7 @@ import {
   ArrowLeft,
   BarChart3,
   TrendingUp,
-  TrendingDown,
+  _TrendingDown,
   Heart,
   MessageCircle,
   Share2,
@@ -18,7 +18,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { analyticsApi } from '../../../services/marketing';
-import type { MarketingAnalytics, SocialPlatform } from '../../../types';
+import type { MarketingAnalytics } from '../../../types';
 
 const platformColors: Record<string, string> = {
   facebook: 'bg-primary-900',
@@ -67,7 +67,10 @@ export default function MarketingAnalyticsPage() {
 
   const calculateEngagementRate = (): string => {
     if (!analytics || !analytics.metrics.impressions) return '0';
-    const engagement = (analytics.metrics.likes || 0) + (analytics.metrics.comments || 0) + (analytics.metrics.shares || 0);
+    const engagement =
+      (analytics.metrics.likes || 0) +
+      (analytics.metrics.comments || 0) +
+      (analytics.metrics.shares || 0);
     return ((engagement / analytics.metrics.impressions) * 100).toFixed(2);
   };
 
@@ -128,8 +131,12 @@ export default function MarketingAnalyticsPage() {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-primary-500">{t('superadmin.marketing.analyticsPage.totalPublications')}</p>
-              <p className="text-3xl font-bold text-primary-900">{analytics?.total_publications || 0}</p>
+              <p className="text-sm text-primary-500">
+                {t('superadmin.marketing.analyticsPage.totalPublications')}
+              </p>
+              <p className="text-3xl font-bold text-primary-900">
+                {analytics?.total_publications || 0}
+              </p>
             </div>
             <div className="p-3 bg-primary-100 rounded-full">
               <BarChart3 className="h-6 w-6 text-primary-900" />
@@ -137,14 +144,18 @@ export default function MarketingAnalyticsPage() {
           </div>
           <div className="mt-4 flex items-center text-sm">
             <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-            <span className="text-green-600">{analytics?.total_published || 0} {t('superadmin.marketing.status.published')}</span>
+            <span className="text-green-600">
+              {analytics?.total_published || 0} {t('superadmin.marketing.status.published')}
+            </span>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-primary-500">{t('superadmin.marketing.analyticsPage.impressions')}</p>
+              <p className="text-sm text-primary-500">
+                {t('superadmin.marketing.analyticsPage.impressions')}
+              </p>
               <p className="text-3xl font-bold text-primary-900">
                 {(analytics?.metrics.impressions || 0).toLocaleString()}
               </p>
@@ -155,16 +166,25 @@ export default function MarketingAnalyticsPage() {
           </div>
           <div className="mt-4 flex items-center text-sm text-primary-500">
             <Users className="h-4 w-4 mr-1" />
-            <span>{(analytics?.metrics.reach || 0).toLocaleString()} {t('superadmin.marketing.analyticsPage.reach')}</span>
+            <span>
+              {(analytics?.metrics.reach || 0).toLocaleString()}{' '}
+              {t('superadmin.marketing.analyticsPage.reach')}
+            </span>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-primary-500">{t('superadmin.marketing.analyticsPage.totalEngagement')}</p>
+              <p className="text-sm text-primary-500">
+                {t('superadmin.marketing.analyticsPage.totalEngagement')}
+              </p>
               <p className="text-3xl font-bold text-primary-900">
-                {((analytics?.metrics.likes || 0) + (analytics?.metrics.comments || 0) + (analytics?.metrics.shares || 0)).toLocaleString()}
+                {(
+                  (analytics?.metrics.likes || 0) +
+                  (analytics?.metrics.comments || 0) +
+                  (analytics?.metrics.shares || 0)
+                ).toLocaleString()}
               </p>
             </div>
             <div className="p-3 bg-primary-100 rounded-full">
@@ -173,14 +193,18 @@ export default function MarketingAnalyticsPage() {
           </div>
           <div className="mt-4 flex items-center text-sm text-primary-500">
             <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-            <span>{calculateEngagementRate()}% {t('superadmin.marketing.analyticsPage.engagementRate')}</span>
+            <span>
+              {calculateEngagementRate()}% {t('superadmin.marketing.analyticsPage.engagementRate')}
+            </span>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-primary-500">{t('superadmin.marketing.analyticsPage.clicks')}</p>
+              <p className="text-sm text-primary-500">
+                {t('superadmin.marketing.analyticsPage.clicks')}
+              </p>
               <p className="text-3xl font-bold text-primary-900">
                 {(analytics?.metrics.clicks || 0).toLocaleString()}
               </p>
@@ -190,7 +214,9 @@ export default function MarketingAnalyticsPage() {
             </div>
           </div>
           <div className="mt-4 flex items-center text-sm text-primary-500">
-            <span>{t('superadmin.marketing.analyticsPage.bestPlatform')}: {getTopPlatform()}</span>
+            <span>
+              {t('superadmin.marketing.analyticsPage.bestPlatform')}: {getTopPlatform()}
+            </span>
           </div>
         </div>
       </div>
@@ -206,17 +232,24 @@ export default function MarketingAnalyticsPage() {
             {(analytics?.metrics.likes || 0).toLocaleString()}
           </p>
           <div className="mt-4 space-y-2">
-            {analytics?.by_platform && Object.entries(analytics.by_platform).map(([platform, data]) => (
-              <div key={platform} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${platformColors[platform]}`}>
-                    <img src={platformIcons[platform]} alt={platform} className="w-3 h-3 filter brightness-0 invert" />
+            {analytics?.by_platform &&
+              Object.entries(analytics.by_platform).map(([platform, data]) => (
+                <div key={platform} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center ${platformColors[platform]}`}
+                    >
+                      <img
+                        src={platformIcons[platform]}
+                        alt={platform}
+                        className="w-3 h-3 filter brightness-0 invert"
+                      />
+                    </div>
+                    <span className="text-sm text-primary-600">{platformNames[platform]}</span>
                   </div>
-                  <span className="text-sm text-primary-600">{platformNames[platform]}</span>
+                  <span className="text-sm font-medium text-primary-900">{data.likes}</span>
                 </div>
-                <span className="text-sm font-medium text-primary-900">{data.likes}</span>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 
@@ -229,17 +262,24 @@ export default function MarketingAnalyticsPage() {
             {(analytics?.metrics.comments || 0).toLocaleString()}
           </p>
           <div className="mt-4 space-y-2">
-            {analytics?.by_platform && Object.entries(analytics.by_platform).map(([platform, data]) => (
-              <div key={platform} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${platformColors[platform]}`}>
-                    <img src={platformIcons[platform]} alt={platform} className="w-3 h-3 filter brightness-0 invert" />
+            {analytics?.by_platform &&
+              Object.entries(analytics.by_platform).map(([platform, data]) => (
+                <div key={platform} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center ${platformColors[platform]}`}
+                    >
+                      <img
+                        src={platformIcons[platform]}
+                        alt={platform}
+                        className="w-3 h-3 filter brightness-0 invert"
+                      />
+                    </div>
+                    <span className="text-sm text-primary-600">{platformNames[platform]}</span>
                   </div>
-                  <span className="text-sm text-primary-600">{platformNames[platform]}</span>
+                  <span className="text-sm font-medium text-primary-900">{data.comments}</span>
                 </div>
-                <span className="text-sm font-medium text-primary-900">{data.comments}</span>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 
@@ -252,17 +292,24 @@ export default function MarketingAnalyticsPage() {
             {(analytics?.metrics.shares || 0).toLocaleString()}
           </p>
           <div className="mt-4 space-y-2">
-            {analytics?.by_platform && Object.entries(analytics.by_platform).map(([platform, data]) => (
-              <div key={platform} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${platformColors[platform]}`}>
-                    <img src={platformIcons[platform]} alt={platform} className="w-3 h-3 filter brightness-0 invert" />
+            {analytics?.by_platform &&
+              Object.entries(analytics.by_platform).map(([platform, data]) => (
+                <div key={platform} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center ${platformColors[platform]}`}
+                    >
+                      <img
+                        src={platformIcons[platform]}
+                        alt={platform}
+                        className="w-3 h-3 filter brightness-0 invert"
+                      />
+                    </div>
+                    <span className="text-sm text-primary-600">{platformNames[platform]}</span>
                   </div>
-                  <span className="text-sm text-primary-600">{platformNames[platform]}</span>
+                  <span className="text-sm font-medium text-primary-900">{data.shares}</span>
                 </div>
-                <span className="text-sm font-medium text-primary-900">{data.shares}</span>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
@@ -270,66 +317,87 @@ export default function MarketingAnalyticsPage() {
       {/* Platform Performance */}
       <div className="bg-white rounded-lg shadow">
         <div className="p-6 border-b border-primary-200">
-          <h3 className="text-lg font-semibold text-primary-900">{t('superadmin.marketing.analyticsPage.platformPerformance')}</h3>
+          <h3 className="text-lg font-semibold text-primary-900">
+            {t('superadmin.marketing.analyticsPage.platformPerformance')}
+          </h3>
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {analytics?.by_platform && Object.entries(analytics.by_platform).map(([platform, data]) => {
-              const totalEngagement = data.likes + data.comments + data.shares;
-              const maxEngagement = Math.max(
-                ...Object.values(analytics.by_platform).map(p => p.likes + p.comments + p.shares)
-              );
-              const percentage = maxEngagement > 0 ? (totalEngagement / maxEngagement) * 100 : 0;
+            {analytics?.by_platform &&
+              Object.entries(analytics.by_platform).map(([platform, data]) => {
+                const totalEngagement = data.likes + data.comments + data.shares;
+                const maxEngagement = Math.max(
+                  ...Object.values(analytics.by_platform).map(
+                    (p) => p.likes + p.comments + p.shares
+                  )
+                );
+                const percentage = maxEngagement > 0 ? (totalEngagement / maxEngagement) * 100 : 0;
 
-              return (
-                <div key={platform} className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${platformColors[platform]}`}>
-                    <img src={platformIcons[platform]} alt={platform} className="w-6 h-6 filter brightness-0 invert" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-primary-900">{platformNames[platform]}</span>
-                      <span className="text-sm text-primary-500">{data.posts} {t('superadmin.marketing.analyticsPage.publications')}</span>
-                    </div>
-                    <div className="w-full bg-primary-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${platformColors[platform]}`}
-                        style={{ width: `${percentage}%` }}
+                return (
+                  <div key={platform} className="flex items-center gap-4">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center ${platformColors[platform]}`}
+                    >
+                      <img
+                        src={platformIcons[platform]}
+                        alt={platform}
+                        className="w-6 h-6 filter brightness-0 invert"
                       />
                     </div>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-primary-500">
-                      <span className="flex items-center gap-1">
-                        <Heart className="h-3 w-3" /> {data.likes}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MessageCircle className="h-3 w-3" /> {data.comments}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Share2 className="h-3 w-3" /> {data.shares}
-                      </span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-medium text-primary-900">
+                          {platformNames[platform]}
+                        </span>
+                        <span className="text-sm text-primary-500">
+                          {data.posts} {t('superadmin.marketing.analyticsPage.publications')}
+                        </span>
+                      </div>
+                      <div className="w-full bg-primary-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${platformColors[platform]}`}
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-4 mt-2 text-sm text-primary-500">
+                        <span className="flex items-center gap-1">
+                          <Heart className="h-3 w-3" /> {data.likes}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <MessageCircle className="h-3 w-3" /> {data.comments}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Share2 className="h-3 w-3" /> {data.shares}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
       </div>
 
       {/* Status Distribution */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-primary-900 mb-4">{t('superadmin.marketing.analyticsPage.statusDistribution')}</h3>
+        <h3 className="text-lg font-semibold text-primary-900 mb-4">
+          {t('superadmin.marketing.analyticsPage.statusDistribution')}
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center p-4 bg-primary-50 rounded-lg">
             <p className="text-3xl font-bold text-primary-600">{analytics?.by_status.draft || 0}</p>
             <p className="text-sm text-primary-500">{t('superadmin.marketing.status.draft')}</p>
           </div>
           <div className="text-center p-4 bg-primary-50 rounded-lg">
-            <p className="text-3xl font-bold text-primary-900">{analytics?.by_status.scheduled || 0}</p>
+            <p className="text-3xl font-bold text-primary-900">
+              {analytics?.by_status.scheduled || 0}
+            </p>
             <p className="text-sm text-primary-500">{t('superadmin.marketing.status.scheduled')}</p>
           </div>
           <div className="text-center p-4 bg-green-50 rounded-lg">
-            <p className="text-3xl font-bold text-green-600">{analytics?.by_status.published || 0}</p>
+            <p className="text-3xl font-bold text-green-600">
+              {analytics?.by_status.published || 0}
+            </p>
             <p className="text-sm text-primary-500">{t('superadmin.marketing.status.published')}</p>
           </div>
           <div className="text-center p-4 bg-red-50 rounded-lg">

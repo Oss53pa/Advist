@@ -17,7 +17,6 @@ import {
   Maximize2,
   GripVertical,
 } from 'lucide-react';
-import { Button } from '../ui/Button';
 import { useAIStore } from '../../store/aiStore';
 import { aiService, AIMessage } from '../../services/ai';
 
@@ -79,7 +78,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      setPosition(prev => ({
+      setPosition((prev) => ({
         x: Math.min(prev.x, window.innerWidth - (isOpen ? 400 : 60)),
         y: Math.min(prev.y, window.innerHeight - (isOpen ? 520 : 60)),
       }));
@@ -207,9 +206,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
 
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantMessageId
-            ? { ...m, content: response.content, isStreaming: false }
-            : m
+          m.id === assistantMessageId ? { ...m, content: response.content, isStreaming: false } : m
         )
       );
     } catch (error) {
@@ -256,13 +253,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
         onTouchStart={handleDragStart}
       >
         <button
-          onClick={(e) => {
+          onClick={(_e) => {
             if (!hasMoved.current) {
               setIsOpen(true);
             }
           }}
           className="p-4 bg-gradient-to-br from-primary-900 to-primary-900 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
-          title={t('ai.chat.open', 'Ouvrir l\'assistant IA')}
+          title={t('ai.chat.open', "Ouvrir l'assistant IA")}
         >
           <Brain className="w-6 h-6" />
           <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></span>
@@ -297,13 +294,19 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
         </div>
         <div className="flex items-center gap-1">
           <button
-            onClick={(e) => { e.stopPropagation(); setIsMinimized(!isMinimized); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMinimized(!isMinimized);
+            }}
             className="p-1.5 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-colors"
           >
             {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
           </button>
           <button
-            onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
             className="p-1.5 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-colors"
           >
             <X size={16} />
@@ -320,16 +323,25 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
                 <div className="p-4 bg-primary-50 rounded-full mb-4">
                   <MessageSquare className="w-8 h-8 text-primary-900" />
                 </div>
-                <h3 className="font-medium text-primary-900 mb-2" style={{ fontFamily: "'Grand Hotel', cursive", fontSize: '1.5rem' }}>
+                <h3
+                  className="font-medium text-primary-900 mb-2"
+                  style={{ fontFamily: "'Grand Hotel', cursive", fontSize: '1.5rem' }}
+                >
                   Proph3t
                 </h3>
                 {!isConfigured ? (
                   <p className="text-sm text-primary-500">
-                    {t('ai.chat.notConfigured', 'Configurez l\'API dans Paramètres → Intelligence Artificielle pour activer Proph3t.')}
+                    {t(
+                      'ai.chat.notConfigured',
+                      "Configurez l'API dans Paramètres → Intelligence Artificielle pour activer Proph3t."
+                    )}
                   </p>
                 ) : (
                   <p className="text-sm text-primary-500">
-                    {t('ai.chat.welcomeDesc', 'Posez-moi vos questions sur vos documents ou l\'utilisation d\'ADVIST.')}
+                    {t(
+                      'ai.chat.welcomeDesc',
+                      "Posez-moi vos questions sur vos documents ou l'utilisation d'ADVIST."
+                    )}
                   </p>
                 )}
               </div>
@@ -337,9 +349,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
               messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex gap-3 ${
-                    message.role === 'user' ? 'flex-row-reverse' : ''
-                  }`}
+                  className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
                 >
                   <div
                     className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
@@ -397,7 +407,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={!isConfigured ? t('ai.chat.configureFirst', 'Configurez d\'abord l\'API...') : t('ai.chat.placeholder', 'Posez votre question...')}
+                  placeholder={
+                    !isConfigured
+                      ? t('ai.chat.configureFirst', "Configurez d'abord l'API...")
+                      : t('ai.chat.placeholder', 'Posez votre question...')
+                  }
                   disabled={isLoading || !isConfigured}
                   className="w-full px-4 py-2.5 pr-12 bg-primary-50 border border-primary-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50"
                 />
@@ -406,11 +420,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
                   disabled={!inputValue.trim() || isLoading || !isConfigured}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white bg-primary-900 rounded-lg hover:bg-primary-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {isLoading ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <Send size={16} />
-                  )}
+                  {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                 </button>
               </div>
             </div>

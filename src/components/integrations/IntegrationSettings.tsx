@@ -65,13 +65,17 @@ export const IntegrationSettings: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<TabId>('connections');
   const [setupProvider, setSetupProvider] = useState<IntegrationProvider | null>(null);
-  const [configureConnection, setConfigureConnection] = useState<IntegrationConnection | null>(null);
+  const [configureConnection, setConfigureConnection] = useState<IntegrationConnection | null>(
+    null
+  );
 
   useEffect(() => {
     fetchConnections();
   }, [fetchConnections]);
 
-  const getConnectionForProvider = (provider: IntegrationProvider): IntegrationConnection | undefined => {
+  const getConnectionForProvider = (
+    provider: IntegrationProvider
+  ): IntegrationConnection | undefined => {
     return (connections ?? []).find((c) => c.provider === provider);
   };
 
@@ -84,7 +88,14 @@ export const IntegrationSettings: React.FC = () => {
   };
 
   const handleDisconnect = async (connection: IntegrationConnection) => {
-    if (window.confirm(t('integrations.confirmDisconnect', 'Etes-vous sur de vouloir deconnecter cette integration?'))) {
+    if (
+      window.confirm(
+        t(
+          'integrations.confirmDisconnect',
+          'Etes-vous sur de vouloir deconnecter cette integration?'
+        )
+      )
+    ) {
       await disconnect(connection.id);
     }
   };
@@ -93,8 +104,12 @@ export const IntegrationSettings: React.FC = () => {
     await syncNow(connection.id);
   };
 
-  const handleDelete = async (connection: IntegrationConnection) => {
-    if (window.confirm(t('integrations.confirmDelete', 'Supprimer cette connexion? Cette action est irreversible.'))) {
+  const _handleDelete = async (connection: IntegrationConnection) => {
+    if (
+      window.confirm(
+        t('integrations.confirmDelete', 'Supprimer cette connexion? Cette action est irreversible.')
+      )
+    ) {
       await deleteConnection(connection.id);
     }
   };
@@ -114,7 +129,11 @@ export const IntegrationSettings: React.FC = () => {
   };
 
   const tabs = [
-    { id: 'connections' as TabId, label: t('integrations.tabs.connections', 'Connexions'), icon: Plug },
+    {
+      id: 'connections' as TabId,
+      label: t('integrations.tabs.connections', 'Connexions'),
+      icon: Plug,
+    },
     { id: 'sync' as TabId, label: t('integrations.tabs.sync', 'Synchronisation'), icon: RefreshCw },
     { id: 'logs' as TabId, label: t('integrations.tabs.logs', 'Historique'), icon: Activity },
   ];
@@ -129,9 +148,7 @@ export const IntegrationSettings: React.FC = () => {
           <div key={categoryKey}>
             <div className="flex items-center gap-3 mb-4">
               <CategoryIcon size={20} className="text-advist-gray900/60" />
-              <h3 className="text-lg font-semibold text-advist-gray900">
-                {category.label}
-              </h3>
+              <h3 className="text-lg font-semibold text-advist-gray900">{category.label}</h3>
               {!hasEnabledProvider && (
                 <Badge variant="secondary">
                   {t('integrations.upgradePlan', 'Plan superieur requis')}
@@ -178,7 +195,10 @@ export const IntegrationSettings: React.FC = () => {
               {t('integrations.noConnections', 'Aucune integration connectee')}
             </h3>
             <p className="text-sm text-advist-gray900/60 mb-4">
-              {t('integrations.noConnectionsDesc', 'Connectez une integration pour configurer la synchronisation')}
+              {t(
+                'integrations.noConnectionsDesc',
+                'Connectez une integration pour configurer la synchronisation'
+              )}
             </p>
             <Button onClick={() => setActiveTab('connections')}>
               {t('integrations.goToConnections', 'Voir les connexions')}
@@ -221,7 +241,10 @@ export const IntegrationSettings: React.FC = () => {
             <div className="flex flex-col items-center text-center">
               <Settings size={48} className="text-advist-gray900/30 mb-4" />
               <p className="text-sm text-advist-gray900/60">
-                {t('integrations.selectConnectionToConfig', 'Selectionnez une connexion pour configurer les mappings')}
+                {t(
+                  'integrations.selectConnectionToConfig',
+                  'Selectionnez une connexion pour configurer les mappings'
+                )}
               </p>
             </div>
           </Card>
@@ -230,9 +253,7 @@ export const IntegrationSettings: React.FC = () => {
     );
   };
 
-  const renderLogsTab = () => (
-    <SyncStatusDashboard />
-  );
+  const renderLogsTab = () => <SyncStatusDashboard />;
 
   return (
     <div className="space-y-6">
@@ -247,14 +268,13 @@ export const IntegrationSettings: React.FC = () => {
               {t('integrations.title', 'Integrations')}
             </h2>
             <p className="text-advist-gray900/60 mt-1">
-              {t('integrations.description', 'Connectez ADVIST a vos logiciels d\'entreprise pour synchroniser documents et workflows')}
+              {t(
+                'integrations.description',
+                "Connectez ADVIST a vos logiciels d'entreprise pour synchroniser documents et workflows"
+              )}
             </p>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => fetchConnections()}
-            disabled={isLoading}
-          >
+          <Button variant="outline" onClick={() => fetchConnections()} disabled={isLoading}>
             <RefreshCw size={16} className={`mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             {t('common.refresh', 'Actualiser')}
           </Button>
@@ -284,9 +304,10 @@ export const IntegrationSettings: React.FC = () => {
                 className={`
                   flex items-center gap-2 px-4 py-3 text-sm font-medium
                   border-b-2 transition-colors
-                  ${activeTab === tab.id
-                    ? 'border-advist-primary text-advist-primary'
-                    : 'border-transparent text-advist-gray900/60 hover:text-advist-gray900'
+                  ${
+                    activeTab === tab.id
+                      ? 'border-advist-primary text-advist-primary'
+                      : 'border-transparent text-advist-gray900/60 hover:text-advist-gray900'
                   }
                 `}
               >

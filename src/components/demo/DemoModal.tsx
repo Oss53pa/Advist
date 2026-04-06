@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Play,
-  X,
+  _X,
   Clock,
   CheckCircle,
   ArrowRight,
@@ -15,7 +15,7 @@ import {
   GitBranch,
   PenTool,
   Users,
-  Sparkles,
+  _Sparkles,
   ChevronLeft,
   Lightbulb,
   Layers,
@@ -90,7 +90,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
     {
       id: 'workflow' as InteractiveDemoType,
       title: 'Workflow de validation',
-      description: 'Simulez un circuit d\'approbation multi-étapes',
+      description: "Simulez un circuit d'approbation multi-étapes",
       icon: GitBranch,
       color: 'bg-primary-900',
     },
@@ -104,7 +104,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
     {
       id: 'documents' as InteractiveDemoType,
       title: 'Gestion documentaire',
-      description: 'Explorez l\'interface de gestion de fichiers',
+      description: "Explorez l'interface de gestion de fichiers",
       icon: FileText,
       color: 'bg-primary-900',
     },
@@ -146,7 +146,12 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" title={selectedInteractiveDemo ? '' : 'Découvrir ADVIST'}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="xl"
+      title={selectedInteractiveDemo ? '' : 'Découvrir ADVIST'}
+    >
       {/* Back button when in interactive demo */}
       {selectedInteractiveDemo && (
         <div className="mb-4">
@@ -230,10 +235,14 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
                     onClick={() => setSelectedInteractiveDemo(demo.id)}
                     className="flex flex-col items-center p-4 bg-white rounded-xl border border-primary-100 hover:border-primary-200 hover:shadow-md transition-all"
                   >
-                    <div className={`w-12 h-12 ${demo.color} rounded-xl flex items-center justify-center mb-3`}>
+                    <div
+                      className={`w-12 h-12 ${demo.color} rounded-xl flex items-center justify-center mb-3`}
+                    >
                       <demo.icon className="w-6 h-6 text-white" />
                     </div>
-                    <h4 className="font-medium text-primary-900 text-sm text-center">{demo.title}</h4>
+                    <h4 className="font-medium text-primary-900 text-sm text-center">
+                      {demo.title}
+                    </h4>
                     <p className="text-xs text-primary-500 text-center mt-1">{demo.description}</p>
                   </button>
                 ))}
@@ -248,13 +257,9 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {selectedDemo === 'guided' && (
-            <GuidedTour />
-          )}
+          {selectedDemo === 'guided' && <GuidedTour />}
 
-          {selectedDemo === 'tutorial' && (
-            <InteractiveTutorial />
-          )}
+          {selectedDemo === 'tutorial' && <InteractiveTutorial />}
 
           {selectedDemo === 'video' && (
             <div className="bg-advist-bg rounded-xl p-6">
@@ -278,7 +283,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
                   'Présentation adaptée à votre secteur',
                   'Réponses à toutes vos questions',
                   'Conseils personnalisés',
-                  'Pas d\'engagement',
+                  "Pas d'engagement",
                 ].map((item, index) => (
                   <li key={index} className="flex items-center gap-2 text-sm text-advist-gray900">
                     <CheckCircle size={16} className="text-advist-success" />
@@ -368,9 +373,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
           <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle size={32} className="text-advist-success" />
           </div>
-          <h3 className="text-xl font-semibold text-advist-gray900 mb-2">
-            Demande envoyée !
-          </h3>
+          <h3 className="text-xl font-semibold text-advist-gray900 mb-2">Demande envoyée !</h3>
           <p className="text-advist-gray900/70 mb-6">
             Notre équipe vous contactera dans les 24 heures pour planifier votre démo.
           </p>

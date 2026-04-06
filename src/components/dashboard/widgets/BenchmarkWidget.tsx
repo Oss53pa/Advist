@@ -12,7 +12,7 @@ import {
   ArrowRight,
   CheckCircle,
   AlertCircle,
-  Info
+  Info,
 } from 'lucide-react';
 import { WidgetConfig } from '../../../services/dashboard';
 import {
@@ -30,7 +30,7 @@ interface BenchmarkWidgetProps {
 export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
   const [data, setData] = useState<BenchmarkData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +39,7 @@ export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
       try {
         const benchmarkData = await analyticsService.getBenchmarkComparison();
         setData(benchmarkData);
-      } catch (err) {
+      } catch (_err) {
         // Mock data for demo
         setData({
           organizationMetrics: {
@@ -101,7 +101,7 @@ export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
       <div className="h-full flex flex-col gap-4 animate-pulse">
         <div className="h-20 bg-advist-surface-dark rounded-lg"></div>
         <div className="flex-1 space-y-3">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <div key={i} className="h-16 bg-advist-surface-dark rounded-lg"></div>
           ))}
         </div>
@@ -116,10 +116,7 @@ export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
         <p className="text-sm text-advist-gray900/70">
           Configurez votre secteur d'activité pour accéder aux benchmarks
         </p>
-        <Link
-          to="/user/settings"
-          className="mt-3 text-sm text-advist-red hover:underline"
-        >
+        <Link to="/user/settings" className="mt-3 text-sm text-advist-red hover:underline">
           Configurer maintenant
         </Link>
       </div>
@@ -170,9 +167,7 @@ export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
         {/* Validation Time */}
         <div className="p-3 border border-advist-border rounded-lg">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-advist-gray900">
-              Temps de validation
-            </span>
+            <span className="text-sm font-medium text-advist-gray900">Temps de validation</span>
             {getStatusIcon(data.comparison!.validationTime.status)}
           </div>
           <div className="flex items-end justify-between">
@@ -200,9 +195,7 @@ export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
         {/* Signature Time */}
         <div className="p-3 border border-advist-border rounded-lg">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-advist-gray900">
-              Temps de signature
-            </span>
+            <span className="text-sm font-medium text-advist-gray900">Temps de signature</span>
             {getStatusIcon(data.comparison!.signatureTime.status)}
           </div>
           <div className="flex items-end justify-between">
@@ -217,7 +210,14 @@ export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
             <div className="flex items-center gap-1 text-sm">
               <TrendingUp size={14} className="text-advist-success" />
               <span className="text-advist-success font-medium">
-                -{Math.round((1 - data.comparison!.signatureTime.yourValue / data.comparison!.signatureTime.industryAverage) * 100)}%
+                -
+                {Math.round(
+                  (1 -
+                    data.comparison!.signatureTime.yourValue /
+                      data.comparison!.signatureTime.industryAverage) *
+                    100
+                )}
+                %
               </span>
             </div>
           </div>
@@ -226,9 +226,7 @@ export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
         {/* Rejection Rate */}
         <div className="p-3 border border-advist-border rounded-lg">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-advist-gray900">
-              Taux de rejet
-            </span>
+            <span className="text-sm font-medium text-advist-gray900">Taux de rejet</span>
             {getStatusIcon(data.comparison!.rejectionRate.status)}
           </div>
           <div className="flex items-end justify-between">
@@ -243,7 +241,14 @@ export const BenchmarkWidget: React.FC<BenchmarkWidgetProps> = ({ config }) => {
             <div className="flex items-center gap-1 text-sm">
               <TrendingDown size={14} className="text-advist-success" />
               <span className="text-advist-success font-medium">
-                -{Math.round((1 - data.comparison!.rejectionRate.yourValue / data.comparison!.rejectionRate.industryAverage) * 100)}%
+                -
+                {Math.round(
+                  (1 -
+                    data.comparison!.rejectionRate.yourValue /
+                      data.comparison!.rejectionRate.industryAverage) *
+                    100
+                )}
+                %
               </span>
             </div>
           </div>

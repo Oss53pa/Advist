@@ -6,7 +6,7 @@
  * Route: /verify/:code?
  */
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Shield,
   CheckCircle,
@@ -16,8 +16,8 @@ import {
   FileText,
   Clock,
   User,
-  Hash,
-  ArrowLeft,
+  _Hash,
+  _ArrowLeft,
   AlertCircle,
   Loader2,
 } from 'lucide-react';
@@ -61,7 +61,8 @@ export const VerifyPage: React.FC = () => {
       // For now, search in document_signatures metadata
       const { data: signatures, error: queryError } = await supabase
         .from('document_signatures')
-        .select(`
+        .select(
+          `
           id,
           document_id,
           user_id,
@@ -78,7 +79,8 @@ export const VerifyPage: React.FC = () => {
           verification:signer_verifications!document_signatures_verification_id_fkey(
             verification_level, otp_channel, verified_at
           )
-        `)
+        `
+        )
         .eq('integrity_seal', code)
         .limit(10);
 
@@ -106,12 +108,8 @@ export const VerifyPage: React.FC = () => {
           const signer = sig.signer;
           const verification = sig.verification;
           return {
-            signerEmail: signer?.email
-              ? maskEmail(signer.email)
-              : 'Signataire externe',
-            signerName: signer
-              ? `${signer.first_name} ${signer.last_name}`
-              : 'Signataire externe',
+            signerEmail: signer?.email ? maskEmail(signer.email) : 'Signataire externe',
+            signerName: signer ? `${signer.first_name} ${signer.last_name}` : 'Signataire externe',
             signedAt: sig.server_timestamp || sig.signed_at,
             verificationMethod: verification?.otp_channel
               ? `OTP ${verification.otp_channel} verifie`
@@ -154,7 +152,8 @@ export const VerifyPage: React.FC = () => {
             Verifier l'authenticite d'un document
           </h2>
           <p className="text-sm text-gray-500 mb-6">
-            Saisissez le code de verification ou le sceau d'integrite present sur le certificat de signature.
+            Saisissez le code de verification ou le sceau d'integrite present sur le certificat de
+            signature.
           </p>
 
           <div className="flex gap-3">
@@ -206,27 +205,56 @@ export const VerifyPage: React.FC = () => {
                     </p>
                   </div>
                   <PrintButton
-                    config={{ title: 'Certificat de vérification', subtitle: 'Portail de vérification ADVIST', appName: 'Advist' }}
+                    config={{
+                      title: 'Certificat de vérification',
+                      subtitle: 'Portail de vérification ADVIST',
+                      appName: 'Advist',
+                    }}
                     className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-800 transition-all"
                     label="Imprimer le certificat"
                   >
                     <div>
-                      <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>CERTIFICAT DE VERIFICATION</h2>
+                      <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>
+                        CERTIFICAT DE VERIFICATION
+                      </h2>
                       <p style={{ marginBottom: 4 }}>Statut : DOCUMENT AUTHENTIQUE</p>
                       {result.document && (
                         <>
                           <p>Titre : {result.document.title}</p>
                           <p>Référence : {result.document.reference}</p>
-                          <p>Signé le : {new Date(result.document.signedAt).toLocaleString('fr-FR')}</p>
+                          <p>
+                            Signé le : {new Date(result.document.signedAt).toLocaleString('fr-FR')}
+                          </p>
                         </>
                       )}
                       {result.signatures.length > 0 && (
                         <>
-                          <h3 style={{ fontSize: 14, fontWeight: 'bold', marginTop: 12, marginBottom: 4 }}>Signatures ({result.signatures.length})</h3>
+                          <h3
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 'bold',
+                              marginTop: 12,
+                              marginBottom: 4,
+                            }}
+                          >
+                            Signatures ({result.signatures.length})
+                          </h3>
                           {result.signatures.map((sig, i) => (
-                            <div key={i} style={{ marginBottom: 6, paddingLeft: 8, borderLeft: '2px solid #16a34a' }}>
-                              <p>{sig.signerName} — {sig.signerEmail}</p>
-                              <p>Méthode : {sig.verificationMethod} — Intégrité : {sig.integrityStatus}</p>
+                            <div
+                              key={i}
+                              style={{
+                                marginBottom: 6,
+                                paddingLeft: 8,
+                                borderLeft: '2px solid #16a34a',
+                              }}
+                            >
+                              <p>
+                                {sig.signerName} — {sig.signerEmail}
+                              </p>
+                              <p>
+                                Méthode : {sig.verificationMethod} — Intégrité :{' '}
+                                {sig.integrityStatus}
+                              </p>
                               <p>Date : {new Date(sig.signedAt).toLocaleString('fr-FR')}</p>
                             </div>
                           ))}
@@ -247,8 +275,8 @@ export const VerifyPage: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-bold text-gray-700">DOCUMENT NON TROUVE</h3>
                     <p className="text-sm text-gray-500 mt-1">
-                      Aucun document ne correspond a ce code de verification.
-                      Verifiez que le code est correctement saisi.
+                      Aucun document ne correspond a ce code de verification. Verifiez que le code
+                      est correctement saisi.
                     </p>
                   </div>
                 </div>
@@ -264,7 +292,8 @@ export const VerifyPage: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-bold text-red-800">DOCUMENT MODIFIE</h3>
                     <p className="text-sm text-red-600 mt-1">
-                      Le sceau d'integrite ne correspond pas. Le document ou la signature a ete modifie.
+                      Le sceau d'integrite ne correspond pas. Le document ou la signature a ete
+                      modifie.
                     </p>
                   </div>
                 </div>
@@ -281,7 +310,9 @@ export const VerifyPage: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <FileText className="w-4 h-4 text-gray-400" />
                     <span className="text-sm text-gray-600">Titre :</span>
-                    <span className="text-sm font-medium text-gray-900">{result.document.title}</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {result.document.title}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Clock className="w-4 h-4 text-gray-400" />
@@ -302,20 +333,21 @@ export const VerifyPage: React.FC = () => {
                 </h4>
                 <div className="space-y-4">
                   {result.signatures.map((sig, index) => (
-                    <div
-                      key={index}
-                      className="p-4 bg-gray-50 rounded-lg border border-gray-100"
-                    >
+                    <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-100">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <User className="w-4 h-4 text-gray-400" />
-                          <span className="font-medium text-gray-900 text-sm">{sig.signerName}</span>
+                          <span className="font-medium text-gray-900 text-sm">
+                            {sig.signerName}
+                          </span>
                         </div>
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                          sig.integrityStatus === 'VALID'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-700'
-                        }`}>
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                            sig.integrityStatus === 'VALID'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-red-100 text-red-700'
+                          }`}
+                        >
                           {sig.integrityStatus === 'VALID' ? (
                             <CheckCircle className="w-3 h-3" />
                           ) : (
@@ -328,7 +360,9 @@ export const VerifyPage: React.FC = () => {
                         <span>Email : {sig.signerEmail}</span>
                         <span>Verification : {sig.verificationMethod}</span>
                         <span>Date : {new Date(sig.signedAt).toLocaleString('fr-FR')}</span>
-                        <span className="font-mono">Sceau : {sig.integritySeal.substring(0, 16)}...</span>
+                        <span className="font-mono">
+                          Sceau : {sig.integritySeal.substring(0, 16)}...
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -351,7 +385,7 @@ export const VerifyPage: React.FC = () => {
 function maskEmail(email: string): string {
   const [local, domain] = email.split('@');
   if (!domain) return email;
-  const masked = local.charAt(0) + '***' + (local.length > 1 ? local.charAt(local.length - 1) : '');
+  const masked = `${local.charAt(0)}***${local.length > 1 ? local.charAt(local.length - 1) : ''}`;
   return `${masked}@${domain}`;
 }
 

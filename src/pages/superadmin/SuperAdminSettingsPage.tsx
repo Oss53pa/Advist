@@ -3,36 +3,36 @@ import { useTranslation } from 'react-i18next';
 import {
   Settings,
   Mail,
-  MessageSquare,
+  _MessageSquare,
   Bell,
   Shield,
-  Globe,
+  _Globe,
   Database,
   Server,
   Key,
-  Lock,
+  _Lock,
   Webhook,
-  Cloud,
-  Palette,
-  Languages,
-  Clock,
+  _Cloud,
+  _Palette,
+  _Languages,
+  _Clock,
   Save,
   RefreshCw,
-  CheckCircle,
-  AlertTriangle,
+  _CheckCircle,
+  _AlertTriangle,
   Eye,
   EyeOff,
   Plus,
   Trash2,
   Edit,
   Copy,
-  ExternalLink,
+  _ExternalLink,
   ToggleLeft,
   ToggleRight,
   HardDrive,
   Zap,
-  Users,
-  Building2,
+  _Users,
+  _Building2,
   FileText,
 } from 'lucide-react';
 import { Card, Button, Badge, Modal } from '../../components/ui';
@@ -130,7 +130,7 @@ const settingsSections = [
 ];
 
 export const SuperAdminSettingsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [activeSection, setActiveSection] = useState('general');
   const [isSaving, setIsSaving] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
@@ -191,7 +191,7 @@ export const SuperAdminSettingsPage: React.FC = () => {
   const formatTimeAgo = (date?: Date) => {
     if (!date) return 'Jamais';
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    if (seconds < 60) return 'À l\'instant';
+    if (seconds < 60) return "À l'instant";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `Il y a ${minutes}min`;
     const hours = Math.floor(minutes / 60);
@@ -211,18 +211,20 @@ export const SuperAdminSettingsPage: React.FC = () => {
             <input
               type="text"
               value={generalSettings.platformName}
-              onChange={(e) => setGeneralSettings({ ...generalSettings, platformName: e.target.value })}
+              onChange={(e) =>
+                setGeneralSettings({ ...generalSettings, platformName: e.target.value })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">
-              Email support
-            </label>
+            <label className="block text-sm font-medium text-primary-700 mb-1">Email support</label>
             <input
               type="email"
               value={generalSettings.supportEmail}
-              onChange={(e) => setGeneralSettings({ ...generalSettings, supportEmail: e.target.value })}
+              onChange={(e) =>
+                setGeneralSettings({ ...generalSettings, supportEmail: e.target.value })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
@@ -232,7 +234,9 @@ export const SuperAdminSettingsPage: React.FC = () => {
             </label>
             <select
               value={generalSettings.defaultLanguage}
-              onChange={(e) => setGeneralSettings({ ...generalSettings, defaultLanguage: e.target.value })}
+              onChange={(e) =>
+                setGeneralSettings({ ...generalSettings, defaultLanguage: e.target.value })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none"
             >
               <option value="fr">Français</option>
@@ -245,7 +249,9 @@ export const SuperAdminSettingsPage: React.FC = () => {
             </label>
             <select
               value={generalSettings.defaultTimezone}
-              onChange={(e) => setGeneralSettings({ ...generalSettings, defaultTimezone: e.target.value })}
+              onChange={(e) =>
+                setGeneralSettings({ ...generalSettings, defaultTimezone: e.target.value })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none"
             >
               <option value="Africa/Abidjan">Africa/Abidjan (GMT+0)</option>
@@ -267,7 +273,12 @@ export const SuperAdminSettingsPage: React.FC = () => {
             <input
               type="number"
               value={generalSettings.maxOrganizations}
-              onChange={(e) => setGeneralSettings({ ...generalSettings, maxOrganizations: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setGeneralSettings({
+                  ...generalSettings,
+                  maxOrganizations: parseInt(e.target.value),
+                })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
@@ -278,7 +289,9 @@ export const SuperAdminSettingsPage: React.FC = () => {
             <input
               type="number"
               value={generalSettings.maxUsersPerOrg}
-              onChange={(e) => setGeneralSettings({ ...generalSettings, maxUsersPerOrg: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setGeneralSettings({ ...generalSettings, maxUsersPerOrg: parseInt(e.target.value) })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
@@ -291,10 +304,17 @@ export const SuperAdminSettingsPage: React.FC = () => {
           <div className="flex items-center justify-between p-4 bg-primary-50 rounded-xl">
             <div>
               <p className="font-medium text-primary-900">Inscriptions ouvertes</p>
-              <p className="text-sm text-primary-500">Permet aux nouvelles organisations de s'inscrire</p>
+              <p className="text-sm text-primary-500">
+                Permet aux nouvelles organisations de s'inscrire
+              </p>
             </div>
             <button
-              onClick={() => setGeneralSettings({ ...generalSettings, registrationEnabled: !generalSettings.registrationEnabled })}
+              onClick={() =>
+                setGeneralSettings({
+                  ...generalSettings,
+                  registrationEnabled: !generalSettings.registrationEnabled,
+                })
+              }
               className={`p-1 rounded-full transition-colors ${generalSettings.registrationEnabled ? 'bg-primary-900' : 'bg-primary-300'}`}
             >
               {generalSettings.registrationEnabled ? (
@@ -308,10 +328,17 @@ export const SuperAdminSettingsPage: React.FC = () => {
           <div className="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-200">
             <div>
               <p className="font-medium text-red-900">Mode maintenance</p>
-              <p className="text-sm text-red-600">Désactive l'accès pour tous les utilisateurs (sauf Super Admin)</p>
+              <p className="text-sm text-red-600">
+                Désactive l'accès pour tous les utilisateurs (sauf Super Admin)
+              </p>
             </div>
             <button
-              onClick={() => setGeneralSettings({ ...generalSettings, maintenanceMode: !generalSettings.maintenanceMode })}
+              onClick={() =>
+                setGeneralSettings({
+                  ...generalSettings,
+                  maintenanceMode: !generalSettings.maintenanceMode,
+                })
+              }
               className={`p-1 rounded-full transition-colors ${generalSettings.maintenanceMode ? 'bg-red-500' : 'bg-primary-300'}`}
             >
               {generalSettings.maintenanceMode ? (
@@ -358,7 +385,9 @@ export const SuperAdminSettingsPage: React.FC = () => {
             <input
               type="number"
               value={emailSettings.smtpPort}
-              onChange={(e) => setEmailSettings({ ...emailSettings, smtpPort: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setEmailSettings({ ...emailSettings, smtpPort: parseInt(e.target.value) })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
@@ -387,7 +416,9 @@ export const SuperAdminSettingsPage: React.FC = () => {
         <h3 className="text-lg font-semibold text-primary-900 mb-4">Expéditeur</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Email expéditeur</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1">
+              Email expéditeur
+            </label>
             <input
               type="email"
               value={emailSettings.fromEmail}
@@ -396,7 +427,9 @@ export const SuperAdminSettingsPage: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Nom expéditeur</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1">
+              Nom expéditeur
+            </label>
             <input
               type="text"
               value={emailSettings.fromName}
@@ -433,10 +466,17 @@ export const SuperAdminSettingsPage: React.FC = () => {
           <div className="flex items-center justify-between p-4 bg-primary-50 rounded-xl">
             <div>
               <p className="font-medium text-primary-900">2FA obligatoire</p>
-              <p className="text-sm text-primary-500">Exiger l'authentification à deux facteurs pour tous les admins</p>
+              <p className="text-sm text-primary-500">
+                Exiger l'authentification à deux facteurs pour tous les admins
+              </p>
             </div>
             <button
-              onClick={() => setSecuritySettings({ ...securitySettings, mfaRequired: !securitySettings.mfaRequired })}
+              onClick={() =>
+                setSecuritySettings({
+                  ...securitySettings,
+                  mfaRequired: !securitySettings.mfaRequired,
+                })
+              }
               className={`p-1 rounded-full transition-colors ${securitySettings.mfaRequired ? 'bg-primary-900' : 'bg-primary-300'}`}
             >
               {securitySettings.mfaRequired ? (
@@ -459,7 +499,12 @@ export const SuperAdminSettingsPage: React.FC = () => {
             <input
               type="number"
               value={securitySettings.passwordMinLength}
-              onChange={(e) => setSecuritySettings({ ...securitySettings, passwordMinLength: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setSecuritySettings({
+                  ...securitySettings,
+                  passwordMinLength: parseInt(e.target.value),
+                })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
@@ -470,7 +515,12 @@ export const SuperAdminSettingsPage: React.FC = () => {
             <input
               type="number"
               value={securitySettings.maxLoginAttempts}
-              onChange={(e) => setSecuritySettings({ ...securitySettings, maxLoginAttempts: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setSecuritySettings({
+                  ...securitySettings,
+                  maxLoginAttempts: parseInt(e.target.value),
+                })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
@@ -481,7 +531,12 @@ export const SuperAdminSettingsPage: React.FC = () => {
             <input
               type="number"
               value={securitySettings.sessionTimeout}
-              onChange={(e) => setSecuritySettings({ ...securitySettings, sessionTimeout: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setSecuritySettings({
+                  ...securitySettings,
+                  sessionTimeout: parseInt(e.target.value),
+                })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
@@ -492,7 +547,12 @@ export const SuperAdminSettingsPage: React.FC = () => {
             <input
               type="number"
               value={securitySettings.auditLogRetention}
-              onChange={(e) => setSecuritySettings({ ...securitySettings, auditLogRetention: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setSecuritySettings({
+                  ...securitySettings,
+                  auditLogRetention: parseInt(e.target.value),
+                })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
@@ -525,7 +585,11 @@ export const SuperAdminSettingsPage: React.FC = () => {
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => setShowKeyValue(showKeyValue === key.id ? null : key.id)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowKeyValue(showKeyValue === key.id ? null : key.id)}
+                  >
                     {showKeyValue === key.id ? <EyeOff size={14} /> : <Eye size={14} />}
                   </Button>
                   <Button variant="ghost" size="sm">
@@ -589,7 +653,10 @@ export const SuperAdminSettingsPage: React.FC = () => {
               </div>
               <div className="flex flex-wrap gap-1 mt-2">
                 {webhook.events.map((event) => (
-                  <span key={event} className="px-2 py-0.5 bg-primary-200 text-primary-700 rounded text-xs">
+                  <span
+                    key={event}
+                    className="px-2 py-0.5 bg-primary-200 text-primary-700 rounded text-xs"
+                  >
                     {event}
                   </span>
                 ))}
@@ -641,20 +708,28 @@ export const SuperAdminSettingsPage: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Taille max fichier (MB)</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1">
+              Taille max fichier (MB)
+            </label>
             <input
               type="number"
               value={storageSettings.maxFileSize}
-              onChange={(e) => setStorageSettings({ ...storageSettings, maxFileSize: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setStorageSettings({ ...storageSettings, maxFileSize: parseInt(e.target.value) })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-primary-700 mb-1">Types autorisés</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1">
+              Types autorisés
+            </label>
             <input
               type="text"
               value={storageSettings.allowedTypes}
-              onChange={(e) => setStorageSettings({ ...storageSettings, allowedTypes: e.target.value })}
+              onChange={(e) =>
+                setStorageSettings({ ...storageSettings, allowedTypes: e.target.value })
+              }
               className="w-full px-3 py-2 border border-primary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
               placeholder="pdf,doc,docx,xls,xlsx"
             />
@@ -668,7 +743,12 @@ export const SuperAdminSettingsPage: React.FC = () => {
           <p className="text-sm text-primary-500">Chiffrer tous les fichiers stockés (AES-256)</p>
         </div>
         <button
-          onClick={() => setStorageSettings({ ...storageSettings, encryptionEnabled: !storageSettings.encryptionEnabled })}
+          onClick={() =>
+            setStorageSettings({
+              ...storageSettings,
+              encryptionEnabled: !storageSettings.encryptionEnabled,
+            })
+          }
           className={`p-1 rounded-full transition-colors ${storageSettings.encryptionEnabled ? 'bg-primary-900' : 'bg-primary-300'}`}
         >
           {storageSettings.encryptionEnabled ? (
@@ -691,7 +771,11 @@ export const SuperAdminSettingsPage: React.FC = () => {
             { icon: Zap, label: 'Vider le cache', desc: 'Purger Redis cache' },
             { icon: RefreshCw, label: 'Redémarrer workers', desc: 'Restart queue workers' },
             { icon: FileText, label: 'Réindexer recherche', desc: 'Rebuild search index' },
-            { icon: Trash2, label: 'Nettoyer fichiers temp', desc: 'Supprimer fichiers temporaires' },
+            {
+              icon: Trash2,
+              label: 'Nettoyer fichiers temp',
+              desc: 'Supprimer fichiers temporaires',
+            },
             { icon: Shield, label: 'Scan sécurité', desc: 'Lancer audit de sécurité' },
           ].map((action, i) => (
             <button
@@ -866,7 +950,12 @@ export const SuperAdminSettingsPage: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-primary-700 mb-1">Événements</label>
             <div className="grid grid-cols-2 gap-2">
-              {['document.created', 'workflow.completed', 'signature.completed', 'tenant.created'].map((event) => (
+              {[
+                'document.created',
+                'workflow.completed',
+                'signature.completed',
+                'tenant.created',
+              ].map((event) => (
                 <label key={event} className="flex items-center gap-2">
                   <input type="checkbox" className="rounded" />
                   <span className="text-sm">{event}</span>

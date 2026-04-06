@@ -12,21 +12,21 @@ import {
   Calendar,
   TrendingUp,
   Wallet,
-  ArrowRight,
-  XCircle,
+  _ArrowRight,
+  _XCircle,
   Sparkles,
   Plus,
-  X,
+  _X,
   Info,
 } from 'lucide-react';
-import { Button, Modal, Badge } from '../../components/ui';
+import { Button, Modal } from '../../components/ui';
 import { PrintButton } from '../../shared/PrintEngine';
 import { PaymentForm, PaymentFormData } from '../../components/payment';
 import { AddonCard } from '../../components/billing/AddonCard';
 import { PlanDetailsModal } from '../../components/billing/PlanDetailsModal';
 import {
   subscriptionsService,
-  addonsService,
+  _addonsService,
   SubscriptionAddon,
   AvailableAddon,
 } from '../../services/subscriptions';
@@ -102,10 +102,10 @@ const mockPaymentMethods = [
 ];
 
 export const ClientBillingPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const navigate = useNavigate();
   const { currentTenant } = useTenantStore();
-  const [selectedInvoice, setSelectedInvoice] = useState<typeof mockInvoices[0] | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<(typeof mockInvoices)[0] | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -137,7 +137,7 @@ export const ClientBillingPage: React.FC = () => {
         subscriptionsService.getAvailableAddons(subscriptionId),
       ]);
       setActiveAddons(active);
-      setAvailableAddons(available.filter(a => !a.is_active));
+      setAvailableAddons(available.filter((a) => !a.is_active));
     } catch (err) {
       console.error('Error loading addons:', err);
       // For demo, use mock data
@@ -180,23 +180,33 @@ export const ClientBillingPage: React.FC = () => {
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'pending':
-        return { icon: Clock, color: 'bg-advist-gold-light text-advist-gray900', label: 'En attente' };
+        return {
+          icon: Clock,
+          color: 'bg-advist-gold-light text-advist-gray900',
+          label: 'En attente',
+        };
       case 'paid':
         return { icon: CheckCircle, color: 'bg-green-50 text-advist-success', label: 'Payée' };
       case 'overdue':
-        return { icon: AlertTriangle, color: 'bg-advist-gold-light text-advist-error', label: 'En retard' };
+        return {
+          icon: AlertTriangle,
+          color: 'bg-advist-gold-light text-advist-error',
+          label: 'En retard',
+        };
       default:
         return { icon: Clock, color: 'bg-advist-surface-dark text-advist-gray900', label: status };
     }
   };
 
-  const pendingInvoices = mockInvoices.filter(inv => inv.status === 'pending' || inv.status === 'overdue');
+  const pendingInvoices = mockInvoices.filter(
+    (inv) => inv.status === 'pending' || inv.status === 'overdue'
+  );
   const totalPending = pendingInvoices.reduce((sum, inv) => sum + (inv.total - inv.amountPaid), 0);
 
   const handlePayment = async (data: PaymentFormData) => {
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('Payment data:', data);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.info('Payment data:', data);
     setPaymentSuccess(true);
     setTimeout(() => {
       setShowPaymentModal(false);
@@ -210,9 +220,7 @@ export const ClientBillingPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">Facturation</h1>
-          <p className="text-advist-blue-light mt-1">
-            Gérez votre abonnement et vos paiements
-          </p>
+          <p className="text-advist-blue-light mt-1">Gérez votre abonnement et vos paiements</p>
         </div>
         <PrintButton config={{ title: 'Facturation', appName: 'Advist' }}>
           <div>
@@ -230,9 +238,18 @@ export const ClientBillingPage: React.FC = () => {
                 {mockInvoices.map((inv) => (
                   <tr key={inv.id} className="border-b">
                     <td className="py-2">{inv.invoiceNumber}</td>
-                    <td className="py-2">{new Date(inv.periodStart).toLocaleDateString('fr-FR')} - {new Date(inv.periodEnd).toLocaleDateString('fr-FR')}</td>
+                    <td className="py-2">
+                      {new Date(inv.periodStart).toLocaleDateString('fr-FR')} -{' '}
+                      {new Date(inv.periodEnd).toLocaleDateString('fr-FR')}
+                    </td>
                     <td className="py-2">{formatCurrency(inv.total)} FCFA</td>
-                    <td className="py-2">{inv.status === 'paid' ? 'Payée' : inv.status === 'pending' ? 'En attente' : inv.status}</td>
+                    <td className="py-2">
+                      {inv.status === 'paid'
+                        ? 'Payée'
+                        : inv.status === 'pending'
+                          ? 'En attente'
+                          : inv.status}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -250,7 +267,8 @@ export const ClientBillingPage: React.FC = () => {
             </div>
             <div>
               <p className="font-medium text-advist-gold-dark">
-                {pendingInvoices.length} facture{pendingInvoices.length > 1 ? 's' : ''} en attente de paiement
+                {pendingInvoices.length} facture{pendingInvoices.length > 1 ? 's' : ''} en attente
+                de paiement
               </p>
               <p className="text-sm text-advist-gold-dark">
                 Montant total: {formatCurrency(totalPending)} FCFA
@@ -275,14 +293,21 @@ export const ClientBillingPage: React.FC = () => {
         <div className="lg:col-span-2 bg-white rounded-xl border border-advist-bg p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-advist-gray900">Votre abonnement</h2>
-            <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${
-              currentTenant?.status === 'active' ? 'bg-green-50 text-advist-success' :
-              currentTenant?.status === 'trial' ? 'bg-blue-50 text-blue-600' :
-              'bg-advist-gold-light text-advist-gold-dark'
-            }`}>
+            <div
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${
+                currentTenant?.status === 'active'
+                  ? 'bg-green-50 text-advist-success'
+                  : currentTenant?.status === 'trial'
+                    ? 'bg-blue-50 text-blue-600'
+                    : 'bg-advist-gold-light text-advist-gold-dark'
+              }`}
+            >
               <CheckCircle size={14} />
-              {currentTenant?.status === 'active' ? 'Actif' :
-               currentTenant?.status === 'trial' ? 'Essai' : 'En attente'}
+              {currentTenant?.status === 'active'
+                ? 'Actif'
+                : currentTenant?.status === 'trial'
+                  ? 'Essai'
+                  : 'En attente'}
             </div>
           </div>
 
@@ -302,20 +327,29 @@ export const ClientBillingPage: React.FC = () => {
                   <span>Gratuit</span>
                 ) : (
                   <>
-                    {planInfo.price} <span className="text-sm font-normal text-advist-blue-light">{planInfo.period}</span>
+                    {planInfo.price}{' '}
+                    <span className="text-sm font-normal text-advist-blue-light">
+                      {planInfo.period}
+                    </span>
                   </>
                 )}
               </p>
               {currentTenant?.subscription?.trialEndsAt && currentTenant.status === 'trial' && (
                 <div className="flex items-center gap-2 mt-3 text-sm text-blue-600">
                   <Calendar size={16} />
-                  <span>Fin de l'essai: {new Date(currentTenant.subscription.trialEndsAt).toLocaleDateString('fr-FR')}</span>
+                  <span>
+                    Fin de l'essai:{' '}
+                    {new Date(currentTenant.subscription.trialEndsAt).toLocaleDateString('fr-FR')}
+                  </span>
                 </div>
               )}
               {currentTenant?.subscription?.expiresAt && currentTenant.status === 'active' && (
                 <div className="flex items-center gap-2 mt-3 text-sm text-advist-blue-light">
                   <Calendar size={16} />
-                  <span>Prochain renouvellement: {new Date(currentTenant.subscription.expiresAt).toLocaleDateString('fr-FR')}</span>
+                  <span>
+                    Prochain renouvellement:{' '}
+                    {new Date(currentTenant.subscription.expiresAt).toLocaleDateString('fr-FR')}
+                  </span>
                 </div>
               )}
             </div>
@@ -520,23 +554,37 @@ export const ClientBillingPage: React.FC = () => {
                 className="flex items-center justify-between p-4 hover:bg-advist-bg/50 transition-all"
               >
                 <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    invoice.status === 'paid' ? 'bg-green-50' : 'bg-advist-gold-light'
-                  }`}>
-                    <FileText size={18} className={invoice.status === 'paid' ? 'text-advist-success' : 'text-advist-gold-dark'} />
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      invoice.status === 'paid' ? 'bg-green-50' : 'bg-advist-gold-light'
+                    }`}
+                  >
+                    <FileText
+                      size={18}
+                      className={
+                        invoice.status === 'paid' ? 'text-advist-success' : 'text-advist-gold-dark'
+                      }
+                    />
                   </div>
                   <div>
                     <p className="font-medium text-advist-gray900">{invoice.invoiceNumber}</p>
                     <p className="text-sm text-advist-blue-light">
-                      {new Date(invoice.periodStart).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+                      {new Date(invoice.periodStart).toLocaleDateString('fr-FR', {
+                        month: 'long',
+                        year: 'numeric',
+                      })}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <p className="font-semibold text-advist-gray900">{formatCurrency(invoice.total)} FCFA</p>
-                    <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
+                    <p className="font-semibold text-advist-gray900">
+                      {formatCurrency(invoice.total)} FCFA
+                    </p>
+                    <div
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${status.color}`}
+                    >
                       <status.icon size={10} />
                       {status.label}
                     </div>
@@ -589,10 +637,13 @@ export const ClientBillingPage: React.FC = () => {
                 <div>
                   <p className="text-sm text-advist-blue-light">Période</p>
                   <p className="font-medium text-advist-gray900">
-                    {new Date(selectedInvoice.periodStart).toLocaleDateString('fr-FR')} - {new Date(selectedInvoice.periodEnd).toLocaleDateString('fr-FR')}
+                    {new Date(selectedInvoice.periodStart).toLocaleDateString('fr-FR')} -{' '}
+                    {new Date(selectedInvoice.periodEnd).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${getStatusConfig(selectedInvoice.status).color}`}>
+                <div
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${getStatusConfig(selectedInvoice.status).color}`}
+                >
                   {React.createElement(getStatusConfig(selectedInvoice.status).icon, { size: 14 })}
                   {getStatusConfig(selectedInvoice.status).label}
                 </div>
@@ -606,7 +657,9 @@ export const ClientBillingPage: React.FC = () => {
               </div>
               <div className="p-4 bg-advist-bg flex justify-between">
                 <span className="font-semibold">Total</span>
-                <span className="text-xl font-bold text-advist-gray900">{formatCurrency(selectedInvoice.total)} FCFA</span>
+                <span className="text-xl font-bold text-advist-gray900">
+                  {formatCurrency(selectedInvoice.total)} FCFA
+                </span>
               </div>
             </div>
 
@@ -649,9 +702,7 @@ export const ClientBillingPage: React.FC = () => {
               <CheckCircle size={40} className="text-advist-success" />
             </div>
             <h3 className="text-xl font-bold text-advist-gray900 mb-2">Paiement réussi!</h3>
-            <p className="text-advist-blue-light">
-              Votre paiement a été traité avec succès.
-            </p>
+            <p className="text-advist-blue-light">Votre paiement a été traité avec succès.</p>
           </div>
         ) : selectedInvoice ? (
           <PaymentForm

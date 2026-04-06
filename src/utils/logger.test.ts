@@ -12,7 +12,7 @@ vi.mock('@sentry/react', () => ({
 }));
 
 describe('Logger', () => {
-  let consoleSpy: {
+  let _consoleSpy: {
     debug: ReturnType<typeof vi.spyOn>;
     info: ReturnType<typeof vi.spyOn>;
     warn: ReturnType<typeof vi.spyOn>;

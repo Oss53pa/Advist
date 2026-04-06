@@ -5,19 +5,19 @@ import {
   Search,
   Plus,
   Download,
-  Send,
+  _Send,
   Eye,
   CheckCircle,
   Clock,
   AlertTriangle,
   XCircle,
-  Filter,
-  Calendar,
-  MoreVertical,
+  _Filter,
+  _Calendar,
+  _MoreVertical,
   CreditCard,
   Printer,
 } from 'lucide-react';
-import { Button, Modal, Badge } from '../../../components/ui';
+import { Button, Modal } from '../../../components/ui';
 
 // Mock invoices data
 const mockInvoices = [
@@ -39,7 +39,7 @@ const mockInvoices = [
   {
     id: '2',
     invoiceNumber: 'INV-2024-0094',
-    organization: 'Orange Côte d\'Ivoire',
+    organization: "Orange Côte d'Ivoire",
     subscription: { plan: 'Enterprise' },
     total: 2500000,
     amountPaid: 2500000,
@@ -124,10 +124,10 @@ const statusOptions = [
 ];
 
 export const InvoicesPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [selectedInvoice, setSelectedInvoice] = useState<typeof mockInvoices[0] | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<(typeof mockInvoices)[0] | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
@@ -138,17 +138,37 @@ export const InvoicesPage: React.FC = () => {
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'draft':
-        return { icon: FileText, color: 'bg-advist-surface-dark text-advist-gray900', label: 'Brouillon' };
+        return {
+          icon: FileText,
+          color: 'bg-advist-surface-dark text-advist-gray900',
+          label: 'Brouillon',
+        };
       case 'pending':
-        return { icon: Clock, color: 'bg-advist-gold-light text-advist-gray900', label: 'En attente' };
+        return {
+          icon: Clock,
+          color: 'bg-advist-gold-light text-advist-gray900',
+          label: 'En attente',
+        };
       case 'paid':
         return { icon: CheckCircle, color: 'bg-green-50 text-advist-success', label: 'Payée' };
       case 'partial':
-        return { icon: Clock, color: 'bg-advist-gold-light text-advist-gold-dark', label: 'Partielle' };
+        return {
+          icon: Clock,
+          color: 'bg-advist-gold-light text-advist-gold-dark',
+          label: 'Partielle',
+        };
       case 'overdue':
-        return { icon: AlertTriangle, color: 'bg-advist-gold-light text-advist-error', label: 'En retard' };
+        return {
+          icon: AlertTriangle,
+          color: 'bg-advist-gold-light text-advist-error',
+          label: 'En retard',
+        };
       case 'cancelled':
-        return { icon: XCircle, color: 'bg-advist-surface-dark text-advist-gray900', label: 'Annulée' };
+        return {
+          icon: XCircle,
+          color: 'bg-advist-surface-dark text-advist-gray900',
+          label: 'Annulée',
+        };
       default:
         return { icon: Clock, color: 'bg-advist-surface-dark text-advist-gray900', label: status };
     }
@@ -172,9 +192,7 @@ export const InvoicesPage: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">Factures</h1>
-          <p className="text-advist-blue-light mt-1">
-            Gérer les factures et les paiements
-          </p>
+          <p className="text-advist-blue-light mt-1">Gérer les factures et les paiements</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -212,7 +230,7 @@ export const InvoicesPage: React.FC = () => {
         <div className="bg-advist-gold-light rounded-xl p-4 border border-advist-gold">
           <p className="text-sm text-advist-error">En retard</p>
           <p className="text-2xl font-bold text-advist-error mt-1">
-            {mockInvoices.filter(i => i.status === 'overdue').length} factures
+            {mockInvoices.filter((i) => i.status === 'overdue').length} factures
           </p>
         </div>
       </div>
@@ -220,7 +238,10 @@ export const InvoicesPage: React.FC = () => {
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light" />
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
+          />
           <input
             type="text"
             placeholder="Rechercher par numéro ou organisation..."
@@ -235,7 +256,9 @@ export const InvoicesPage: React.FC = () => {
           className="px-4 py-2.5 bg-white border border-advist-bg rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
         >
           {statusOptions.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
           ))}
         </select>
       </div>
@@ -271,7 +294,9 @@ export const InvoicesPage: React.FC = () => {
                 const status = getStatusConfig(invoice.status);
                 const isOverdue = invoice.status === 'overdue';
                 const daysOverdue = isOverdue
-                  ? Math.ceil((Date.now() - new Date(invoice.dueDate).getTime()) / (1000 * 60 * 60 * 24))
+                  ? Math.ceil(
+                      (Date.now() - new Date(invoice.dueDate).getTime()) / (1000 * 60 * 60 * 24)
+                    )
                   : 0;
 
                 return (
@@ -291,7 +316,9 @@ export const InvoicesPage: React.FC = () => {
                         </div>
                         <div>
                           <p className="font-medium text-advist-gray900">{invoice.organization}</p>
-                          <p className="text-xs text-advist-blue-light">{invoice.subscription.plan}</p>
+                          <p className="text-xs text-advist-blue-light">
+                            {invoice.subscription.plan}
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -309,7 +336,9 @@ export const InvoicesPage: React.FC = () => {
                     </td>
                     <td className="px-4 py-4">
                       <div>
-                        <p className={`text-sm ${isOverdue ? 'text-advist-error font-medium' : 'text-advist-gray900'}`}>
+                        <p
+                          className={`text-sm ${isOverdue ? 'text-advist-error font-medium' : 'text-advist-gray900'}`}
+                        >
                           {new Date(invoice.dueDate).toLocaleDateString('fr-FR')}
                         </p>
                         {isOverdue && (
@@ -318,7 +347,9 @@ export const InvoicesPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.color}`}>
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.color}`}
+                      >
                         <status.icon size={12} />
                         {status.label}
                       </div>
@@ -338,7 +369,9 @@ export const InvoicesPage: React.FC = () => {
                         <Button variant="ghost" size="sm">
                           <Download size={16} />
                         </Button>
-                        {(invoice.status === 'pending' || invoice.status === 'partial' || invoice.status === 'overdue') && (
+                        {(invoice.status === 'pending' ||
+                          invoice.status === 'partial' ||
+                          invoice.status === 'overdue') && (
                           <Button
                             variant="ghost"
                             size="sm"
@@ -373,12 +406,16 @@ export const InvoicesPage: React.FC = () => {
             {/* Invoice Header */}
             <div className="flex justify-between items-start p-4 bg-advist-bg rounded-xl">
               <div>
-                <h3 className="text-lg font-bold text-advist-gray900">{selectedInvoice.invoiceNumber}</h3>
+                <h3 className="text-lg font-bold text-advist-gray900">
+                  {selectedInvoice.invoiceNumber}
+                </h3>
                 <p className="text-sm text-advist-blue-light">
                   Émise le {new Date(selectedInvoice.issuedAt).toLocaleDateString('fr-FR')}
                 </p>
               </div>
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${getStatusConfig(selectedInvoice.status).color}`}>
+              <div
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${getStatusConfig(selectedInvoice.status).color}`}
+              >
                 {React.createElement(getStatusConfig(selectedInvoice.status).icon, { size: 14 })}
                 {getStatusConfig(selectedInvoice.status).label}
               </div>
@@ -389,12 +426,15 @@ export const InvoicesPage: React.FC = () => {
               <div className="p-4 border border-advist-bg rounded-xl">
                 <p className="text-sm text-advist-blue-light mb-1">Client</p>
                 <p className="font-semibold text-advist-gray900">{selectedInvoice.organization}</p>
-                <p className="text-sm text-advist-blue-light mt-1">Plan {selectedInvoice.subscription.plan}</p>
+                <p className="text-sm text-advist-blue-light mt-1">
+                  Plan {selectedInvoice.subscription.plan}
+                </p>
               </div>
               <div className="p-4 border border-advist-bg rounded-xl">
                 <p className="text-sm text-advist-blue-light mb-1">Période</p>
                 <p className="font-semibold text-advist-gray900">
-                  {new Date(selectedInvoice.periodStart).toLocaleDateString('fr-FR')} - {new Date(selectedInvoice.periodEnd).toLocaleDateString('fr-FR')}
+                  {new Date(selectedInvoice.periodStart).toLocaleDateString('fr-FR')} -{' '}
+                  {new Date(selectedInvoice.periodEnd).toLocaleDateString('fr-FR')}
                 </p>
               </div>
             </div>
@@ -403,24 +443,34 @@ export const InvoicesPage: React.FC = () => {
             <div className="border border-advist-bg rounded-xl overflow-hidden">
               <div className="p-4 border-b border-advist-bg">
                 <div className="flex justify-between">
-                  <span className="text-advist-gray900">Abonnement {selectedInvoice.subscription.plan}</span>
-                  <span className="font-medium text-advist-gray900">{formatCurrency(selectedInvoice.total)} FCFA</span>
+                  <span className="text-advist-gray900">
+                    Abonnement {selectedInvoice.subscription.plan}
+                  </span>
+                  <span className="font-medium text-advist-gray900">
+                    {formatCurrency(selectedInvoice.total)} FCFA
+                  </span>
                 </div>
               </div>
               <div className="p-4 bg-advist-bg">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-advist-gray900">Total</span>
-                  <span className="text-xl font-bold text-advist-gray900">{formatCurrency(selectedInvoice.total)} FCFA</span>
+                  <span className="text-xl font-bold text-advist-gray900">
+                    {formatCurrency(selectedInvoice.total)} FCFA
+                  </span>
                 </div>
                 {selectedInvoice.amountPaid > 0 && (
                   <>
                     <div className="flex justify-between mt-2">
                       <span className="text-advist-success">Payé</span>
-                      <span className="text-advist-success">-{formatCurrency(selectedInvoice.amountPaid)} FCFA</span>
+                      <span className="text-advist-success">
+                        -{formatCurrency(selectedInvoice.amountPaid)} FCFA
+                      </span>
                     </div>
                     <div className="flex justify-between mt-2 pt-2 border-t border-advist-bg">
                       <span className="font-semibold text-advist-gold-dark">Reste à payer</span>
-                      <span className="font-bold text-advist-gold-dark">{formatCurrency(selectedInvoice.total - selectedInvoice.amountPaid)} FCFA</span>
+                      <span className="font-bold text-advist-gold-dark">
+                        {formatCurrency(selectedInvoice.total - selectedInvoice.amountPaid)} FCFA
+                      </span>
                     </div>
                   </>
                 )}
@@ -491,7 +541,9 @@ export const InvoicesPage: React.FC = () => {
                     defaultValue={selectedInvoice.total - selectedInvoice.amountPaid}
                     className="w-full px-4 py-3 border border-advist-bg rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-advist-blue-light">FCFA</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-advist-blue-light">
+                    FCFA
+                  </span>
                 </div>
               </div>
 
@@ -502,15 +554,32 @@ export const InvoicesPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { id: 'card', label: 'Carte bancaire', icon: CreditCard },
-                    { id: 'mobile_money', label: 'Mobile Money', icon: () => <span className="text-lg">📱</span> },
-                    { id: 'bank_transfer', label: 'Virement', icon: () => <span className="text-lg">🏦</span> },
-                    { id: 'cash', label: 'Espèces', icon: () => <span className="text-lg">💵</span> },
+                    {
+                      id: 'mobile_money',
+                      label: 'Mobile Money',
+                      icon: () => <span className="text-lg">📱</span>,
+                    },
+                    {
+                      id: 'bank_transfer',
+                      label: 'Virement',
+                      icon: () => <span className="text-lg">🏦</span>,
+                    },
+                    {
+                      id: 'cash',
+                      label: 'Espèces',
+                      icon: () => <span className="text-lg">💵</span>,
+                    },
                   ].map((method) => (
                     <label
                       key={method.id}
                       className="flex items-center gap-3 p-3 border border-advist-bg rounded-xl cursor-pointer hover:border-advist-blue-light transition-colors"
                     >
-                      <input type="radio" name="paymentMethod" value={method.id} className="accent-advist-navy" />
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value={method.id}
+                        className="accent-advist-navy"
+                      />
                       <method.icon size={18} />
                       <span className="text-sm text-advist-gray900">{method.label}</span>
                     </label>
@@ -530,9 +599,7 @@ export const InvoicesPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                  Notes
-                </label>
+                <label className="block text-sm font-medium text-advist-gray900 mb-2">Notes</label>
                 <textarea
                   placeholder="Notes additionnelles..."
                   rows={2}
@@ -543,7 +610,11 @@ export const InvoicesPage: React.FC = () => {
 
             {/* Actions */}
             <div className="flex gap-3 pt-4 border-t border-advist-bg">
-              <Button variant="outline" className="flex-1" onClick={() => setShowPaymentModal(false)}>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowPaymentModal(false)}
+              >
                 Annuler
               </Button>
               <Button className="flex-1">

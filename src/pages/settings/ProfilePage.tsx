@@ -2,11 +2,11 @@
 import { useTranslation } from 'react-i18next';
 import {
   User,
-  Mail,
-  Phone,
-  Building2,
-  MapPin,
-  Calendar,
+  _Mail,
+  _Phone,
+  _Building2,
+  _MapPin,
+  _Calendar,
   Camera,
   Save,
   Key,
@@ -31,8 +31,6 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
 import { Avatar } from '../../components/ui/Avatar';
 import { useAuthStore } from '../../store';
@@ -62,10 +60,15 @@ interface SignatureSpecimen {
 export const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const { user, updateUser } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<'profile' | 'signature' | 'security' | 'sessions' | 'appearance'>('profile');
+  const [activeTab, setActiveTab] = useState<
+    'profile' | 'signature' | 'security' | 'sessions' | 'appearance'
+  >('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [saveMessage, setSaveMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
@@ -78,7 +81,7 @@ export const ProfilePage: React.FC = () => {
     department: 'Direction',
     position: 'Directeur General',
     location: 'Paris, France',
-    bio: 'Directeur general chez ADVIST Demo. Passionne par la transformation digitale et l\'optimisation des processus.',
+    bio: "Directeur general chez ADVIST Demo. Passionne par la transformation digitale et l'optimisation des processus.",
   });
 
   const tabs = [
@@ -103,14 +106,20 @@ export const ProfilePage: React.FC = () => {
         });
       }
 
-      setSaveMessage({ type: 'success', text: t('profile.updateSuccess', 'Profil mis à jour avec succès') });
+      setSaveMessage({
+        type: 'success',
+        text: t('profile.updateSuccess', 'Profil mis à jour avec succès'),
+      });
       setIsEditing(false);
 
       // Clear success message after 3 seconds
       setTimeout(() => setSaveMessage(null), 3000);
     } catch (error) {
       console.error('Failed to save profile:', error);
-      setSaveMessage({ type: 'error', text: t('profile.updateError', 'Erreur lors de la mise à jour du profil') });
+      setSaveMessage({
+        type: 'error',
+        text: t('profile.updateError', 'Erreur lors de la mise à jour du profil'),
+      });
     } finally {
       setIsSaving(false);
     }
@@ -122,9 +131,7 @@ export const ProfilePage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">{t('profile.title')}</h1>
-          <p className="text-advist-gray900 mt-1">
-            {t('profile.subtitle')}
-          </p>
+          <p className="text-advist-gray900 mt-1">{t('profile.subtitle')}</p>
         </div>
       </div>
 
@@ -158,7 +165,7 @@ export const ProfilePage: React.FC = () => {
           </div>
           <Button
             variant={isEditing ? 'primary' : 'outline'}
-            onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
+            onClick={() => (isEditing ? handleSaveProfile() : setIsEditing(true))}
             disabled={isSaving}
           >
             {isSaving ? (
@@ -180,11 +187,13 @@ export const ProfilePage: React.FC = () => {
 
       {/* Save Message */}
       {saveMessage && (
-        <div className={`p-4 rounded-xl flex items-center gap-3 ${
-          saveMessage.type === 'success'
-            ? 'bg-green-50 border border-advist-success text-advist-success'
-            : 'bg-advist-gold-light border border-advist-gold text-advist-error'
-        }`}>
+        <div
+          className={`p-4 rounded-xl flex items-center gap-3 ${
+            saveMessage.type === 'success'
+              ? 'bg-green-50 border border-advist-success text-advist-success'
+              : 'bg-advist-gold-light border border-advist-gold text-advist-error'
+          }`}
+        >
           {saveMessage.type === 'success' ? <Check size={18} /> : <AlertTriangle size={18} />}
           {saveMessage.text}
         </div>
@@ -199,9 +208,10 @@ export const ProfilePage: React.FC = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`
                 flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all duration-240
-                ${activeTab === tab.id
-                  ? 'border-advist-dark text-advist-gray900'
-                  : 'border-transparent text-advist-gray900 hover:text-advist-gray900'
+                ${
+                  activeTab === tab.id
+                    ? 'border-advist-dark text-advist-gray900'
+                    : 'border-transparent text-advist-gray900 hover:text-advist-gray900'
                 }
               `}
             >
@@ -220,7 +230,9 @@ export const ProfilePage: React.FC = () => {
           isEditing={isEditing}
         />
       )}
-      {activeTab === 'signature' && <SignatureTab userName={`${profileData.first_name} ${profileData.last_name}`} />}
+      {activeTab === 'signature' && (
+        <SignatureTab userName={`${profileData.first_name} ${profileData.last_name}`} />
+      )}
       {activeTab === 'security' && (
         <SecurityTab
           onChangePassword={() => setShowPasswordModal(true)}
@@ -232,16 +244,10 @@ export const ProfilePage: React.FC = () => {
       {activeTab === 'appearance' && <AppearanceTab />}
 
       {/* Change Password Modal */}
-      <ChangePasswordModal
-        isOpen={showPasswordModal}
-        onClose={() => setShowPasswordModal(false)}
-      />
+      <ChangePasswordModal isOpen={showPasswordModal} onClose={() => setShowPasswordModal(false)} />
 
       {/* 2FA Setup Modal */}
-      <Setup2FAModal
-        isOpen={show2FAModal}
-        onClose={() => setShow2FAModal(false)}
-      />
+      <Setup2FAModal isOpen={show2FAModal} onClose={() => setShow2FAModal(false)} />
 
       {/* Delete Account Modal */}
       <DeleteAccountModal
@@ -272,17 +278,13 @@ const ProfileTab: React.FC<{
             <Input
               label={t('auth.firstName', 'Prénom')}
               value={profileData.first_name}
-              onChange={(e) =>
-                setProfileData({ ...profileData, first_name: e.target.value })
-              }
+              onChange={(e) => setProfileData({ ...profileData, first_name: e.target.value })}
               disabled={!isEditing}
             />
             <Input
               label={t('auth.lastName', 'Nom')}
               value={profileData.last_name}
-              onChange={(e) =>
-                setProfileData({ ...profileData, last_name: e.target.value })
-              }
+              onChange={(e) => setProfileData({ ...profileData, last_name: e.target.value })}
               disabled={!isEditing}
             />
           </div>
@@ -290,18 +292,14 @@ const ProfileTab: React.FC<{
             label={t('common.email', 'Email')}
             type="email"
             value={profileData.email}
-            onChange={(e) =>
-              setProfileData({ ...profileData, email: e.target.value })
-            }
+            onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
             disabled={!isEditing}
           />
           <Input
             label={t('common.phone', 'Téléphone')}
             type="tel"
             value={profileData.phone}
-            onChange={(e) =>
-              setProfileData({ ...profileData, phone: e.target.value })
-            }
+            onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
             disabled={!isEditing}
           />
         </div>
@@ -316,25 +314,19 @@ const ProfileTab: React.FC<{
           <Input
             label={t('profile.position', 'Poste')}
             value={profileData.position}
-            onChange={(e) =>
-              setProfileData({ ...profileData, position: e.target.value })
-            }
+            onChange={(e) => setProfileData({ ...profileData, position: e.target.value })}
             disabled={!isEditing}
           />
           <Input
             label={t('users.department', 'Département')}
             value={profileData.department}
-            onChange={(e) =>
-              setProfileData({ ...profileData, department: e.target.value })
-            }
+            onChange={(e) => setProfileData({ ...profileData, department: e.target.value })}
             disabled={!isEditing}
           />
           <Input
             label={t('profile.location', 'Localisation')}
             value={profileData.location}
-            onChange={(e) =>
-              setProfileData({ ...profileData, location: e.target.value })
-            }
+            onChange={(e) => setProfileData({ ...profileData, location: e.target.value })}
             disabled={!isEditing}
           />
         </div>
@@ -342,12 +334,12 @@ const ProfileTab: React.FC<{
 
       {/* Bio */}
       <div className="bg-white rounded-[14px] border border-advist-border shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-6 lg:col-span-2">
-        <h3 className="text-lg font-semibold text-advist-gray900 mb-4">{t('profile.bio', 'Bio')}</h3>
+        <h3 className="text-lg font-semibold text-advist-gray900 mb-4">
+          {t('profile.bio', 'Bio')}
+        </h3>
         <textarea
           value={profileData.bio}
-          onChange={(e) =>
-            setProfileData({ ...profileData, bio: e.target.value })
-          }
+          onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
           disabled={!isEditing}
           rows={4}
           className="w-full px-4 py-3 bg-advist-surface-dark border border-advist-border rounded-[10px] text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold/20 focus:border-advist-dark resize-none disabled:bg-advist-surface-dark disabled:cursor-not-allowed"
@@ -413,23 +405,29 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
   ]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createMode, setCreateMode] = useState<'draw' | 'type' | 'upload'>('draw');
-  const [selectedSpecimenType, setSelectedSpecimenType] = useState<'signature' | 'paraph' | 'visa'>('signature');
-  const [activeSpecimenTab, setActiveSpecimenTab] = useState<'signature' | 'paraph' | 'visa'>('signature');
+  const [selectedSpecimenType, setSelectedSpecimenType] = useState<'signature' | 'paraph' | 'visa'>(
+    'signature'
+  );
+  const [activeSpecimenTab, setActiveSpecimenTab] = useState<'signature' | 'paraph' | 'visa'>(
+    'signature'
+  );
 
   const handleSetDefault = (id: string, specimenType: 'signature' | 'paraph' | 'visa') => {
-    setSpecimens(specimens.map(spec => ({
-      ...spec,
-      isDefault: spec.specimenType === specimenType ? spec.id === id : spec.isDefault,
-    })));
+    setSpecimens(
+      specimens.map((spec) => ({
+        ...spec,
+        isDefault: spec.specimenType === specimenType ? spec.id === id : spec.isDefault,
+      }))
+    );
   };
 
   const handleDelete = (id: string) => {
-    setSpecimens(specimens.filter(spec => spec.id !== id));
+    setSpecimens(specimens.filter((spec) => spec.id !== id));
   };
 
   const handleCreateSpecimen = (data: string, type: 'drawn' | 'typed' | 'uploaded') => {
-    const specimenConfig = SPECIMEN_TYPES.find(s => s.id === selectedSpecimenType);
-    const existingOfType = specimens.filter(s => s.specimenType === selectedSpecimenType);
+    const specimenConfig = SPECIMEN_TYPES.find((s) => s.id === selectedSpecimenType);
+    const existingOfType = specimens.filter((s) => s.specimenType === selectedSpecimenType);
 
     const newSpecimen: SignatureSpecimen = {
       id: Date.now().toString(),
@@ -450,8 +448,8 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
     setShowCreateModal(true);
   };
 
-  const filteredSpecimens = specimens.filter(s => s.specimenType === activeSpecimenTab);
-  const activeConfig = SPECIMEN_TYPES.find(s => s.id === activeSpecimenTab);
+  const filteredSpecimens = specimens.filter((s) => s.specimenType === activeSpecimenTab);
+  const activeConfig = SPECIMEN_TYPES.find((s) => s.id === activeSpecimenTab);
 
   return (
     <div className="space-y-6">
@@ -474,7 +472,7 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
       {/* Specimen Type Tabs */}
       <div className="flex gap-2 p-1 bg-advist-surface-dark rounded-xl">
         {SPECIMEN_TYPES.map((type) => {
-          const count = specimens.filter(s => s.specimenType === type.id).length;
+          const count = specimens.filter((s) => s.specimenType === type.id).length;
           return (
             <button
               key={type.id}
@@ -488,11 +486,13 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
               <type.icon size={18} />
               <span>{type.label}</span>
               {count > 0 && (
-                <span className={`px-2 py-0.5 text-xs rounded-full ${
-                  activeSpecimenTab === type.id
-                    ? 'bg-white/20 text-white'
-                    : 'bg-advist-dark/10 text-advist-gray900'
-                }`}>
+                <span
+                  className={`px-2 py-0.5 text-xs rounded-full ${
+                    activeSpecimenTab === type.id
+                      ? 'bg-white/20 text-white'
+                      : 'bg-advist-dark/10 text-advist-gray900'
+                  }`}
+                >
                   {count}
                 </span>
               )}
@@ -502,7 +502,9 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
       </div>
 
       {/* Active Type Description */}
-      <div className={`p-4 rounded-xl ${activeConfig?.bgColor} ${activeConfig?.borderColor} border`}>
+      <div
+        className={`p-4 rounded-xl ${activeConfig?.bgColor} ${activeConfig?.borderColor} border`}
+      >
         <div className="flex items-center gap-3">
           {activeConfig && <activeConfig.icon size={20} className="text-advist-gray900" />}
           <div>
@@ -520,7 +522,12 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
           className="flex flex-col items-center justify-center gap-3 p-8 bg-white rounded-[14px] border-2 border-dashed border-advist-border hover:border-advist-dark hover:bg-advist-gold-light/20/30 transition-all group min-h-[200px]"
         >
           <div className="p-4 bg-advist-surface-dark rounded-full group-hover:bg-advist-gold-light/20 transition-all duration-240">
-            {activeConfig && <activeConfig.icon size={24} className="text-advist-blue-light group-hover:text-advist-gray900 transition-all duration-240" />}
+            {activeConfig && (
+              <activeConfig.icon
+                size={24}
+                className="text-advist-blue-light group-hover:text-advist-gray900 transition-all duration-240"
+              />
+            )}
           </div>
           <span className="font-medium text-advist-gray900 group-hover:text-advist-gray900">
             Ajouter un {activeConfig?.label.toLowerCase()}
@@ -544,7 +551,11 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
             {/* Specimen Preview */}
             <div className="h-32 bg-advist-surface-dark flex items-center justify-center border-b border-advist-border">
               {specimen.data ? (
-                <img src={specimen.data} alt={specimen.name} className="max-h-24 max-w-full object-contain" />
+                <img
+                  src={specimen.data}
+                  alt={specimen.name}
+                  className="max-h-24 max-w-full object-contain"
+                />
               ) : (
                 <div className="text-center">
                   {specimen.specimenType === 'signature' && (
@@ -552,7 +563,10 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
                   )}
                   {specimen.specimenType === 'paraph' && (
                     <p className="text-3xl font-bold text-advist-gray900">
-                      {userName.split(' ').map(n => n[0]).join('')}
+                      {userName
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')}
                     </p>
                   )}
                   {specimen.specimenType === 'visa' && (
@@ -569,12 +583,20 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
             <div className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-medium text-advist-gray900">{specimen.name}</h4>
-                <span className={`px-2 py-0.5 text-xs rounded-xl ${
-                  specimen.type === 'drawn' ? 'bg-advist-gold-light/20 text-advist-gray900' :
-                  specimen.type === 'typed' ? 'bg-advist-dark/10 text-advist-gray900' :
-                  'bg-advist-dark/10 text-advist-gray900'
-                }`}>
-                  {specimen.type === 'drawn' ? 'Dessiné' : specimen.type === 'typed' ? 'Tapé' : 'Importé'}
+                <span
+                  className={`px-2 py-0.5 text-xs rounded-xl ${
+                    specimen.type === 'drawn'
+                      ? 'bg-advist-gold-light/20 text-advist-gray900'
+                      : specimen.type === 'typed'
+                        ? 'bg-advist-dark/10 text-advist-gray900'
+                        : 'bg-advist-dark/10 text-advist-gray900'
+                  }`}
+                >
+                  {specimen.type === 'drawn'
+                    ? 'Dessiné'
+                    : specimen.type === 'typed'
+                      ? 'Tapé'
+                      : 'Importé'}
                 </span>
               </div>
               <p className="text-xs text-advist-blue-light mb-3">
@@ -608,7 +630,7 @@ const SignatureTab: React.FC<{ userName: string }> = ({ userName }) => {
       <Modal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
-        title={`Créer un ${SPECIMEN_TYPES.find(s => s.id === selectedSpecimenType)?.label.toLowerCase()}`}
+        title={`Créer un ${SPECIMEN_TYPES.find((s) => s.id === selectedSpecimenType)?.label.toLowerCase()}`}
         size="lg"
       >
         <CreateSignatureModal
@@ -643,7 +665,10 @@ const CreateSignatureModal: React.FC<{
       case 'signature':
         return userName;
       case 'paraph':
-        return userName.split(' ').map(n => n[0]).join('');
+        return userName
+          .split(' ')
+          .map((n) => n[0])
+          .join('');
       case 'visa':
         return 'VALIDÉ';
       default:
@@ -654,7 +679,7 @@ const CreateSignatureModal: React.FC<{
   const [typedText, setTypedText] = useState(getDefaultText());
   const [selectedFont, setSelectedFont] = useState('cursive');
 
-  const specimenConfig = SPECIMEN_TYPES.find(s => s.id === specimenType);
+  const _specimenConfig = SPECIMEN_TYPES.find((s) => s.id === specimenType);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
   const fonts = [
@@ -680,7 +705,9 @@ const CreateSignatureModal: React.FC<{
     }
   }, [mode]);
 
-  const getCanvasPoint = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const getCanvasPoint = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
@@ -698,11 +725,13 @@ const CreateSignatureModal: React.FC<{
 
     return {
       x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
+      y: (clientY - rect.top) * scaleY,
     };
   };
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const startDrawing = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     e.preventDefault();
     const point = getCanvasPoint(e);
     if (!point) return;
@@ -783,7 +812,9 @@ const CreateSignatureModal: React.FC<{
         <button
           onClick={() => setMode('draw')}
           className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-240 ${
-            mode === 'draw' ? 'bg-advist-dark text-white' : 'text-advist-gray900 hover:bg-advist-surface-dark'
+            mode === 'draw'
+              ? 'bg-advist-dark text-white'
+              : 'text-advist-gray900 hover:bg-advist-surface-dark'
           }`}
         >
           <Edit3 size={16} />
@@ -792,7 +823,9 @@ const CreateSignatureModal: React.FC<{
         <button
           onClick={() => setMode('type')}
           className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-240 ${
-            mode === 'type' ? 'bg-advist-dark text-white' : 'text-advist-gray900 hover:bg-advist-surface-dark'
+            mode === 'type'
+              ? 'bg-advist-dark text-white'
+              : 'text-advist-gray900 hover:bg-advist-surface-dark'
           }`}
         >
           <Type size={16} />
@@ -801,7 +834,9 @@ const CreateSignatureModal: React.FC<{
         <button
           onClick={() => setMode('upload')}
           className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-240 ${
-            mode === 'upload' ? 'bg-advist-dark text-white' : 'text-advist-gray900 hover:bg-advist-surface-dark'
+            mode === 'upload'
+              ? 'bg-advist-dark text-white'
+              : 'text-advist-gray900 hover:bg-advist-surface-dark'
           }`}
         >
           <Upload size={16} />
@@ -865,7 +900,9 @@ const CreateSignatureModal: React.FC<{
                       : 'border-advist-border hover:border-advist-blue-light'
                   }`}
                 >
-                  <p className={`text-xl ${font.style} text-advist-gray900`}>{typedText || 'Apercu'}</p>
+                  <p className={`text-xl ${font.style} text-advist-gray900`}>
+                    {typedText || 'Apercu'}
+                  </p>
                   <p className="text-xs text-advist-blue-light mt-1">{font.name}</p>
                 </button>
               ))}
@@ -875,7 +912,9 @@ const CreateSignatureModal: React.FC<{
           {/* Preview */}
           <div className="p-6 bg-advist-surface-dark rounded-[10px] border border-advist-border">
             <p className="text-xs text-advist-blue-light mb-2">Apercu</p>
-            <p className={`text-3xl ${fonts.find(f => f.id === selectedFont)?.style} text-advist-gray900`}>
+            <p
+              className={`text-3xl ${fonts.find((f) => f.id === selectedFont)?.style} text-advist-gray900`}
+            >
               {typedText || 'Votre signature'}
             </p>
           </div>
@@ -957,7 +996,9 @@ const SecurityTab: React.FC<{
               <Key size={24} className="text-advist-gray900" />
             </div>
             <div>
-              <h3 className="font-semibold text-advist-gray900">{t('auth.password', 'Mot de passe')}</h3>
+              <h3 className="font-semibold text-advist-gray900">
+                {t('auth.password', 'Mot de passe')}
+              </h3>
               <p className="text-sm text-advist-gray900 mt-1">
                 {t('profile.lastPasswordChange', 'Dernière modification il y a 3 mois')}
               </p>
@@ -981,7 +1022,10 @@ const SecurityTab: React.FC<{
                 {t('profile.twoFactor', 'Authentification à deux facteurs')}
               </h3>
               <p className="text-sm text-advist-gray900 mt-1">
-                {t('profile.twoFactorDesc', 'Ajoutez une couche de sécurité supplémentaire à votre compte')}
+                {t(
+                  'profile.twoFactorDesc',
+                  'Ajoutez une couche de sécurité supplémentaire à votre compte'
+                )}
               </p>
               <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 bg-green-50 text-advist-success text-xs font-medium rounded-xl">
                 <Check size={12} />
@@ -1002,9 +1046,14 @@ const SecurityTab: React.FC<{
             <AlertTriangle size={24} className="text-advist-error" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-advist-error">{t('profile.deleteAccount', 'Supprimer le compte')}</h3>
+            <h3 className="font-semibold text-advist-error">
+              {t('profile.deleteAccount', 'Supprimer le compte')}
+            </h3>
             <p className="text-sm text-advist-gray900 mt-1">
-              {t('profile.deleteAccountWarning', 'La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.')}
+              {t(
+                'profile.deleteAccountWarning',
+                'La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.'
+              )}
             </p>
             <button
               onClick={onDeleteAccount}
@@ -1067,7 +1116,9 @@ const SessionsTab: React.FC = () => {
             <div
               key={session.id}
               className={`flex items-center justify-between p-4 rounded-[10px] ${
-                session.current ? 'bg-green-50 border border-advist-success' : 'bg-advist-surface-dark'
+                session.current
+                  ? 'bg-green-50 border border-advist-success'
+                  : 'bg-advist-surface-dark'
               }`}
             >
               <div className="flex items-center gap-4">
@@ -1123,7 +1174,7 @@ const ChangePasswordModal: React.FC<{
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Changing password');
+    console.info('Changing password');
     onClose();
   };
 
@@ -1134,27 +1185,21 @@ const ChangePasswordModal: React.FC<{
           label="Mot de passe actuel"
           type="password"
           value={formData.currentPassword}
-          onChange={(e) =>
-            setFormData({ ...formData, currentPassword: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
           required
         />
         <Input
           label="Nouveau mot de passe"
           type="password"
           value={formData.newPassword}
-          onChange={(e) =>
-            setFormData({ ...formData, newPassword: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
           required
         />
         <Input
           label="Confirmer le nouveau mot de passe"
           type="password"
           value={formData.confirmPassword}
-          onChange={(e) =>
-            setFormData({ ...formData, confirmPassword: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
           required
         />
 
@@ -1178,17 +1223,13 @@ const Setup2FAModal: React.FC<{
   const [code, setCode] = useState('');
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Configurer l'authentification a deux facteurs"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Configurer l'authentification a deux facteurs">
       <div className="space-y-4">
         {step === 1 && (
           <>
             <p className="text-sm text-advist-gray900">
-              Scannez le QR code ci-dessous avec votre application d'authentification
-              (Google Authenticator, Authy, etc.)
+              Scannez le QR code ci-dessous avec votre application d'authentification (Google
+              Authenticator, Authy, etc.)
             </p>
             <div className="flex justify-center py-6">
               <div className="w-48 h-48 bg-advist-surface-dark rounded-[10px] flex items-center justify-center border border-advist-border">
@@ -1245,8 +1286,8 @@ const AppearanceTab: React.FC = () => {
           <div>
             <h3 className="font-semibold text-advist-gray900">Personnalisation de l'interface</h3>
             <p className="text-sm text-advist-gray900 mt-1">
-              Adaptez l'apparence de votre espace de travail selon vos préférences.
-              Choisissez vos couleurs, polices et options de mise en page.
+              Adaptez l'apparence de votre espace de travail selon vos préférences. Choisissez vos
+              couleurs, polices et options de mise en page.
             </p>
           </div>
         </div>
@@ -1306,7 +1347,7 @@ const DeleteAccountModal: React.FC<{
       }
       handleClose();
       // In real implementation, redirect to a goodbye page or home
-    } catch (err) {
+    } catch (_err) {
       setError('Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setIsDeleting(false);
@@ -1335,7 +1376,8 @@ const DeleteAccountModal: React.FC<{
                 {t('profile.deleteAccount', 'Supprimer votre compte')}
               </h2>
               <p className="text-sm text-primary-500 mt-2">
-                Cette action est irréversible et entraînera la suppression définitive de toutes vos données.
+                Cette action est irréversible et entraînera la suppression définitive de toutes vos
+                données.
               </p>
             </div>
 
@@ -1404,9 +1446,7 @@ const DeleteAccountModal: React.FC<{
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-red-600" />
               </div>
-              <h2 className="text-xl font-bold text-primary-900">
-                Confirmer la suppression
-              </h2>
+              <h2 className="text-xl font-bold text-primary-900">Confirmer la suppression</h2>
               <p className="text-sm text-primary-500 mt-2">
                 Pour des raisons de sécurité, veuillez confirmer votre identité.
               </p>

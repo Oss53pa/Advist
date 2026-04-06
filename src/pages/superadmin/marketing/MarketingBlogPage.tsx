@@ -17,7 +17,7 @@ import {
   Archive,
   Image,
   X,
-  ExternalLink,
+  _ExternalLink,
   Calendar,
 } from 'lucide-react';
 import { blogApi } from '../../../services/marketing';
@@ -192,7 +192,7 @@ export default function MarketingBlogPage() {
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, tagInput.trim()],
       }));
@@ -201,9 +201,9 @@ export default function MarketingBlogPage() {
   };
 
   const handleRemoveTag = (tag: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(t => t !== tag),
+      tags: prev.tags.filter((t) => t !== tag),
     }));
   };
 
@@ -216,9 +216,10 @@ export default function MarketingBlogPage() {
       .replace(/^-+|-+$/g, '');
   };
 
-  const filteredPosts = posts.filter(post =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPosts = posts.filter(
+    (post) =>
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -226,10 +227,10 @@ export default function MarketingBlogPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-primary-900">{t('superadmin.marketing.blog.title')}</h1>
-          <p className="text-primary-600 mt-1">
-            {t('superadmin.marketing.blog.subtitle')}
-          </p>
+          <h1 className="text-2xl font-bold text-primary-900">
+            {t('superadmin.marketing.blog.title')}
+          </h1>
+          <p className="text-primary-600 mt-1">{t('superadmin.marketing.blog.subtitle')}</p>
         </div>
         <button
           onClick={handleCreateNew}
@@ -248,7 +249,9 @@ export default function MarketingBlogPage() {
               <FileText className="h-5 w-5 text-primary-900" />
             </div>
             <div>
-              <p className="text-sm text-primary-600">{t('superadmin.marketing.blog.totalArticles')}</p>
+              <p className="text-sm text-primary-600">
+                {t('superadmin.marketing.blog.totalArticles')}
+              </p>
               <p className="text-xl font-bold">{posts.length}</p>
             </div>
           </div>
@@ -261,7 +264,7 @@ export default function MarketingBlogPage() {
             <div>
               <p className="text-sm text-primary-600">{t('superadmin.marketing.blog.published')}</p>
               <p className="text-xl font-bold">
-                {posts.filter(p => p.status === 'published').length}
+                {posts.filter((p) => p.status === 'published').length}
               </p>
             </div>
           </div>
@@ -274,7 +277,7 @@ export default function MarketingBlogPage() {
             <div>
               <p className="text-sm text-primary-600">{t('superadmin.marketing.blog.drafts')}</p>
               <p className="text-xl font-bold">
-                {posts.filter(p => p.status === 'draft').length}
+                {posts.filter((p) => p.status === 'draft').length}
               </p>
             </div>
           </div>
@@ -286,9 +289,7 @@ export default function MarketingBlogPage() {
             </div>
             <div>
               <p className="text-sm text-primary-600">{t('superadmin.marketing.blog.featured')}</p>
-              <p className="text-xl font-bold">
-                {posts.filter(p => p.is_featured).length}
-              </p>
+              <p className="text-xl font-bold">{posts.filter((p) => p.is_featured).length}</p>
             </div>
           </div>
         </div>
@@ -325,8 +326,10 @@ export default function MarketingBlogPage() {
             className="px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
           >
             <option value="">{t('superadmin.marketing.blog.allCategories')}</option>
-            {CATEGORY_KEYS.map(key => (
-              <option key={key} value={t(key)}>{t(key)}</option>
+            {CATEGORY_KEYS.map((key) => (
+              <option key={key} value={t(key)}>
+                {t(key)}
+              </option>
             ))}
           </select>
         </div>
@@ -372,27 +375,23 @@ export default function MarketingBlogPage() {
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-primary-900">
-                            {post.title}
-                          </h3>
+                          <h3 className="font-semibold text-primary-900">{post.title}</h3>
                           {post.is_featured && (
                             <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
                           )}
                         </div>
-                        <p className="text-sm text-primary-600 mt-1 line-clamp-2">
-                          {post.excerpt}
-                        </p>
+                        <p className="text-sm text-primary-600 mt-1 line-clamp-2">{post.excerpt}</p>
                       </div>
-                      <span className={`px-2 py-1 text-xs rounded-full ${STATUS_COLORS[post.status]}`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${STATUS_COLORS[post.status]}`}
+                      >
                         {t(STATUS_KEYS[post.status])}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-4 mt-3 text-sm text-primary-500">
                       {post.category && (
-                        <span className="bg-primary-100 px-2 py-0.5 rounded">
-                          {post.category}
-                        </span>
+                        <span className="bg-primary-100 px-2 py-0.5 rounded">{post.category}</span>
                       )}
                       <span className="flex items-center gap-1">
                         <Eye className="h-4 w-4" />
@@ -430,7 +429,11 @@ export default function MarketingBlogPage() {
                           ? 'bg-yellow-100 text-yellow-600'
                           : 'bg-primary-100 text-primary-600 hover:bg-primary-200'
                       }`}
-                      title={post.is_featured ? t('superadmin.marketing.blog.removeFeatured') : t('superadmin.marketing.blog.setFeatured')}
+                      title={
+                        post.is_featured
+                          ? t('superadmin.marketing.blog.removeFeatured')
+                          : t('superadmin.marketing.blog.setFeatured')
+                      }
                     >
                       {post.is_featured ? (
                         <StarOff className="h-4 w-4" />
@@ -491,7 +494,7 @@ export default function MarketingBlogPage() {
           <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-semibold">
-                {editingPost ? 'Modifier l\'article' : 'Nouvel article'}
+                {editingPost ? "Modifier l'article" : 'Nouvel article'}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
@@ -514,7 +517,7 @@ export default function MarketingBlogPage() {
                       required
                       value={formData.title}
                       onChange={(e) => {
-                        setFormData(prev => ({
+                        setFormData((prev) => ({
                           ...prev,
                           title: e.target.value,
                           slug: prev.slug || generateSlug(e.target.value),
@@ -531,7 +534,7 @@ export default function MarketingBlogPage() {
                     <input
                       type="text"
                       value={formData.slug}
-                      onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
                       className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                       placeholder="mon-article"
                     />
@@ -546,7 +549,7 @@ export default function MarketingBlogPage() {
                   <textarea
                     required
                     value={formData.excerpt}
-                    onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
                     rows={2}
                     maxLength={500}
                     className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
@@ -564,7 +567,9 @@ export default function MarketingBlogPage() {
                   </label>
                   <ImageUploader
                     value={formData.featured_image_url}
-                    onChange={(url) => setFormData(prev => ({ ...prev, featured_image_url: url }))}
+                    onChange={(url) =>
+                      setFormData((prev) => ({ ...prev, featured_image_url: url }))
+                    }
                     placeholder="Glissez une image ou cliquez pour selectionner"
                     aspectRatio="video"
                   />
@@ -577,7 +582,7 @@ export default function MarketingBlogPage() {
                   </label>
                   <RichTextEditor
                     value={formData.content}
-                    onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                    onChange={(content) => setFormData((prev) => ({ ...prev, content }))}
                     placeholder="Redigez votre article..."
                     minHeight="350px"
                   />
@@ -591,12 +596,16 @@ export default function MarketingBlogPage() {
                     </label>
                     <select
                       value={formData.category}
-                      onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, category: e.target.value }))
+                      }
                       className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="">Selectionner...</option>
-                      {CATEGORIES.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
+                      {CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -606,7 +615,12 @@ export default function MarketingBlogPage() {
                     </label>
                     <select
                       value={formData.status}
-                      onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as BlogPostStatus }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          status: e.target.value as BlogPostStatus,
+                        }))
+                      }
                       className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="draft">Brouillon</option>
@@ -619,7 +633,9 @@ export default function MarketingBlogPage() {
                       type="checkbox"
                       id="is_featured"
                       checked={formData.is_featured}
-                      onChange={(e) => setFormData(prev => ({ ...prev, is_featured: e.target.checked }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, is_featured: e.target.checked }))
+                      }
                       className="h-4 w-4 text-primary-900 rounded"
                     />
                     <label htmlFor="is_featured" className="text-sm font-medium text-primary-700">
@@ -630,9 +646,7 @@ export default function MarketingBlogPage() {
 
                 {/* Tags */}
                 <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-1">
-                    Tags
-                  </label>
+                  <label className="block text-sm font-medium text-primary-700 mb-1">Tags</label>
                   {formData.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-2">
                       {formData.tags.map((tag) => (
@@ -682,7 +696,9 @@ export default function MarketingBlogPage() {
                       <input
                         type="text"
                         value={formData.meta_title}
-                        onChange={(e) => setFormData(prev => ({ ...prev, meta_title: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, meta_title: e.target.value }))
+                        }
                         maxLength={70}
                         className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                         placeholder="Titre pour les moteurs de recherche"
@@ -697,7 +713,9 @@ export default function MarketingBlogPage() {
                       </label>
                       <textarea
                         value={formData.meta_description}
-                        onChange={(e) => setFormData(prev => ({ ...prev, meta_description: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, meta_description: e.target.value }))
+                        }
                         maxLength={160}
                         rows={2}
                         className="w-full px-4 py-2 border border-primary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
@@ -754,7 +772,9 @@ export default function MarketingBlogPage() {
                 />
               )}
               <div className="flex items-center gap-2 mb-4">
-                <span className={`px-2 py-1 text-xs rounded-full ${STATUS_COLORS[previewPost.status]}`}>
+                <span
+                  className={`px-2 py-1 text-xs rounded-full ${STATUS_COLORS[previewPost.status]}`}
+                >
                   {STATUS_LABELS[previewPost.status]}
                 </span>
                 {previewPost.category && (
@@ -763,20 +783,19 @@ export default function MarketingBlogPage() {
                   </span>
                 )}
               </div>
-              <h1 className="text-3xl font-bold text-primary-900 mb-4">
-                {previewPost.title}
-              </h1>
-              <p className="text-lg text-primary-600 mb-6 italic">
-                {previewPost.excerpt}
-              </p>
+              <h1 className="text-3xl font-bold text-primary-900 mb-4">{previewPost.title}</h1>
+              <p className="text-lg text-primary-600 mb-6 italic">{previewPost.excerpt}</p>
               <div
                 className="prose max-w-none"
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(previewPost.content) }}
               />
               {previewPost.tags && previewPost.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t">
-                  {previewPost.tags.map(tag => (
-                    <span key={tag} className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm">
+                  {previewPost.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm"
+                    >
                       #{tag}
                     </span>
                   ))}

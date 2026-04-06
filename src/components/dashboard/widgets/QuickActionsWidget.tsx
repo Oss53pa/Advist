@@ -4,7 +4,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, Upload, GitBranch, PenTool, Search, FolderPlus } from 'lucide-react';
+import { Upload, GitBranch, PenTool, Search, FolderPlus } from 'lucide-react';
 import { WidgetConfig } from '../../../services/dashboard';
 
 interface QuickActionsWidgetProps {
@@ -20,7 +20,7 @@ interface QuickAction {
   onClick?: () => void;
 }
 
-export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({ config }) => {
+export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({ _config }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -75,7 +75,7 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({ config }
 
   return (
     <div className="flex flex-wrap gap-3">
-      {actions.map(action => (
+      {actions.map((action) => (
         <button
           key={action.id}
           onClick={() => handleClick(action)}

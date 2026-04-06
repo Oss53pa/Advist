@@ -10,12 +10,12 @@ import {
   ChevronRight,
   ChevronLeft,
   CheckCircle,
-  Play,
+  _Play,
   RotateCcw,
   Lightbulb,
   Target,
   Sparkles,
-  Hand,
+  _Hand,
   Award,
   Clock,
   BookOpen,
@@ -48,7 +48,7 @@ const tutorials: Tutorial[] = [
   {
     id: 'documents',
     title: 'Gestion documentaire',
-    description: 'Maîtrisez l\'import et l\'organisation de vos fichiers',
+    description: "Maîtrisez l'import et l'organisation de vos fichiers",
     icon: FileText,
     color: 'bg-primary-900',
     gradient: 'from-primary-900 to-primary-900',
@@ -58,28 +58,32 @@ const tutorials: Tutorial[] = [
       {
         id: 1,
         title: 'Importer un document',
-        instruction: 'Cliquez sur le bouton "Ajouter" en haut à droite ou glissez-déposez directement un fichier dans la zone centrale.',
-        tip: 'ADVIST accepte les formats PDF, Word, Excel et images jusqu\'à 50 MB par fichier.',
+        instruction:
+          'Cliquez sur le bouton "Ajouter" en haut à droite ou glissez-déposez directement un fichier dans la zone centrale.',
+        tip: "ADVIST accepte les formats PDF, Word, Excel et images jusqu'à 50 MB par fichier.",
         action: 'Ajouter un fichier',
       },
       {
         id: 2,
         title: 'Organiser en dossiers',
-        instruction: 'Créez une arborescence de dossiers pour classer vos documents par projet, type ou département.',
+        instruction:
+          'Créez une arborescence de dossiers pour classer vos documents par projet, type ou département.',
         tip: 'Une structure claire facilite la recherche et le partage avec vos collaborateurs.',
         action: 'Créer un dossier',
       },
       {
         id: 3,
         title: 'Ajouter des métadonnées',
-        instruction: 'Enrichissez vos documents avec des tags, descriptions et dates d\'échéance pour un suivi optimal.',
+        instruction:
+          "Enrichissez vos documents avec des tags, descriptions et dates d'échéance pour un suivi optimal.",
         tip: 'Les tags permettent de retrouver instantanément vos documents via la recherche.',
         action: 'Ajouter des tags',
       },
       {
         id: 4,
         title: 'Rechercher efficacement',
-        instruction: 'Utilisez la barre de recherche avec filtres pour trouver n\'importe quel document en quelques secondes.',
+        instruction:
+          "Utilisez la barre de recherche avec filtres pour trouver n'importe quel document en quelques secondes.",
         tip: 'La recherche fonctionne aussi sur le contenu OCR des documents scannés.',
         action: 'Rechercher',
       },
@@ -88,7 +92,7 @@ const tutorials: Tutorial[] = [
   {
     id: 'workflows',
     title: 'Circuits de validation',
-    description: 'Créez des workflows d\'approbation personnalisés',
+    description: "Créez des workflows d'approbation personnalisés",
     icon: GitBranch,
     color: 'bg-primary-900',
     gradient: 'from-primary-900 to-primary-700',
@@ -98,29 +102,32 @@ const tutorials: Tutorial[] = [
       {
         id: 1,
         title: 'Créer un workflow',
-        instruction: 'Accédez à la section Workflows et cliquez sur "Nouveau". Donnez un nom explicite à votre circuit.',
+        instruction:
+          'Accédez à la section Workflows et cliquez sur "Nouveau". Donnez un nom explicite à votre circuit.',
         tip: 'Exemple : "Validation Contrat Fournisseur > 10K€" pour identifier rapidement le cas d\'usage.',
         action: 'Créer le workflow',
       },
       {
         id: 2,
         title: 'Définir les étapes',
-        instruction: 'Ajoutez les approbateurs dans l\'ordre souhaité. Chaque étape peut avoir un ou plusieurs validateurs.',
-        tip: 'Définissez des approbateurs de secours qui seront notifiés en cas d\'absence.',
+        instruction:
+          "Ajoutez les approbateurs dans l'ordre souhaité. Chaque étape peut avoir un ou plusieurs validateurs.",
+        tip: "Définissez des approbateurs de secours qui seront notifiés en cas d'absence.",
         action: 'Ajouter une étape',
       },
       {
         id: 3,
         title: 'Configurer les délais',
-        instruction: 'Définissez un délai maximum pour chaque étape. Des relances automatiques seront envoyées.',
+        instruction:
+          'Définissez un délai maximum pour chaque étape. Des relances automatiques seront envoyées.',
         tip: 'Les rappels partent automatiquement à 50% et 80% du délai imparti.',
         action: 'Définir les délais',
       },
       {
         id: 4,
         title: 'Lancer le workflow',
-        instruction: 'Associez un document au workflow pour démarrer le processus d\'approbation.',
-        tip: 'Suivez l\'avancement en temps réel depuis votre tableau de bord.',
+        instruction: "Associez un document au workflow pour démarrer le processus d'approbation.",
+        tip: "Suivez l'avancement en temps réel depuis votre tableau de bord.",
         action: 'Démarrer',
       },
     ],
@@ -138,28 +145,32 @@ const tutorials: Tutorial[] = [
       {
         id: 1,
         title: 'Sélectionner le document',
-        instruction: 'Ouvrez le document à signer depuis votre liste. Seuls les documents approuvés sont éligibles.',
+        instruction:
+          'Ouvrez le document à signer depuis votre liste. Seuls les documents approuvés sont éligibles.',
         tip: 'Vérifiez que le document a bien passé toutes les étapes de validation requises.',
         action: 'Ouvrir le document',
       },
       {
         id: 2,
         title: 'Positionner la zone',
-        instruction: 'Cliquez à l\'endroit exact où vous souhaitez apposer votre signature sur le document.',
-        tip: 'Vous pouvez redimensionner et déplacer la zone de signature après l\'avoir placée.',
+        instruction:
+          "Cliquez à l'endroit exact où vous souhaitez apposer votre signature sur le document.",
+        tip: "Vous pouvez redimensionner et déplacer la zone de signature après l'avoir placée.",
         action: 'Placer la signature',
       },
       {
         id: 3,
         title: 'Créer votre signature',
-        instruction: 'Dessinez votre signature à la main, tapez votre nom ou importez une image de signature.',
+        instruction:
+          'Dessinez votre signature à la main, tapez votre nom ou importez une image de signature.',
         tip: 'Votre signature est sauvegardée pour les futures utilisations.',
         action: 'Signer',
       },
       {
         id: 4,
         title: 'Confirmer et certifier',
-        instruction: 'Validez votre signature. Un certificat avec horodatage est automatiquement généré.',
+        instruction:
+          'Validez votre signature. Un certificat avec horodatage est automatiquement généré.',
         tip: 'Le document signé est conforme au règlement eIDAS et a valeur légale.',
         action: 'Confirmer',
       },
@@ -182,17 +193,17 @@ export const InteractiveTutorial: React.FC = () => {
     if (!selectedTutorial) return;
 
     if (!completedSteps.includes(currentStep)) {
-      setCompletedSteps(prev => [...prev, currentStep]);
+      setCompletedSteps((prev) => [...prev, currentStep]);
     }
 
     if (currentStep < selectedTutorial.steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -224,23 +235,29 @@ export const InteractiveTutorial: React.FC = () => {
         </div>
 
         <div className="space-y-3">
-          {tutorials.map(tutorial => (
+          {tutorials.map((tutorial) => (
             <button
               key={tutorial.id}
               onClick={() => handleSelectTutorial(tutorial)}
               className="w-full flex items-center gap-4 p-5 bg-white border border-primary-200 rounded-2xl hover:border-primary-300 hover:shadow-md transition-all text-left group"
             >
-              <div className={`w-14 h-14 bg-gradient-to-br ${tutorial.gradient} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform`}>
+              <div
+                className={`w-14 h-14 bg-gradient-to-br ${tutorial.gradient} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform`}
+              >
                 <tutorial.icon className="w-7 h-7 text-white" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-semibold text-primary-900">{tutorial.title}</h3>
-                  <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
-                    tutorial.difficulty === 'Facile' ? 'bg-primary-100 text-green-600' :
-                    tutorial.difficulty === 'Moyen' ? 'bg-primary-100 text-primary-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>
+                  <span
+                    className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                      tutorial.difficulty === 'Facile'
+                        ? 'bg-primary-100 text-green-600'
+                        : tutorial.difficulty === 'Moyen'
+                          ? 'bg-primary-100 text-primary-700'
+                          : 'bg-red-100 text-red-700'
+                    }`}
+                  >
                     {tutorial.difficulty}
                   </span>
                 </div>
@@ -272,7 +289,8 @@ export const InteractiveTutorial: React.FC = () => {
         </div>
         <h3 className="text-2xl font-bold text-primary-900 mb-2">Tutoriel terminé !</h3>
         <p className="text-primary-500 mb-8 max-w-sm mx-auto">
-          Félicitations ! Vous maîtrisez maintenant <strong>{selectedTutorial.title.toLowerCase()}</strong>.
+          Félicitations ! Vous maîtrisez maintenant{' '}
+          <strong>{selectedTutorial.title.toLowerCase()}</strong>.
         </p>
 
         {/* Achievement Badge */}
@@ -281,7 +299,9 @@ export const InteractiveTutorial: React.FC = () => {
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div className="text-left">
-            <p className="text-xs text-primary-900 font-medium uppercase tracking-wider">Badge débloqué</p>
+            <p className="text-xs text-primary-900 font-medium uppercase tracking-wider">
+              Badge débloqué
+            </p>
             <p className="font-semibold text-primary-900">{selectedTutorial.title}</p>
           </div>
         </div>
@@ -354,8 +374,8 @@ export const InteractiveTutorial: React.FC = () => {
               completedSteps.includes(i)
                 ? 'bg-primary-900 text-white shadow-lg shadow-green-200'
                 : i === currentStep
-                ? `bg-gradient-to-br ${selectedTutorial.gradient} text-white shadow-lg scale-110`
-                : 'bg-primary-100 text-primary-400'
+                  ? `bg-gradient-to-br ${selectedTutorial.gradient} text-white shadow-lg scale-110`
+                  : 'bg-primary-100 text-primary-400'
             }`}
           >
             {completedSteps.includes(i) ? (
@@ -372,11 +392,15 @@ export const InteractiveTutorial: React.FC = () => {
         <div className="p-6">
           {/* Step Title */}
           <div className="flex items-center gap-3 mb-4">
-            <div className={`w-10 h-10 bg-gradient-to-br ${selectedTutorial.gradient} rounded-xl flex items-center justify-center`}>
+            <div
+              className={`w-10 h-10 bg-gradient-to-br ${selectedTutorial.gradient} rounded-xl flex items-center justify-center`}
+            >
               <Target className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-xs text-primary-500 uppercase tracking-wider">Étape {currentStep + 1}</p>
+              <p className="text-xs text-primary-500 uppercase tracking-wider">
+                Étape {currentStep + 1}
+              </p>
               <h4 className="text-lg font-bold text-primary-900">{step.title}</h4>
             </div>
           </div>
@@ -438,8 +462,8 @@ export const InteractiveTutorial: React.FC = () => {
                   completedSteps.includes(i)
                     ? 'bg-primary-900'
                     : i === currentStep
-                    ? 'bg-primary-900'
-                    : 'bg-primary-300'
+                      ? 'bg-primary-900'
+                      : 'bg-primary-300'
                 }`}
               />
             ))}

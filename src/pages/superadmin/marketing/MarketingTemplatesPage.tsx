@@ -15,7 +15,7 @@ import {
   X,
   FileText,
   Upload,
-  Image as ImageIcon,
+  Image as _ImageIcon,
 } from 'lucide-react';
 import { templatesApi } from '../../../services/marketing';
 import type { PostTemplate, SocialPlatform } from '../../../types';
@@ -231,7 +231,10 @@ export default function MarketingTemplatesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {templates.map((template) => (
-            <div key={template.id} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+            <div
+              key={template.id}
+              className="bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+            >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -324,7 +327,8 @@ export default function MarketingTemplatesPage() {
                 )}
               </div>
               <div className="px-6 py-3 bg-primary-50 border-t border-primary-100 text-xs text-primary-500">
-                {t('superadmin.marketing.templates.createdOn')} {new Date(template.created_at).toLocaleDateString('fr-FR')}
+                {t('superadmin.marketing.templates.createdOn')}{' '}
+                {new Date(template.created_at).toLocaleDateString('fr-FR')}
               </div>
             </div>
           ))}
@@ -337,7 +341,9 @@ export default function MarketingTemplatesPage() {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-primary-200">
               <h2 className="text-xl font-semibold text-primary-900">
-                {editingTemplate ? t('superadmin.marketing.templates.edit') : t('superadmin.marketing.templates.new')}
+                {editingTemplate
+                  ? t('superadmin.marketing.templates.edit')
+                  : t('superadmin.marketing.templates.new')}
               </h2>
               <button
                 onClick={() => {
@@ -353,7 +359,9 @@ export default function MarketingTemplatesPage() {
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-1">{t('superadmin.marketing.templates.name')}</label>
+                  <label className="block text-sm font-medium text-primary-700 mb-1">
+                    {t('superadmin.marketing.templates.name')}
+                  </label>
                   <input
                     type="text"
                     value={formData.name}
@@ -377,7 +385,9 @@ export default function MarketingTemplatesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-1">{t('superadmin.marketing.templates.content')}</label>
+                  <label className="block text-sm font-medium text-primary-700 mb-1">
+                    {t('superadmin.marketing.templates.content')}
+                  </label>
                   <textarea
                     value={formData.content}
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
@@ -421,7 +431,9 @@ export default function MarketingTemplatesPage() {
                     <div className="flex flex-col items-center">
                       <label className="flex flex-col items-center cursor-pointer">
                         <Upload className="h-8 w-8 text-primary-400" />
-                        <span className="mt-2 text-sm text-primary-500">{t('superadmin.marketing.templates.clickToAddImages')}</span>
+                        <span className="mt-2 text-sm text-primary-500">
+                          {t('superadmin.marketing.templates.clickToAddImages')}
+                        </span>
                         <input
                           type="file"
                           accept="image/*"
@@ -447,7 +459,9 @@ export default function MarketingTemplatesPage() {
                         />
                       </label>
                       <div className="mt-3 flex items-center gap-4">
-                        <span className="text-xs text-primary-400">{t('superadmin.marketing.templates.or')}</span>
+                        <span className="text-xs text-primary-400">
+                          {t('superadmin.marketing.templates.or')}
+                        </span>
                         <input
                           type="url"
                           placeholder={t('superadmin.marketing.templates.pasteImageUrl')}
@@ -516,7 +530,9 @@ export default function MarketingTemplatesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-1">{t('superadmin.marketing.templates.tags')}</label>
+                  <label className="block text-sm font-medium text-primary-700 mb-1">
+                    {t('superadmin.marketing.templates.tags')}
+                  </label>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {formData.tags.map((tag) => (
                       <span
@@ -565,7 +581,11 @@ export default function MarketingTemplatesPage() {
                 disabled={!formData.name || !formData.content || submitting}
                 className="px-4 py-2 bg-primary-900 text-white rounded-lg hover:bg-primary-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? t('common.saving') : editingTemplate ? t('common.edit') : t('common.create')}
+                {submitting
+                  ? t('common.saving')
+                  : editingTemplate
+                    ? t('common.edit')
+                    : t('common.create')}
               </button>
             </div>
           </div>

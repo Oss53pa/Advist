@@ -25,9 +25,9 @@ import {
   ArrowRight,
   Lock,
   CheckCircle2,
-  FileCheck,
+  _FileCheck,
   Send,
-  Download,
+  _Download,
 } from 'lucide-react';
 
 type ViewState = 'intro' | 'tour' | 'complete';
@@ -49,10 +49,12 @@ const tourSteps: TourStep[] = [
     id: 1,
     title: 'Importez vos documents',
     subtitle: 'Gestion documentaire intelligente',
-    description: 'Glissez-déposez vos fichiers et laissez ADVIST organiser automatiquement vos documents avec versioning et classification.',
+    description:
+      'Glissez-déposez vos fichiers et laissez ADVIST organiser automatiquement vos documents avec versioning et classification.',
     icon: Upload,
     gradient: 'from-primary-900 via-primary-900 to-primary-400',
-    bgPattern: 'radial-gradient(circle at 20% 80%, rgba(59,130,246,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(34,211,238,0.3) 0%, transparent 50%)',
+    bgPattern:
+      'radial-gradient(circle at 20% 80%, rgba(59,130,246,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(34,211,238,0.3) 0%, transparent 50%)',
     features: ['Drag & drop', 'Versioning auto', 'OCR intégré'],
     animation: 'upload',
   },
@@ -60,10 +62,12 @@ const tourSteps: TourStep[] = [
     id: 2,
     title: 'Créez vos workflows',
     subtitle: 'Automatisation des processus',
-    description: 'Définissez des circuits de validation multi-étapes avec approbateurs, délais et escalades automatiques.',
+    description:
+      'Définissez des circuits de validation multi-étapes avec approbateurs, délais et escalades automatiques.',
     icon: GitBranch,
     gradient: 'from-primary-900 via-primary-900 to-primary-400',
-    bgPattern: 'radial-gradient(circle at 30% 70%, rgba(147,51,234,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(236,72,153,0.3) 0%, transparent 50%)',
+    bgPattern:
+      'radial-gradient(circle at 30% 70%, rgba(147,51,234,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(236,72,153,0.3) 0%, transparent 50%)',
     features: ['Multi-étapes', 'Escalades auto', 'Notifications'],
     animation: 'workflow',
   },
@@ -71,10 +75,12 @@ const tourSteps: TourStep[] = [
     id: 3,
     title: 'Signez électroniquement',
     subtitle: 'Signature légale certifiée',
-    description: 'Signez vos documents avec une valeur légale conforme eIDAS, certificat qualifié et horodatage.',
+    description:
+      'Signez vos documents avec une valeur légale conforme eIDAS, certificat qualifié et horodatage.',
     icon: PenTool,
     gradient: 'from-green-600 via-green-500 to-primary-400',
-    bgPattern: 'radial-gradient(circle at 25% 75%, rgba(16,185,129,0.3) 0%, transparent 50%), radial-gradient(circle at 75% 25%, rgba(20,184,166,0.3) 0%, transparent 50%)',
+    bgPattern:
+      'radial-gradient(circle at 25% 75%, rgba(16,185,129,0.3) 0%, transparent 50%), radial-gradient(circle at 75% 25%, rgba(20,184,166,0.3) 0%, transparent 50%)',
     features: ['Conforme eIDAS', 'Certificat', 'Horodatage'],
     animation: 'signature',
   },
@@ -82,10 +88,12 @@ const tourSteps: TourStep[] = [
     id: 4,
     title: 'Suivez en temps réel',
     subtitle: 'Tableaux de bord analytiques',
-    description: 'Visualisez vos KPIs, suivez l\'avancement des validations et générez des rapports personnalisés.',
+    description:
+      "Visualisez vos KPIs, suivez l'avancement des validations et générez des rapports personnalisés.",
     icon: BarChart3,
     gradient: 'from-primary-500 via-orange-500 to-red-400',
-    bgPattern: 'radial-gradient(circle at 20% 80%, rgba(245,158,11,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(239,68,68,0.3) 0%, transparent 50%)',
+    bgPattern:
+      'radial-gradient(circle at 20% 80%, rgba(245,158,11,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(239,68,68,0.3) 0%, transparent 50%)',
     features: ['KPIs temps réel', 'Rapports', 'Alertes'],
     animation: 'dashboard',
   },
@@ -93,10 +101,12 @@ const tourSteps: TourStep[] = [
     id: 5,
     title: 'Collaborez en équipe',
     subtitle: 'Travail collaboratif avancé',
-    description: 'Invitez vos collaborateurs avec des rôles précis et des permissions granulaires par projet.',
+    description:
+      'Invitez vos collaborateurs avec des rôles précis et des permissions granulaires par projet.',
     icon: Users,
     gradient: 'from-primary-900 via-primary-900 to-primary-400',
-    bgPattern: 'radial-gradient(circle at 30% 70%, rgba(99,102,241,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(139,92,246,0.3) 0%, transparent 50%)',
+    bgPattern:
+      'radial-gradient(circle at 30% 70%, rgba(99,102,241,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(139,92,246,0.3) 0%, transparent 50%)',
     features: ['Rôles flexibles', 'Permissions', 'Équipes'],
     animation: 'team',
   },
@@ -104,10 +114,12 @@ const tourSteps: TourStep[] = [
     id: 6,
     title: 'Sécurité maximale',
     subtitle: 'Protection des données',
-    description: 'Vos documents sont protégés par un chiffrement AES-256 avec audit trail complet et conformité RGPD.',
+    description:
+      'Vos documents sont protégés par un chiffrement AES-256 avec audit trail complet et conformité RGPD.',
     icon: Shield,
     gradient: 'from-primary-700 via-primary-600 to-primary-500',
-    bgPattern: 'radial-gradient(circle at 25% 75%, rgba(51,65,85,0.3) 0%, transparent 50%), radial-gradient(circle at 75% 25%, rgba(100,116,139,0.3) 0%, transparent 50%)',
+    bgPattern:
+      'radial-gradient(circle at 25% 75%, rgba(51,65,85,0.3) 0%, transparent 50%), radial-gradient(circle at 75% 25%, rgba(100,116,139,0.3) 0%, transparent 50%)',
     features: ['AES-256', 'RGPD', 'ISO 27001'],
     animation: 'security',
   },
@@ -122,15 +134,18 @@ export const GuidedTour: React.FC = () => {
 
   const step = tourSteps[currentStep];
 
-  const goToStep = useCallback((index: number) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentStep(index);
-      setProgress(0);
-      setIsTransitioning(false);
-    }, 300);
-  }, [isTransitioning]);
+  const goToStep = useCallback(
+    (index: number) => {
+      if (isTransitioning) return;
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(index);
+        setProgress(0);
+        setIsTransitioning(false);
+      }, 300);
+    },
+    [isTransitioning]
+  );
 
   const goNext = useCallback(() => {
     if (currentStep === tourSteps.length - 1) {
@@ -148,7 +163,7 @@ export const GuidedTour: React.FC = () => {
     if (!isPlaying || viewState !== 'tour') return;
 
     const progressInterval = setInterval(() => {
-      setProgress(prev => {
+      setProgress((prev) => {
         if (prev >= 100) {
           goNext();
           return 0;
@@ -160,7 +175,7 @@ export const GuidedTour: React.FC = () => {
     return () => clearInterval(progressInterval);
   }, [isPlaying, viewState, goNext]);
 
-  const togglePlay = () => setIsPlaying(prev => !prev);
+  const togglePlay = () => setIsPlaying((prev) => !prev);
 
   const startTour = () => {
     setViewState('tour');
@@ -183,12 +198,19 @@ export const GuidedTour: React.FC = () => {
         {/* Animated background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-900/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary-900/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div
+            className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary-900/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: '1s' }}
+          />
           {/* Grid pattern */}
-          <div className="absolute inset-0 opacity-10" style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }} />
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+              backgroundSize: '40px 40px',
+            }}
+          />
         </div>
 
         <div className="relative p-8 text-center">
@@ -197,11 +219,10 @@ export const GuidedTour: React.FC = () => {
             <Eye className="w-10 h-10 text-white" />
           </div>
 
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Découvrez ADVIST
-          </h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Découvrez ADVIST</h2>
           <p className="text-primary-400 mb-8 max-w-sm mx-auto">
-            Une visite guidée interactive pour explorer toutes les fonctionnalités de notre plateforme
+            Une visite guidée interactive pour explorer toutes les fonctionnalités de notre
+            plateforme
           </p>
 
           {/* Feature preview cards */}
@@ -212,10 +233,14 @@ export const GuidedTour: React.FC = () => {
                 className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-3 transform hover:scale-105 transition-transform"
                 style={{ animationDelay: `${i * 0.1}s` }}
               >
-                <div className={`w-10 h-10 bg-gradient-to-br ${s.gradient} rounded-lg flex items-center justify-center mb-2 mx-auto shadow-lg`}>
+                <div
+                  className={`w-10 h-10 bg-gradient-to-br ${s.gradient} rounded-lg flex items-center justify-center mb-2 mx-auto shadow-lg`}
+                >
                   <s.icon className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-xs text-primary-300 font-medium">{s.title.split(' ').slice(0, 2).join(' ')}</p>
+                <p className="text-xs text-primary-300 font-medium">
+                  {s.title.split(' ').slice(0, 2).join(' ')}
+                </p>
               </div>
             ))}
           </div>
@@ -285,9 +310,7 @@ export const GuidedTour: React.FC = () => {
             <Award className="w-14 h-14 text-white" />
           </div>
 
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Visite terminée ! 🎉
-          </h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Visite terminée ! 🎉</h2>
           <p className="text-green-100 mb-6 max-w-sm mx-auto">
             Vous avez découvert les principales fonctionnalités d'ADVIST
           </p>
@@ -296,7 +319,7 @@ export const GuidedTour: React.FC = () => {
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-6">
             <p className="text-white/80 text-sm mb-3">Fonctionnalités explorées</p>
             <div className="flex flex-wrap justify-center gap-2">
-              {tourSteps.map(s => (
+              {tourSteps.map((s) => (
                 <div
                   key={s.id}
                   className="flex items-center gap-1 px-3 py-1 bg-white/20 rounded-full text-white text-xs"
@@ -371,7 +394,9 @@ export const GuidedTour: React.FC = () => {
 
         {/* Step Animation */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className={`transform transition-all duration-500 ${isTransitioning ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}`}>
+          <div
+            className={`transform transition-all duration-500 ${isTransitioning ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}`}
+          >
             <StepAnimation type={step.animation} />
           </div>
         </div>
@@ -402,7 +427,9 @@ export const GuidedTour: React.FC = () => {
 
       {/* Content */}
       <div className="p-6">
-        <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
+        <div
+          className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}
+        >
           <h3 className="text-xl font-bold text-primary-900 mb-2">{step.title}</h3>
           <p className="text-primary-600 mb-6 text-sm leading-relaxed">{step.description}</p>
         </div>
@@ -422,14 +449,18 @@ export const GuidedTour: React.FC = () => {
                     style={{ width: `${progress}%` }}
                   />
                 ) : index < currentStep ? (
-                  <div className={`absolute inset-0 bg-gradient-to-r ${tourSteps[index].gradient} rounded-full`} />
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-r ${tourSteps[index].gradient} rounded-full`}
+                  />
                 ) : null}
               </button>
             ))}
           </div>
           <div className="flex justify-between mt-2">
             <span className="text-xs text-primary-400">Progression</span>
-            <span className="text-xs text-primary-400">{Math.round((currentStep / (tourSteps.length - 1)) * 100)}%</span>
+            <span className="text-xs text-primary-400">
+              {Math.round((currentStep / (tourSteps.length - 1)) * 100)}%
+            </span>
           </div>
         </div>
 
@@ -510,7 +541,7 @@ const UploadAnimation: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setUploadProgress(prev => (prev >= 100 ? 0 : prev + 3));
+      setUploadProgress((prev) => (prev >= 100 ? 0 : prev + 3));
     }, 100);
     return () => clearInterval(interval);
   }, []);
@@ -563,7 +594,7 @@ const WorkflowAnimation: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveStep(prev => (prev + 1) % 4);
+      setActiveStep((prev) => (prev + 1) % 4);
     }, 1500);
     return () => clearInterval(interval);
   }, []);
@@ -586,17 +617,21 @@ const WorkflowAnimation: React.FC = () => {
                   i < activeStep
                     ? 'bg-primary-900'
                     : i === activeStep
-                    ? `${s.color} scale-110 animate-pulse`
-                    : 'bg-white/60'
+                      ? `${s.color} scale-110 animate-pulse`
+                      : 'bg-white/60'
                 }`}
               >
                 {i < activeStep ? (
                   <Check className="w-7 h-7 text-white" />
                 ) : (
-                  <s.icon className={`w-7 h-7 ${i === activeStep ? 'text-white' : 'text-primary-400'}`} />
+                  <s.icon
+                    className={`w-7 h-7 ${i === activeStep ? 'text-white' : 'text-primary-400'}`}
+                  />
                 )}
               </div>
-              <p className={`text-xs mt-2 font-medium ${i <= activeStep ? 'text-white' : 'text-white/60'}`}>
+              <p
+                className={`text-xs mt-2 font-medium ${i <= activeStep ? 'text-white' : 'text-white/60'}`}
+              >
                 {s.label}
               </p>
             </div>
@@ -620,7 +655,7 @@ const SignatureAnimation: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setSigned(prev => !prev);
+      setSigned((prev) => !prev);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -660,7 +695,9 @@ const SignatureAnimation: React.FC = () => {
       </div>
 
       {/* Pen */}
-      <div className={`absolute -bottom-3 -right-3 transition-all duration-500 ${signed ? 'translate-x-4 opacity-0' : 'translate-x-0 opacity-100'}`}>
+      <div
+        className={`absolute -bottom-3 -right-3 transition-all duration-500 ${signed ? 'translate-x-4 opacity-0' : 'translate-x-0 opacity-100'}`}
+      >
         <div className="p-2 bg-white rounded-full shadow-lg">
           <PenTool className="w-6 h-6 text-primary-900" />
         </div>
@@ -688,7 +725,9 @@ const DashboardAnimation: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setValues(prev => prev.map(v => Math.max(20, Math.min(95, v + (Math.random() - 0.5) * 20))));
+      setValues((prev) =>
+        prev.map((v) => Math.max(20, Math.min(95, v + (Math.random() - 0.5) * 20)))
+      );
     }, 2000);
     return () => clearInterval(interval);
   }, []);
@@ -720,7 +759,9 @@ const DashboardAnimation: React.FC = () => {
 
           {/* Mini chart */}
           <div className="absolute top-2 right-2">
-            <Zap className={`w-4 h-4 ${i === 0 ? 'text-primary-900' : i === 1 ? 'text-primary-900' : i === 2 ? 'text-primary-900' : 'text-primary-900'}`} />
+            <Zap
+              className={`w-4 h-4 ${i === 0 ? 'text-primary-900' : i === 1 ? 'text-primary-900' : i === 2 ? 'text-primary-900' : 'text-primary-900'}`}
+            />
           </div>
         </div>
       ))}
@@ -733,7 +774,7 @@ const TeamAnimation: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % 5);
+      setActiveIndex((prev) => (prev + 1) % 5);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -778,7 +819,7 @@ const SecurityAnimation: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setScanning(prev => (prev + 1) % 100);
+      setScanning((prev) => (prev + 1) % 100);
     }, 50);
     return () => clearInterval(interval);
   }, []);
@@ -810,12 +851,15 @@ const SecurityAnimation: React.FC = () => {
 
       {/* Rotating security ring */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-44 h-44 border-2 border-white/20 rounded-full animate-spin-slow" style={{ borderTopColor: 'rgba(255,255,255,0.6)' }} />
+        <div
+          className="w-44 h-44 border-2 border-white/20 rounded-full animate-spin-slow"
+          style={{ borderTopColor: 'rgba(255,255,255,0.6)' }}
+        />
       </div>
 
       {/* Security badges */}
       <div className="absolute -bottom-8 flex gap-2">
-        {['AES-256', 'RGPD', 'ISO'].map((badge, i) => (
+        {['AES-256', 'RGPD', 'ISO'].map((badge, _i) => (
           <span
             key={badge}
             className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-xs font-medium text-white"

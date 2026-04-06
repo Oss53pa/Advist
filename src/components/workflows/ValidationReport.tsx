@@ -13,19 +13,19 @@ import {
   Building2,
   Download,
   Printer,
-  Eye,
+  _Eye,
   AlertTriangle,
   Hash,
   QrCode,
   Mail,
-  Phone,
+  _Phone,
   ArrowRight,
   Check,
-  X,
+  _X,
   Share2,
   Copy,
-  Link,
-  Send,
+  _Link,
+  _Send,
   Loader2,
   ExternalLink,
 } from 'lucide-react';
@@ -162,7 +162,7 @@ const generatePDF = async (element: HTMLElement, filename: string): Promise<Blob
     jsPDF: {
       unit: 'mm',
       format: 'a4',
-      orientation: 'portrait' as const
+      orientation: 'portrait' as const,
     },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
   };
@@ -178,9 +178,9 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
   onPrint,
   onShare,
   shareUrl,
-  documentId,
+  _documentId,
 }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const reportRef = useRef<HTMLDivElement>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -231,11 +231,11 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
     const subject = encodeURIComponent(`Rapport de Validation - ${data.document.title}`);
     const body = encodeURIComponent(
       `Bonjour,\n\nVeuillez trouver ci-joint le rapport de validation pour le document "${data.document.title}".\n\n` +
-      `Référence: ${data.referenceNumber}\n` +
-      `Statut: ${data.workflow.status === 'completed' ? 'Terminé' : 'En cours'}\n\n` +
-      `Accéder au rapport: ${url}\n\n` +
-      `Code de vérification: ${data.verificationCode}\n\n` +
-      `Cordialement,\nADVIST`
+        `Référence: ${data.referenceNumber}\n` +
+        `Statut: ${data.workflow.status === 'completed' ? 'Terminé' : 'En cours'}\n\n` +
+        `Accéder au rapport: ${url}\n\n` +
+        `Code de vérification: ${data.verificationCode}\n\n` +
+        `Cordialement,\nADVIST`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`);
     if (onShare) onShare('email');
@@ -249,56 +249,86 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
 
   const getStepTypeLabel = (type: ValidationStep['type']) => {
     switch (type) {
-      case 'consultation': return 'Consultation';
-      case 'validation': return 'Validation';
-      case 'approval': return 'Approbation';
-      case 'signature': return 'Signature';
-      case 'paraph': return 'Paraphe';
-      default: return type;
+      case 'consultation':
+        return 'Consultation';
+      case 'validation':
+        return 'Validation';
+      case 'approval':
+        return 'Approbation';
+      case 'signature':
+        return 'Signature';
+      case 'paraph':
+        return 'Paraphe';
+      default:
+        return type;
     }
   };
 
   const getStepTypeColor = (type: ValidationStep['type']) => {
     switch (type) {
-      case 'consultation': return 'bg-advist-surface-dark text-advist-gray900';
-      case 'validation': return 'bg-green-50 text-advist-success';
-      case 'approval': return 'bg-green-50 text-advist-success';
-      case 'signature': return 'bg-advist-gold-light text-advist-gray900';
-      case 'paraph': return 'bg-advist-gold-light text-advist-gold-dark';
-      default: return 'bg-advist-surface-dark text-advist-gray900';
+      case 'consultation':
+        return 'bg-advist-surface-dark text-advist-gray900';
+      case 'validation':
+        return 'bg-green-50 text-advist-success';
+      case 'approval':
+        return 'bg-green-50 text-advist-success';
+      case 'signature':
+        return 'bg-advist-gold-light text-advist-gray900';
+      case 'paraph':
+        return 'bg-advist-gold-light text-advist-gold-dark';
+      default:
+        return 'bg-advist-surface-dark text-advist-gray900';
     }
   };
 
   const getStatusIcon = (status: ValidationStep['status']) => {
     switch (status) {
-      case 'approved': return <CheckCircle size={20} className="text-advist-success" />;
-      case 'rejected': return <XCircle size={20} className="text-advist-error" />;
-      case 'pending': return <Clock size={20} className="text-advist-text-muted" />;
-      case 'in_progress': return <Clock size={20} className="text-advist-gray900" />;
-      case 'skipped': return <ArrowRight size={20} className="text-advist-text-muted" />;
-      default: return <Clock size={20} className="text-advist-text-muted" />;
+      case 'approved':
+        return <CheckCircle size={20} className="text-advist-success" />;
+      case 'rejected':
+        return <XCircle size={20} className="text-advist-error" />;
+      case 'pending':
+        return <Clock size={20} className="text-advist-text-muted" />;
+      case 'in_progress':
+        return <Clock size={20} className="text-advist-gray900" />;
+      case 'skipped':
+        return <ArrowRight size={20} className="text-advist-text-muted" />;
+      default:
+        return <Clock size={20} className="text-advist-text-muted" />;
     }
   };
 
   const getStatusLabel = (status: ValidationStep['status']) => {
     switch (status) {
-      case 'approved': return 'Approuvé';
-      case 'rejected': return 'Rejeté';
-      case 'pending': return 'En attente';
-      case 'in_progress': return 'En cours';
-      case 'skipped': return 'Ignoré';
-      default: return status;
+      case 'approved':
+        return 'Approuvé';
+      case 'rejected':
+        return 'Rejeté';
+      case 'pending':
+        return 'En attente';
+      case 'in_progress':
+        return 'En cours';
+      case 'skipped':
+        return 'Ignoré';
+      default:
+        return status;
     }
   };
 
   const getStatusColor = (status: ValidationStep['status']) => {
     switch (status) {
-      case 'approved': return 'bg-green-50 text-advist-success';
-      case 'rejected': return 'bg-advist-gold-light text-advist-error';
-      case 'pending': return 'bg-advist-surface-dark text-advist-text-secondary';
-      case 'in_progress': return 'bg-advist-gold-light text-advist-gray900';
-      case 'skipped': return 'bg-advist-surface-dark text-advist-text-secondary';
-      default: return 'bg-advist-surface-dark text-advist-text-secondary';
+      case 'approved':
+        return 'bg-green-50 text-advist-success';
+      case 'rejected':
+        return 'bg-advist-gold-light text-advist-error';
+      case 'pending':
+        return 'bg-advist-surface-dark text-advist-text-secondary';
+      case 'in_progress':
+        return 'bg-advist-gold-light text-advist-gray900';
+      case 'skipped':
+        return 'bg-advist-surface-dark text-advist-text-secondary';
+      default:
+        return 'bg-advist-surface-dark text-advist-text-secondary';
     }
   };
 
@@ -315,13 +345,29 @@ export const ValidationReport: React.FC<ValidationReportProps> = ({
   const getWorkflowStatusBadge = () => {
     switch (data.workflow.status) {
       case 'completed':
-        return <Badge variant="success" size="lg">Workflow Terminé</Badge>;
+        return (
+          <Badge variant="success" size="lg">
+            Workflow Terminé
+          </Badge>
+        );
       case 'rejected':
-        return <Badge variant="danger" size="lg">Workflow Rejeté</Badge>;
+        return (
+          <Badge variant="danger" size="lg">
+            Workflow Rejeté
+          </Badge>
+        );
       case 'cancelled':
-        return <Badge variant="gray" size="lg">Workflow Annulé</Badge>;
+        return (
+          <Badge variant="gray" size="lg">
+            Workflow Annulé
+          </Badge>
+        );
       default:
-        return <Badge variant="warning" size="lg">En Cours</Badge>;
+        return (
+          <Badge variant="warning" size="lg">
+            En Cours
+          </Badge>
+        );
     }
   };
 
@@ -469,33 +515,24 @@ button, .no-print { display: none !important; }
     if (onPrint) onPrint();
   }, [data.referenceNumber, onPrint]);
 
-  const completedSteps = data.steps.filter(s => s.status === 'approved' || s.status === 'rejected');
-  const approvedSteps = data.steps.filter(s => s.status === 'approved');
+  const _completedSteps = data.steps.filter(
+    (s) => s.status === 'approved' || s.status === 'rejected'
+  );
+  const approvedSteps = data.steps.filter((s) => s.status === 'approved');
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Rapport de Validation"
-      size="xl"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Rapport de Validation" size="xl">
       <div className="max-h-[80vh] overflow-y-auto">
         {/* Actions Bar */}
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E7EB] sticky top-0 bg-white z-10 print:hidden">
           <div className="flex items-center gap-2">
             {getWorkflowStatusBadge()}
-            <span className="text-sm text-[#6B7280]">
-              Généré le {formatDate(data.generatedAt)}
-            </span>
+            <span className="text-sm text-[#6B7280]">Généré le {formatDate(data.generatedAt)}</span>
           </div>
           <div className="flex items-center gap-2">
             {/* Share Button with Dropdown */}
             <div className="relative">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowShareMenu(!showShareMenu)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setShowShareMenu(!showShareMenu)}>
                 <Share2 size={16} className="mr-1" />
                 Partager
               </Button>
@@ -581,19 +618,18 @@ button, .no-print { display: none !important; }
 
         {/* Click outside to close share menu */}
         {showShareMenu && (
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setShowShareMenu(false)}
-          />
+          <div className="fixed inset-0 z-10" onClick={() => setShowShareMenu(false)} />
         )}
 
         {/* Report Content - Compact for printing */}
-        <div ref={reportRef} className="validation-report-content space-y-3 bg-white" data-print="true">
+        <div
+          ref={reportRef}
+          className="validation-report-content space-y-3 bg-white"
+          data-print="true"
+        >
           {/* Header - Compact */}
           <div className="text-center border-b-2 border-advist-dark pb-3">
-            <h1 className="text-xl font-bold text-advist-gray900 mb-1">
-              RAPPORT DE VALIDATION
-            </h1>
+            <h1 className="text-xl font-bold text-advist-gray900 mb-1">RAPPORT DE VALIDATION</h1>
             <p className="text-sm text-advist-gray900">Certificat de Workflow Documentaire</p>
             <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-[#F8FAFC] rounded-lg">
               <Hash size={14} className="text-[#6B7280]" />
@@ -630,7 +666,9 @@ button, .no-print { display: none !important; }
                 </div>
                 <div>
                   <p className="text-[#6B7280]">Créé le</p>
-                  <p className="font-medium text-advist-gray900">{formatDate(data.document.createdAt)}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {formatDate(data.document.createdAt)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-[#6B7280]">Par</p>
@@ -666,22 +704,41 @@ button, .no-print { display: none !important; }
                 )}
                 <div>
                   <p className="text-advist-gray900">Initié par</p>
-                  <p className="font-medium text-advist-gray900">{data.workflow.initiatedBy.name}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {data.workflow.initiatedBy.name}
+                  </p>
                 </div>
                 <div>
                   <p className="text-advist-gray900">Début</p>
-                  <p className="font-medium text-advist-gray900">{formatDate(data.workflow.startedAt)}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {formatDate(data.workflow.startedAt)}
+                  </p>
                 </div>
                 {data.workflow.completedAt && (
                   <div>
                     <p className="text-advist-gray900">Fin</p>
-                    <p className="font-medium text-advist-gray900">{formatDate(data.workflow.completedAt)}</p>
+                    <p className="font-medium text-advist-gray900">
+                      {formatDate(data.workflow.completedAt)}
+                    </p>
                   </div>
                 )}
                 <div>
                   <p className="text-advist-gray900">Statut</p>
-                  <Badge variant={data.workflow.status === 'completed' ? 'success' : data.workflow.status === 'rejected' ? 'danger' : 'warning'} size="sm">
-                    {data.workflow.status === 'completed' ? 'Terminé' : data.workflow.status === 'rejected' ? 'Rejeté' : 'En cours'}
+                  <Badge
+                    variant={
+                      data.workflow.status === 'completed'
+                        ? 'success'
+                        : data.workflow.status === 'rejected'
+                          ? 'danger'
+                          : 'warning'
+                    }
+                    size="sm"
+                  >
+                    {data.workflow.status === 'completed'
+                      ? 'Terminé'
+                      : data.workflow.status === 'rejected'
+                        ? 'Rejeté'
+                        : 'En cours'}
                   </Badge>
                 </div>
               </div>
@@ -700,13 +757,13 @@ button, .no-print { display: none !important; }
             </div>
             <div className="bg-advist-gold-light border border-advist-gold rounded-lg p-2 text-center">
               <p className="text-xl font-bold text-advist-error">
-                {data.steps.filter(s => s.status === 'rejected').length}
+                {data.steps.filter((s) => s.status === 'rejected').length}
               </p>
               <p className="text-xs text-advist-error">Rejetées</p>
             </div>
             <div className="bg-advist-gold-light border border-advist-gold rounded-lg p-2 text-center">
               <p className="text-xl font-bold text-advist-gray900">
-                {data.steps.filter(s => s.type === 'signature' && s.status === 'approved').length}
+                {data.steps.filter((s) => s.type === 'signature' && s.status === 'approved').length}
               </p>
               <p className="text-xs text-advist-gray900">Signatures</p>
             </div>
@@ -741,20 +798,28 @@ button, .no-print { display: none !important; }
                         </div>
                         <Badge
                           className={
-                            signer.signatureType === 'signature' ? 'bg-advist-gold-light text-advist-gray900' :
-                            signer.signatureType === 'paraph' ? 'bg-advist-gold-light text-advist-gold-dark' :
-                            signer.signatureType === 'approval' ? 'bg-green-50 text-advist-success' :
-                            'bg-green-50 text-advist-success'
+                            signer.signatureType === 'signature'
+                              ? 'bg-advist-gold-light text-advist-gray900'
+                              : signer.signatureType === 'paraph'
+                                ? 'bg-advist-gold-light text-advist-gold-dark'
+                                : signer.signatureType === 'approval'
+                                  ? 'bg-green-50 text-advist-success'
+                                  : 'bg-green-50 text-advist-success'
                           }
                           size="sm"
                         >
-                          {signer.signatureType === 'signature' ? 'Signataire' :
-                           signer.signatureType === 'paraph' ? 'Parapheur' :
-                           signer.signatureType === 'approval' ? 'Approbateur' : 'Validateur'}
+                          {signer.signatureType === 'signature'
+                            ? 'Signataire'
+                            : signer.signatureType === 'paraph'
+                              ? 'Parapheur'
+                              : signer.signatureType === 'approval'
+                                ? 'Approbateur'
+                                : 'Validateur'}
                         </Badge>
                       </div>
                       <div className="mt-2 pt-2 border-t border-advist-dark text-xs text-advist-gray900">
-                        <span className="text-[#6B7280]">Rôle: </span>{signer.role}
+                        <span className="text-[#6B7280]">Rôle: </span>
+                        {signer.role}
                         {signer.canDelegate && (
                           <span className="ml-2 text-advist-gray900">(peut déléguer)</span>
                         )}
@@ -779,13 +844,15 @@ button, .no-print { display: none !important; }
             </h2>
 
             <div className="space-y-2">
-              {data.steps.map((step, index) => (
+              {data.steps.map((step, _index) => (
                 <div
                   key={step.id}
                   className={`border rounded-lg overflow-hidden ${
-                    step.status === 'approved' ? 'border-advist-success bg-green-50/30' :
-                    step.status === 'rejected' ? 'border-advist-gold bg-advist-gold-light/30' :
-                    'border-[#E5E7EB] bg-white'
+                    step.status === 'approved'
+                      ? 'border-advist-success bg-green-50/30'
+                      : step.status === 'rejected'
+                        ? 'border-advist-gold bg-advist-gold-light/30'
+                        : 'border-[#E5E7EB] bg-white'
                   }`}
                 >
                   {/* Step Header - Compact */}
@@ -859,7 +926,6 @@ button, .no-print { display: none !important; }
                       </div>
                     </div>
                   )}
-
                 </div>
               ))}
             </div>
@@ -893,19 +959,27 @@ button, .no-print { display: none !important; }
                   <div className="flex-1 grid grid-cols-3 gap-2 text-xs">
                     <div>
                       <p className="text-[#6B7280]">Signé par</p>
-                      <p className="font-medium text-advist-gray900">{data.finalSignature.signedBy.name}</p>
+                      <p className="font-medium text-advist-gray900">
+                        {data.finalSignature.signedBy.name}
+                      </p>
                       {data.finalSignature.signedBy.title && (
-                        <p className="text-[10px] text-advist-gray900">{data.finalSignature.signedBy.title}</p>
+                        <p className="text-[10px] text-advist-gray900">
+                          {data.finalSignature.signedBy.title}
+                        </p>
                       )}
                     </div>
                     <div>
                       <p className="text-[#6B7280]">Date</p>
-                      <p className="text-advist-gray900">{formatDate(data.finalSignature.signedAt)}</p>
+                      <p className="text-advist-gray900">
+                        {formatDate(data.finalSignature.signedAt)}
+                      </p>
                     </div>
                     {data.finalSignature.certificateId && (
                       <div>
                         <p className="text-[#6B7280]">Certificat</p>
-                        <p className="font-mono text-[10px] text-advist-gray900">{data.finalSignature.certificateId}</p>
+                        <p className="font-mono text-[10px] text-advist-gray900">
+                          {data.finalSignature.certificateId}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -949,8 +1023,8 @@ button, .no-print { display: none !important; }
               <AlertTriangle size={14} className="text-advist-gold-dark flex-shrink-0 mt-0.5" />
               <div className="text-[10px] text-advist-gold-dark">
                 <p>
-                  Ce rapport constitue une preuve électronique conforme au Règlement eIDAS.
-                  Les signatures apposées ont valeur juridique équivalente aux signatures manuscrites.
+                  Ce rapport constitue une preuve électronique conforme au Règlement eIDAS. Les
+                  signatures apposées ont valeur juridique équivalente aux signatures manuscrites.
                 </p>
               </div>
             </div>
@@ -958,7 +1032,9 @@ button, .no-print { display: none !important; }
 
           {/* Footer - Compact */}
           <div className="text-center text-[10px] text-[#6B7280] pt-2 border-t border-[#E5E7EB]">
-            <p>ADVIST - GED | Réf: {data.referenceNumber} | {formatDate(data.generatedAt)}</p>
+            <p>
+              ADVIST - GED | Réf: {data.referenceNumber} | {formatDate(data.generatedAt)}
+            </p>
           </div>
         </div>
       </div>
@@ -971,7 +1047,7 @@ export const ValidationReportPreview: React.FC<{
   data: ValidationReportData;
   compact?: boolean;
 }> = ({ data, compact = false }) => {
-  const formatDate = (dateString: string) => {
+  const _formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       day: '2-digit',
       month: '2-digit',
@@ -979,7 +1055,7 @@ export const ValidationReportPreview: React.FC<{
     });
   };
 
-  const approvedSteps = data.steps.filter(s => s.status === 'approved');
+  const approvedSteps = data.steps.filter((s) => s.status === 'approved');
 
   if (compact) {
     return (
@@ -994,7 +1070,9 @@ export const ValidationReportPreview: React.FC<{
           </Badge>
         </div>
         <div className="text-sm text-advist-gray900">
-          <p>{approvedSteps.length} / {data.steps.length} étapes validées</p>
+          <p>
+            {approvedSteps.length} / {data.steps.length} étapes validées
+          </p>
           <p className="text-xs text-[#6B7280] mt-1">Réf: {data.referenceNumber}</p>
         </div>
       </div>
@@ -1027,7 +1105,7 @@ export const ValidationReportPreview: React.FC<{
         </div>
         <div className="text-center p-3 bg-advist-gold-light rounded-lg">
           <p className="text-2xl font-bold text-advist-gray900">
-            {data.steps.filter(s => s.signature).length}
+            {data.steps.filter((s) => s.signature).length}
           </p>
           <p className="text-xs text-advist-gray900">Signatures</p>
         </div>
@@ -1035,14 +1113,17 @@ export const ValidationReportPreview: React.FC<{
 
       {/* Mini timeline */}
       <div className="flex items-center gap-1">
-        {data.steps.map((step, index) => (
+        {data.steps.map((step, _index) => (
           <div
             key={step.id}
             className={`flex-1 h-2 rounded-full ${
-              step.status === 'approved' ? 'bg-advist-success' :
-              step.status === 'rejected' ? 'bg-advist-error' :
-              step.status === 'in_progress' ? 'bg-advist-dark' :
-              'bg-advist-border'
+              step.status === 'approved'
+                ? 'bg-advist-success'
+                : step.status === 'rejected'
+                  ? 'bg-advist-error'
+                  : step.status === 'in_progress'
+                    ? 'bg-advist-dark'
+                    : 'bg-advist-border'
             }`}
             title={`${step.name}: ${step.status}`}
           />

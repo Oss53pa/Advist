@@ -19,14 +19,18 @@ import {
   AlertCircle,
   CheckCircle,
   History,
-  Settings,
+  _Settings,
   Globe,
   Users,
   Search,
   Mail,
 } from 'lucide-react';
 import { Button, Modal } from '../../components/ui';
-import { landingConfigApi, type LandingPageConfig, type LandingPageConfigHistory } from '../../services/landingConfig';
+import {
+  landingConfigApi,
+  type LandingPageConfig,
+  type LandingPageConfigHistory,
+} from '../../services/landingConfig';
 
 type PreviewMode = 'desktop' | 'tablet' | 'mobile';
 
@@ -34,7 +38,8 @@ type PreviewMode = 'desktop' | 'tablet' | 'mobile';
 const defaultConfig: LandingPageConfig = {
   id: '',
   hero_title: 'Simplifiez la gestion de vos documents juridiques',
-  hero_subtitle: 'ADVIST centralise, sécurise et automatise tous vos documents contractuels en un seul endroit.',
+  hero_subtitle:
+    'ADVIST centralise, sécurise et automatise tous vos documents contractuels en un seul endroit.',
   hero_cta_text: 'Commencer gratuitement',
   hero_cta_secondary_text: 'Voir la démo',
   hero_show_stats: true,
@@ -45,14 +50,54 @@ const defaultConfig: LandingPageConfig = {
     { value: '24/7', label: 'Support' },
   ],
   features: [
-    { id: '1', title: 'Gestion documentaire', description: 'Centralisez tous vos contrats', icon: 'FileText', enabled: true },
-    { id: '2', title: 'Signature électronique', description: 'Signez vos documents', icon: 'PenTool', enabled: true },
-    { id: '3', title: 'Workflows automatisés', description: 'Automatisez vos processus', icon: 'GitBranch', enabled: true },
-    { id: '4', title: 'Alertes intelligentes', description: 'Ne manquez aucune échéance', icon: 'Bell', enabled: true },
+    {
+      id: '1',
+      title: 'Gestion documentaire',
+      description: 'Centralisez tous vos contrats',
+      icon: 'FileText',
+      enabled: true,
+    },
+    {
+      id: '2',
+      title: 'Signature électronique',
+      description: 'Signez vos documents',
+      icon: 'PenTool',
+      enabled: true,
+    },
+    {
+      id: '3',
+      title: 'Workflows automatisés',
+      description: 'Automatisez vos processus',
+      icon: 'GitBranch',
+      enabled: true,
+    },
+    {
+      id: '4',
+      title: 'Alertes intelligentes',
+      description: 'Ne manquez aucune échéance',
+      icon: 'Bell',
+      enabled: true,
+    },
   ],
   testimonials: [
-    { id: '1', name: 'Marie Dupont', role: 'Directrice Juridique', company: 'TechCorp CI', content: 'ADVIST a transformé notre gestion documentaire.', avatar: '', enabled: true },
-    { id: '2', name: 'Konan Bédié', role: 'CEO', company: 'Cosmos Group', content: 'Une solution complète et intuitive.', avatar: '', enabled: true },
+    {
+      id: '1',
+      name: 'Marie Dupont',
+      role: 'Directrice Juridique',
+      company: 'TechCorp CI',
+      content: 'ADVIST a transformé notre gestion documentaire.',
+      avatar: '',
+      enabled: true,
+    },
+    {
+      id: '2',
+      name: 'Konan Bédié',
+      role: 'CEO',
+      company: 'Cosmos Group',
+      content: 'Une solution complète et intuitive.',
+      avatar: '',
+      enabled: true,
+    },
   ],
   trusted_companies: [],
   how_it_works_steps: [],
@@ -76,7 +121,7 @@ const defaultConfig: LandingPageConfig = {
   seo_description: 'Plateforme de gestion documentaire et signatures électroniques.',
   seo_keywords: '',
   cta_title: 'Prêt à transformer votre gestion documentaire ?',
-  cta_subtitle: 'Rejoignez des centaines d\'entreprises qui font confiance à ADVIST.',
+  cta_subtitle: "Rejoignez des centaines d'entreprises qui font confiance à ADVIST.",
   cta_button_text: 'Démarrer maintenant',
   show_trusted_companies: true,
   show_features: true,
@@ -92,7 +137,7 @@ const defaultConfig: LandingPageConfig = {
 };
 
 export const LandingPageEditorPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [config, setConfig] = useState<LandingPageConfig>(defaultConfig);
   const [originalConfig, setOriginalConfig] = useState<LandingPageConfig>(defaultConfig);
   const [activeSection, setActiveSection] = useState<string>('hero');
@@ -135,12 +180,12 @@ export const LandingPageEditorPage: React.FC = () => {
       setHistory(data);
       setShowHistory(true);
     } catch (err) {
-      console.error('Erreur lors du chargement de l\'historique:', err);
+      console.error("Erreur lors du chargement de l'historique:", err);
     }
   };
 
   const updateConfig = (section: string, data: unknown) => {
-    setConfig(prev => ({ ...prev, [section]: data }));
+    setConfig((prev) => ({ ...prev, [section]: data }));
     setHasChanges(true);
     setSuccessMessage(null);
   };
@@ -156,8 +201,8 @@ export const LandingPageEditorPage: React.FC = () => {
       setSuccessMessage('Configuration enregistrée avec succès !');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      console.error('Erreur lors de l\'enregistrement:', err);
-      setError('Erreur lors de l\'enregistrement. Veuillez réessayer.');
+      console.error("Erreur lors de l'enregistrement:", err);
+      setError("Erreur lors de l'enregistrement. Veuillez réessayer.");
     } finally {
       setIsSaving(false);
     }
@@ -196,7 +241,7 @@ export const LandingPageEditorPage: React.FC = () => {
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       console.error('Erreur lors du téléchargement:', err);
-      setError('Erreur lors du téléchargement de l\'image.');
+      setError("Erreur lors du téléchargement de l'image.");
     }
   };
 
@@ -314,7 +359,9 @@ export const LandingPageEditorPage: React.FC = () => {
       <div className="flex">
         {/* Sidebar - Sections */}
         <div className="w-64 bg-white border-r border-advist-border min-h-[calc(100vh-8rem)] p-4">
-          <p className="text-xs font-semibold text-advist-blue-light uppercase tracking-wider mb-4">Sections</p>
+          <p className="text-xs font-semibold text-advist-blue-light uppercase tracking-wider mb-4">
+            Sections
+          </p>
           <div className="space-y-1">
             {sections.map((section) => (
               <button
@@ -342,7 +389,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 <h2 className="text-lg font-semibold text-advist-gray900">Hero Section</h2>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Titre principal</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Titre principal
+                  </label>
                   <input
                     type="text"
                     value={config.hero_title}
@@ -352,7 +401,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Sous-titre</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Sous-titre
+                  </label>
                   <textarea
                     value={config.hero_subtitle}
                     onChange={(e) => updateConfig('hero_subtitle', e.target.value)}
@@ -363,7 +414,9 @@ export const LandingPageEditorPage: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-advist-gray900 mb-2">Bouton principal</label>
+                    <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                      Bouton principal
+                    </label>
                     <input
                       type="text"
                       value={config.hero_cta_text}
@@ -372,7 +425,9 @@ export const LandingPageEditorPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-advist-gray900 mb-2">Bouton secondaire</label>
+                    <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                      Bouton secondaire
+                    </label>
                     <input
                       type="text"
                       value={config.hero_cta_secondary_text}
@@ -383,7 +438,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Image de fond (optionnel)</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Image de fond (optionnel)
+                  </label>
                   <div className="border-2 border-dashed border-advist-border rounded-xl p-8 text-center hover:border-advist-blue-light transition-colors">
                     {config.hero_background_image_url ? (
                       <div className="relative">
@@ -402,8 +459,12 @@ export const LandingPageEditorPage: React.FC = () => {
                     ) : (
                       <label className="cursor-pointer">
                         <Image size={32} className="mx-auto text-advist-blue-light mb-2" />
-                        <p className="text-sm text-advist-blue-light">Cliquez ou déposez une image</p>
-                        <p className="text-xs text-advist-blue-light/60 mt-1">PNG, JPG jusqu'à 5MB</p>
+                        <p className="text-sm text-advist-blue-light">
+                          Cliquez ou déposez une image
+                        </p>
+                        <p className="text-xs text-advist-blue-light/60 mt-1">
+                          PNG, JPG jusqu'à 5MB
+                        </p>
                         <input
                           type="file"
                           accept="image/*"
@@ -453,7 +514,10 @@ export const LandingPageEditorPage: React.FC = () => {
 
                 <div className="space-y-3">
                   {config.stats.map((stat, index) => (
-                    <div key={index} className="flex items-center gap-3 p-4 bg-advist-surface-dark/30 rounded-xl">
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 p-4 bg-advist-surface-dark/30 rounded-xl"
+                    >
                       <GripVertical size={18} className="text-advist-blue-light cursor-grab" />
                       <input
                         type="text"
@@ -501,13 +565,16 @@ export const LandingPageEditorPage: React.FC = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      const newFeatures = [...config.features, {
-                        id: String(Date.now()),
-                        title: 'Nouvelle fonctionnalité',
-                        description: 'Description de la fonctionnalité',
-                        icon: 'Star',
-                        enabled: true,
-                      }];
+                      const newFeatures = [
+                        ...config.features,
+                        {
+                          id: String(Date.now()),
+                          title: 'Nouvelle fonctionnalité',
+                          description: 'Description de la fonctionnalité',
+                          icon: 'Star',
+                          enabled: true,
+                        },
+                      ];
                       updateConfig('features', newFeatures);
                     }}
                   >
@@ -520,7 +587,10 @@ export const LandingPageEditorPage: React.FC = () => {
                   {config.features.map((feature, index) => (
                     <div key={feature.id} className="p-4 bg-advist-surface-dark/30 rounded-xl">
                       <div className="flex items-start gap-3">
-                        <GripVertical size={18} className="text-advist-blue-light cursor-grab mt-3" />
+                        <GripVertical
+                          size={18}
+                          className="text-advist-blue-light cursor-grab mt-3"
+                        />
                         <div className="flex-1 space-y-3">
                           <div className="flex items-center gap-3">
                             <input
@@ -596,15 +666,18 @@ export const LandingPageEditorPage: React.FC = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      const newTestimonials = [...config.testimonials, {
-                        id: String(Date.now()),
-                        name: 'Nouveau client',
-                        role: 'Poste',
-                        company: 'Entreprise',
-                        content: 'Témoignage...',
-                        avatar: '',
-                        enabled: true,
-                      }];
+                      const newTestimonials = [
+                        ...config.testimonials,
+                        {
+                          id: String(Date.now()),
+                          name: 'Nouveau client',
+                          role: 'Poste',
+                          company: 'Entreprise',
+                          content: 'Témoignage...',
+                          avatar: '',
+                          enabled: true,
+                        },
+                      ];
                       updateConfig('testimonials', newTestimonials);
                     }}
                   >
@@ -615,7 +688,10 @@ export const LandingPageEditorPage: React.FC = () => {
 
                 <div className="space-y-4">
                   {config.testimonials.map((testimonial, index) => (
-                    <div key={testimonial.id} className="p-4 bg-advist-surface-dark/30 rounded-xl space-y-3">
+                    <div
+                      key={testimonial.id}
+                      className="p-4 bg-advist-surface-dark/30 rounded-xl space-y-3"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-advist-dark rounded-full flex items-center justify-center text-white font-bold">
                           {testimonial.name.charAt(0)}
@@ -672,7 +748,9 @@ export const LandingPageEditorPage: React.FC = () => {
                         </label>
                         <button
                           onClick={() => {
-                            const newTestimonials = config.testimonials.filter((_, i) => i !== index);
+                            const newTestimonials = config.testimonials.filter(
+                              (_, i) => i !== index
+                            );
                             updateConfig('testimonials', newTestimonials);
                           }}
                           className="p-2 text-advist-red hover:bg-advist-red/10 rounded-lg"
@@ -703,7 +781,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 <h2 className="text-lg font-semibold text-advist-gray900">Footer</h2>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Nom de l'entreprise</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Nom de l'entreprise
+                  </label>
                   <input
                     type="text"
                     value={config.footer_company_name}
@@ -713,7 +793,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Description
+                  </label>
                   <textarea
                     value={config.footer_description}
                     onChange={(e) => updateConfig('footer_description', e.target.value)}
@@ -730,7 +812,9 @@ export const LandingPageEditorPage: React.FC = () => {
                       onChange={(e) => updateConfig('footer_show_socials', e.target.checked)}
                       className="w-5 h-5 rounded border-advist-border text-advist-gray900"
                     />
-                    <span className="text-sm font-medium text-advist-gray900">Afficher les réseaux sociaux</span>
+                    <span className="text-sm font-medium text-advist-gray900">
+                      Afficher les réseaux sociaux
+                    </span>
                   </label>
                   <label className="flex items-center gap-3">
                     <input
@@ -739,7 +823,9 @@ export const LandingPageEditorPage: React.FC = () => {
                       onChange={(e) => updateConfig('footer_show_newsletter', e.target.checked)}
                       className="w-5 h-5 rounded border-advist-border text-advist-gray900"
                     />
-                    <span className="text-sm font-medium text-advist-gray900">Afficher le formulaire newsletter</span>
+                    <span className="text-sm font-medium text-advist-gray900">
+                      Afficher le formulaire newsletter
+                    </span>
                   </label>
                 </div>
               </div>
@@ -749,21 +835,45 @@ export const LandingPageEditorPage: React.FC = () => {
             {activeSection === 'social' && (
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold text-advist-gray900">Réseaux Sociaux</h2>
-                <p className="text-sm text-advist-blue-light">Configurez les liens vers vos réseaux sociaux</p>
+                <p className="text-sm text-advist-blue-light">
+                  Configurez les liens vers vos réseaux sociaux
+                </p>
 
                 <div className="space-y-4">
                   {[
-                    { key: 'social_facebook', label: 'Facebook', placeholder: 'https://facebook.com/...' },
-                    { key: 'social_twitter', label: 'Twitter/X', placeholder: 'https://twitter.com/...' },
-                    { key: 'social_linkedin', label: 'LinkedIn', placeholder: 'https://linkedin.com/company/...' },
-                    { key: 'social_instagram', label: 'Instagram', placeholder: 'https://instagram.com/...' },
-                    { key: 'social_youtube', label: 'YouTube', placeholder: 'https://youtube.com/@...' },
+                    {
+                      key: 'social_facebook',
+                      label: 'Facebook',
+                      placeholder: 'https://facebook.com/...',
+                    },
+                    {
+                      key: 'social_twitter',
+                      label: 'Twitter/X',
+                      placeholder: 'https://twitter.com/...',
+                    },
+                    {
+                      key: 'social_linkedin',
+                      label: 'LinkedIn',
+                      placeholder: 'https://linkedin.com/company/...',
+                    },
+                    {
+                      key: 'social_instagram',
+                      label: 'Instagram',
+                      placeholder: 'https://instagram.com/...',
+                    },
+                    {
+                      key: 'social_youtube',
+                      label: 'YouTube',
+                      placeholder: 'https://youtube.com/@...',
+                    },
                   ].map((social) => (
                     <div key={social.key}>
-                      <label className="block text-sm font-medium text-advist-gray900 mb-2">{social.label}</label>
+                      <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                        {social.label}
+                      </label>
                       <input
                         type="url"
-                        value={(config as Record<string, unknown>)[social.key] as string || ''}
+                        value={((config as Record<string, unknown>)[social.key] as string) || ''}
                         onChange={(e) => updateConfig(social.key, e.target.value)}
                         className="w-full px-4 py-3 border border-advist-border rounded-xl"
                         placeholder={social.placeholder}
@@ -780,7 +890,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 <h2 className="text-lg font-semibold text-advist-gray900">Contact</h2>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Email</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Email
+                  </label>
                   <input
                     type="email"
                     value={config.contact_email}
@@ -790,7 +902,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Téléphone</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Téléphone
+                  </label>
                   <input
                     type="tel"
                     value={config.contact_phone}
@@ -800,7 +914,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Adresse</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Adresse
+                  </label>
                   <textarea
                     value={config.contact_address}
                     onChange={(e) => updateConfig('contact_address', e.target.value)}
@@ -815,7 +931,9 @@ export const LandingPageEditorPage: React.FC = () => {
             {activeSection === 'colors' && (
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold text-advist-gray900">Couleurs</h2>
-                <p className="text-sm text-advist-blue-light">Personnalisez les couleurs de votre landing page</p>
+                <p className="text-sm text-advist-blue-light">
+                  Personnalisez les couleurs de votre landing page
+                </p>
 
                 <div className="grid grid-cols-2 gap-6">
                   {[
@@ -825,7 +943,9 @@ export const LandingPageEditorPage: React.FC = () => {
                     { key: 'color_background', label: 'Fond' },
                   ].map((color) => (
                     <div key={color.key}>
-                      <label className="block text-sm font-medium text-advist-gray900 mb-2">{color.label}</label>
+                      <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                        {color.label}
+                      </label>
                       <div className="flex items-center gap-3">
                         <input
                           type="color"
@@ -845,7 +965,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 </div>
 
                 <div className="p-4 bg-advist-surface-dark/30 rounded-xl">
-                  <p className="text-sm font-medium text-advist-gray900 mb-3">Aperçu des couleurs</p>
+                  <p className="text-sm font-medium text-advist-gray900 mb-3">
+                    Aperçu des couleurs
+                  </p>
                   <div className="flex gap-3">
                     <div
                       className="w-16 h-16 rounded-xl"
@@ -875,7 +997,8 @@ export const LandingPageEditorPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                    Titre SEO <span className="text-advist-blue-light">({config.seo_title.length}/70)</span>
+                    Titre SEO{' '}
+                    <span className="text-advist-blue-light">({config.seo_title.length}/70)</span>
                   </label>
                   <input
                     type="text"
@@ -888,7 +1011,10 @@ export const LandingPageEditorPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                    Description SEO <span className="text-advist-blue-light">({config.seo_description.length}/160)</span>
+                    Description SEO{' '}
+                    <span className="text-advist-blue-light">
+                      ({config.seo_description.length}/160)
+                    </span>
                   </label>
                   <textarea
                     value={config.seo_description}
@@ -900,7 +1026,9 @@ export const LandingPageEditorPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-2">Mots-clés (séparés par des virgules)</label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-2">
+                    Mots-clés (séparés par des virgules)
+                  </label>
                   <input
                     type="text"
                     value={config.seo_keywords}
@@ -915,8 +1043,12 @@ export const LandingPageEditorPage: React.FC = () => {
             {/* Visibility Editor */}
             {activeSection === 'visibility' && (
               <div className="space-y-6">
-                <h2 className="text-lg font-semibold text-advist-gray900">Visibilité des Sections</h2>
-                <p className="text-sm text-advist-blue-light">Activez ou désactivez les sections de la landing page</p>
+                <h2 className="text-lg font-semibold text-advist-gray900">
+                  Visibilité des Sections
+                </h2>
+                <p className="text-sm text-advist-blue-light">
+                  Activez ou désactivez les sections de la landing page
+                </p>
 
                 <div className="space-y-3">
                   {[
@@ -929,7 +1061,10 @@ export const LandingPageEditorPage: React.FC = () => {
                     { key: 'show_newsletter', label: 'Newsletter' },
                     { key: 'show_cta', label: 'Call-to-Action final' },
                   ].map((item) => (
-                    <label key={item.key} className="flex items-center gap-3 p-3 bg-advist-surface-dark/30 rounded-xl cursor-pointer hover:bg-advist-surface-dark/50">
+                    <label
+                      key={item.key}
+                      className="flex items-center gap-3 p-3 bg-advist-surface-dark/30 rounded-xl cursor-pointer hover:bg-advist-surface-dark/50"
+                    >
                       <input
                         type="checkbox"
                         checked={(config as Record<string, unknown>)[item.key] as boolean}
@@ -955,7 +1090,9 @@ export const LandingPageEditorPage: React.FC = () => {
       >
         <div className="text-center py-12">
           <ExternalLink size={48} className="mx-auto text-advist-blue-light mb-4" />
-          <p className="text-advist-gray900 font-medium">La prévisualisation s'ouvre dans un nouvel onglet</p>
+          <p className="text-advist-gray900 font-medium">
+            La prévisualisation s'ouvre dans un nouvel onglet
+          </p>
           <Button className="mt-4" onClick={() => window.open('/', '_blank')}>
             Ouvrir la landing page
           </Button>

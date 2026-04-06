@@ -18,7 +18,7 @@ import {
   LogOut,
   User,
   ArrowLeftRight,
-  Sparkles,
+  _Sparkles,
   Shield,
   CreditCard,
   Folder,
@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore, useNotificationStore } from '../../store';
 import { Avatar } from '../ui/Avatar';
-import { languages, changeLanguage, getCurrentLanguage } from '../../i18n';
+import { languages, changeLanguage } from '../../i18n';
 import { TrialBadge } from '../subscription';
 import { PlanSwitcher } from '../dev/PlanSwitcher';
 import { usePlanTheme } from '../../hooks/usePlanTheme';
@@ -56,8 +56,20 @@ const getUserNavItems = (t: (key: string) => string): NavItem[] => [
   { id: 'dashboard', label: t('nav.dashboard'), icon: LayoutDashboard, path: '/user' },
   { id: 'documents', label: t('nav.documents'), icon: FileText, path: '/user/documents' },
   { id: 'projects', label: t('nav.projects'), icon: Folder, path: '/user/projects' },
-  { id: 'workflows', label: t('nav.workflows'), icon: GitBranch, path: '/user/workflows', badgeKey: 'pendingWorkflows' },
-  { id: 'signatures', label: t('nav.signatures'), icon: PenTool, path: '/user/signatures', badgeKey: 'pendingSignatures' },
+  {
+    id: 'workflows',
+    label: t('nav.workflows'),
+    icon: GitBranch,
+    path: '/user/workflows',
+    badgeKey: 'pendingWorkflows',
+  },
+  {
+    id: 'signatures',
+    label: t('nav.signatures'),
+    icon: PenTool,
+    path: '/user/signatures',
+    badgeKey: 'pendingSignatures',
+  },
   { id: 'analytics', label: t('nav.reports'), icon: BarChart3, path: '/user/analytics/reports' },
 ];
 
@@ -65,7 +77,12 @@ const getAdminNavItems = (t: (key: string) => string): NavItem[] => [
   { id: 'dashboard', label: t('nav.dashboard'), icon: LayoutDashboard, path: '/admin' },
   { id: 'projects', label: t('nav.projects'), icon: Folder, path: '/admin/projects' },
   { id: 'users', label: t('nav.users'), icon: Users, path: '/admin/users' },
-  { id: 'organization', label: t('nav.organization'), icon: Building2, path: '/admin/organization' },
+  {
+    id: 'organization',
+    label: t('nav.organization'),
+    icon: Building2,
+    path: '/admin/organization',
+  },
   { id: 'archives', label: t('nav.archives'), icon: Archive, path: '/admin/archives' },
   { id: 'audit', label: t('nav.audit'), icon: History, path: '/admin/audit' },
   { id: 'analytics', label: t('nav.reports'), icon: BarChart3, path: '/admin/analytics/reports' },
@@ -78,7 +95,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
   const location = useLocation();
   const { user, logout } = useAuthStore();
   const { unreadCount } = useNotificationStore();
-  const { classes: planClasses, plan } = usePlanTheme();
+  const { classes: planClasses, _plan } = usePlanTheme();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -103,34 +120,53 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
     return location.pathname.startsWith(path);
   };
 
-  const currentLanguage = languages.find(l => l.code === i18n.language) || languages[0];
+  const currentLanguage = languages.find((l) => l.code === i18n.language) || languages[0];
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-advist-bg border-b border-advist-border shadow-sm" role="banner">
+      <header
+        className="fixed top-0 left-0 right-0 z-50 bg-advist-bg border-b border-advist-border shadow-sm"
+        role="banner"
+      >
         <div className="flex items-center h-14 px-4">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
             className="lg:hidden p-2 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-surface-dark rounded-xl transition-colors mr-2"
             aria-expanded={showMobileMenu}
-            aria-label={showMobileMenu ? t('accessibility.closeMenu', 'Fermer le menu') : t('accessibility.openMenu', 'Ouvrir le menu')}
+            aria-label={
+              showMobileMenu
+                ? t('accessibility.closeMenu', 'Fermer le menu')
+                : t('accessibility.openMenu', 'Ouvrir le menu')
+            }
           >
-            {showMobileMenu ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+            {showMobileMenu ? (
+              <X size={20} aria-hidden="true" />
+            ) : (
+              <Menu size={20} aria-hidden="true" />
+            )}
           </button>
 
           {/* Logo */}
           <div className="flex items-center gap-2 mr-4 lg:mr-8">
-            <span className="font-decorative text-advist-gray900 text-2xl lg:text-3xl font-bold">Advist</span>
+            <span className="font-decorative text-advist-gray900 text-2xl lg:text-3xl font-bold">
+              Advist
+            </span>
             {variant === 'admin' && (
-              <span className={`hidden sm:inline px-2 py-1 ${planClasses.bg} ${planClasses.textOnBg} text-[10px] font-bold rounded-lg uppercase shadow-lg`}>
+              <span
+                className={`hidden sm:inline px-2 py-1 ${planClasses.bg} ${planClasses.textOnBg} text-[10px] font-bold rounded-lg uppercase shadow-lg`}
+              >
                 Admin
               </span>
             )}
           </div>
 
           {/* Navigation Tabs - Desktop - avec couleurs du plan */}
-          <nav id="main-navigation" className="hidden lg:flex items-center gap-1 flex-1" aria-label={t('accessibility.skipToNavigation', 'Navigation principale')}>
+          <nav
+            id="main-navigation"
+            className="hidden lg:flex items-center gap-1 flex-1"
+            aria-label={t('accessibility.skipToNavigation', 'Navigation principale')}
+          >
             {navItems.map((item) => {
               const active = isActive(item.path);
               const badgeCount = item.badgeKey ? pendingCounts[item.badgeKey] : 0;
@@ -140,22 +176,26 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                   to={item.path}
                   className={`
                     relative flex items-center gap-2 px-3 xl:px-4 py-2 rounded-xl text-sm xl:text-base font-medium transition-all
-                    ${active
-                      ? `${planClasses.bg} ${planClasses.textOnBg} shadow-lg`
-                      : `text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover}`
+                    ${
+                      active
+                        ? `${planClasses.bg} ${planClasses.textOnBg} shadow-lg`
+                        : `text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover}`
                     }
                   `}
                 >
                   <item.icon size={18} />
                   <span className="hidden xl:inline">{item.label}</span>
                   {badgeCount > 0 && (
-                    <span className={`
+                    <span
+                      className={`
                       min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full flex items-center justify-center
-                      ${active
-                        ? 'bg-white/30 text-white'
-                        : `${planClasses.bg} ${planClasses.textOnBg}`
+                      ${
+                        active
+                          ? 'bg-white/30 text-white'
+                          : `${planClasses.bg} ${planClasses.textOnBg}`
                       }
-                    `}>
+                    `}
+                    >
                       {badgeCount > 9 ? '9+' : badgeCount}
                     </span>
                   )}
@@ -187,7 +227,9 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                 className="flex items-center gap-1 p-2 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-surface-dark rounded-lg transition-colors"
               >
                 <Globe size={18} />
-                <span className="hidden sm:inline text-xs font-medium">{currentLanguage.code.toUpperCase()}</span>
+                <span className="hidden sm:inline text-xs font-medium">
+                  {currentLanguage.code.toUpperCase()}
+                </span>
               </button>
 
               {showLanguageMenu && (
@@ -203,9 +245,10 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                         }}
                         className={`
                           flex items-center gap-3 w-full px-4 py-2.5 text-left transition-colors
-                          ${i18n.language === lang.code
-                            ? 'bg-advist-gold/20 text-advist-gray900'
-                            : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+                          ${
+                            i18n.language === lang.code
+                              ? 'bg-advist-gold/20 text-advist-gray900'
+                              : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
                           }
                         `}
                       >
@@ -234,11 +277,19 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                 className={`relative p-2 text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover} rounded-xl transition-colors`}
                 aria-expanded={showNotifications}
                 aria-haspopup="true"
-                aria-label={t('accessibility.notifications', 'Notifications') + (unreadCount > 0 ? ` (${unreadCount} ${t('notifications.unread', 'non lues')})` : '')}
+                aria-label={
+                  t('accessibility.notifications', 'Notifications') +
+                  (unreadCount > 0
+                    ? ` (${unreadCount} ${t('notifications.unread', 'non lues')})`
+                    : '')
+                }
               >
                 <Bell size={18} aria-hidden="true" />
                 {unreadCount > 0 && (
-                  <span className={`absolute top-1 right-1 w-4 h-4 ${planClasses.bg} ${planClasses.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`} aria-hidden="true">
+                  <span
+                    className={`absolute top-1 right-1 w-4 h-4 ${planClasses.bg} ${planClasses.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
+                    aria-hidden="true"
+                  >
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -305,9 +356,10 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                     onClick={() => setShowMobileMenu(false)}
                     className={`
                       flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all
-                      ${active
-                        ? `${planClasses.bg} ${planClasses.textOnBg} shadow-lg`
-                        : `text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover}`
+                      ${
+                        active
+                          ? `${planClasses.bg} ${planClasses.textOnBg} shadow-lg`
+                          : `text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover}`
                       }
                     `}
                   >
@@ -316,13 +368,16 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                       <span>{item.label}</span>
                     </div>
                     {badgeCount > 0 && (
-                      <span className={`
+                      <span
+                        className={`
                         min-w-[22px] h-[22px] px-1.5 text-xs font-bold rounded-full flex items-center justify-center
-                        ${active
-                          ? 'bg-white/30 text-white'
-                          : `${planClasses.bg} ${planClasses.textOnBg}`
+                        ${
+                          active
+                            ? 'bg-white/30 text-white'
+                            : `${planClasses.bg} ${planClasses.textOnBg}`
                         }
-                      `}>
+                      `}
+                      >
                         {badgeCount > 9 ? '9+' : badgeCount}
                       </span>
                     )}

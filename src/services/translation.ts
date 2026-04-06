@@ -16,9 +16,21 @@ export interface LanguageInfo {
 export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
   { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', region: 'International' },
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧', region: 'International' },
-  { code: 'bm', name: 'Bambara', nativeName: 'Bamanankan', flag: '🇲🇱', region: 'Mali, West Africa' },
+  {
+    code: 'bm',
+    name: 'Bambara',
+    nativeName: 'Bamanankan',
+    flag: '🇲🇱',
+    region: 'Mali, West Africa',
+  },
   { code: 'wo', name: 'Wolof', nativeName: 'Wolof', flag: '🇸🇳', region: 'Senegal, Gambia' },
-  { code: 'dyu', name: 'Dioula', nativeName: 'Julakan', flag: '🇨🇮', region: 'Côte d\'Ivoire, Burkina Faso' },
+  {
+    code: 'dyu',
+    name: 'Dioula',
+    nativeName: 'Julakan',
+    flag: '🇨🇮',
+    region: "Côte d'Ivoire, Burkina Faso",
+  },
   { code: 'ln', name: 'Lingala', nativeName: 'Lingála', flag: '🇨🇩', region: 'DRC, Congo' },
 ];
 
@@ -56,34 +68,132 @@ export interface AnnotationTranslation {
 // Common phrases dictionary for demo (would be API-based in production)
 const TRANSLATION_DICTIONARY: Record<string, Record<SupportedLanguage, string>> = {
   // Legal terms
-  'contrat': { fr: 'contrat', en: 'contract', bm: 'bɛnkan', wo: 'waafakaay', dyu: 'bɛnkan', ln: 'boyokani' },
-  'signature': { fr: 'signature', en: 'signature', bm: 'tɔgɔda', wo: 'siiñ', dyu: 'tɔgɔda', ln: 'kombo' },
-  'document': { fr: 'document', en: 'document', bm: 'sɛbɛn', wo: 'bataaxal', dyu: 'sɛbɛn', ln: 'mokanda' },
-  'approuvé': { fr: 'approuvé', en: 'approved', bm: 'latigɛlen', wo: 'nangu na', dyu: 'sɔnna', ln: 'endimami' },
-  'rejeté': { fr: 'rejeté', en: 'rejected', bm: 'banna', wo: 'baña', dyu: 'banna', ln: 'eboyami' },
-  'en attente': { fr: 'en attente', en: 'pending', bm: 'a bɛ makɔnɔ', wo: 'di xaar', dyu: 'a bɛ kɔnɔ', ln: 'ezali kozela' },
-  'urgent': { fr: 'urgent', en: 'urgent', bm: 'teliman', wo: 'bu gaaw', dyu: 'joona', ln: 'na mpasi' },
-  'confidentiel': { fr: 'confidentiel', en: 'confidential', bm: 'gundo', wo: 'sutura', dyu: 'gundo', ln: 'ya kobombama' },
+  contrat: {
+    fr: 'contrat',
+    en: 'contract',
+    bm: 'bɛnkan',
+    wo: 'waafakaay',
+    dyu: 'bɛnkan',
+    ln: 'boyokani',
+  },
+  signature: {
+    fr: 'signature',
+    en: 'signature',
+    bm: 'tɔgɔda',
+    wo: 'siiñ',
+    dyu: 'tɔgɔda',
+    ln: 'kombo',
+  },
+  document: {
+    fr: 'document',
+    en: 'document',
+    bm: 'sɛbɛn',
+    wo: 'bataaxal',
+    dyu: 'sɛbɛn',
+    ln: 'mokanda',
+  },
+  approuvé: {
+    fr: 'approuvé',
+    en: 'approved',
+    bm: 'latigɛlen',
+    wo: 'nangu na',
+    dyu: 'sɔnna',
+    ln: 'endimami',
+  },
+  rejeté: { fr: 'rejeté', en: 'rejected', bm: 'banna', wo: 'baña', dyu: 'banna', ln: 'eboyami' },
+  'en attente': {
+    fr: 'en attente',
+    en: 'pending',
+    bm: 'a bɛ makɔnɔ',
+    wo: 'di xaar',
+    dyu: 'a bɛ kɔnɔ',
+    ln: 'ezali kozela',
+  },
+  urgent: {
+    fr: 'urgent',
+    en: 'urgent',
+    bm: 'teliman',
+    wo: 'bu gaaw',
+    dyu: 'joona',
+    ln: 'na mpasi',
+  },
+  confidentiel: {
+    fr: 'confidentiel',
+    en: 'confidential',
+    bm: 'gundo',
+    wo: 'sutura',
+    dyu: 'gundo',
+    ln: 'ya kobombama',
+  },
 
   // Document types
-  'facture': { fr: 'facture', en: 'invoice', bm: 'jateminɛsɛbɛn', wo: 'faktiir', dyu: 'jatebɔsɛbɛn', ln: 'fakitire' },
-  'rapport': { fr: 'rapport', en: 'report', bm: 'kunnafonisɛbɛn', wo: 'rapooru', dyu: 'kunnafonisɛbɛn', ln: 'raporo' },
-  'bon de commande': { fr: 'bon de commande', en: 'purchase order', bm: 'sansɛbɛn', wo: 'komand', dyu: 'sansɛbɛn', ln: 'mokanda ya kosomba' },
+  facture: {
+    fr: 'facture',
+    en: 'invoice',
+    bm: 'jateminɛsɛbɛn',
+    wo: 'faktiir',
+    dyu: 'jatebɔsɛbɛn',
+    ln: 'fakitire',
+  },
+  rapport: {
+    fr: 'rapport',
+    en: 'report',
+    bm: 'kunnafonisɛbɛn',
+    wo: 'rapooru',
+    dyu: 'kunnafonisɛbɛn',
+    ln: 'raporo',
+  },
+  'bon de commande': {
+    fr: 'bon de commande',
+    en: 'purchase order',
+    bm: 'sansɛbɛn',
+    wo: 'komand',
+    dyu: 'sansɛbɛn',
+    ln: 'mokanda ya kosomba',
+  },
 
   // Actions
-  'signer': { fr: 'signer', en: 'sign', bm: 'tɔgɔda', wo: 'siiñ', dyu: 'tɔgɔda', ln: 'kotia kombo' },
-  'valider': { fr: 'valider', en: 'validate', bm: 'latigɛ', wo: 'dëggu', dyu: 'sɔn', ln: 'kondima' },
-  'télécharger': { fr: 'télécharger', en: 'download', bm: 'jigin', wo: 'wàccaat', dyu: 'jigin', ln: 'kokitisa' },
+  signer: { fr: 'signer', en: 'sign', bm: 'tɔgɔda', wo: 'siiñ', dyu: 'tɔgɔda', ln: 'kotia kombo' },
+  valider: { fr: 'valider', en: 'validate', bm: 'latigɛ', wo: 'dëggu', dyu: 'sɔn', ln: 'kondima' },
+  télécharger: {
+    fr: 'télécharger',
+    en: 'download',
+    bm: 'jigin',
+    wo: 'wàccaat',
+    dyu: 'jigin',
+    ln: 'kokitisa',
+  },
 
   // Common phrases
-  'bonjour': { fr: 'bonjour', en: 'hello', bm: 'i ni ce', wo: 'nanga def', dyu: 'i ni ce', ln: 'mbote' },
-  'merci': { fr: 'merci', en: 'thank you', bm: 'i ni ce', wo: 'jërëjëf', dyu: 'i ni ce', ln: 'matondo' },
-  'veuillez': { fr: 'veuillez', en: 'please', bm: 'i ka', wo: 'buleen', dyu: 'i ka', ln: 'nabondela' },
+  bonjour: {
+    fr: 'bonjour',
+    en: 'hello',
+    bm: 'i ni ce',
+    wo: 'nanga def',
+    dyu: 'i ni ce',
+    ln: 'mbote',
+  },
+  merci: {
+    fr: 'merci',
+    en: 'thank you',
+    bm: 'i ni ce',
+    wo: 'jërëjëf',
+    dyu: 'i ni ce',
+    ln: 'matondo',
+  },
+  veuillez: {
+    fr: 'veuillez',
+    en: 'please',
+    bm: 'i ka',
+    wo: 'buleen',
+    dyu: 'i ka',
+    ln: 'nabondela',
+  },
 };
 
 // Notification templates in different languages
 export const NOTIFICATION_TEMPLATES: Record<string, Record<SupportedLanguage, string>> = {
-  'document_pending_signature': {
+  document_pending_signature: {
     fr: 'Le document "{title}" attend votre signature',
     en: 'Document "{title}" is awaiting your signature',
     bm: 'Sɛbɛn "{title}" bɛ i ka tɔgɔda makɔnɔ',
@@ -91,7 +201,7 @@ export const NOTIFICATION_TEMPLATES: Record<string, Record<SupportedLanguage, st
     dyu: 'Sɛbɛn "{title}" bɛ i ka tɔgɔda kɔnɔ',
     ln: 'Mokanda "{title}" ezali kozela kombo na yo',
   },
-  'document_approved': {
+  document_approved: {
     fr: 'Le document "{title}" a été approuvé',
     en: 'Document "{title}" has been approved',
     bm: 'Sɛbɛn "{title}" latigɛlen don',
@@ -99,7 +209,7 @@ export const NOTIFICATION_TEMPLATES: Record<string, Record<SupportedLanguage, st
     dyu: 'Sɛbɛn "{title}" sɔnna',
     ln: 'Mokanda "{title}" endimami',
   },
-  'document_rejected': {
+  document_rejected: {
     fr: 'Le document "{title}" a été rejeté',
     en: 'Document "{title}" has been rejected',
     bm: 'Sɛbɛn "{title}" banna',
@@ -107,7 +217,7 @@ export const NOTIFICATION_TEMPLATES: Record<string, Record<SupportedLanguage, st
     dyu: 'Sɛbɛn "{title}" banna',
     ln: 'Mokanda "{title}" eboyami',
   },
-  'workflow_step_assigned': {
+  workflow_step_assigned: {
     fr: 'Une nouvelle étape vous a été assignée pour "{title}"',
     en: 'A new step has been assigned to you for "{title}"',
     bm: 'Baara kura dira i ma "{title}" kan',
@@ -115,7 +225,7 @@ export const NOTIFICATION_TEMPLATES: Record<string, Record<SupportedLanguage, st
     dyu: 'Baara kura dira i ma "{title}" kan',
     ln: 'Etape ya sika epesami na yo mpo na "{title}"',
   },
-  'deadline_reminder': {
+  deadline_reminder: {
     fr: 'Rappel : Le document "{title}" expire dans {days} jours',
     en: 'Reminder: Document "{title}" expires in {days} days',
     bm: 'Hakili jigin: Sɛbɛn "{title}" bɛna ban tile {days} kɔnɔ',
@@ -123,7 +233,7 @@ export const NOTIFICATION_TEMPLATES: Record<string, Record<SupportedLanguage, st
     dyu: 'Hakili jigin: Sɛbɛn "{title}" bɛna ban tile {days} kɔnɔ',
     ln: 'Kokanisa: Mokanda "{title}" ekosila na mikolo {days}',
   },
-  'comment_added': {
+  comment_added: {
     fr: '{user} a ajouté un commentaire sur "{title}"',
     en: '{user} added a comment on "{title}"',
     bm: '{user} ye kuma fara "{title}" kan',
@@ -140,7 +250,7 @@ class TranslationService {
    * Get language info by code
    */
   getLanguageInfo(code: SupportedLanguage): LanguageInfo | undefined {
-    return SUPPORTED_LANGUAGES.find(lang => lang.code === code);
+    return SUPPORTED_LANGUAGES.find((lang) => lang.code === code);
   }
 
   /**
@@ -148,10 +258,23 @@ class TranslationService {
    */
   async detectLanguage(text: string): Promise<SupportedLanguage> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Simple heuristic detection
-    const frenchIndicators = ['le', 'la', 'les', 'un', 'une', 'des', 'et', 'ou', 'est', 'sont', 'dans', 'pour'];
+    const frenchIndicators = [
+      'le',
+      'la',
+      'les',
+      'un',
+      'une',
+      'des',
+      'et',
+      'ou',
+      'est',
+      'sont',
+      'dans',
+      'pour',
+    ];
     const englishIndicators = ['the', 'a', 'an', 'and', 'or', 'is', 'are', 'in', 'for', 'to', 'of'];
 
     const words = text.toLowerCase().split(/\s+/);
@@ -159,7 +282,7 @@ class TranslationService {
     let frenchScore = 0;
     let englishScore = 0;
 
-    words.forEach(word => {
+    words.forEach((word) => {
       if (frenchIndicators.includes(word)) frenchScore++;
       if (englishIndicators.includes(word)) englishScore++;
     });
@@ -182,17 +305,17 @@ class TranslationService {
     }
 
     // Detect source language if not provided
-    const detectedSource = sourceLanguage || await this.detectLanguage(text);
+    const detectedSource = sourceLanguage || (await this.detectLanguage(text));
 
     // TODO: Replace with real translation API call via edge function
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Simple word-by-word translation for demo
     let translatedText = text;
     let confidence = 0.85;
 
     // Look up words in dictionary
-    Object.entries(TRANSLATION_DICTIONARY).forEach(([key, translations]) => {
+    Object.entries(TRANSLATION_DICTIONARY).forEach(([_key, translations]) => {
       const sourceWord = translations[detectedSource];
       const targetWord = translations[targetLanguage];
 
@@ -211,7 +334,7 @@ class TranslationService {
     // For demo: if translating to local languages, add a note
     if (['bm', 'wo', 'dyu', 'ln'].includes(targetLanguage) && translatedText === text) {
       // Simulate translation by adding language markers
-      const langInfo = this.getLanguageInfo(targetLanguage);
+      const _langInfo = this.getLanguageInfo(targetLanguage);
       confidence = 0.75;
       // In production, this would be actual translation
     }
@@ -284,9 +407,10 @@ class TranslationService {
     language: SupportedLanguage,
     variables: Record<string, string> = {}
   ): string {
-    const template = NOTIFICATION_TEMPLATES[templateKey]?.[language]
-      || NOTIFICATION_TEMPLATES[templateKey]?.['fr']
-      || templateKey;
+    const template =
+      NOTIFICATION_TEMPLATES[templateKey]?.[language] ||
+      NOTIFICATION_TEMPLATES[templateKey]?.['fr'] ||
+      templateKey;
 
     let text = template;
     Object.entries(variables).forEach(([key, value]) => {
@@ -305,7 +429,7 @@ class TranslationService {
     sourceLanguage?: SupportedLanguage
   ): Promise<TranslationResult[]> {
     return Promise.all(
-      texts.map(text => this.translateText(text, targetLanguage, sourceLanguage))
+      texts.map((text) => this.translateText(text, targetLanguage, sourceLanguage))
     );
   }
 

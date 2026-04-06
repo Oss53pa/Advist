@@ -1,6 +1,5 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import {
-  ArrowLeft,
   ArrowRight,
   ChevronDown,
   ChevronUp,
@@ -70,13 +69,13 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
 
   // Group changes by type
   const changesByType = {
-    additions: changes.filter(c => c.type === 'addition'),
-    deletions: changes.filter(c => c.type === 'deletion'),
-    modifications: changes.filter(c => c.type === 'modification'),
+    additions: changes.filter((c) => c.type === 'addition'),
+    deletions: changes.filter((c) => c.type === 'deletion'),
+    modifications: changes.filter((c) => c.type === 'modification'),
   };
 
   const totalChanges = changes.length;
-  const currentChange = changes[currentChangeIndex];
+  const _currentChange = changes[currentChangeIndex];
 
   // Synchronized scrolling
   const handleScroll = (source: 'left' | 'right') => {
@@ -117,7 +116,7 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
           // Estimate position based on line number (assuming ~24px per line)
           const estimatedLineHeight = 24;
           const clientHeight = panel.clientHeight;
-          targetScrollTop = (change.line * estimatedLineHeight) - clientHeight / 2;
+          targetScrollTop = change.line * estimatedLineHeight - clientHeight / 2;
           targetScrollTop = Math.max(0, targetScrollTop);
         } else {
           return;
@@ -126,7 +125,7 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
         // Smooth scroll to the position
         panel.scrollTo({
           top: targetScrollTop,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       };
 
@@ -174,7 +173,9 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
           <div className="flex items-center gap-2 text-sm">
             <span className="px-2 py-1 bg-white/20 rounded">v{leftVersion.versionNumber}</span>
             <ArrowRight size={16} />
-            <span className="px-2 py-1 bg-advist-gold-light/30 rounded">v{rightVersion.versionNumber}</span>
+            <span className="px-2 py-1 bg-advist-gold-light/30 rounded">
+              v{rightVersion.versionNumber}
+            </span>
           </div>
         </div>
 
@@ -182,22 +183,19 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
           {/* Zoom controls */}
           <div className="flex items-center gap-1 bg-white/10 rounded-lg px-2">
             <button
-              onClick={() => setZoom(z => Math.max(50, z - 10))}
+              onClick={() => setZoom((z) => Math.max(50, z - 10))}
               className="p-1 hover:bg-white/10 rounded"
             >
               <ZoomOut size={16} />
             </button>
             <span className="text-sm w-12 text-center">{zoom}%</span>
             <button
-              onClick={() => setZoom(z => Math.min(200, z + 10))}
+              onClick={() => setZoom((z) => Math.min(200, z + 10))}
               className="p-1 hover:bg-white/10 rounded"
             >
               <ZoomIn size={16} />
             </button>
-            <button
-              onClick={() => setZoom(100)}
-              className="p-1 hover:bg-white/10 rounded"
-            >
+            <button onClick={() => setZoom(100)} className="p-1 hover:bg-white/10 rounded">
               <RotateCcw size={14} />
             </button>
           </div>
@@ -270,7 +268,11 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
           >
             <ChevronDown size={18} />
           </button>
-          <Button size="sm" variant="outline" onClick={() => navigateToChange(currentChangeIndex + 1)}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => navigateToChange(currentChangeIndex + 1)}
+          >
             Modification suivante →
           </Button>
         </div>
@@ -283,13 +285,14 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
           <div className="px-4 py-2 bg-advist-gold-light border-b border-advist-gold flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText size={16} className="text-advist-error" />
-              <span className="font-medium text-advist-error">Version {leftVersion.versionNumber}</span>
-              <span className="text-sm text-advist-error">
-                (ancienne)
+              <span className="font-medium text-advist-error">
+                Version {leftVersion.versionNumber}
               </span>
+              <span className="text-sm text-advist-error">(ancienne)</span>
             </div>
             <span className="text-xs text-advist-error">
-              {new Date(leftVersion.createdAt).toLocaleDateString('fr-FR')} par {leftVersion.createdBy.name}
+              {new Date(leftVersion.createdAt).toLocaleDateString('fr-FR')} par{' '}
+              {leftVersion.createdBy.name}
             </span>
           </div>
           <div
@@ -313,18 +316,20 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
               </div>
 
               {/* Show changes markers */}
-              {changes.filter(c => c.type === 'deletion').map((change) => (
-                <div
-                  key={change.id}
-                  className={`p-3 rounded-lg border-l-4 ${getChangeColor(change.type)}`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    {getChangeIcon(change.type)}
-                    <span className="text-sm font-medium">Ligne {change.line}</span>
+              {changes
+                .filter((c) => c.type === 'deletion')
+                .map((change) => (
+                  <div
+                    key={change.id}
+                    className={`p-3 rounded-lg border-l-4 ${getChangeColor(change.type)}`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      {getChangeIcon(change.type)}
+                      <span className="text-sm font-medium">Ligne {change.line}</span>
+                    </div>
+                    <p className="text-sm line-through">{change.oldContent}</p>
                   </div>
-                  <p className="text-sm line-through">{change.oldContent}</p>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>
@@ -334,13 +339,14 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
           <div className="px-4 py-2 bg-green-50 border-b border-advist-success flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText size={16} className="text-advist-success" />
-              <span className="font-medium text-advist-success">Version {rightVersion.versionNumber}</span>
-              <span className="text-sm text-advist-success">
-                (nouvelle)
+              <span className="font-medium text-advist-success">
+                Version {rightVersion.versionNumber}
               </span>
+              <span className="text-sm text-advist-success">(nouvelle)</span>
             </div>
             <span className="text-xs text-advist-success">
-              {new Date(rightVersion.createdAt).toLocaleDateString('fr-FR')} par {rightVersion.createdBy.name}
+              {new Date(rightVersion.createdAt).toLocaleDateString('fr-FR')} par{' '}
+              {rightVersion.createdBy.name}
             </span>
           </div>
           <div
@@ -355,42 +361,44 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
               <div className="p-4 border rounded-lg">
                 <p className="text-advist-gray900 leading-relaxed">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  <span className="bg-green-50 px-1 mx-1">
-                    Nouveau texte ajouté
-                  </span>
+                  <span className="bg-green-50 px-1 mx-1">Nouveau texte ajouté</span>
                   Sed do eiusmod tempor incididunt ut labore.
                 </p>
               </div>
 
               {/* Show changes markers */}
-              {changes.filter(c => c.type === 'addition').map((change) => (
-                <div
-                  key={change.id}
-                  className={`p-3 rounded-lg border-l-4 ${getChangeColor(change.type)}`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    {getChangeIcon(change.type)}
-                    <span className="text-sm font-medium">Ligne {change.line}</span>
+              {changes
+                .filter((c) => c.type === 'addition')
+                .map((change) => (
+                  <div
+                    key={change.id}
+                    className={`p-3 rounded-lg border-l-4 ${getChangeColor(change.type)}`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      {getChangeIcon(change.type)}
+                      <span className="text-sm font-medium">Ligne {change.line}</span>
+                    </div>
+                    <p className="text-sm">{change.newContent}</p>
                   </div>
-                  <p className="text-sm">{change.newContent}</p>
-                </div>
-              ))}
+                ))}
 
-              {changes.filter(c => c.type === 'modification').map((change) => (
-                <div
-                  key={change.id}
-                  className={`p-3 rounded-lg border-l-4 ${getChangeColor(change.type)}`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    {getChangeIcon(change.type)}
-                    <span className="text-sm font-medium">Ligne {change.line}</span>
+              {changes
+                .filter((c) => c.type === 'modification')
+                .map((change) => (
+                  <div
+                    key={change.id}
+                    className={`p-3 rounded-lg border-l-4 ${getChangeColor(change.type)}`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      {getChangeIcon(change.type)}
+                      <span className="text-sm font-medium">Ligne {change.line}</span>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-advist-error line-through">{change.oldContent}</p>
+                      <p className="text-sm text-advist-success">{change.newContent}</p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-advist-error line-through">{change.oldContent}</p>
-                    <p className="text-sm text-advist-success">{change.newContent}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>
@@ -427,7 +435,8 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
                   <p className="text-xs text-advist-blue-light truncate">
                     {change.type === 'addition' && change.newContent}
                     {change.type === 'deletion' && change.oldContent}
-                    {change.type === 'modification' && `${change.oldContent} → ${change.newContent}`}
+                    {change.type === 'modification' &&
+                      `${change.oldContent} → ${change.newContent}`}
                   </p>
                 </div>
                 {index === currentChangeIndex && (

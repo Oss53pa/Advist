@@ -36,7 +36,7 @@ export const BusinessMetricsWidget: React.FC<BusinessMetricsWidgetProps> = ({ co
       try {
         const metricsData = await analyticsService.getBusinessMetrics();
         setData(metricsData);
-      } catch (err) {
+      } catch (_err) {
         // Mock data for demo
         setData({
           costPerValidation: {
@@ -105,7 +105,7 @@ export const BusinessMetricsWidget: React.FC<BusinessMetricsWidgetProps> = ({ co
   if (loading) {
     return (
       <div className="h-full flex flex-col gap-4 animate-pulse">
-        {[1, 2, 3].map(i => (
+        {[1, 2, 3].map((i) => (
           <div key={i} className="h-24 bg-advist-surface-dark rounded-lg"></div>
         ))}
       </div>
@@ -116,9 +116,7 @@ export const BusinessMetricsWidget: React.FC<BusinessMetricsWidgetProps> = ({ co
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-4">
         <Activity size={40} className="text-advist-gray900/30 mb-3" />
-        <p className="text-sm text-advist-gray900/70">
-          Pas de données disponibles
-        </p>
+        <p className="text-sm text-advist-gray900/70">Pas de données disponibles</p>
       </div>
     );
   }
@@ -142,7 +140,9 @@ export const BusinessMetricsWidget: React.FC<BusinessMetricsWidgetProps> = ({ co
             </div>
           </div>
           {data.costPerValidation.trend && (
-            <div className={`flex items-center gap-1 text-sm ${getTrendColor(data.costPerValidation.trend.direction, true)}`}>
+            <div
+              className={`flex items-center gap-1 text-sm ${getTrendColor(data.costPerValidation.trend.direction, true)}`}
+            >
               {getTrendIcon(data.costPerValidation.trend.direction)}
               <span>{Math.abs(data.costPerValidation.trend.changePct)}%</span>
             </div>
@@ -153,7 +153,10 @@ export const BusinessMetricsWidget: React.FC<BusinessMetricsWidgetProps> = ({ co
             <div className="flex items-center justify-between text-xs">
               <span className="text-advist-gray900/50">Estimation manuelle</span>
               <span className="text-advist-gray900/70 line-through">
-                {formatCurrency(data.costPerValidation.comparison.manualEstimate, data.costPerValidation.unit)}
+                {formatCurrency(
+                  data.costPerValidation.comparison.manualEstimate,
+                  data.costPerValidation.unit
+                )}
               </span>
             </div>
             <div className="mt-1 flex items-center gap-2">
@@ -188,7 +191,9 @@ export const BusinessMetricsWidget: React.FC<BusinessMetricsWidgetProps> = ({ co
             </div>
           </div>
           {data.timeToSignature.trend && (
-            <div className={`flex items-center gap-1 text-sm ${getTrendColor(data.timeToSignature.trend.direction, true)}`}>
+            <div
+              className={`flex items-center gap-1 text-sm ${getTrendColor(data.timeToSignature.trend.direction, true)}`}
+            >
               {getTrendIcon(data.timeToSignature.trend.direction)}
               <span>{Math.abs(data.timeToSignature.trend.changePct)}%</span>
             </div>
@@ -229,14 +234,13 @@ export const BusinessMetricsWidget: React.FC<BusinessMetricsWidgetProps> = ({ co
                 Taux d'erreurs évitées
               </p>
               <p className="text-xl font-bold text-advist-gray900">
-                {data.errorRateAvoided.value}{data.errorRateAvoided.unit}
+                {data.errorRateAvoided.value}
+                {data.errorRateAvoided.unit}
               </p>
             </div>
           </div>
         </div>
-        <p className="mt-2 text-xs text-advist-gray900/60">
-          {data.errorRateAvoided.description}
-        </p>
+        <p className="mt-2 text-xs text-advist-gray900/60">{data.errorRateAvoided.description}</p>
         <div className="mt-3 grid grid-cols-2 gap-2 text-center">
           <div className="p-2 bg-advist-gold-light rounded-lg">
             <p className="text-xs text-advist-error/70">Processus manuel</p>

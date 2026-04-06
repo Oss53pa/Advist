@@ -10,9 +10,9 @@ import {
   X,
   Loader2,
   Mail,
-  Phone,
+  _Phone,
   AlertTriangle,
-  ArrowRight,
+  _ArrowRight,
   Clock,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -53,7 +53,7 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
   currentStepId,
   onValidatorAdded,
 }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState<'user' | 'role' | 'department' | 'external'>('user');
   const [users, setUsers] = useState<Validator[]>([]);
@@ -99,32 +99,56 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
         api.get('/departments/'),
       ]);
 
-      setUsers(usersRes.data.results?.map((u: any) => ({
-        id: u.id,
-        type: 'user' as const,
-        name: `${u.first_name} ${u.last_name}`,
-        email: u.email,
-        department: u.department?.name,
-      })) || []);
+      setUsers(
+        usersRes.data.results?.map((u: any) => ({
+          id: u.id,
+          type: 'user' as const,
+          name: `${u.first_name} ${u.last_name}`,
+          email: u.email,
+          department: u.department?.name,
+        })) || []
+      );
 
-      setRoles(rolesRes.data.results?.map((r: any) => ({
-        id: r.id,
-        type: 'role' as const,
-        name: r.name,
-      })) || []);
+      setRoles(
+        rolesRes.data.results?.map((r: any) => ({
+          id: r.id,
+          type: 'role' as const,
+          name: r.name,
+        })) || []
+      );
 
-      setDepartments(deptsRes.data.results?.map((d: any) => ({
-        id: d.id,
-        type: 'department' as const,
-        name: d.name,
-      })) || []);
+      setDepartments(
+        deptsRes.data.results?.map((d: any) => ({
+          id: d.id,
+          type: 'department' as const,
+          name: d.name,
+        })) || []
+      );
     } catch (err) {
       console.error('Failed to fetch validators:', err);
       // Use mock data for development
       setUsers([
-        { id: 1, type: 'user', name: 'Jean Dupont', email: 'jean.dupont@example.com', department: 'Finance' },
-        { id: 2, type: 'user', name: 'Marie Martin', email: 'marie.martin@example.com', department: 'RH' },
-        { id: 3, type: 'user', name: 'Pierre Bernard', email: 'pierre.bernard@example.com', department: 'Direction' },
+        {
+          id: 1,
+          type: 'user',
+          name: 'Jean Dupont',
+          email: 'jean.dupont@example.com',
+          department: 'Finance',
+        },
+        {
+          id: 2,
+          type: 'user',
+          name: 'Marie Martin',
+          email: 'marie.martin@example.com',
+          department: 'RH',
+        },
+        {
+          id: 3,
+          type: 'user',
+          name: 'Pierre Bernard',
+          email: 'pierre.bernard@example.com',
+          department: 'Direction',
+        },
       ]);
       setRoles([
         { id: 1, type: 'role', name: 'Manager' },
@@ -159,9 +183,10 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
     }
 
     if (!searchTerm) return list;
-    return list.filter(v =>
-      v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    return list.filter(
+      (v) =>
+        v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        v.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -175,7 +200,11 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
 
       if (searchType === 'external') {
         // Validate external validator
-        if (!externalValidator.email || !externalValidator.firstName || !externalValidator.lastName) {
+        if (
+          !externalValidator.email ||
+          !externalValidator.firstName ||
+          !externalValidator.lastName
+        ) {
           setError('Veuillez remplir tous les champs obligatoires');
           setIsAdding(false);
           return;
@@ -222,7 +251,7 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
       onClose();
     } catch (err: any) {
       console.error('Failed to add validator:', err);
-      setError(err.response?.data?.message || 'Impossible d\'ajouter le validateur');
+      setError(err.response?.data?.message || "Impossible d'ajouter le validateur");
     } finally {
       setIsAdding(false);
     }
@@ -302,9 +331,10 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                 }}
                 className={`
                   flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors
-                  ${searchType === value
-                    ? 'bg-advist-dark text-white'
-                    : 'bg-advist-bg text-advist-gray900 hover:bg-advist-border'
+                  ${
+                    searchType === value
+                      ? 'bg-advist-dark text-white'
+                      : 'bg-advist-bg text-advist-gray900 hover:bg-advist-border'
                   }
                 `}
               >
@@ -326,32 +356,34 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                 <input
                   type="text"
                   value={externalValidator.firstName}
-                  onChange={(e) => setExternalValidator(prev => ({ ...prev, firstName: e.target.value }))}
+                  onChange={(e) =>
+                    setExternalValidator((prev) => ({ ...prev, firstName: e.target.value }))
+                  }
                   className="w-full px-4 py-2 bg-advist-bg border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
                   placeholder="Jean"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-advist-gray900 mb-1">
-                  Nom *
-                </label>
+                <label className="block text-sm font-medium text-advist-gray900 mb-1">Nom *</label>
                 <input
                   type="text"
                   value={externalValidator.lastName}
-                  onChange={(e) => setExternalValidator(prev => ({ ...prev, lastName: e.target.value }))}
+                  onChange={(e) =>
+                    setExternalValidator((prev) => ({ ...prev, lastName: e.target.value }))
+                  }
                   className="w-full px-4 py-2 bg-advist-bg border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
                   placeholder="Dupont"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-advist-gray900 mb-1">
-                Email *
-              </label>
+              <label className="block text-sm font-medium text-advist-gray900 mb-1">Email *</label>
               <input
                 type="email"
                 value={externalValidator.email}
-                onChange={(e) => setExternalValidator(prev => ({ ...prev, email: e.target.value }))}
+                onChange={(e) =>
+                  setExternalValidator((prev) => ({ ...prev, email: e.target.value }))
+                }
                 className="w-full px-4 py-2 bg-advist-bg border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
                 placeholder="jean.dupont@external.com"
               />
@@ -364,7 +396,9 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                 <input
                   type="text"
                   value={externalValidator.company}
-                  onChange={(e) => setExternalValidator(prev => ({ ...prev, company: e.target.value }))}
+                  onChange={(e) =>
+                    setExternalValidator((prev) => ({ ...prev, company: e.target.value }))
+                  }
                   className="w-full px-4 py-2 bg-advist-bg border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
                   placeholder="Nom de l'entreprise"
                 />
@@ -376,7 +410,9 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                 <input
                   type="tel"
                   value={externalValidator.phone}
-                  onChange={(e) => setExternalValidator(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={(e) =>
+                    setExternalValidator((prev) => ({ ...prev, phone: e.target.value }))
+                  }
                   className="w-full px-4 py-2 bg-advist-bg border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
                   placeholder="+225 XX XX XX XX"
                 />
@@ -387,7 +423,10 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
           <>
             {/* Search */}
             <div className="relative">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light" />
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
+              />
               <input
                 type="text"
                 value={searchTerm}
@@ -404,9 +443,7 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                   <Loader2 size={24} className="animate-spin text-advist-blue-light" />
                 </div>
               ) : getFilteredValidators().length === 0 ? (
-                <div className="py-8 text-center text-advist-blue-light">
-                  Aucun résultat trouvé
-                </div>
+                <div className="py-8 text-center text-advist-blue-light">Aucun résultat trouvé</div>
               ) : (
                 getFilteredValidators().map((validator) => (
                   <button
@@ -414,15 +451,15 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                     onClick={() => setSelectedValidator(validator)}
                     className={`
                       w-full flex items-center gap-3 p-3 text-left transition-colors
-                      ${selectedValidator?.id === validator.id && selectedValidator?.type === validator.type
-                        ? 'bg-advist-gold-light/10'
-                        : 'hover:bg-advist-bg'
+                      ${
+                        selectedValidator?.id === validator.id &&
+                        selectedValidator?.type === validator.type
+                          ? 'bg-advist-gold-light/10'
+                          : 'hover:bg-advist-bg'
                       }
                     `}
                   >
-                    <div className="p-2 bg-advist-bg rounded-lg">
-                      {getTypeIcon(validator.type)}
-                    </div>
+                    <div className="p-2 bg-advist-bg rounded-lg">{getTypeIcon(validator.type)}</div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-advist-gray900 truncate">{validator.name}</p>
                       {validator.email && (
@@ -432,9 +469,10 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                         <p className="text-xs text-advist-blue-light">{validator.department}</p>
                       )}
                     </div>
-                    {selectedValidator?.id === validator.id && selectedValidator?.type === validator.type && (
-                      <Check size={20} className="text-advist-success" />
-                    )}
+                    {selectedValidator?.id === validator.id &&
+                      selectedValidator?.type === validator.type && (
+                        <Check size={20} className="text-advist-success" />
+                      )}
                   </button>
                 ))
               )}
@@ -449,8 +487,16 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
           </label>
           <div className="flex gap-2">
             {[
-              { value: 'current', label: 'Étape actuelle', description: 'Ajouter à l\'étape en cours' },
-              { value: 'next', label: 'Étape suivante', description: 'Créer une nouvelle étape après' },
+              {
+                value: 'current',
+                label: 'Étape actuelle',
+                description: "Ajouter à l'étape en cours",
+              },
+              {
+                value: 'next',
+                label: 'Étape suivante',
+                description: 'Créer une nouvelle étape après',
+              },
               { value: 'end', label: 'Fin du circuit', description: 'Ajouter à la fin' },
             ].map(({ value, label, description }) => (
               <button
@@ -458,14 +504,17 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                 onClick={() => setInsertPosition(value as InsertPosition)}
                 className={`
                   flex-1 p-3 rounded-lg text-left transition-colors
-                  ${insertPosition === value
-                    ? 'bg-advist-dark text-white'
-                    : 'bg-advist-bg text-advist-gray900 hover:bg-advist-border'
+                  ${
+                    insertPosition === value
+                      ? 'bg-advist-dark text-white'
+                      : 'bg-advist-bg text-advist-gray900 hover:bg-advist-border'
                   }
                 `}
               >
                 <p className="font-medium text-sm">{label}</p>
-                <p className={`text-xs mt-0.5 ${insertPosition === value ? 'text-white/70' : 'text-advist-blue-light'}`}>
+                <p
+                  className={`text-xs mt-0.5 ${insertPosition === value ? 'text-white/70' : 'text-advist-blue-light'}`}
+                >
                   {description}
                 </p>
               </button>
@@ -484,7 +533,9 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
               </label>
               <select
                 value={stepConfig.type}
-                onChange={(e) => setStepConfig(prev => ({ ...prev, type: e.target.value as any }))}
+                onChange={(e) =>
+                  setStepConfig((prev) => ({ ...prev, type: e.target.value as any }))
+                }
                 className="w-full px-4 py-2 bg-white border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
               >
                 <option value="consultation">Consultation</option>
@@ -503,7 +554,12 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
                 min={1}
                 max={30}
                 value={stepConfig.deadlineDays}
-                onChange={(e) => setStepConfig(prev => ({ ...prev, deadlineDays: parseInt(e.target.value) || 3 }))}
+                onChange={(e) =>
+                  setStepConfig((prev) => ({
+                    ...prev,
+                    deadlineDays: parseInt(e.target.value) || 3,
+                  }))
+                }
                 className="w-full px-4 py-2 bg-white border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
               />
             </div>
@@ -514,7 +570,9 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
               <input
                 type="checkbox"
                 checked={stepConfig.canDelegate}
-                onChange={(e) => setStepConfig(prev => ({ ...prev, canDelegate: e.target.checked }))}
+                onChange={(e) =>
+                  setStepConfig((prev) => ({ ...prev, canDelegate: e.target.checked }))
+                }
                 className="w-4 h-4 rounded border-advist-border text-advist-gray900 focus:ring-advist-blue-light"
               />
               <span className="text-sm text-advist-gray900">Permettre la délégation</span>
@@ -527,7 +585,7 @@ export const AddValidatorModal: React.FC<AddValidatorModalProps> = ({
             </label>
             <textarea
               value={stepConfig.message}
-              onChange={(e) => setStepConfig(prev => ({ ...prev, message: e.target.value }))}
+              onChange={(e) => setStepConfig((prev) => ({ ...prev, message: e.target.value }))}
               placeholder="Instructions ou contexte pour le nouveau validateur..."
               rows={2}
               className="w-full px-4 py-2 bg-white border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30 resize-none"

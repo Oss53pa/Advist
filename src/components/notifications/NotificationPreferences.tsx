@@ -61,7 +61,7 @@ const DEFAULT_PREFERENCES: NotificationPreferences = {
 };
 
 export const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ onSave }) => {
-  const { t } = useTranslation();
+  const { _t } = useTranslation();
   const [preferences, setPreferences] = useState<NotificationPreferences>(DEFAULT_PREFERENCES);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -125,11 +125,11 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
       if (result.valid) {
         setWhatsappNumber(result.formatted);
         setWhatsappVerified(true);
-        setPreferences(prev => ({ ...prev, whatsapp_enabled: true }));
+        setPreferences((prev) => ({ ...prev, whatsapp_enabled: true }));
       } else {
         setError('Numéro WhatsApp invalide');
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Erreur de vérification WhatsApp');
     } finally {
       setIsVerifyingWhatsApp(false);
@@ -143,7 +143,7 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
       if (!result.success) {
         setError(result.error || `Échec du test ${CHANNEL_LABELS[channel]}`);
       }
-    } catch (err) {
+    } catch (_err) {
       setError(`Erreur lors du test ${CHANNEL_LABELS[channel]}`);
     } finally {
       setTestingChannel(null);
@@ -151,13 +151,20 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
   };
 
   const toggleChannelForType = (
-    type: keyof Pick<NotificationPreferences, 'workflow_updates' | 'document_comments' | 'signature_requests' | 'deadline_reminders' | 'system_alerts'>,
+    type: keyof Pick<
+      NotificationPreferences,
+      | 'workflow_updates'
+      | 'document_comments'
+      | 'signature_requests'
+      | 'deadline_reminders'
+      | 'system_alerts'
+    >,
     channel: NotificationChannel
   ) => {
-    setPreferences(prev => {
+    setPreferences((prev) => {
       const current = prev[type] || [];
       const updated = current.includes(channel)
-        ? current.filter(c => c !== channel)
+        ? current.filter((c) => c !== channel)
         : [...current, channel];
       return { ...prev, [type]: updated };
     });
@@ -237,7 +244,9 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
               </div>
               <div>
                 <p className="font-medium text-advist-gray900">Email</p>
-                <p className="text-sm text-advist-blue-light">{preferences.email_address || 'Non configuré'}</p>
+                <p className="text-sm text-advist-blue-light">
+                  {preferences.email_address || 'Non configuré'}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -247,13 +256,19 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
                 onClick={() => handleTestChannel('email')}
                 disabled={testingChannel === 'email'}
               >
-                {testingChannel === 'email' ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                {testingChannel === 'email' ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Send size={14} />
+                )}
               </Button>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={preferences.email_enabled}
-                  onChange={(e) => setPreferences(prev => ({ ...prev, email_enabled: e.target.checked }))}
+                  onChange={(e) =>
+                    setPreferences((prev) => ({ ...prev, email_enabled: e.target.checked }))
+                  }
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-blue-light/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -283,14 +298,20 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
                     onClick={() => handleTestChannel('whatsapp')}
                     disabled={testingChannel === 'whatsapp'}
                   >
-                    {testingChannel === 'whatsapp' ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                    {testingChannel === 'whatsapp' ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <Send size={14} />
+                    )}
                   </Button>
                 )}
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     checked={preferences.whatsapp_enabled && whatsappVerified}
-                    onChange={(e) => setPreferences(prev => ({ ...prev, whatsapp_enabled: e.target.checked }))}
+                    onChange={(e) =>
+                      setPreferences((prev) => ({ ...prev, whatsapp_enabled: e.target.checked }))
+                    }
                     disabled={!whatsappVerified}
                     className="sr-only peer"
                   />
@@ -302,7 +323,10 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
             {!whatsappVerified && (
               <div className="flex gap-2 mt-3">
                 <div className="flex-1 relative">
-                  <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light" />
+                  <Phone
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
+                  />
                   <input
                     type="tel"
                     value={whatsappNumber}
@@ -335,7 +359,7 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
                 <button
                   onClick={() => {
                     setWhatsappVerified(false);
-                    setPreferences(prev => ({ ...prev, whatsapp_enabled: false }));
+                    setPreferences((prev) => ({ ...prev, whatsapp_enabled: false }));
                   }}
                   className="ml-auto text-advist-blue-light hover:text-advist-error"
                 >
@@ -353,14 +377,18 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
               </div>
               <div>
                 <p className="font-medium text-advist-gray900">SMS</p>
-                <p className="text-sm text-advist-blue-light">{preferences.sms_number || 'Non configuré'}</p>
+                <p className="text-sm text-advist-blue-light">
+                  {preferences.sms_number || 'Non configuré'}
+                </p>
               </div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={preferences.sms_enabled}
-                onChange={(e) => setPreferences(prev => ({ ...prev, sms_enabled: e.target.checked }))}
+                onChange={(e) =>
+                  setPreferences((prev) => ({ ...prev, sms_enabled: e.target.checked }))
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-blue-light/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -382,7 +410,9 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
               <input
                 type="checkbox"
                 checked={preferences.push_enabled}
-                onChange={(e) => setPreferences(prev => ({ ...prev, push_enabled: e.target.checked }))}
+                onChange={(e) =>
+                  setPreferences((prev) => ({ ...prev, push_enabled: e.target.checked }))
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-blue-light/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -402,45 +432,48 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           {notificationTypes.map((type) => (
             <div key={type.key} className="p-4 bg-advist-bg rounded-xl">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-white rounded-lg text-advist-gray900">
-                  {type.icon}
-                </div>
+                <div className="p-2 bg-white rounded-lg text-advist-gray900">{type.icon}</div>
                 <div>
                   <p className="font-medium text-advist-gray900">{type.title}</p>
                   <p className="text-xs text-advist-blue-light">{type.description}</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
-                {(['in_app', 'email', 'whatsapp', 'sms'] as NotificationChannel[]).map((channel) => {
-                  const isEnabled =
-                    (channel === 'email' && preferences.email_enabled) ||
-                    (channel === 'whatsapp' && preferences.whatsapp_enabled && whatsappVerified) ||
-                    (channel === 'sms' && preferences.sms_enabled) ||
-                    channel === 'in_app';
+                {(['in_app', 'email', 'whatsapp', 'sms'] as NotificationChannel[]).map(
+                  (channel) => {
+                    const isEnabled =
+                      (channel === 'email' && preferences.email_enabled) ||
+                      (channel === 'whatsapp' &&
+                        preferences.whatsapp_enabled &&
+                        whatsappVerified) ||
+                      (channel === 'sms' && preferences.sms_enabled) ||
+                      channel === 'in_app';
 
-                  const isSelected = preferences[type.key]?.includes(channel);
+                    const isSelected = preferences[type.key]?.includes(channel);
 
-                  return (
-                    <button
-                      key={channel}
-                      onClick={() => isEnabled && toggleChannelForType(type.key, channel)}
-                      disabled={!isEnabled}
-                      className={`
+                    return (
+                      <button
+                        key={channel}
+                        onClick={() => isEnabled && toggleChannelForType(type.key, channel)}
+                        disabled={!isEnabled}
+                        className={`
                         flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all
-                        ${isSelected
-                          ? 'bg-advist-dark text-white'
-                          : isEnabled
-                            ? 'bg-white text-advist-gray900 hover:bg-advist-dark/10'
-                            : 'bg-advist-surface-dark text-advist-text-muted cursor-not-allowed'
+                        ${
+                          isSelected
+                            ? 'bg-advist-dark text-white'
+                            : isEnabled
+                              ? 'bg-white text-advist-gray900 hover:bg-advist-dark/10'
+                              : 'bg-advist-surface-dark text-advist-text-muted cursor-not-allowed'
                         }
                       `}
-                    >
-                      {CHANNEL_ICONS[channel]}
-                      {CHANNEL_LABELS[channel]}
-                      {isSelected && <Check size={14} />}
-                    </button>
-                  );
-                })}
+                      >
+                        {CHANNEL_ICONS[channel]}
+                        {CHANNEL_LABELS[channel]}
+                        {isSelected && <Check size={14} />}
+                      </button>
+                    );
+                  }
+                )}
               </div>
             </div>
           ))}
@@ -456,14 +489,18 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
             </div>
             <div>
               <h3 className="text-lg font-semibold text-advist-gray900">Heures silencieuses</h3>
-              <p className="text-sm text-advist-blue-light">Suspendre les notifications pendant certaines heures</p>
+              <p className="text-sm text-advist-blue-light">
+                Suspendre les notifications pendant certaines heures
+              </p>
             </div>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
               checked={preferences.quiet_hours_enabled}
-              onChange={(e) => setPreferences(prev => ({ ...prev, quiet_hours_enabled: e.target.checked }))}
+              onChange={(e) =>
+                setPreferences((prev) => ({ ...prev, quiet_hours_enabled: e.target.checked }))
+              }
               className="sr-only peer"
             />
             <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-blue-light/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -477,7 +514,9 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
               <input
                 type="time"
                 value={preferences.quiet_hours_start || '22:00'}
-                onChange={(e) => setPreferences(prev => ({ ...prev, quiet_hours_start: e.target.value }))}
+                onChange={(e) =>
+                  setPreferences((prev) => ({ ...prev, quiet_hours_start: e.target.value }))
+                }
                 className="w-full px-4 py-2 bg-advist-bg border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
               />
             </div>
@@ -486,7 +525,9 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
               <input
                 type="time"
                 value={preferences.quiet_hours_end || '07:00'}
-                onChange={(e) => setPreferences(prev => ({ ...prev, quiet_hours_end: e.target.value }))}
+                onChange={(e) =>
+                  setPreferences((prev) => ({ ...prev, quiet_hours_end: e.target.value }))
+                }
                 className="w-full px-4 py-2 bg-advist-bg border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-advist-blue-light/30"
               />
             </div>
@@ -502,8 +543,12 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
               <Globe size={20} className="text-advist-gray900" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-advist-gray900">Langue des notifications</h3>
-              <p className="text-sm text-advist-blue-light">Choisissez la langue de vos notifications</p>
+              <h3 className="text-lg font-semibold text-advist-gray900">
+                Langue des notifications
+              </h3>
+              <p className="text-sm text-advist-blue-light">
+                Choisissez la langue de vos notifications
+              </p>
             </div>
           </div>
         </div>
@@ -515,18 +560,21 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           >
             <div className="flex items-center gap-3">
               <span className="text-2xl">
-                {SUPPORTED_LANGUAGES.find(l => l.code === notificationLanguage)?.flag}
+                {SUPPORTED_LANGUAGES.find((l) => l.code === notificationLanguage)?.flag}
               </span>
               <div className="text-left">
                 <p className="font-medium text-advist-gray900">
-                  {SUPPORTED_LANGUAGES.find(l => l.code === notificationLanguage)?.nativeName}
+                  {SUPPORTED_LANGUAGES.find((l) => l.code === notificationLanguage)?.nativeName}
                 </p>
                 <p className="text-sm text-advist-blue-light">
-                  {SUPPORTED_LANGUAGES.find(l => l.code === notificationLanguage)?.region}
+                  {SUPPORTED_LANGUAGES.find((l) => l.code === notificationLanguage)?.region}
                 </p>
               </div>
             </div>
-            <ChevronDown size={20} className={`text-advist-blue-light transition-transform ${showLanguageSelector ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              size={20}
+              className={`text-advist-blue-light transition-transform ${showLanguageSelector ? 'rotate-180' : ''}`}
+            />
           </button>
 
           {showLanguageSelector && (
@@ -547,7 +595,9 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
                     <span className="text-2xl">{lang.flag}</span>
                     <div className="flex-1 text-left">
                       <p className="font-medium text-advist-gray900">{lang.nativeName}</p>
-                      <p className="text-sm text-advist-blue-light">{lang.name} - {lang.region}</p>
+                      <p className="text-sm text-advist-blue-light">
+                        {lang.name} - {lang.region}
+                      </p>
                     </div>
                     {notificationLanguage === lang.code && (
                       <Check size={18} className="text-advist-gray900" />
@@ -561,7 +611,10 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
 
         <div className="mt-4 p-3 bg-advist-gold-light rounded-xl">
           <p className="text-sm text-advist-gray900">
-            <strong>Exemple de notification en {SUPPORTED_LANGUAGES.find(l => l.code === notificationLanguage)?.nativeName}:</strong>
+            <strong>
+              Exemple de notification en{' '}
+              {SUPPORTED_LANGUAGES.find((l) => l.code === notificationLanguage)?.nativeName}:
+            </strong>
           </p>
           <p className="text-sm text-advist-gray900 mt-1">
             {notificationLanguage === 'fr' && 'Le document "Contrat Q4" attend votre signature'}
@@ -574,11 +627,7 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <Button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="min-w-[200px]"
-        >
+        <Button onClick={handleSave} disabled={isSaving} className="min-w-[200px]">
           {isSaving ? (
             <>
               <Loader2 size={16} className="animate-spin mr-2" />

@@ -96,11 +96,7 @@ export const controlService = {
    * Get a specific control
    */
   getControl: async (id: string): Promise<Control> => {
-    const { data, error } = await supabase
-      .from('iso_controls')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('iso_controls').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as Control;
@@ -161,11 +157,7 @@ export const soaService = {
    * Get a specific SoA
    */
   getSoA: async (id: string): Promise<StatementOfApplicability> => {
-    const { data, error } = await supabase
-      .from('iso_soa')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('iso_soa').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as StatementOfApplicability;
@@ -444,11 +436,7 @@ export const riskService = {
    * Get a specific risk
    */
   getRisk: async (id: string): Promise<Risk> => {
-    const { data, error } = await supabase
-      .from('iso_risks')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('iso_risks').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as Risk;
@@ -533,7 +521,9 @@ export const riskService = {
   /**
    * Get risk heat map data
    */
-  getHeatMapData: async (registerId: string): Promise<{
+  getHeatMapData: async (
+    registerId: string
+  ): Promise<{
     matrix: number[][];
     risks_by_cell: Record<string, Risk[]>;
   }> => {
@@ -737,10 +727,7 @@ export const auditService = {
    * Update audit status
    */
   updateAuditStatus: async (id: string, status: string): Promise<void> => {
-    const { error } = await supabase
-      .from('iso_internal_audits')
-      .update({ status })
-      .eq('id', id);
+    const { error } = await supabase.from('iso_internal_audits').update({ status }).eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -1180,11 +1167,7 @@ export const scopeService = {
    * Get ISMS scope
    */
   getScope: async (): Promise<ISMSScope> => {
-    const { data, error } = await supabase
-      .from('iso_isms_scope')
-      .select('*')
-      .limit(1)
-      .single();
+    const { data, error } = await supabase.from('iso_isms_scope').select('*').limit(1).single();
 
     if (error) throw parseSupabaseError(error);
     return data as ISMSScope;
@@ -1283,7 +1266,10 @@ export const scopeService = {
   ): Promise<void> => {
     // Fetch current measurements, append, and update
     const objective = await scopeService.getObjective(objectiveId);
-    const measurements = [...((objective as Record<string, unknown>).measurements as unknown[] ?? []), data];
+    const measurements = [
+      ...(((objective as Record<string, unknown>).measurements as unknown[]) ?? []),
+      data,
+    ];
 
     const { error } = await supabase
       .from('iso_isms_objectives')
@@ -1394,10 +1380,12 @@ export const policyService = {
    * Acknowledge a policy
    */
   acknowledgePolicy: async (id: string): Promise<PolicyAcknowledgment> => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { data, error } = await supabase
+    const { _data, error } = await supabase
       .from('iso_security_policies')
       .select('id')
       .eq('id', id)
@@ -1416,7 +1404,9 @@ export const policyService = {
    * Get pending acknowledgments for current user
    */
   getPendingAcknowledgments: async (): Promise<SecurityPolicy[]> => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
     const result = await invokeRpc<SecurityPolicy[]>('get_pending_policy_acknowledgments', {

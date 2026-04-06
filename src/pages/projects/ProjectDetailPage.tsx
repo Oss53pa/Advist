@@ -31,22 +31,23 @@ import {
 } from 'lucide-react';
 import {
   ProjectDetail,
-  TimelineEntry,
+  _TimelineEntry,
   projectService,
   getStatusConfig,
   getPriorityConfig,
   getTimelineEventConfig,
 } from '../../services/projects';
-import { Button } from '../../components/ui';
 import { UploadDocumentModal } from '../../components/documents';
 
 export const ProjectDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [project, setProject] = useState<ProjectDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'documents' | 'timeline' | 'members' | 'settings'>('documents');
+  const [activeTab, setActiveTab] = useState<'documents' | 'timeline' | 'members' | 'settings'>(
+    'documents'
+  );
 
   useEffect(() => {
     const loadProject = async () => {
@@ -77,8 +78,12 @@ export const ProjectDetailPage: React.FC = () => {
     return (
       <div className="text-center py-16">
         <Folder size={48} className="mx-auto mb-4 text-advist-gray900/30" />
-        <h2 className="text-lg font-medium text-advist-gray900">{t('projects.notFound', 'Projet non trouvé')}</h2>
-        <p className="text-advist-gray900/70 mt-1">{t('projects.notFoundDesc', 'Ce projet n\'existe pas ou a été supprimé.')}</p>
+        <h2 className="text-lg font-medium text-advist-gray900">
+          {t('projects.notFound', 'Projet non trouvé')}
+        </h2>
+        <p className="text-advist-gray900/70 mt-1">
+          {t('projects.notFoundDesc', "Ce projet n'existe pas ou a été supprimé.")}
+        </p>
         <Link
           to="/user/projects"
           className="inline-flex items-center gap-2 mt-4 text-advist-gray900 hover:text-advist-gray900/80"
@@ -108,17 +113,21 @@ export const ProjectDetailPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: `${project.color  }20` }}
+                style={{ backgroundColor: `${project.color}20` }}
               >
                 <Folder size={24} style={{ color: project.color }} />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-advist-gray900">{project.name}</h1>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color}`}>
+                  <span
+                    className={`px-2 py-0.5 rounded text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color}`}
+                  >
                     {statusConfig.label}
                   </span>
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${priorityConfig.bgColor} ${priorityConfig.color}`}>
+                  <span
+                    className={`px-2 py-0.5 rounded text-xs font-medium ${priorityConfig.bgColor} ${priorityConfig.color}`}
+                  >
                     {priorityConfig.label}
                   </span>
                   {project.reference && (
@@ -160,7 +169,8 @@ export const ProjectDetailPage: React.FC = () => {
               />
             </div>
             <p className="text-xs text-advist-gray900/50 mt-1">
-              {project.completedDocumentsCount}/{project.documentsCount} {t('projects.completed', 'complétés')}
+              {project.completedDocumentsCount}/{project.documentsCount}{' '}
+              {t('projects.completed', 'complétés')}
             </p>
           </div>
         </div>
@@ -179,18 +189,13 @@ export const ProjectDetailPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-2xl font-bold text-advist-gray900">{project.progress}%</p>
-              <p className="text-sm text-advist-gray900/70">{t('projects.progress', 'Progression')}</p>
+              <p className="text-sm text-advist-gray900/70">
+                {t('projects.progress', 'Progression')}
+              </p>
             </div>
             <div className="relative w-12 h-12">
               <svg className="w-full h-full transform -rotate-90">
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="20"
-                  fill="none"
-                  stroke="#EAEAEA"
-                  strokeWidth="4"
-                />
+                <circle cx="24" cy="24" r="20" fill="none" stroke="#EAEAEA" strokeWidth="4" />
                 <circle
                   cx="24"
                   cy="24"
@@ -212,14 +217,21 @@ export const ProjectDetailPage: React.FC = () => {
               {project.dueDate ? (
                 <>
                   <p className="text-2xl font-bold text-advist-gray900">
-                    {new Date(project.dueDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                    {new Date(project.dueDate).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'short',
+                    })}
                   </p>
-                  <p className="text-sm text-advist-gray900/70">{t('projects.deadline', 'Échéance')}</p>
+                  <p className="text-sm text-advist-gray900/70">
+                    {t('projects.deadline', 'Échéance')}
+                  </p>
                 </>
               ) : (
                 <>
                   <p className="text-2xl font-bold text-advist-gray900/30">—</p>
-                  <p className="text-sm text-advist-gray900/70">{t('projects.noDeadline', 'Pas d\'échéance')}</p>
+                  <p className="text-sm text-advist-gray900/70">
+                    {t('projects.noDeadline', "Pas d'échéance")}
+                  </p>
                 </>
               )}
             </div>
@@ -243,9 +255,10 @@ export const ProjectDetailPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`
                   flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all border-b-2
-                  ${activeTab === tab.id
-                    ? 'border-advist-dark text-advist-gray900'
-                    : 'border-transparent text-advist-gray900/50 hover:text-advist-gray900'
+                  ${
+                    activeTab === tab.id
+                      ? 'border-advist-dark text-advist-gray900'
+                      : 'border-transparent text-advist-gray900/50 hover:text-advist-gray900'
                   }
                 `}
               >
@@ -257,18 +270,10 @@ export const ProjectDetailPage: React.FC = () => {
         </div>
 
         <div className="p-6">
-          {activeTab === 'documents' && (
-            <ProjectDocumentsTab project={project} />
-          )}
-          {activeTab === 'timeline' && (
-            <ProjectTimelineTab project={project} />
-          )}
-          {activeTab === 'members' && (
-            <ProjectMembersTab project={project} />
-          )}
-          {activeTab === 'settings' && (
-            <ProjectSettingsTab project={project} />
-          )}
+          {activeTab === 'documents' && <ProjectDocumentsTab project={project} />}
+          {activeTab === 'timeline' && <ProjectTimelineTab project={project} />}
+          {activeTab === 'members' && <ProjectMembersTab project={project} />}
+          {activeTab === 'settings' && <ProjectSettingsTab project={project} />}
         </div>
       </div>
     </div>
@@ -304,7 +309,7 @@ const ProjectDocumentsTab: React.FC<{ project: ProjectDetail }> = ({ project }) 
   };
 
   const handleDocumentCreated = (document: unknown) => {
-    console.log('Document created:', document);
+    console.info('Document created:', document);
     // Ici on pourrait rafraîchir la liste des documents du projet
   };
 
@@ -393,7 +398,9 @@ const ProjectDocumentsTab: React.FC<{ project: ProjectDetail }> = ({ project }) 
                 <span className={`px-2 py-0.5 rounded text-xs font-medium ${roleBadge.bg}`}>
                   {roleBadge.label}
                 </span>
-                <span className={`px-2 py-0.5 rounded text-xs font-medium ${getStatusBadge(doc.documentStatus)}`}>
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-medium ${getStatusBadge(doc.documentStatus)}`}
+                >
                   {doc.documentStatus}
                 </span>
               </Link>
@@ -414,9 +421,9 @@ const ProjectDocumentsTab: React.FC<{ project: ProjectDetail }> = ({ project }) 
         isOpen={isLinkModalOpen}
         onClose={() => setIsLinkModalOpen(false)}
         projectId={project.id}
-        existingDocumentIds={project.documents.map(d => d.documentId)}
+        existingDocumentIds={project.documents.map((d) => d.documentId)}
         onDocumentLinked={(docId) => {
-          console.log('Document linked:', docId);
+          console.info('Document linked:', docId);
           // Ici on pourrait rafraîchir la liste des documents du projet
         }}
       />
@@ -434,35 +441,94 @@ const LinkExistingDocumentModal: React.FC<{
 }> = ({ isOpen, onClose, projectId, existingDocumentIds, onDocumentLinked }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([]);
-  const [selectedRole, setSelectedRole] = useState<'main' | 'supporting' | 'reference' | 'output' | 'template'>('supporting');
+  const [selectedRole, setSelectedRole] = useState<
+    'main' | 'supporting' | 'reference' | 'output' | 'template'
+  >('supporting');
 
   // Mock des documents disponibles (à remplacer par un vrai appel API)
   const availableDocuments = [
-    { id: 101, title: 'Contrat de prestation 2024', type: 'Contrat', status: 'approved', owner: 'Jean Dupont', updatedAt: '2024-11-20' },
-    { id: 102, title: 'Facture #F-2024-089', type: 'Facture', status: 'signed', owner: 'Marie Martin', updatedAt: '2024-11-18' },
-    { id: 103, title: 'Rapport annuel Q3', type: 'Rapport', status: 'approved', owner: 'Pierre Bernard', updatedAt: '2024-11-15' },
-    { id: 104, title: 'Cahier des charges v2', type: 'Cahier des charges', status: 'draft', owner: 'Sophie Lefebvre', updatedAt: '2024-11-10' },
-    { id: 105, title: 'Avenant contrat A-2024', type: 'Avenant', status: 'pending', owner: 'Jean Dupont', updatedAt: '2024-11-08' },
-    { id: 106, title: 'Bon de commande BC-456', type: 'Bon de commande', status: 'approved', owner: 'Marie Martin', updatedAt: '2024-11-05' },
-    { id: 107, title: 'PV de réunion 15/11', type: 'PV', status: 'approved', owner: 'Pierre Bernard', updatedAt: '2024-11-16' },
-    { id: 108, title: 'Devis commercial DEV-789', type: 'Devis', status: 'draft', owner: 'Sophie Lefebvre', updatedAt: '2024-11-12' },
-  ].filter(doc => !existingDocumentIds.includes(doc.id));
+    {
+      id: 101,
+      title: 'Contrat de prestation 2024',
+      type: 'Contrat',
+      status: 'approved',
+      owner: 'Jean Dupont',
+      updatedAt: '2024-11-20',
+    },
+    {
+      id: 102,
+      title: 'Facture #F-2024-089',
+      type: 'Facture',
+      status: 'signed',
+      owner: 'Marie Martin',
+      updatedAt: '2024-11-18',
+    },
+    {
+      id: 103,
+      title: 'Rapport annuel Q3',
+      type: 'Rapport',
+      status: 'approved',
+      owner: 'Pierre Bernard',
+      updatedAt: '2024-11-15',
+    },
+    {
+      id: 104,
+      title: 'Cahier des charges v2',
+      type: 'Cahier des charges',
+      status: 'draft',
+      owner: 'Sophie Lefebvre',
+      updatedAt: '2024-11-10',
+    },
+    {
+      id: 105,
+      title: 'Avenant contrat A-2024',
+      type: 'Avenant',
+      status: 'pending',
+      owner: 'Jean Dupont',
+      updatedAt: '2024-11-08',
+    },
+    {
+      id: 106,
+      title: 'Bon de commande BC-456',
+      type: 'Bon de commande',
+      status: 'approved',
+      owner: 'Marie Martin',
+      updatedAt: '2024-11-05',
+    },
+    {
+      id: 107,
+      title: 'PV de réunion 15/11',
+      type: 'PV',
+      status: 'approved',
+      owner: 'Pierre Bernard',
+      updatedAt: '2024-11-16',
+    },
+    {
+      id: 108,
+      title: 'Devis commercial DEV-789',
+      type: 'Devis',
+      status: 'draft',
+      owner: 'Sophie Lefebvre',
+      updatedAt: '2024-11-12',
+    },
+  ].filter((doc) => !existingDocumentIds.includes(doc.id));
 
-  const filteredDocuments = availableDocuments.filter(doc =>
-    doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    doc.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    doc.owner.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredDocuments = availableDocuments.filter(
+    (doc) =>
+      doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      doc.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      doc.owner.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const toggleDocument = (id: number) => {
-    setSelectedDocuments(prev =>
-      prev.includes(id) ? prev.filter(d => d !== id) : [...prev, id]
+    setSelectedDocuments((prev) =>
+      prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
     );
   };
 
   const handleLink = () => {
-    selectedDocuments.forEach(docId => {
-      console.log(`Linking document ${docId} to project ${projectId} with role ${selectedRole}`);
+    selectedDocuments.forEach((docId) => {
+      console.info(`Linking document ${docId} to project ${projectId} with role ${selectedRole}`);
       if (onDocumentLinked) {
         onDocumentLinked(docId);
       }
@@ -503,8 +569,12 @@ const LinkExistingDocumentModal: React.FC<{
               <LinkIcon size={20} className="text-advist-gray900" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-advist-gray900">Lier un document existant</h2>
-              <p className="text-sm text-advist-gray900/60">Sélectionnez les documents à ajouter au projet</p>
+              <h2 className="text-lg font-semibold text-advist-gray900">
+                Lier un document existant
+              </h2>
+              <p className="text-sm text-advist-gray900/60">
+                Sélectionnez les documents à ajouter au projet
+              </p>
             </div>
           </div>
           <button
@@ -519,7 +589,10 @@ const LinkExistingDocumentModal: React.FC<{
         <div className="px-6 py-4 border-b border-advist-border space-y-4">
           {/* Search */}
           <div className="relative">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-gray900/40" />
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-gray900/40"
+            />
             <input
               type="text"
               placeholder="Rechercher un document..."
@@ -573,11 +646,13 @@ const LinkExistingDocumentModal: React.FC<{
                       : 'border-advist-border hover:border-advist-blue-light'
                   }`}
                 >
-                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                    selectedDocuments.includes(doc.id)
-                      ? 'border-advist-dark bg-advist-dark'
-                      : 'border-advist-border'
-                  }`}>
+                  <div
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                      selectedDocuments.includes(doc.id)
+                        ? 'border-advist-dark bg-advist-dark'
+                        : 'border-advist-border'
+                    }`}
+                  >
                     {selectedDocuments.includes(doc.id) && (
                       <CheckCircle size={14} className="text-white" />
                     )}
@@ -588,10 +663,13 @@ const LinkExistingDocumentModal: React.FC<{
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-advist-gray900 truncate">{doc.title}</p>
                     <p className="text-xs text-advist-gray900/50">
-                      {doc.type} • {doc.owner} • {new Date(doc.updatedAt).toLocaleDateString('fr-FR')}
+                      {doc.type} • {doc.owner} •{' '}
+                      {new Date(doc.updatedAt).toLocaleDateString('fr-FR')}
                     </p>
                   </div>
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${getStatusBadge(doc.status)}`}>
+                  <span
+                    className={`px-2 py-0.5 rounded text-xs font-medium ${getStatusBadge(doc.status)}`}
+                  >
                     {doc.status}
                   </span>
                 </div>
@@ -660,7 +738,7 @@ const ProjectTimelineTab: React.FC<{ project: ProjectDetail }> = ({ project }) =
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'À l\'instant';
+    if (diffMins < 1) return "À l'instant";
     if (diffMins < 60) return `Il y a ${diffMins} min`;
     if (diffHours < 24) return `Il y a ${diffHours}h`;
     if (diffDays < 7) return `Il y a ${diffDays}j`;
@@ -689,7 +767,7 @@ const ProjectTimelineTab: React.FC<{ project: ProjectDetail }> = ({ project }) =
 
           {/* Timeline entries */}
           <div className="space-y-6">
-            {project.timeline.map((entry, index) => {
+            {project.timeline.map((entry, _index) => {
               const config = getTimelineEventConfig(entry.eventType);
               return (
                 <div key={entry.id} className="relative flex gap-4">
@@ -867,20 +945,26 @@ const ProjectSettingsTab: React.FC<{ project: ProjectDetail }> = ({ project }) =
                 Les documents nécessitent une approbation avant validation
               </p>
             </div>
-            <div className={`w-10 h-6 rounded-full ${project.settings.requireApprovalForDocuments ? 'bg-advist-dark' : 'bg-advist-surface-dark'}`}>
-              <div className={`w-4 h-4 bg-white rounded-full mt-1 transition-all ${project.settings.requireApprovalForDocuments ? 'ml-5' : 'ml-1'}`} />
+            <div
+              className={`w-10 h-6 rounded-full ${project.settings.requireApprovalForDocuments ? 'bg-advist-dark' : 'bg-advist-surface-dark'}`}
+            >
+              <div
+                className={`w-4 h-4 bg-white rounded-full mt-1 transition-all ${project.settings.requireApprovalForDocuments ? 'ml-5' : 'ml-1'}`}
+              />
             </div>
           </div>
 
           <div className="flex items-center justify-between p-3 border border-advist-border rounded-xl">
             <div>
               <p className="font-medium text-advist-gray900">Archivage automatique</p>
-              <p className="text-xs text-advist-gray900/50">
-                Archiver le projet une fois terminé
-              </p>
+              <p className="text-xs text-advist-gray900/50">Archiver le projet une fois terminé</p>
             </div>
-            <div className={`w-10 h-6 rounded-full ${project.settings.autoArchiveOnComplete ? 'bg-advist-dark' : 'bg-advist-surface-dark'}`}>
-              <div className={`w-4 h-4 bg-white rounded-full mt-1 transition-all ${project.settings.autoArchiveOnComplete ? 'ml-5' : 'ml-1'}`} />
+            <div
+              className={`w-10 h-6 rounded-full ${project.settings.autoArchiveOnComplete ? 'bg-advist-dark' : 'bg-advist-surface-dark'}`}
+            >
+              <div
+                className={`w-4 h-4 bg-white rounded-full mt-1 transition-all ${project.settings.autoArchiveOnComplete ? 'ml-5' : 'ml-1'}`}
+              />
             </div>
           </div>
         </div>

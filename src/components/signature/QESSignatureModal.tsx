@@ -10,7 +10,7 @@ import {
   Lock,
   Smartphone,
   Mail,
-  AlertTriangle,
+  _AlertTriangle,
   Clock,
   FileText,
   Loader2,
@@ -21,11 +21,7 @@ import { Badge } from '../ui/Badge';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { qesService } from '../../services/qesService';
-import type {
-  QualifiedCertificate,
-  VerificationMethod,
-  OTPChannel,
-} from '../../types/qes';
+import type { QualifiedCertificate, VerificationMethod, OTPChannel } from '../../types/qes';
 
 export interface QESSignatureModalProps {
   isOpen: boolean;
@@ -63,7 +59,7 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
   const [otpExpiresIn, setOtpExpiresIn] = useState(300);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [signatureResult, setSignatureResult] = useState<unknown>(null);
+  const [_signatureResult, setSignatureResult] = useState<unknown>(null);
 
   // Check certificate status on modal open
   useEffect(() => {
@@ -159,7 +155,7 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
       setCurrentStep('otp');
     } catch (err) {
       console.error('Error sending OTP:', err);
-      setError(t('qes.errorSendingOTP', 'Erreur lors de l\'envoi du code OTP'));
+      setError(t('qes.errorSendingOTP', "Erreur lors de l'envoi du code OTP"));
     } finally {
       setIsLoading(false);
     }
@@ -176,12 +172,7 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
     setCurrentStep('signing');
 
     try {
-      const result = await qesService.signDocument(
-        documentId,
-        signatureId,
-        [],
-        otpCode
-      );
+      const result = await qesService.signDocument(documentId, signatureId, [], otpCode);
 
       setSignatureResult(result);
       setCurrentStep('success');
@@ -225,7 +216,10 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
                 {t('qes.noCertificate', 'Certificat qualifié requis')}
               </h3>
               <p className="text-gray-600 mt-2">
-                {t('qes.certificateRequired', 'Pour signer avec une signature qualifiée, vous devez d\'abord obtenir un certificat.')}
+                {t(
+                  'qes.certificateRequired',
+                  "Pour signer avec une signature qualifiée, vous devez d'abord obtenir un certificat."
+                )}
               </p>
             </div>
 
@@ -259,10 +253,10 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900">
-                    {t('qes.idScan', 'Scan de pièce d\'identité')}
+                    {t('qes.idScan', "Scan de pièce d'identité")}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {t('qes.idScanDesc', 'Photo de votre pièce d\'identité + selfie')}
+                    {t('qes.idScanDesc', "Photo de votre pièce d'identité + selfie")}
                   </p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -273,7 +267,10 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
               <div className="flex gap-3">
                 <Lock className="w-5 h-5 text-blue-600 shrink-0" />
                 <p className="text-sm text-blue-800">
-                  {t('qes.securityNote', 'La vérification d\'identité est requise par le règlement eIDAS pour garantir la valeur juridique maximale de votre signature.')}
+                  {t(
+                    'qes.securityNote',
+                    "La vérification d'identité est requise par le règlement eIDAS pour garantir la valeur juridique maximale de votre signature."
+                  )}
                 </p>
               </div>
             </div>
@@ -285,10 +282,13 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
           <div className="space-y-6">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {t('qes.verification', 'Vérification d\'identité')}
+                {t('qes.verification', "Vérification d'identité")}
               </h3>
               <p className="text-gray-600">
-                {t('qes.verificationInProgress', 'Veuillez compléter la vérification d\'identité ci-dessous.')}
+                {t(
+                  'qes.verificationInProgress',
+                  "Veuillez compléter la vérification d'identité ci-dessous."
+                )}
               </p>
             </div>
 
@@ -320,7 +320,10 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
                 {t('qes.verificationPending', 'Vérification en cours')}
               </h3>
               <p className="text-gray-600 mt-2">
-                {t('qes.verificationPendingDesc', 'Votre demande de certificat est en cours de traitement. Vous recevrez une notification lorsqu\'elle sera approuvée.')}
+                {t(
+                  'qes.verificationPendingDesc',
+                  "Votre demande de certificat est en cours de traitement. Vous recevrez une notification lorsqu'elle sera approuvée."
+                )}
               </p>
             </div>
 
@@ -480,9 +483,16 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
                   {t('qes.signatureDetails', 'Détails de la signature')}
                 </h4>
                 <div className="space-y-1 text-sm text-green-700">
-                  <p><strong>{t('qes.level', 'Niveau')}:</strong> Signature Qualifiée (QES)</p>
-                  <p><strong>{t('qes.provider', 'Fournisseur')}:</strong> {certificate.qtsp_provider}</p>
-                  <p><strong>{t('qes.timestamp', 'Horodatage')}:</strong> {new Date().toLocaleString('fr-FR')}</p>
+                  <p>
+                    <strong>{t('qes.level', 'Niveau')}:</strong> Signature Qualifiée (QES)
+                  </p>
+                  <p>
+                    <strong>{t('qes.provider', 'Fournisseur')}:</strong> {certificate.qtsp_provider}
+                  </p>
+                  <p>
+                    <strong>{t('qes.timestamp', 'Horodatage')}:</strong>{' '}
+                    {new Date().toLocaleString('fr-FR')}
+                  </p>
                 </div>
               </div>
             )}
@@ -491,7 +501,10 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
               <div className="flex gap-3">
                 <Shield className="w-5 h-5 text-blue-600 shrink-0" />
                 <p className="text-sm text-blue-800">
-                  {t('qes.legalValue', 'Cette signature qualifiée a la même valeur juridique qu\'une signature manuscrite conformément au règlement eIDAS.')}
+                  {t(
+                    'qes.legalValue',
+                    "Cette signature qualifiée a la même valeur juridique qu'une signature manuscrite conformément au règlement eIDAS."
+                  )}
                 </p>
               </div>
             </div>
@@ -540,7 +553,7 @@ export const QESSignatureModal: React.FC<QESSignatureModalProps> = ({
       case 'no-certificate':
         return t('qes.getCertificate', 'Obtenir un certificat');
       case 'verification':
-        return t('qes.verification', 'Vérification d\'identité');
+        return t('qes.verification', "Vérification d'identité");
       case 'verification-pending':
         return t('qes.pendingTitle', 'En attente');
       case 'otp':

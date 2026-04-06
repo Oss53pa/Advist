@@ -22,17 +22,17 @@ import {
   Link as LinkIcon,
   ExternalLink,
   GitBranch,
-  FileCheck,
+  _FileCheck,
   MessageSquare,
   History,
   Edit3,
-  Shield,
-  ArrowUpRight,
+  _Shield,
+  _ArrowUpRight,
   FolderOpen,
   Home,
   Check,
   X,
-  Info,
+  _Info,
   Users,
   Zap,
   UserPlus,
@@ -40,7 +40,13 @@ import {
 import { Card, Button, Input, Badge, StatusBadge, Avatar, Modal } from '../../components/ui';
 import { PrintButton } from '../../shared/PrintEngine';
 import { documentsService } from '../../services';
-import type { Document, DocumentFolder, DocumentLink, DocumentComment, DocumentModification } from '../../types';
+import type {
+  Document,
+  DocumentFolder,
+  DocumentLink,
+  DocumentComment,
+  DocumentModification,
+} from '../../types';
 
 // v2: Extended document with folder support
 interface DocumentWithFolder extends Document {
@@ -66,9 +72,12 @@ export const DocumentsPage: React.FC = () => {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [selectedDocForLink, setSelectedDocForLink] = useState<DocumentWithFolder | null>(null);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
-  const [selectedDocForComments, setSelectedDocForComments] = useState<DocumentWithFolder | null>(null);
+  const [selectedDocForComments, setSelectedDocForComments] = useState<DocumentWithFolder | null>(
+    null
+  );
   const [showTrackChangesModal, setShowTrackChangesModal] = useState(false);
-  const [selectedDocForTrackChanges, setSelectedDocForTrackChanges] = useState<DocumentWithFolder | null>(null);
+  const [selectedDocForTrackChanges, setSelectedDocForTrackChanges] =
+    useState<DocumentWithFolder | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['documents', searchQuery, selectedStatus, currentFolder?.id],
@@ -111,7 +120,9 @@ export const DocumentsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-advist-gray900">{t('documents.title', 'Documents')}</h1>
+          <h1 className="text-2xl font-bold text-advist-gray900">
+            {t('documents.title', 'Documents')}
+          </h1>
           <p className="text-advist-gray900/80 mt-1">
             {t('documents.subtitle', 'Gérez vos documents et leurs workflows')}
           </p>
@@ -132,14 +143,20 @@ export const DocumentsPage: React.FC = () => {
                     <tr key={doc.id} className="border-b">
                       <td className="py-2">{doc.title}</td>
                       <td className="py-2">{doc.status}</td>
-                      <td className="py-2">{new Date(doc.created_at).toLocaleDateString('fr-FR')}</td>
+                      <td className="py-2">
+                        {new Date(doc.created_at).toLocaleDateString('fr-FR')}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </PrintButton>
-          <Button variant="outline" onClick={() => setShowFolderModal(true)} leftIcon={<FolderPlus size={18} />}>
+          <Button
+            variant="outline"
+            onClick={() => setShowFolderModal(true)}
+            leftIcon={<FolderPlus size={18} />}
+          >
             {t('documents.newFolder', 'Nouveau dossier')}
           </Button>
           <Button onClick={() => setShowUploadModal(true)} leftIcon={<Plus size={18} />}>
@@ -181,7 +198,9 @@ export const DocumentsPage: React.FC = () => {
                   <Folder size={24} className="text-primary-900" />
                 </div>
                 <p className="font-medium text-advist-gray900 text-sm truncate">{folder.name}</p>
-                <p className="text-xs text-advist-blue-light">{folder.documents_count} {t('documents.files', 'fichiers')}</p>
+                <p className="text-xs text-advist-blue-light">
+                  {folder.documents_count} {t('documents.files', 'fichiers')}
+                </p>
               </div>
             </Card>
           ))}
@@ -213,7 +232,9 @@ export const DocumentsPage: React.FC = () => {
               <option value="archived">{t('documents.status.archived', 'Archivé')}</option>
             </select>
             <Button variant="outline" leftIcon={<Filter size={18} />}>
-              <span className="hidden sm:inline">{t('documents.moreFilters', 'Plus de filtres')}</span>
+              <span className="hidden sm:inline">
+                {t('documents.moreFilters', 'Plus de filtres')}
+              </span>
             </Button>
             <div className="flex border border-advist-blue-light rounded-xl overflow-hidden">
               <button
@@ -242,7 +263,9 @@ export const DocumentsPage: React.FC = () => {
         <Card>
           <div className="text-center py-12">
             <FileText size={48} className="mx-auto text-advist-blue-light mb-4" />
-            <h3 className="text-lg font-medium text-advist-gray900">{t('documents.noDocuments', 'Aucun document')}</h3>
+            <h3 className="text-lg font-medium text-advist-gray900">
+              {t('documents.noDocuments', 'Aucun document')}
+            </h3>
             <p className="text-advist-gray900/80 mt-1">
               {t('documents.noDocumentsDesc', 'Commencez par ajouter votre premier document')}
             </p>
@@ -294,7 +317,9 @@ export const DocumentsPage: React.FC = () => {
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
         folders={folders}
-        onDuplicateDetected={(existingDoc) => handleDocumentUpload(true, existingDoc as DocumentWithFolder)}
+        onDuplicateDetected={(existingDoc) =>
+          handleDocumentUpload(true, existingDoc as DocumentWithFolder)
+        }
       />
 
       {/* v2: Create folder modal */}
@@ -392,12 +417,12 @@ const DocumentListView: React.FC<{
         </thead>
         <tbody className="divide-y divide-[#E0E0D8]">
           {documents.map((doc) => (
-            <tr key={doc.id} className="hover:bg-advist-surface-dark/30 transition-all duration-240">
+            <tr
+              key={doc.id}
+              className="hover:bg-advist-surface-dark/30 transition-all duration-240"
+            >
               <td className="px-4 py-3">
-                <Link
-                  to={`${doc.id}`}
-                  className="flex items-center gap-3"
-                >
+                <Link to={`${doc.id}`} className="flex items-center gap-3">
                   <div className="p-2 bg-advist-surface-dark rounded-xl relative">
                     <FileText size={20} className="text-advist-gray900/80" />
                     {/* v2: Duplicate indicator */}
@@ -409,9 +434,7 @@ const DocumentListView: React.FC<{
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-advist-gray900 hover:underline">
-                        {doc.title}
-                      </p>
+                      <p className="font-medium text-advist-gray900 hover:underline">{doc.title}</p>
                       {/* v2: Linked documents indicator */}
                       {doc.linked_documents.length > 0 && (
                         <Badge variant="info" size="sm">
@@ -427,7 +450,8 @@ const DocumentListView: React.FC<{
                     )}
                     {doc.is_duplicate && (
                       <span className="flex items-center gap-1 text-xs text-advist-gray900">
-                        <AlertTriangle size={12} /> {t('documents.possibleDuplicate', 'Doublon possible')}
+                        <AlertTriangle size={12} />{' '}
+                        {t('documents.possibleDuplicate', 'Doublon possible')}
                       </span>
                     )}
                   </div>
@@ -473,7 +497,9 @@ const DocumentListView: React.FC<{
                         onShowTrackChanges(doc);
                       }}
                       className={`p-1.5 rounded transition-all duration-240 ${
-                        doc.modifications.length > 0 ? 'bg-advist-gold-light/20 text-advist-gray900/80' : 'text-advist-blue-light hover:bg-advist-surface-dark'
+                        doc.modifications.length > 0
+                          ? 'bg-advist-gold-light/20 text-advist-gray900/80'
+                          : 'text-advist-blue-light hover:bg-advist-surface-dark'
                       }`}
                       title={t('documents.trackChanges', 'Suivi des modifications')}
                     >
@@ -547,17 +573,26 @@ const DocumentGridView: React.FC<{
               {/* v2: Feature indicators */}
               <div className="absolute top-2 right-2 flex gap-1">
                 {doc.is_duplicate && (
-                  <div className="p-1 bg-primary-100 rounded" title={t('documents.duplicate', 'Doublon')}>
+                  <div
+                    className="p-1 bg-primary-100 rounded"
+                    title={t('documents.duplicate', 'Doublon')}
+                  >
                     <Copy size={14} className="text-advist-gray900" />
                   </div>
                 )}
                 {doc.track_changes_enabled && (
-                  <div className="p-1 bg-advist-gold-light/20 rounded" title={t('documents.trackChanges', 'Suivi actif')}>
+                  <div
+                    className="p-1 bg-advist-gold-light/20 rounded"
+                    title={t('documents.trackChanges', 'Suivi actif')}
+                  >
                     <History size={14} className="text-advist-gray900/80" />
                   </div>
                 )}
                 {doc.linked_documents.length > 0 && (
-                  <div className="p-1 bg-advist-gold-light/20 rounded" title={t('documents.linked', 'Documents liés')}>
+                  <div
+                    className="p-1 bg-advist-gold-light/20 rounded"
+                    title={t('documents.linked', 'Documents liés')}
+                  >
                     <LinkIcon size={14} className="text-advist-gray900/80" />
                   </div>
                 )}
@@ -636,7 +671,7 @@ const DocumentActions: React.FC<{
     e.stopPropagation();
     setShowMenu(false);
     // TODO: Implement delete confirmation modal
-    console.log('Delete document:', document.id);
+    console.info('Delete document:', document.id);
   };
 
   return (
@@ -687,7 +722,9 @@ const DocumentActions: React.FC<{
             >
               <LinkIcon size={16} /> {t('documents.manageLinks', 'Gérer les liens')}
               {document.linked_documents.length > 0 && (
-                <Badge variant="info" size="sm" className="ml-auto">{document.linked_documents.length}</Badge>
+                <Badge variant="info" size="sm" className="ml-auto">
+                  {document.linked_documents.length}
+                </Badge>
               )}
             </button>
 
@@ -702,7 +739,9 @@ const DocumentActions: React.FC<{
             >
               <MessageSquare size={16} /> {t('documents.comments', 'Commentaires')}
               {document.comments_count && document.comments_count > 0 && (
-                <Badge variant="success" size="sm" className="ml-auto">{document.comments_count}</Badge>
+                <Badge variant="success" size="sm" className="ml-auto">
+                  {document.comments_count}
+                </Badge>
               )}
             </button>
 
@@ -718,7 +757,9 @@ const DocumentActions: React.FC<{
               >
                 <History size={16} /> {t('documents.trackChanges', 'Suivi des modifications')}
                 {document.modifications.length > 0 && (
-                  <Badge variant="warning" size="sm" className="ml-auto">{document.modifications.length}</Badge>
+                  <Badge variant="warning" size="sm" className="ml-auto">
+                    {document.modifications.length}
+                  </Badge>
                 )}
               </button>
             )}
@@ -784,15 +825,19 @@ const UploadDocumentModal: React.FC<{
   onClose: () => void;
   folders: DocumentFolder[];
   onDuplicateDetected?: (existingDoc: Document) => void;
-}> = ({ isOpen, onClose, folders, onDuplicateDetected }) => {
+}> = ({ isOpen, onClose, folders, _onDuplicateDetected }) => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'document' | 'annexes' | 'metadata' | 'workflow' | 'signatories'>('document');
+  const [activeTab, setActiveTab] = useState<
+    'document' | 'annexes' | 'metadata' | 'workflow' | 'signatories'
+  >('document');
 
   // Document state
   const [documentTitle, setDocumentTitle] = useState('');
   const [documentType, setDocumentType] = useState('');
   const [selectedFolder, setSelectedFolder] = useState<number | ''>('');
-  const [confidentiality, setConfidentiality] = useState<'public' | 'internal' | 'confidential' | 'secret'>('internal');
+  const [confidentiality, setConfidentiality] = useState<
+    'public' | 'internal' | 'confidential' | 'secret'
+  >('internal');
   const [description, setDescription] = useState('');
   const [enableTrackChanges, setEnableTrackChanges] = useState(false);
   const [mainFile, setMainFile] = useState<UploadedFile | null>(null);
@@ -817,7 +862,13 @@ const UploadDocumentModal: React.FC<{
 
   // External signatories state
   const [externalSignatories, setExternalSignatories] = useState<ExternalSignatory[]>([]);
-  const [newSignatory, setNewSignatory] = useState({ email: '', firstName: '', lastName: '', company: '', role: 'signer' as const });
+  const [newSignatory, setNewSignatory] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    company: '',
+    role: 'signer' as const,
+  });
 
   // Mock workflows
   const workflows = [
@@ -827,16 +878,21 @@ const UploadDocumentModal: React.FC<{
   ];
 
   // Mock metadata fields based on document type
-  const metadataFields = documentType === '1' ? [
-    { id: 'client', name: 'Client', type: 'text', required: true },
-    { id: 'contractNumber', name: 'Numero de contrat', type: 'text', required: true },
-    { id: 'startDate', name: 'Date de debut', type: 'date', required: false },
-    { id: 'endDate', name: 'Date de fin', type: 'date', required: false },
-  ] : documentType === '2' ? [
-    { id: 'supplier', name: 'Fournisseur', type: 'text', required: true },
-    { id: 'invoiceNumber', name: 'Numero de facture', type: 'text', required: true },
-    { id: 'dueDate', name: 'Date d\'echeance', type: 'date', required: true },
-  ] : [];
+  const metadataFields =
+    documentType === '1'
+      ? [
+          { id: 'client', name: 'Client', type: 'text', required: true },
+          { id: 'contractNumber', name: 'Numero de contrat', type: 'text', required: true },
+          { id: 'startDate', name: 'Date de debut', type: 'date', required: false },
+          { id: 'endDate', name: 'Date de fin', type: 'date', required: false },
+        ]
+      : documentType === '2'
+        ? [
+            { id: 'supplier', name: 'Fournisseur', type: 'text', required: true },
+            { id: 'invoiceNumber', name: 'Numero de facture', type: 'text', required: true },
+            { id: 'dueDate', name: "Date d'echeance", type: 'date', required: true },
+          ]
+        : [];
 
   const handleDrag = (e: React.DragEvent, isAnnex = false) => {
     e.preventDefault();
@@ -911,11 +967,11 @@ const UploadDocumentModal: React.FC<{
   };
 
   const removeAnnex = (id: string) => {
-    setAnnexes(annexes.filter(a => a.id !== id));
+    setAnnexes(annexes.filter((a) => a.id !== id));
   };
 
   const updateAnnexDescription = (id: string, description: string) => {
-    setAnnexes(annexes.map(a => a.id === id ? { ...a, description } : a));
+    setAnnexes(annexes.map((a) => (a.id === id ? { ...a, description } : a)));
   };
 
   const addTag = () => {
@@ -926,22 +982,25 @@ const UploadDocumentModal: React.FC<{
   };
 
   const removeTag = (tag: string) => {
-    setTags(tags.filter(t => t !== tag));
+    setTags(tags.filter((t) => t !== tag));
   };
 
   const addExternalSignatory = () => {
     if (newSignatory.email && newSignatory.firstName && newSignatory.lastName) {
-      setExternalSignatories([...externalSignatories, {
-        ...newSignatory,
-        id: `sig_${Date.now()}`,
-        order: externalSignatories.length + 1,
-      }]);
+      setExternalSignatories([
+        ...externalSignatories,
+        {
+          ...newSignatory,
+          id: `sig_${Date.now()}`,
+          order: externalSignatories.length + 1,
+        },
+      ]);
       setNewSignatory({ email: '', firstName: '', lastName: '', company: '', role: 'signer' });
     }
   };
 
   const removeSignatory = (id: string) => {
-    setExternalSignatories(externalSignatories.filter(s => s.id !== id));
+    setExternalSignatories(externalSignatories.filter((s) => s.id !== id));
   };
 
   const formatFileSize = (bytes: number) => {
@@ -949,11 +1008,11 @@ const UploadDocumentModal: React.FC<{
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
 
   const handleSubmit = () => {
-    console.log('Submitting document:', {
+    console.info('Submitting document:', {
       title: documentTitle,
       type: documentType,
       folder: selectedFolder,
@@ -978,7 +1037,11 @@ const UploadDocumentModal: React.FC<{
   const tabs = [
     { key: 'document', label: 'Document', count: mainFile ? 1 : 0 },
     { key: 'annexes', label: 'Annexes', count: annexes.length },
-    { key: 'metadata', label: 'Metadonnees', count: tags.length + metadataValues.filter(m => m.value).length },
+    {
+      key: 'metadata',
+      label: 'Metadonnees',
+      count: tags.length + metadataValues.filter((m) => m.value).length,
+    },
     { key: 'workflow', label: 'Workflow', count: selectedWorkflow ? 1 : 0 },
     { key: 'signatories', label: 'Signataires', count: externalSignatories.length },
   ];
@@ -986,7 +1049,12 @@ const UploadDocumentModal: React.FC<{
   const isValid = mainFile && documentTitle.trim();
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('documents.newDocument', 'Nouveau document')} size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('documents.newDocument', 'Nouveau document')}
+      size="xl"
+    >
       <div className="flex flex-col h-[70vh]">
         {/* Tabs */}
         <div className="border-b border-advist-border flex-shrink-0">
@@ -997,9 +1065,10 @@ const UploadDocumentModal: React.FC<{
                 onClick={() => setActiveTab(tab.key as typeof activeTab)}
                 className={`
                   flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-240 relative
-                  ${activeTab === tab.key
-                    ? 'text-advist-gray900 border-b-2 border-advist-dark'
-                    : 'text-advist-gray900/80 hover:text-advist-gray900'
+                  ${
+                    activeTab === tab.key
+                      ? 'text-advist-gray900 border-b-2 border-advist-dark'
+                      : 'text-advist-gray900/80 hover:text-advist-gray900'
                   }
                 `}
               >
@@ -1053,12 +1122,16 @@ const UploadDocumentModal: React.FC<{
                   </label>
                   <select
                     value={selectedFolder}
-                    onChange={(e) => setSelectedFolder(e.target.value ? Number(e.target.value) : '')}
+                    onChange={(e) =>
+                      setSelectedFolder(e.target.value ? Number(e.target.value) : '')
+                    }
                     className="w-full px-4 py-2 border border-advist-blue-light rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
                   >
                     <option value="">{t('documents.noFolder', 'Aucun dossier')}</option>
                     {folders.map((folder) => (
-                      <option key={folder.id} value={folder.id}>{folder.name}</option>
+                      <option key={folder.id} value={folder.id}>
+                        {folder.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -1105,7 +1178,9 @@ const UploadDocumentModal: React.FC<{
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-advist-gray900">{mainFile.name}</p>
-                      <p className="text-sm text-advist-blue-light">{formatFileSize(mainFile.size)}</p>
+                      <p className="text-sm text-advist-blue-light">
+                        {formatFileSize(mainFile.size)}
+                      </p>
                     </div>
                     <Button
                       variant="ghost"
@@ -1157,7 +1232,9 @@ const UploadDocumentModal: React.FC<{
                   className="rounded border-advist-border text-advist-gray900 focus:ring-advist-gold"
                 />
                 <label htmlFor="trackChanges" className="flex-1 cursor-pointer">
-                  <span className="font-medium text-advist-gray900">Activer le suivi des modifications</span>
+                  <span className="font-medium text-advist-gray900">
+                    Activer le suivi des modifications
+                  </span>
                   <p className="text-xs text-advist-gray900/80">
                     Toutes les modifications seront tracees avec identification de l'auteur
                   </p>
@@ -1184,22 +1261,30 @@ const UploadDocumentModal: React.FC<{
           {activeTab === 'annexes' && (
             <div className="space-y-4">
               <div className="p-3 bg-advist-gold-light rounded-xl text-sm text-advist-gray900">
-                <strong>Pieces jointes:</strong> Ajoutez les annexes, avenants ou documents complementaires lies a ce document principal.
+                <strong>Pieces jointes:</strong> Ajoutez les annexes, avenants ou documents
+                complementaires lies a ce document principal.
               </div>
 
               {/* Annexes list */}
               {annexes.length > 0 && (
                 <div className="space-y-3">
                   {annexes.map((annex, index) => (
-                    <div key={annex.id} className="flex items-start gap-3 p-4 border border-advist-border rounded-xl">
+                    <div
+                      key={annex.id}
+                      className="flex items-start gap-3 p-4 border border-advist-border rounded-xl"
+                    >
                       <div className="p-2 bg-advist-surface-dark rounded-xl">
                         <FileText size={20} className="text-advist-gray900/80" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" size="sm">Annexe {index + 1}</Badge>
+                          <Badge variant="outline" size="sm">
+                            Annexe {index + 1}
+                          </Badge>
                           <p className="font-medium text-advist-gray900">{annex.name}</p>
-                          <span className="text-xs text-advist-blue-light">({formatFileSize(annex.size)})</span>
+                          <span className="text-xs text-advist-blue-light">
+                            ({formatFileSize(annex.size)})
+                          </span>
                         </div>
                         <input
                           type="text"
@@ -1262,14 +1347,15 @@ const UploadDocumentModal: React.FC<{
             <div className="space-y-6">
               {/* Tags */}
               <div>
-                <label className="block text-sm font-medium text-advist-gray900 mb-2">
-                  Tags
-                </label>
+                <label className="block text-sm font-medium text-advist-gray900 mb-2">Tags</label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="flex items-center gap-1">
                       {tag}
-                      <button onClick={() => removeTag(tag)} className="ml-1 hover:text-advist-error">
+                      <button
+                        onClick={() => removeTag(tag)}
+                        className="ml-1 hover:text-advist-error"
+                      >
                         <X size={12} />
                       </button>
                     </Badge>
@@ -1326,19 +1412,24 @@ const UploadDocumentModal: React.FC<{
                         label={field.name + (field.required ? ' *' : '')}
                         type={field.type === 'date' ? 'date' : 'text'}
                         placeholder={`Saisir ${field.name.toLowerCase()}...`}
-                        value={metadataValues.find(m => m.fieldId === field.id)?.value || ''}
+                        value={metadataValues.find((m) => m.fieldId === field.id)?.value || ''}
                         onChange={(e) => {
-                          const existing = metadataValues.find(m => m.fieldId === field.id);
+                          const existing = metadataValues.find((m) => m.fieldId === field.id);
                           if (existing) {
-                            setMetadataValues(metadataValues.map(m =>
-                              m.fieldId === field.id ? { ...m, value: e.target.value } : m
-                            ));
+                            setMetadataValues(
+                              metadataValues.map((m) =>
+                                m.fieldId === field.id ? { ...m, value: e.target.value } : m
+                              )
+                            );
                           } else {
-                            setMetadataValues([...metadataValues, {
-                              fieldId: field.id,
-                              fieldName: field.name,
-                              value: e.target.value,
-                            }]);
+                            setMetadataValues([
+                              ...metadataValues,
+                              {
+                                fieldId: field.id,
+                                fieldName: field.name,
+                                value: e.target.value,
+                              },
+                            ]);
                           }
                         }}
                       />
@@ -1353,7 +1444,8 @@ const UploadDocumentModal: React.FC<{
           {activeTab === 'workflow' && (
             <div className="space-y-4">
               <div className="p-3 bg-advist-surface-dark rounded-xl text-sm text-advist-gray900">
-                <strong>Workflow:</strong> Selectionnez un modele de workflow pour declencher automatiquement le processus de validation et signature.
+                <strong>Workflow:</strong> Selectionnez un modele de workflow pour declencher
+                automatiquement le processus de validation et signature.
               </div>
 
               <div>
@@ -1403,7 +1495,9 @@ const UploadDocumentModal: React.FC<{
                     <X size={20} className="text-advist-blue-light" />
                     <div className="flex-1">
                       <p className="font-medium text-advist-gray900">Sans workflow</p>
-                      <p className="text-xs text-advist-blue-light">Le document sera cree en brouillon</p>
+                      <p className="text-xs text-advist-blue-light">
+                        Le document sera cree en brouillon
+                      </p>
                     </div>
                   </label>
                 </div>
@@ -1431,7 +1525,10 @@ const UploadDocumentModal: React.FC<{
                       onChange={(e) => setFastTrack(e.target.checked)}
                       className="rounded border-advist-border text-advist-gray900"
                     />
-                    <label htmlFor="fastTrack" className="text-sm text-advist-gray900 flex items-center gap-1">
+                    <label
+                      htmlFor="fastTrack"
+                      className="text-sm text-advist-gray900 flex items-center gap-1"
+                    >
                       <Zap size={14} className="text-advist-gold-dark" />
                       Mode urgent (Fast-Track)
                     </label>
@@ -1445,14 +1542,18 @@ const UploadDocumentModal: React.FC<{
           {activeTab === 'signatories' && (
             <div className="space-y-4">
               <div className="p-3 bg-advist-gold-light rounded-xl text-sm text-advist-gold-dark">
-                <strong>Signataires externes:</strong> Ajoutez des personnes externes a votre organisation qui devront signer ou valider ce document.
+                <strong>Signataires externes:</strong> Ajoutez des personnes externes a votre
+                organisation qui devront signer ou valider ce document.
               </div>
 
               {/* Existing signatories */}
               {externalSignatories.length > 0 && (
                 <div className="space-y-2">
                   {externalSignatories.map((signatory, index) => (
-                    <div key={signatory.id} className="flex items-center gap-3 p-3 border border-advist-border rounded-xl">
+                    <div
+                      key={signatory.id}
+                      className="flex items-center gap-3 p-3 border border-advist-border rounded-xl"
+                    >
                       <div className="flex items-center justify-center w-8 h-8 bg-advist-surface-dark rounded-full text-sm font-medium">
                         {index + 1}
                       </div>
@@ -1465,8 +1566,21 @@ const UploadDocumentModal: React.FC<{
                           {signatory.email} {signatory.company && `• ${signatory.company}`}
                         </p>
                       </div>
-                      <Badge variant={signatory.role === 'signer' ? 'primary' : signatory.role === 'validator' ? 'success' : 'secondary'} size="sm">
-                        {signatory.role === 'signer' ? 'Signataire' : signatory.role === 'validator' ? 'Validateur' : 'Observateur'}
+                      <Badge
+                        variant={
+                          signatory.role === 'signer'
+                            ? 'primary'
+                            : signatory.role === 'validator'
+                              ? 'success'
+                              : 'secondary'
+                        }
+                        size="sm"
+                      >
+                        {signatory.role === 'signer'
+                          ? 'Signataire'
+                          : signatory.role === 'validator'
+                            ? 'Validateur'
+                            : 'Observateur'}
                       </Badge>
                       <Button
                         variant="ghost"
@@ -1488,7 +1602,9 @@ const UploadDocumentModal: React.FC<{
                   <Input
                     label="Prenom"
                     value={newSignatory.firstName}
-                    onChange={(e) => setNewSignatory({ ...newSignatory, firstName: e.target.value })}
+                    onChange={(e) =>
+                      setNewSignatory({ ...newSignatory, firstName: e.target.value })
+                    }
                     placeholder="Jean"
                   />
                   <Input
@@ -1514,9 +1630,7 @@ const UploadDocumentModal: React.FC<{
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-advist-gray900 mb-1">
-                    Role
-                  </label>
+                  <label className="block text-sm font-medium text-advist-gray900 mb-1">Role</label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { value: 'signer', label: 'Signataire', desc: 'Doit signer le document' },
@@ -1526,14 +1640,21 @@ const UploadDocumentModal: React.FC<{
                       <button
                         key={role.value}
                         type="button"
-                        onClick={() => setNewSignatory({ ...newSignatory, role: role.value as ExternalSignatory['role'] })}
+                        onClick={() =>
+                          setNewSignatory({
+                            ...newSignatory,
+                            role: role.value as ExternalSignatory['role'],
+                          })
+                        }
                         className={`p-3 rounded-xl border-2 text-left transition-all ${
                           newSignatory.role === role.value
                             ? 'border-advist-dark bg-advist-surface-dark'
                             : 'border-advist-border hover:border-advist-blue-light'
                         }`}
                       >
-                        <span className="text-sm font-medium text-advist-gray900 block">{role.label}</span>
+                        <span className="text-sm font-medium text-advist-gray900 block">
+                          {role.label}
+                        </span>
                         <span className="text-xs text-advist-blue-light">{role.desc}</span>
                       </button>
                     ))}
@@ -1542,7 +1663,9 @@ const UploadDocumentModal: React.FC<{
                 <Button
                   variant="outline"
                   onClick={addExternalSignatory}
-                  disabled={!newSignatory.email || !newSignatory.firstName || !newSignatory.lastName}
+                  disabled={
+                    !newSignatory.email || !newSignatory.firstName || !newSignatory.lastName
+                  }
                   className="w-full"
                 >
                   <UserPlus size={16} className="mr-2" />
@@ -1564,17 +1687,14 @@ const UploadDocumentModal: React.FC<{
         {/* Footer */}
         <div className="flex justify-between items-center pt-4 border-t border-advist-border flex-shrink-0 px-4 pb-4">
           <div className="text-sm text-advist-blue-light">
-            {mainFile ? '1 fichier' : '0 fichier'} • {annexes.length} annexe(s) • {externalSignatories.length} signataire(s) externe(s)
+            {mainFile ? '1 fichier' : '0 fichier'} • {annexes.length} annexe(s) •{' '}
+            {externalSignatories.length} signataire(s) externe(s)
           </div>
           <div className="flex gap-3">
             <Button variant="ghost" onClick={onClose}>
               Annuler
             </Button>
-            <Button
-              leftIcon={<Plus size={18} />}
-              onClick={handleSubmit}
-              disabled={!isValid}
-            >
+            <Button leftIcon={<Plus size={18} />} onClick={handleSubmit} disabled={!isValid}>
               Creer le document
             </Button>
           </div>
@@ -1595,12 +1715,19 @@ const CreateFolderModal: React.FC<{
   const [folderDescription, setFolderDescription] = useState('');
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('documents.createFolder', 'Créer un dossier')} size="md">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('documents.createFolder', 'Créer un dossier')}
+      size="md"
+    >
       <div className="space-y-4">
         {parentFolder && (
           <div className="flex items-center gap-2 p-3 bg-advist-surface-dark/50 rounded-xl text-sm">
             <FolderOpen size={16} className="text-advist-gray900" />
-            <span className="text-advist-gray900/80">{t('documents.insideFolder', 'Dans le dossier:')}</span>
+            <span className="text-advist-gray900/80">
+              {t('documents.insideFolder', 'Dans le dossier:')}
+            </span>
             <span className="font-medium text-advist-gray900">{parentFolder.name}</span>
           </div>
         )}
@@ -1649,7 +1776,12 @@ const DuplicateAlertModal: React.FC<{
   if (!duplicateOf) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('documents.duplicateDetected', 'Doublon détecté')} size="md">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('documents.duplicateDetected', 'Doublon détecté')}
+      size="md"
+    >
       <div className="space-y-4">
         <div className="flex items-start gap-4 p-4 bg-advist-warning-light rounded-xl border border-advist-warning/30">
           <AlertTriangle size={24} className="text-advist-gray900 shrink-0" />
@@ -1658,13 +1790,18 @@ const DuplicateAlertModal: React.FC<{
               {t('documents.duplicateWarning', 'Ce fichier semble être un doublon')}
             </p>
             <p className="text-sm text-advist-gray900/80 mt-1">
-              {t('documents.duplicateDesc', 'Un document avec le même contenu existe déjà dans le système.')}
+              {t(
+                'documents.duplicateDesc',
+                'Un document avec le même contenu existe déjà dans le système.'
+              )}
             </p>
           </div>
         </div>
 
         <div className="p-4 bg-advist-surface-dark/50 rounded-xl">
-          <p className="text-sm font-medium text-advist-gray900 mb-2">{t('documents.existingDocument', 'Document existant:')}</p>
+          <p className="text-sm font-medium text-advist-gray900 mb-2">
+            {t('documents.existingDocument', 'Document existant:')}
+          </p>
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white rounded-xl">
               <FileText size={20} className="text-advist-gray900/80" />
@@ -1672,8 +1809,10 @@ const DuplicateAlertModal: React.FC<{
             <div>
               <p className="font-medium text-advist-gray900">{duplicateOf.title}</p>
               <p className="text-xs text-advist-gray900/80">
-                {t('documents.createdBy', 'Créé par')} {duplicateOf.owner.first_name} {duplicateOf.owner.last_name}
-                {' • '}{new Date(duplicateOf.created_at).toLocaleDateString('fr-FR')}
+                {t('documents.createdBy', 'Créé par')} {duplicateOf.owner.first_name}{' '}
+                {duplicateOf.owner.last_name}
+                {' • '}
+                {new Date(duplicateOf.created_at).toLocaleDateString('fr-FR')}
               </p>
             </div>
           </div>
@@ -1684,7 +1823,7 @@ const DuplicateAlertModal: React.FC<{
             {t('common.cancel', 'Annuler')}
           </Button>
           <Button variant="outline" leftIcon={<Eye size={18} />}>
-            {t('documents.viewExisting', 'Voir l\'existant')}
+            {t('documents.viewExisting', "Voir l'existant")}
           </Button>
           <Button leftIcon={<Plus size={18} />}>
             {t('documents.uploadAnyway', 'Importer quand même')}
@@ -1703,7 +1842,9 @@ const DocumentLinksModal: React.FC<{
 }> = ({ isOpen, onClose, document }) => {
   const { t } = useTranslation();
   const [showAddLink, setShowAddLink] = useState(false);
-  const [linkType, setLinkType] = useState<'parent_child' | 'reference' | 'amendment' | 'annex'>('reference');
+  const [linkType, setLinkType] = useState<'parent_child' | 'reference' | 'amendment' | 'annex'>(
+    'reference'
+  );
 
   const linkTypeLabels = {
     parent_child: t('documents.linkTypes.parentChild', 'Parent/Enfant'),
@@ -1720,7 +1861,12 @@ const DocumentLinksModal: React.FC<{
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('documents.documentLinks', 'Documents liés')} size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('documents.documentLinks', 'Documents liés')}
+      size="lg"
+    >
       <div className="space-y-4">
         <div className="flex items-center justify-between p-3 bg-advist-surface-dark/50 rounded-xl">
           <div className="flex items-center gap-2">
@@ -1772,20 +1918,27 @@ const DocumentLinksModal: React.FC<{
 
         {/* Existing links */}
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-advist-gray900">{t('documents.existingLinks', 'Liens existants')}</h4>
+          <h4 className="text-sm font-medium text-advist-gray900">
+            {t('documents.existingLinks', 'Liens existants')}
+          </h4>
           {document.linked_documents.length === 0 ? (
             <p className="text-sm text-advist-blue-light text-center py-4">
               {t('documents.noLinks', 'Aucun document lié')}
             </p>
           ) : (
             document.linked_documents.map((link) => (
-              <div key={link.id} className="flex items-center justify-between p-3 border border-advist-border rounded-xl">
+              <div
+                key={link.id}
+                className="flex items-center justify-between p-3 border border-advist-border rounded-xl"
+              >
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-advist-surface-dark rounded-xl">
                     <FileText size={16} className="text-advist-gray900/80" />
                   </div>
                   <div>
-                    <p className="font-medium text-advist-gray900">Document #{link.target_document}</p>
+                    <p className="font-medium text-advist-gray900">
+                      Document #{link.target_document}
+                    </p>
                     <Badge size="sm" className={linkTypeColors[link.link_type]}>
                       {linkTypeLabels[link.link_type]}
                     </Badge>
@@ -1829,20 +1982,46 @@ const CommentsModal: React.FC<{
     {
       id: 1,
       document: document.id,
-      user: { id: 1, first_name: 'Marie', last_name: 'Dupont', email: 'marie@example.com', role: 'manager', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '', color: '#4F46E5' },
+      user: {
+        id: 1,
+        first_name: 'Marie',
+        last_name: 'Dupont',
+        email: 'marie@example.com',
+        role: 'manager',
+        organization: null,
+        is_active: true,
+        is_org_admin: false,
+        language: 'fr',
+        timezone: 'Europe/Paris',
+        created_at: '',
+        color: '#4F46E5',
+      },
       content: 'Il faudrait revoir la clause 3.2 concernant les délais de paiement.',
       replies: [
         {
           id: 2,
           document: document.id,
-          user: { id: 2, first_name: 'Jean', last_name: 'Martin', email: 'jean@example.com', role: 'user', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '', color: '#059669' },
-          content: 'D\'accord, je m\'en occupe. Quel délai suggères-tu ?',
+          user: {
+            id: 2,
+            first_name: 'Jean',
+            last_name: 'Martin',
+            email: 'jean@example.com',
+            role: 'user',
+            organization: null,
+            is_active: true,
+            is_org_admin: false,
+            language: 'fr',
+            timezone: 'Europe/Paris',
+            created_at: '',
+            color: '#059669',
+          },
+          content: "D'accord, je m'en occupe. Quel délai suggères-tu ?",
           replies: [],
           mentions: [],
           is_resolved: false,
           created_at: '2024-11-26T10:30:00Z',
           updated_at: '2024-11-26T10:30:00Z',
-        }
+        },
       ],
       mentions: [],
       is_resolved: false,
@@ -1852,12 +2031,37 @@ const CommentsModal: React.FC<{
     {
       id: 3,
       document: document.id,
-      user: { id: 3, first_name: 'Sophie', last_name: 'Laurent', email: 'sophie@example.com', role: 'manager', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '', color: '#F59E0B' },
+      user: {
+        id: 3,
+        first_name: 'Sophie',
+        last_name: 'Laurent',
+        email: 'sophie@example.com',
+        role: 'manager',
+        organization: null,
+        is_active: true,
+        is_org_admin: false,
+        language: 'fr',
+        timezone: 'Europe/Paris',
+        created_at: '',
+        color: '#F59E0B',
+      },
       content: 'Validation terminée de mon côté. Tout est conforme.',
       replies: [],
       mentions: [],
       is_resolved: true,
-      resolved_by: { id: 3, first_name: 'Sophie', last_name: 'Laurent', email: 'sophie@example.com', role: 'manager', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '' },
+      resolved_by: {
+        id: 3,
+        first_name: 'Sophie',
+        last_name: 'Laurent',
+        email: 'sophie@example.com',
+        role: 'manager',
+        organization: null,
+        is_active: true,
+        is_org_admin: false,
+        language: 'fr',
+        timezone: 'Europe/Paris',
+        created_at: '',
+      },
       resolved_at: '2024-11-26T14:00:00Z',
       created_at: '2024-11-26T11:00:00Z',
       updated_at: '2024-11-26T14:00:00Z',
@@ -1866,7 +2070,9 @@ const CommentsModal: React.FC<{
 
   const renderComment = (comment: DocumentComment, isReply = false) => (
     <div key={comment.id} className={`${isReply ? 'ml-8 mt-2' : ''}`}>
-      <div className={`p-3 rounded-xl ${comment.is_resolved ? 'bg-green-50 border border-advist-success' : 'bg-advist-surface-dark/50'}`}>
+      <div
+        className={`p-3 rounded-xl ${comment.is_resolved ? 'bg-green-50 border border-advist-success' : 'bg-advist-surface-dark/50'}`}
+      >
         <div className="flex items-start gap-3">
           <Avatar
             name={`${comment.user.first_name} ${comment.user.last_name}`}
@@ -1884,7 +2090,7 @@ const CommentsModal: React.FC<{
                   day: '2-digit',
                   month: 'short',
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
                 })}
               </span>
               {comment.is_resolved && (
@@ -1927,7 +2133,12 @@ const CommentsModal: React.FC<{
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('documents.comments', 'Commentaires')} size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('documents.comments', 'Commentaires')}
+      size="lg"
+    >
       <div className="space-y-4">
         <div className="flex items-center justify-between p-3 bg-advist-surface-dark/50 rounded-xl">
           <div className="flex items-center gap-2">
@@ -1946,7 +2157,10 @@ const CommentsModal: React.FC<{
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder={t('documents.writeComment', 'Ajouter un commentaire... Utilisez @ pour mentionner quelqu\'un')}
+              placeholder={t(
+                'documents.writeComment',
+                "Ajouter un commentaire... Utilisez @ pour mentionner quelqu'un"
+              )}
               className="w-full p-2 border border-advist-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-advist-gold"
               rows={2}
             />
@@ -1991,12 +2205,26 @@ const TrackChangesModal: React.FC<{
       id: 1,
       document: document.id,
       version: 2,
-      user: { id: 1, first_name: 'Marie', last_name: 'Dupont', email: 'marie@example.com', role: 'manager', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '', color: '#4F46E5' },
+      user: {
+        id: 1,
+        first_name: 'Marie',
+        last_name: 'Dupont',
+        email: 'marie@example.com',
+        role: 'manager',
+        organization: null,
+        is_active: true,
+        is_org_admin: false,
+        language: 'fr',
+        timezone: 'Europe/Paris',
+        created_at: '',
+        color: '#4F46E5',
+      },
       modification_type: 'addition',
       page: 3,
       position_start: 100,
       position_end: 200,
-      new_content: 'Article 5 - Conditions de paiement modifiées pour inclure un délai de 45 jours.',
+      new_content:
+        'Article 5 - Conditions de paiement modifiées pour inclure un délai de 45 jours.',
       is_formula_protected: false,
       status: 'pending',
       created_at: '2024-11-26T14:30:00Z',
@@ -2005,7 +2233,20 @@ const TrackChangesModal: React.FC<{
       id: 2,
       document: document.id,
       version: 2,
-      user: { id: 2, first_name: 'Jean', last_name: 'Martin', email: 'jean@example.com', role: 'user', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '', color: '#059669' },
+      user: {
+        id: 2,
+        first_name: 'Jean',
+        last_name: 'Martin',
+        email: 'jean@example.com',
+        role: 'user',
+        organization: null,
+        is_active: true,
+        is_org_admin: false,
+        language: 'fr',
+        timezone: 'Europe/Paris',
+        created_at: '',
+        color: '#059669',
+      },
       modification_type: 'deletion',
       page: 1,
       position_start: 50,
@@ -2013,7 +2254,19 @@ const TrackChangesModal: React.FC<{
       original_content: 'Paragraphe initial supprimé',
       is_formula_protected: false,
       status: 'accepted',
-      reviewed_by: { id: 3, first_name: 'Sophie', last_name: 'Laurent', email: 'sophie@example.com', role: 'manager', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '' },
+      reviewed_by: {
+        id: 3,
+        first_name: 'Sophie',
+        last_name: 'Laurent',
+        email: 'sophie@example.com',
+        role: 'manager',
+        organization: null,
+        is_active: true,
+        is_org_admin: false,
+        language: 'fr',
+        timezone: 'Europe/Paris',
+        created_at: '',
+      },
       reviewed_at: '2024-11-26T15:00:00Z',
       created_at: '2024-11-26T10:00:00Z',
     },
@@ -2021,7 +2274,20 @@ const TrackChangesModal: React.FC<{
       id: 3,
       document: document.id,
       version: 2,
-      user: { id: 3, first_name: 'Sophie', last_name: 'Laurent', email: 'sophie@example.com', role: 'manager', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '', color: '#F59E0B' },
+      user: {
+        id: 3,
+        first_name: 'Sophie',
+        last_name: 'Laurent',
+        email: 'sophie@example.com',
+        role: 'manager',
+        organization: null,
+        is_active: true,
+        is_org_admin: false,
+        language: 'fr',
+        timezone: 'Europe/Paris',
+        created_at: '',
+        color: '#F59E0B',
+      },
       modification_type: 'replacement',
       page: 2,
       position_start: 200,
@@ -2030,26 +2296,64 @@ const TrackChangesModal: React.FC<{
       new_content: '45 jours',
       is_formula_protected: false,
       status: 'rejected',
-      reviewed_by: { id: 1, first_name: 'Marie', last_name: 'Dupont', email: 'marie@example.com', role: 'manager', organization: null, is_active: true, is_org_admin: false, language: 'fr', timezone: 'Europe/Paris', created_at: '' },
+      reviewed_by: {
+        id: 1,
+        first_name: 'Marie',
+        last_name: 'Dupont',
+        email: 'marie@example.com',
+        role: 'manager',
+        organization: null,
+        is_active: true,
+        is_org_admin: false,
+        language: 'fr',
+        timezone: 'Europe/Paris',
+        created_at: '',
+      },
       reviewed_at: '2024-11-26T16:00:00Z',
       created_at: '2024-11-26T11:00:00Z',
     },
   ];
 
   const modificationTypeLabels = {
-    addition: { label: t('documents.modification.addition', 'Ajout'), color: 'bg-primary-100 text-advist-gray900', icon: Plus },
-    deletion: { label: t('documents.modification.deletion', 'Suppression'), color: 'bg-advist-bg text-advist-gray900/70', icon: X },
-    replacement: { label: t('documents.modification.replacement', 'Remplacement'), color: 'bg-primary-100 text-advist-gold-dark', icon: GitBranch },
+    addition: {
+      label: t('documents.modification.addition', 'Ajout'),
+      color: 'bg-primary-100 text-advist-gray900',
+      icon: Plus,
+    },
+    deletion: {
+      label: t('documents.modification.deletion', 'Suppression'),
+      color: 'bg-advist-bg text-advist-gray900/70',
+      icon: X,
+    },
+    replacement: {
+      label: t('documents.modification.replacement', 'Remplacement'),
+      color: 'bg-primary-100 text-advist-gold-dark',
+      icon: GitBranch,
+    },
   };
 
   const statusLabels = {
-    pending: { label: t('documents.status.pending', 'En attente'), color: 'bg-primary-100 text-advist-gold-dark' },
-    accepted: { label: t('documents.status.accepted', 'Accepté'), color: 'bg-primary-100 text-advist-gray900' },
-    rejected: { label: t('documents.status.rejected', 'Rejeté'), color: 'bg-advist-bg text-advist-gray900/70' },
+    pending: {
+      label: t('documents.status.pending', 'En attente'),
+      color: 'bg-primary-100 text-advist-gold-dark',
+    },
+    accepted: {
+      label: t('documents.status.accepted', 'Accepté'),
+      color: 'bg-primary-100 text-advist-gray900',
+    },
+    rejected: {
+      label: t('documents.status.rejected', 'Rejeté'),
+      color: 'bg-advist-bg text-advist-gray900/70',
+    },
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('documents.trackChanges', 'Suivi des modifications')} size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('documents.trackChanges', 'Suivi des modifications')}
+      size="xl"
+    >
       <div className="space-y-4">
         <div className="flex items-center justify-between p-3 bg-advist-surface-dark/50 rounded-xl">
           <div className="flex items-center gap-2">
@@ -2058,17 +2362,18 @@ const TrackChangesModal: React.FC<{
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="secondary">
-              {modifications.filter(m => m.status === 'pending').length} {t('documents.pendingChanges', 'en attente')}
+              {modifications.filter((m) => m.status === 'pending').length}{' '}
+              {t('documents.pendingChanges', 'en attente')}
             </Badge>
-            <Badge variant="success">
-              {t('documents.trackingActive', 'Suivi actif')}
-            </Badge>
+            <Badge variant="success">{t('documents.trackingActive', 'Suivi actif')}</Badge>
           </div>
         </div>
 
         {/* Legend */}
         <div className="flex items-center gap-4 p-2 border border-advist-border rounded-xl">
-          <span className="text-sm text-advist-gray900/80">{t('documents.legend', 'Légende')}:</span>
+          <span className="text-sm text-advist-gray900/80">
+            {t('documents.legend', 'Légende')}:
+          </span>
           {Object.entries(modificationTypeLabels).map(([key, { label, color, icon: Icon }]) => (
             <div key={key} className={`flex items-center gap-1 px-2 py-1 rounded ${color}`}>
               <Icon size={12} />
@@ -2147,12 +2452,16 @@ const TrackChangesModal: React.FC<{
                             day: '2-digit',
                             month: 'short',
                             hour: '2-digit',
-                            minute: '2-digit'
+                            minute: '2-digit',
                           })}
                         </span>
                         {mod.reviewed_by && (
                           <span>
-                            • {mod.status === 'accepted' ? t('documents.acceptedBy', 'Accepté par') : t('documents.rejectedBy', 'Rejeté par')} {mod.reviewed_by.first_name}
+                            •{' '}
+                            {mod.status === 'accepted'
+                              ? t('documents.acceptedBy', 'Accepté par')
+                              : t('documents.rejectedBy', 'Rejeté par')}{' '}
+                            {mod.reviewed_by.first_name}
                           </span>
                         )}
                       </div>
@@ -2162,10 +2471,18 @@ const TrackChangesModal: React.FC<{
                   {/* Actions for pending modifications */}
                   {mod.status === 'pending' && (
                     <div className="flex gap-1">
-                      <Button size="sm" variant="ghost" className="text-advist-gray900 hover:bg-primary-100">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-advist-gray900 hover:bg-primary-100"
+                      >
                         <Check size={16} />
                       </Button>
-                      <Button size="sm" variant="ghost" className="text-advist-gray900/70 hover:bg-advist-bg">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-advist-gray900/70 hover:bg-advist-bg"
+                      >
                         <X size={16} />
                       </Button>
                     </div>
