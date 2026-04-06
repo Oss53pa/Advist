@@ -285,12 +285,12 @@ export const FeaturesSection: React.FC = () => {
         <div
           className={`mt-16 text-center transition-all duration-700 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <Link to="/register">
+          <a href="https://atlas-studio.org/portal?app=advist">
             <button className="group inline-flex items-center gap-3 px-7 py-3.5 bg-[#C8A961] text-[#0A0A0B] text-sm font-medium rounded-full hover:bg-[#D4B872] transition-all hover:shadow-[0_0_40px_8px_rgba(200,169,97,0.15)]">
               Decouvrir toutes les fonctionnalites
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-          </Link>
+          </a>
         </div>
       </div>
 

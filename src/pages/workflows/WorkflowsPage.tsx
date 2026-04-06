@@ -29,7 +29,8 @@ import {
   PenTool,
   Save,
 } from 'lucide-react';
-import { Card, Button, Badge, AvatarGroup, Modal, Input } from '../../components/ui';
+import { AvatarGroup } from '../../components/ui/Avatar';
+import { Card, Button, Badge, Modal, Input } from '../../components/ui';
 import { WorkflowEditor, type WorkflowStep } from '../../components/workflows/WorkflowEditor';
 import {
   ConditionalRules,

@@ -27,7 +27,8 @@ import {
   BarChart3,
   Zap,
 } from 'lucide-react';
-import { Button, Badge, Avatar, Modal } from '../../components/ui';
+import { Avatar } from '../../components/ui/Avatar';
+import { Button, Badge, Modal } from '../../components/ui';
 import { PaymentNotificationsWidget } from '../../components/superadmin';
 
 // Mock data for tenants/organizations

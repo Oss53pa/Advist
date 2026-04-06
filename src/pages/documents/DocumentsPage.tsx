@@ -37,7 +37,8 @@ import {
   Zap,
   UserPlus,
 } from 'lucide-react';
-import { Card, Button, Input, Badge, StatusBadge, Avatar, Modal } from '../../components/ui';
+import { Avatar } from '../../components/ui/Avatar';
+import { Card, Button, Input, Badge, StatusBadge, Modal } from '../../components/ui';
 import { documentsService } from '../../services';
 import type { Document, DocumentFolder, DocumentLink, DocumentComment, DocumentModification } from '../../types';
 

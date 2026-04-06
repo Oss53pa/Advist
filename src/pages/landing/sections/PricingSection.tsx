@@ -118,12 +118,12 @@ export const PricingSection: React.FC = () => {
               </div>
 
               {/* CTA */}
-              <Link to="/register">
+              <a href="https://atlas-studio.org/portal?app=advist&plan=Business">
                 <button className="w-full py-3.5 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 group bg-[#C8A961] text-[#0A0A0B] hover:bg-[#D4B872]">
                   Commencer l'essai gratuit
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -215,12 +215,12 @@ export const PricingSection: React.FC = () => {
               </div>
 
               {/* CTA */}
-              <Link to="/contact">
+              <a href="https://atlas-studio.org/portal?app=advist&plan=Entreprise">
                 <button className="w-full py-3.5 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 group bg-white/10 text-white hover:bg-white/15 border border-white/10">
                   Nous contacter
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>

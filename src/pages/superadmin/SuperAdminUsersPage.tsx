@@ -33,7 +33,8 @@ import {
   Edit,
   Send,
 } from 'lucide-react';
-import { Card, Button, Badge, Modal, Avatar } from '../../components/ui';
+import { Avatar } from '../../components/ui/Avatar';
+import { Card, Button, Badge, Modal } from '../../components/ui';
 
 // Types
 interface GlobalUser {

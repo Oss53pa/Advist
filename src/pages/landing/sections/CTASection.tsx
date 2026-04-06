@@ -47,12 +47,12 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
         <div
           className={`flex flex-col sm:flex-row gap-4 justify-center mb-12 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <Link to="/register">
+          <a href="https://atlas-studio.org/portal?app=advist">
             <button className="group relative flex items-center justify-center gap-3 px-7 py-3.5 bg-[#C8A961] text-[#0A0A0B] text-sm font-medium rounded-xl overflow-hidden transition-all duration-300 hover:bg-[#D4B872] hover:shadow-[0_0_40px_8px_rgba(200,169,97,0.15)] hover:scale-[1.02]">
               <span className="relative z-10">Demarrer gratuitement</span>
               <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
             </button>
-          </Link>
+          </a>
           <button
             onClick={onDemoClick}
             className="group flex items-center justify-center gap-3 px-7 py-3.5 bg-white/5 backdrop-blur border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 text-sm"

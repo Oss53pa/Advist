@@ -222,14 +222,14 @@ export const Header: React.FC = () => {
                 </button>
               </Link>
 
-              <Link to="/register">
+              <a href="https://atlas-studio.org/portal?app=advist">
                 <button className="group relative px-5 py-2.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 bg-[#C8A961] text-[#0A0A0B] hover:bg-[#D4B872]">
                   <span className="relative z-10 flex items-center gap-2">
                     {t('landingNav.freeTrial', 'Essai gratuit')}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                   </span>
                 </button>
-              </Link>
+              </a>
             </div>
 
             {/* Mobile menu button */}
@@ -377,12 +377,12 @@ export const Header: React.FC = () => {
                   {t('auth.login', 'Connexion')}
                 </button>
               </Link>
-              <Link to="/register" className="block" onClick={() => setIsMenuOpen(false)}>
+              <a href="https://atlas-studio.org/portal?app=advist" className="block" onClick={() => setIsMenuOpen(false)}>
                 <button className="w-full py-3.5 bg-[#C8A961] text-[#0A0A0B] font-semibold rounded-xl hover:bg-[#D4B872] transition-colors flex items-center justify-center gap-2">
                   {t('landingNav.freeTrial', 'Essai gratuit')}
                   <ArrowRight className="w-4 h-4" />
                 </button>
-              </Link>
+              </a>
             </div>
 
             {/* Language switcher */}

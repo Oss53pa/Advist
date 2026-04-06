@@ -57,12 +57,12 @@ import {
   Sparkles,
   Languages,
 } from 'lucide-react';
+import { Avatar } from '../../components/ui/Avatar';
 import {
   Card,
   Button,
   Badge,
   StatusBadge,
-  Avatar,
   Modal,
   Input,
 } from '../../components/ui';

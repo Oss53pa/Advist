@@ -31,7 +31,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useAuthStore } from '../../store';
-import { Avatar } from '../ui';
+import { Avatar } from '../ui/Avatar';
 
 interface NavItem {
   name: string;

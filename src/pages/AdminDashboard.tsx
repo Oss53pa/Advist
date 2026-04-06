@@ -38,7 +38,8 @@ import {
   Filter,
   Download,
 } from 'lucide-react';
-import { Avatar, Badge, Button, Modal, MiniChart, ProgressCircle } from '../components/ui';
+import { Avatar } from '../components/ui/Avatar';
+import { Badge, Button, Modal, MiniChart, ProgressCircle } from '../components/ui';
 import { useAuthStore } from '../store';
 
 // Données pour les graphiques de tendance (simulé)

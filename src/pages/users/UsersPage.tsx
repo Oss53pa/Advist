@@ -14,7 +14,8 @@ import {
   Download,
   Upload,
 } from 'lucide-react';
-import { Button, Input, Card, Badge, Modal, Avatar, StatsCard, PageHeader, SearchInput, FilterSelect, ViewModeToggle } from '../../components/ui';
+import { Avatar } from '../../components/ui/Avatar';
+import { Button, Input, Card, Badge, Modal, StatsCard, PageHeader, SearchInput, FilterSelect, ViewModeToggle } from '../../components/ui';
 
 interface TeamMember {
   id: number;

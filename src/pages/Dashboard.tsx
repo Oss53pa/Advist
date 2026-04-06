@@ -23,7 +23,8 @@ import {
   Filter,
   RefreshCw,
 } from 'lucide-react';
-import { Card, CardHeader, CardContent, Badge, Avatar, StatusBadge, Button, Modal, Input } from '../components/ui';
+import { Avatar } from '../components/ui/Avatar';
+import { Card, CardHeader, CardContent, Badge, StatusBadge, Button, Modal, Input } from '../components/ui';
 import { NewDocumentForm } from '../components/documents/NewDocumentForm';
 import { useAuthStore } from '../store';
 
