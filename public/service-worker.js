@@ -47,32 +47,51 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate event - clean old caches
+// Activate event - clean old caches and stale assets
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating Service Worker...');
 
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => {
-            return (
-              name.startsWith('advist-') &&
-              name !== CACHE_NAME &&
-              name !== DYNAMIC_CACHE &&
-              name !== API_CACHE
-            );
+    Promise.all([
+      // Delete old named caches
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => {
+              return (
+                name.startsWith('advist-') &&
+                name !== CACHE_NAME &&
+                name !== DYNAMIC_CACHE &&
+                name !== API_CACHE
+              );
+            })
+            .map((name) => {
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
+        );
+      }),
+      // Purge stale JS/CSS assets from cache to avoid module mismatch errors
+      caches.open(CACHE_NAME).then(async (cache) => {
+        const keys = await cache.keys();
+        const assetKeys = keys.filter((req) => /\/assets\/.*\.(js|css)$/.test(new URL(req.url).pathname));
+        // Verify each cached asset still exists on the server
+        return Promise.all(
+          assetKeys.map(async (req) => {
+            try {
+              const res = await fetch(req, { method: 'HEAD' });
+              if (!res.ok) {
+                console.log('[SW] Purging stale asset:', req.url);
+                await cache.delete(req);
+              }
+            } catch {
+              // Offline — keep cached version
+            }
           })
-          .map((name) => {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
-          })
-      );
-    })
+        );
+      }),
+    ]).then(() => self.clients.claim())
   );
-
-  // Take control of all clients
-  self.clients.claim();
 });
 
 // Fetch event - serve from cache with network fallback
@@ -217,13 +236,34 @@ async function handleNavigationRequest(request) {
   }
 }
 
-// Handle static assets - cache first
+// Handle static assets
+// Hashed assets (JS/CSS with content hash) use cache-first since the hash guarantees uniqueness
+// Non-hashed assets use network-first to always get the latest version
 async function handleStaticRequest(request) {
-  const cachedResponse = await caches.match(request);
-  if (cachedResponse) {
-    return cachedResponse;
+  const url = new URL(request.url);
+  const isHashedAsset = /\/assets\/.*-[a-zA-Z0-9]{8,}\.(js|css)$/.test(url.pathname);
+
+  if (isHashedAsset) {
+    // Hashed assets: cache-first (hash in filename = immutable content)
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
+    try {
+      const networkResponse = await fetch(request);
+      if (networkResponse.ok) {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, networkResponse.clone());
+      }
+      return networkResponse;
+    } catch (error) {
+      console.log('[SW] Failed to fetch hashed asset:', request.url);
+      return new Response('Ressource non disponible', { status: 503 });
+    }
   }
 
+  // Non-hashed assets: network-first
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
@@ -232,6 +272,10 @@ async function handleStaticRequest(request) {
     }
     return networkResponse;
   } catch (error) {
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
     console.log('[SW] Failed to fetch:', request.url);
     return new Response('Ressource non disponible', { status: 503 });
   }
