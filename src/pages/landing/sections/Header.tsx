@@ -109,16 +109,30 @@ export const Header: React.FC = () => {
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <Link to="/" className="flex items-center group">
-              <span
-                className={`font-decorative text-2xl lg:text-3xl transition-colors duration-300 ${
-                  isScrolled ? 'text-gray-900' : 'text-white'
+            {/* Logo + Atlas Studio badge */}
+            <div className="flex items-center gap-3">
+              <Link to="/" className="flex items-center group">
+                <span
+                  className={`font-decorative text-2xl lg:text-3xl transition-colors duration-300 ${
+                    isScrolled ? 'text-gray-900' : 'text-white'
+                  }`}
+                >
+                  Advist
+                </span>
+              </Link>
+              <a
+                href="https://atlas-studio.org"
+                className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+                  isScrolled
+                    ? 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700'
+                    : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
                 }`}
               >
-                Advist
-              </span>
-            </Link>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span className="font-decorative normal-case tracking-normal" style={{ color: '#EF9F27' }}>Atlas</span>
+                Studio
+              </a>
+            </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center">
@@ -304,6 +318,21 @@ export const Header: React.FC = () => {
                 <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
+
+            {/* Back to Atlas Studio */}
+            <a
+              href="https://atlas-studio.org"
+              className="flex items-center gap-3 p-3 mb-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all border border-gray-200"
+            >
+              <div className="w-10 h-10 rounded-xl bg-[#0A0A0B] flex items-center justify-center">
+                <span className="font-decorative text-sm" style={{ color: '#EF9F27' }}>A</span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">Atlas Studio</p>
+                <p className="text-xs text-gray-500">Retour au portail</p>
+              </div>
+              <svg className="w-4 h-4 text-gray-400 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
 
             {/* Main navigation links */}
             <div className="mb-6">
