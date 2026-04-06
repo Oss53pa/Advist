@@ -3,9 +3,9 @@
  * Enables offline functionality with caching and background sync
  */
 
-const CACHE_NAME = 'advist-cache-v1';
-const DYNAMIC_CACHE = 'advist-dynamic-v1';
-const API_CACHE = 'advist-api-v1';
+const CACHE_NAME = 'advist-cache-v2';
+const DYNAMIC_CACHE = 'advist-dynamic-v2';
+const API_CACHE = 'advist-api-v2';
 
 // Resources to cache immediately on install
 const STATIC_ASSETS = [
