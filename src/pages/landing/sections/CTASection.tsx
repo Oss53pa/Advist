@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
 import { ArrowRight, Play, Check, Star, Shield } from 'lucide-react';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
