@@ -68,7 +68,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
         >
           <div className="flex items-center gap-2">
             <Check className="w-5 h-5 text-[#C8A961]/40" />
-            <span className="text-sm text-white/40">1 mois d'essai gratuit</span>
+            <span className="text-sm text-white/40">Souscrivez maintenant</span>
           </div>
           <div className="flex items-center gap-2">
             <Check className="w-5 h-5 text-[#C8A961]/40" />

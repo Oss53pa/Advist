@@ -124,8 +124,24 @@ export const Header: React.FC = () => {
                     : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
                 }`}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                <span className="font-decorative normal-case tracking-normal" style={{ color: '#EF9F27' }}>Atlas</span>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                <span
+                  className="font-decorative normal-case tracking-normal"
+                  style={{ color: '#EF9F27' }}
+                >
+                  Atlas
+                </span>
                 Studio
               </a>
             </div>
@@ -239,7 +255,7 @@ export const Header: React.FC = () => {
               <a href="https://atlas-studio.org/portal?app=advist">
                 <button className="group relative px-5 py-2.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 bg-[#C8A961] text-[#0A0A0B] hover:bg-[#D4B872]">
                   <span className="relative z-10 flex items-center gap-2">
-                    {t('landingNav.freeTrial', 'Essai gratuit')}
+                    {t('landingNav.subscribe', 'Souscrire')}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                   </span>
                 </button>
@@ -293,13 +309,25 @@ export const Header: React.FC = () => {
               className="flex items-center gap-3 p-3 mb-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all border border-gray-200"
             >
               <div className="w-10 h-10 rounded-xl bg-[#0A0A0B] flex items-center justify-center">
-                <span className="font-decorative text-sm" style={{ color: '#EF9F27' }}>A</span>
+                <span className="font-decorative text-sm" style={{ color: '#EF9F27' }}>
+                  A
+                </span>
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900">Atlas Studio</p>
                 <p className="text-xs text-gray-500">Retour au portail</p>
               </div>
-              <svg className="w-4 h-4 text-gray-400 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              <svg
+                className="w-4 h-4 text-gray-400 ml-auto"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
             </a>
 
             {/* Main navigation links */}
@@ -406,9 +434,13 @@ export const Header: React.FC = () => {
                   {t('auth.login', 'Connexion')}
                 </button>
               </Link>
-              <a href="https://atlas-studio.org/portal?app=advist" className="block" onClick={() => setIsMenuOpen(false)}>
+              <a
+                href="https://atlas-studio.org/portal?app=advist"
+                className="block"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 <button className="w-full py-3.5 bg-[#C8A961] text-[#0A0A0B] font-semibold rounded-xl hover:bg-[#D4B872] transition-colors flex items-center justify-center gap-2">
-                  {t('landingNav.freeTrial', 'Essai gratuit')}
+                  {t('landingNav.subscribe', 'Souscrire')}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </a>

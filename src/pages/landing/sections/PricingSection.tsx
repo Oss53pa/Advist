@@ -19,7 +19,7 @@ export const PricingSection: React.FC = () => {
           </div>
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">Choisissez votre plan</h2>
           <p className="text-base text-white/40 font-light mb-2">
-            1 mois d'essai gratuit sur tous les plans. Droit de retractation inclus.
+            Souscrivez maintenant. Annulation a tout moment.
           </p>
           <p className="text-sm text-white/30">
             Signataires et validateurs externes illimites sur tous les plans.
@@ -120,7 +120,7 @@ export const PricingSection: React.FC = () => {
               {/* CTA */}
               <a href="https://atlas-studio.org/portal?app=advist&plan=Business">
                 <button className="w-full py-3.5 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 group bg-[#C8A961] text-[#0A0A0B] hover:bg-[#D4B872]">
-                  Commencer l'essai gratuit
+                  S'abonner maintenant
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </a>
