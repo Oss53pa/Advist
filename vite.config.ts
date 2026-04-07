@@ -26,11 +26,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // Core React
-          if (id.includes('node_modules/react-dom')) {
-            return 'vendor-react-dom';
-          }
-          if (id.includes('node_modules/react/')) {
+          // Core React + React DOM + i18n in ONE chunk (avoids createContext race condition)
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom') ||
+            id.includes('node_modules/i18next') ||
+            id.includes('node_modules/react-i18next') ||
+            id.includes('node_modules/i18next-browser-languagedetector')
+          ) {
             return 'vendor-react';
           }
           // Routing
@@ -49,10 +52,6 @@ export default defineConfig({
           if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/@hookform') || id.includes('node_modules/zod')) {
             return 'vendor-forms';
           }
-          // i18n
-          if (id.includes('node_modules/i18next') || id.includes('node_modules/react-i18next')) {
-            return 'vendor-i18n';
-          }
           // PDF generation (lazy load only when needed)
           if (id.includes('node_modules/html2pdf') || id.includes('node_modules/html2canvas') || id.includes('node_modules/jspdf')) {
             return 'vendor-pdf';
@@ -62,12 +61,6 @@ export default defineConfig({
             return 'vendor-qrcode';
           }
           // Other utilities
-          if (id.includes('node_modules/date-fns')) {
-            return 'vendor-date';
-          }
-          if (id.includes('node_modules/axios')) {
-            return 'vendor-http';
-          }
           if (id.includes('node_modules/dompurify')) {
             return 'vendor-security';
           }
