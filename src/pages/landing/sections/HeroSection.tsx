@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useLandingContent } from '../../../hooks/useLandingContent';
 import {
   ArrowRight,
   Play,
@@ -29,6 +30,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
   const { t } = useTranslation();
   const [currentWord, setCurrentWord] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
+  const { content: remoteContent } = useLandingContent('advist');
+  const remoteHero = remoteContent?.hero;
 
   const ANIMATED_WORDS = [
     { text: t('landing.hero.word1', 'Validez') },
@@ -93,10 +96,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
               </h1>
 
               <p className="text-lg md:text-xl text-white/50 max-w-xl leading-relaxed animate-fade-in-up animation-delay-200">
-                {t(
-                  'landing.hero.subtitle',
-                  'La plateforme tout-en-un pour digitaliser vos circuits de validation, signer électroniquement et automatiser vos processus documentaires.'
-                )}
+                {remoteHero?.subtitle ??
+                  t(
+                    'landing.hero.subtitle',
+                    'La plateforme tout-en-un pour digitaliser vos circuits de validation, signer électroniquement et automatiser vos processus documentaires.'
+                  )}
               </p>
             </div>
 
@@ -150,19 +154,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
               <div className="h-8 w-px bg-white/10 hidden sm:block" />
 
               <div className="flex items-center gap-3">
-                {[
-                  { icon: ShieldCheck, label: 'eIDAS' },
-                  { icon: Award, label: 'ISO 27001' },
-                  { icon: Globe, label: 'OHADA' },
-                ].map((cert, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10"
-                  >
-                    <cert.icon className="w-4 h-4 text-white/50" />
-                    <span className="text-xs font-medium text-white/50">{cert.label}</span>
-                  </div>
-                ))}
+                {(remoteHero?.badges ?? ['eIDAS', 'ISO 27001', 'OHADA'])
+                  .map((badge: string) => {
+                    const iconMap: Record<string, typeof ShieldCheck> = {
+                      eIDAS: ShieldCheck,
+                      'ISO 27001': Award,
+                      OHADA: Globe,
+                    };
+                    const IconComp = iconMap[badge] ?? ShieldCheck;
+                    return { icon: IconComp, label: badge };
+                  })
+                  .map((cert, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10"
+                    >
+                      <cert.icon className="w-4 h-4 text-white/50" />
+                      <span className="text-xs font-medium text-white/50">{cert.label}</span>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>

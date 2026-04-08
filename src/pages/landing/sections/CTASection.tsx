@@ -2,6 +2,7 @@ import React from 'react';
 
 import { ArrowRight, Play, Check, Star, Shield } from 'lucide-react';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { useLandingContent } from '../../../hooks/useLandingContent';
 
 interface CTASectionProps {
   onDemoClick?: () => void;
@@ -9,6 +10,9 @@ interface CTASectionProps {
 
 export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
   const { ref, isVisible } = useScrollAnimation();
+  const { content: remoteContent } = useLandingContent('advist');
+  const remoteCta = remoteContent?.cta;
+  const ctaTitle = remoteCta?.title ?? 'Pret a transformer votre gestion documentaire ?';
 
   return (
     <section ref={ref} className="py-32 bg-[#0A0A0B] relative overflow-hidden">
@@ -31,9 +35,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
         <h2
           className={`text-3xl md:text-4xl lg:text-5xl font-light text-white mb-6 leading-tight transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          Pret a transformer votre
-          <br />
-          <span className="text-[#C8A961]">gestion documentaire ?</span>
+          {ctaTitle}
         </h2>
 
         <p

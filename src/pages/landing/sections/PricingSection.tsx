@@ -2,9 +2,16 @@ import React from 'react';
 
 import { Check, X, Zap, ArrowRight, Star, Shield, Building2, Clock } from 'lucide-react';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { useLandingContent } from '../../../hooks/useLandingContent';
 
 export const PricingSection: React.FC = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const { content: remoteContent } = useLandingContent('advist');
+  const remotePricing = remoteContent?.pricing;
+  const businessPrice = remotePricing?.plans?.[0]?.price ?? 25000;
+  const entreprisePrice = remotePricing?.plans?.[1]?.price ?? 150000;
+  const pricingSubtitle =
+    remotePricing?.subtitle ?? 'Souscrivez maintenant. Annulation a tout moment.';
 
   return (
     <section ref={ref} id="pricing" className="py-32 bg-[#0F0F11] relative overflow-hidden">
@@ -18,9 +25,7 @@ export const PricingSection: React.FC = () => {
             <span className="text-sm font-medium text-[#C8A961]">Tarifs transparents</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">Choisissez votre plan</h2>
-          <p className="text-base text-white/40 font-light mb-2">
-            Souscrivez maintenant. Annulation a tout moment.
-          </p>
+          <p className="text-base text-white/40 font-light mb-2">{pricingSubtitle}</p>
           <p className="text-sm text-white/30">
             Signataires et validateurs externes illimites sur tous les plans.
           </p>
@@ -53,7 +58,9 @@ export const PricingSection: React.FC = () => {
               {/* Price */}
               <div className="mb-2">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-medium text-[#C8A961]">25 000</span>
+                  <span className="text-3xl font-medium text-[#C8A961]">
+                    {businessPrice.toLocaleString('fr-FR')}
+                  </span>
                   <span className="text-sm text-white/40">FCFA/mois</span>
                 </div>
                 <p className="text-xs text-white/30 mt-1">
@@ -152,7 +159,9 @@ export const PricingSection: React.FC = () => {
               {/* Price */}
               <div className="mb-2">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-medium text-white">150 000</span>
+                  <span className="text-3xl font-medium text-white">
+                    {entreprisePrice.toLocaleString('fr-FR')}
+                  </span>
                   <span className="text-sm text-white/40">FCFA/mois</span>
                 </div>
                 <p className="text-xs text-white/30 mt-1">
