@@ -17,6 +17,9 @@ const ExternalAuthPage = lazy(() => import('./pages/auth/ExternalAuthPage'));
 // LandingPage lazy loaded (large bundle)
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 
+// Demo page (public, no auth required)
+const DemoPage = lazy(() => import('./pages/DemoPage'));
+
 // Lazy loading des pages utilisateur
 const UserDashboard = lazy(() => import('./pages/UserDashboard'));
 const DocumentsPage = lazy(() => import('./pages/documents/DocumentsPage'));
@@ -224,7 +227,10 @@ function App() {
                 />
                 {/* Registration + checkout handled by Atlas Studio portal */}
                 <Route path="/register" element={<AtlasStudioRedirect destination="register" />} />
-                <Route path="/register/success" element={<AtlasStudioRedirect destination="portal" />} />
+                <Route
+                  path="/register/success"
+                  element={<AtlasStudioRedirect destination="portal" />}
+                />
                 <Route path="/checkout" element={<AtlasStudioRedirect destination="pricing" />} />
                 <Route path="/pricing" element={<AtlasStudioRedirect destination="pricing" />} />
                 <Route
@@ -238,6 +244,9 @@ function App() {
 
                 {/* Profile Selection */}
                 <Route path="/select-profile" element={<ProfileSelectPage />} />
+
+                {/* Public Demo Page (no auth required) */}
+                <Route path="/demo" element={<DemoPage />} />
 
                 {/* External User Interface (no auth required) */}
                 <Route path="/external/:token" element={<ExternalUserPage />} />
