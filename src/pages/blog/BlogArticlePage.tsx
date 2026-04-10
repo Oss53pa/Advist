@@ -1823,11 +1823,11 @@ export const BlogArticlePage: React.FC = () => {
                   Connexion
                 </button>
               </Link>
-              <Link to="/register">
+              <a href="https://atlas-studio.org/portal?app=advist">
                 <button className="px-4 py-2 bg-[#C8A961] text-[#0A0A0B] text-sm font-medium rounded-lg hover:bg-[#C8A961]/90 transition-colors">
-                  Essai gratuit
+                  Souscrire
                 </button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -2120,13 +2120,13 @@ export const BlogArticlePage: React.FC = () => {
             gratuit d'1 mois.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/register"
+            <a
+              href="https://atlas-studio.org/portal?app=advist"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#C8A961] text-[#0A0A0B] rounded-xl font-medium hover:bg-[#C8A961]/90 transition-colors"
             >
-              Essai gratuit
+              Souscrire
               <ArrowRight className="w-5 h-5" />
-            </Link>
+            </a>
             <Link
               to="/#demo"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-white/10 text-white/80 rounded-xl font-medium hover:bg-white/5 transition-colors"

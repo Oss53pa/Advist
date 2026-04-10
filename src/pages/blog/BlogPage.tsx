@@ -339,11 +339,11 @@ export const BlogPage: React.FC = () => {
                   Connexion
                 </button>
               </Link>
-              <Link to="/register">
+              <a href="https://atlas-studio.org/portal?app=advist">
                 <button className="px-4 py-2 bg-primary-900 text-white text-sm font-medium rounded-lg hover:bg-primary-800 transition-colors">
-                  Essai gratuit
+                  Souscrire
                 </button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>

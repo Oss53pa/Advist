@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { DemoModal } from '../components/demo/DemoModal';
 import {
   InteractiveWorkflowDemo,
@@ -381,11 +380,11 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
               Decouvrir toutes les demos
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-            <Link to="/register">
+            <a href="https://atlas-studio.org/portal?app=advist">
               <button className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border-2 border-white/20 text-white text-sm font-medium rounded-2xl hover:bg-white/10 transition-all">
-                Essai gratuit 1 mois
+                Souscrire maintenant
               </button>
-            </Link>
+            </a>
           </div>
         </div>
       </div>
@@ -592,12 +591,12 @@ const IAPromotionSection: React.FC = () => {
                     ))}
                   </ul>
 
-                  <Link to="/register">
+                  <a href="https://atlas-studio.org/portal?app=advist">
                     <button className="w-full py-3.5 bg-[#C8A961] text-[#0A0A0B] text-sm font-medium rounded-xl hover:bg-[#D4B872] transition-all flex items-center justify-center gap-2">
-                      Essayer l'offre IA gratuitement
+                      Souscrire a l'offre IA
                       <ArrowRight className="w-5 h-5" />
                     </button>
-                  </Link>
+                  </a>
                   <p className="text-center text-xs text-white/30 mt-3">
                     Inclus dans le mois d'essai gratuit
                   </p>
