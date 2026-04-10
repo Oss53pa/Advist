@@ -824,7 +824,7 @@ const DemoPage: React.FC = () => {
             >
               <iframe
                 key={previewRoute}
-                src={`${window.location.origin}${previewRoute}`}
+                src={`${window.location.origin}${previewRoute}?demo=1`}
                 title="Aperçu Advist"
                 style={{
                   width: `${IFRAME_DESIGN_WIDTH}px`,
@@ -833,6 +833,7 @@ const DemoPage: React.FC = () => {
                   transform: `scale(${previewScale})`,
                   transformOrigin: 'top left',
                 }}
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
               />
             </div>
           </div>
