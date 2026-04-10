@@ -1,13 +1,12 @@
 /**
- * Checkout Service
- * Service pour le processus de checkout public (inscription + paiement)
+ * Checkout Service — REDIRECT ONLY
+ *
+ * Les paiements et abonnements sont gérés exclusivement sur Atlas Studio.
+ * Ce service redirige simplement vers le portail Atlas Studio.
  */
-import { supabase, invokeEdgeFunction } from '../lib/supabase';
-import { parseSupabaseError } from './supabase-helpers';
 
-// =========================================================================
-// Types
-// =========================================================================
+const ATLAS_STUDIO_PRICING = 'https://atlas-studio.org/applications/advist';
+const ATLAS_STUDIO_PORTAL = 'https://atlas-studio.org/portal';
 
 export interface PublicPlan {
   id: string;
@@ -24,154 +23,33 @@ export interface PublicPlan {
   is_popular?: boolean;
 }
 
-export interface MobileMoneyProvider {
-  code: string;
-  name: string;
-  logo: string;
-}
-
-export interface MobileMoneyProvidersByCountry {
-  [countryCode: string]: MobileMoneyProvider[];
-}
-
-export interface CheckoutInitiateData {
-  // Infos personnelles
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  password: string;
-
-  // Infos organisation
-  organization_name: string;
-  organization_size?: string;
-  industry?: string;
-  country?: string;
-  city?: string;
-
-  // Plan
-  plan_code: string;
-  billing_cycle?: 'monthly' | 'quarterly' | 'yearly';
-
-  // Paiement
-  payment_method: 'card' | 'mobile_money';
-  card_token?: string;
-  phone_number?: string;
-  mobile_provider?: string;
-}
-
-export interface CheckoutResponse {
-  checkout_token: string;
-  payment_url?: string;
-  client_secret?: string;
-  status: 'pending' | 'requires_action' | 'processing';
-  amount: number;
-  currency: string;
-  gateway: string;
-}
-
-export interface PaymentStatus {
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  subscription_activated: boolean;
-  redirect_url?: string;
-  plan_name?: string;
-  organization_name?: string;
-  error_message?: string;
-}
-
-export interface TotalBreakdown {
-  plan_code: string;
-  plan_name: string;
-  subtotal: number;
-  tax_rate: number;
-  tax_amount: number;
-  total: number;
-  currency: string;
-}
-
-// =========================================================================
-// Service
-// =========================================================================
-
 export const checkoutService = {
   /**
-   * Récupérer la liste des plans disponibles (public)
+   * Redirige vers la page de tarifs Atlas Studio
    */
-  async getPublicPlans(): Promise<PublicPlan[]> {
-    const { data, error } = await supabase
-      .from('billing_plans')
-      .select('*')
-      .eq('is_active', true)
-      .order('price', { ascending: true });
-
-    if (error) throw parseSupabaseError(error);
-    return (data as PublicPlan[]) ?? [];
+  redirectToAtlasStudio(): void {
+    window.location.href = ATLAS_STUDIO_PRICING;
   },
 
   /**
-   * Récupérer les opérateurs Mobile Money par pays
+   * Redirige vers le portail Atlas Studio (gestion des abonnements)
    */
-  async getMobileMoneyProviders(country?: string): Promise<MobileMoneyProvidersByCountry> {
-    return invokeEdgeFunction<MobileMoneyProvidersByCountry>('get-mobile-money-providers', {
-      country: country ?? null,
-    });
+  redirectToPortal(): void {
+    window.location.href = ATLAS_STUDIO_PORTAL;
   },
 
   /**
-   * Calculer le total avec TVA
+   * URL de la page pricing Atlas Studio (pour les liens)
    */
-  async calculateTotal(planCode: string, billingCycle?: string): Promise<TotalBreakdown> {
-    return invokeEdgeFunction<TotalBreakdown>('calculate-checkout-total', {
-      plan_code: planCode,
-      billing_cycle: billingCycle || 'monthly',
-    });
+  getPricingUrl(): string {
+    return ATLAS_STUDIO_PRICING;
   },
 
   /**
-   * Initier le checkout (création compte + paiement)
+   * URL du portail Atlas Studio
    */
-  async initiateCheckout(data: CheckoutInitiateData): Promise<CheckoutResponse> {
-    return invokeEdgeFunction<CheckoutResponse>('create-checkout', data as unknown as Record<string, unknown>);
-  },
-
-  /**
-   * Vérifier le statut d'un paiement
-   */
-  async getPaymentStatus(checkoutToken: string): Promise<PaymentStatus> {
-    const { data, error } = await supabase
-      .from('checkout_sessions')
-      .select('status, subscription_activated, redirect_url, plan_name, organization_name, error_message')
-      .eq('checkout_token', checkoutToken)
-      .single();
-
-    if (error) throw parseSupabaseError(error);
-    return data as PaymentStatus;
-  },
-
-  /**
-   * Calcul local du total avec TVA (pour affichage immédiat)
-   */
-  calculateLocalTotal(price: number, taxRate: number = 18): {
-    subtotal: number;
-    taxAmount: number;
-    total: number;
-  } {
-    const subtotal = price;
-    const taxAmount = Math.round(subtotal * taxRate / 100);
-    const total = subtotal + taxAmount;
-    return { subtotal, taxAmount, total };
-  },
-
-  /**
-   * Formater un montant en XOF
-   */
-  formatAmount(amount: number, currency: string = 'XOF'): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+  getPortalUrl(): string {
+    return ATLAS_STUDIO_PORTAL;
   },
 };
 

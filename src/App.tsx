@@ -10,10 +10,9 @@ import { useAuthStore } from './store';
 import { useSubscriptionGuard } from './hooks/useSubscriptionGuard';
 
 // Pages d'auth chargées immédiatement (small bundles)
-import { LoginPage, RegisterPage, ProfileSelectPage } from './pages';
-import { RegisterSuccessPage } from './pages/auth/RegisterSuccessPage';
+import { LoginPage, ProfileSelectPage } from './pages';
+import { AtlasStudioRedirect } from './pages/AtlasStudioRedirect';
 const ExternalAuthPage = lazy(() => import('./pages/auth/ExternalAuthPage'));
-import { CheckoutPage } from './pages/checkout';
 
 // LandingPage lazy loaded (large bundle)
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -92,7 +91,7 @@ const MarketingNewslettersPage = lazy(
 );
 
 // Lazy loading des pages billing Client
-const ClientBillingPage = lazy(() => import('./pages/billing/ClientBillingPage'));
+// ClientBillingPage removed — billing handled by Atlas Studio portal
 
 // Pages externes
 const ExternalUserPage = lazy(() => import('./pages/external/ExternalUserPage'));
@@ -223,29 +222,17 @@ function App() {
                     </PublicRoute>
                   }
                 />
-                <Route path="/register" element={<RegisterPage />} />
+                {/* Registration + checkout handled by Atlas Studio portal */}
+                <Route path="/register" element={<AtlasStudioRedirect destination="register" />} />
+                <Route path="/register/success" element={<AtlasStudioRedirect destination="portal" />} />
+                <Route path="/checkout" element={<AtlasStudioRedirect destination="pricing" />} />
+                <Route path="/pricing" element={<AtlasStudioRedirect destination="pricing" />} />
                 <Route
                   path="/auth"
                   element={
                     <Suspense fallback={<div />}>
                       <ExternalAuthPage />
                     </Suspense>
-                  }
-                />
-                <Route
-                  path="/register/success"
-                  element={
-                    <PublicRoute>
-                      <RegisterSuccessPage />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/checkout"
-                  element={
-                    <ProtectedRoute>
-                      <CheckoutPage />
-                    </ProtectedRoute>
                   }
                 />
 
@@ -308,7 +295,7 @@ function App() {
                   <Route path="profile" element={<ProfilePage />} />
                   <Route path="notifications" element={<NotificationsPage />} />
                   <Route path="calendar" element={<CalendarPage />} />
-                  <Route path="billing" element={<ClientBillingPage />} />
+                  <Route path="billing" element={<AtlasStudioRedirect destination="billing" />} />
                   <Route path="projects" element={<ProjectsPage />} />
                   <Route path="projects/:id" element={<ProjectDetailPage />} />
                   <Route path="analytics/reports" element={<ExecutiveReportPage />} />
@@ -346,7 +333,7 @@ function App() {
                   <Route path="profile" element={<ProfilePage />} />
                   <Route path="notifications" element={<NotificationsPage />} />
                   <Route path="calendar" element={<CalendarPage />} />
-                  <Route path="billing" element={<ClientBillingPage />} />
+                  <Route path="billing" element={<AtlasStudioRedirect destination="billing" />} />
                   <Route path="projects" element={<ProjectsPage />} />
                   <Route path="projects/:id" element={<ProjectDetailPage />} />
                   <Route path="analytics/reports" element={<ExecutiveReportPage />} />
