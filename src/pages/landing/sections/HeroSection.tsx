@@ -162,8 +162,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
             </div>
           </div>
 
-          {/* Right - Interactive Product Preview */}
-          <div className="relative lg:ml-8 animate-fade-in-right animation-delay-300">
+          {/* Right - Interactive Product Preview (hidden on mobile to avoid cramped layout) */}
+          <div className="relative lg:ml-8 animate-fade-in-right animation-delay-300 hidden md:block">
             <ProductPreview />
           </div>
         </div>
