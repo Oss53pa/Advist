@@ -321,7 +321,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Nom complet"
-              placeholder="Jean Dupont"
+              placeholder="Kouamé N'Guessan"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
@@ -329,7 +329,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
             <Input
               label="Email professionnel"
               type="email"
-              placeholder="jean@entreprise.com"
+              placeholder="k.nguessan@entreprise.ci"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required

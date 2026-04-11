@@ -104,7 +104,7 @@ const tutorials: Tutorial[] = [
         title: 'Créer un workflow',
         instruction:
           'Accédez à la section Workflows et cliquez sur "Nouveau". Donnez un nom explicite à votre circuit.',
-        tip: 'Exemple : "Validation Contrat Fournisseur > 10K€" pour identifier rapidement le cas d\'usage.',
+        tip: 'Exemple : "Validation Contrat Fournisseur > 5 000 000 FCFA" pour identifier rapidement le cas d\'usage.',
         action: 'Créer le workflow',
       },
       {

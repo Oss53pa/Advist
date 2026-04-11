@@ -41,9 +41,9 @@ export const InteractiveSignatureDemo: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const documentInfo = {
-    name: 'Contrat_Service_Premium_2025.pdf',
+    name: 'Contrat_Service_Premium_2026.pdf',
     type: 'Contrat de service',
-    client: 'Société ABC',
+    client: 'Groupe Diakité & Associés',
     pages: 8,
     signatureRequired: 'Page 8 - Zone de signature',
   };
@@ -257,11 +257,13 @@ export const InteractiveSignatureDemo: React.FC = () => {
                 <strong>Entre les soussignés :</strong>
               </p>
               <p className="text-gray-600 mb-2 ml-4">
-                • <strong>ADVIST SAS</strong>, société par actions simplifiée au capital de 100 000
-                €, dont le siège social est situé à Abidjan, Côte d'Ivoire, immatriculée au RCCM...
+                • <strong>ADVIST SARL</strong>, société à responsabilité limitée au capital de 65
+                000 000 FCFA, dont le siège social est situé à Abidjan, Côte d'Ivoire, immatriculée
+                au RCCM...
               </p>
               <p className="text-gray-600 mb-4 ml-4">
-                • <strong>Société ABC</strong>, représentée par son Directeur Général...
+                • <strong>Groupe Diakité &amp; Associés</strong>, représenté par Monsieur Moussa
+                Diakité, Directeur Général...
               </p>
               <p className="text-gray-600 mb-3">
                 <strong>Article 1 - Objet du contrat</strong>
