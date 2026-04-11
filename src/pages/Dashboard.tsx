@@ -21,6 +21,8 @@ import { NewDocumentForm } from '../components/documents/NewDocumentForm';
 import { useAuthStore } from '../store';
 import { supabase } from '../lib/supabase';
 import { PrintButton } from '../shared/PrintEngine';
+import { DocumentQuotaCard } from '../components/gating';
+import { useDocumentQuota } from '../hooks/useTenantPlan';
 
 interface RecentDoc {
   id: string;
@@ -43,8 +45,18 @@ interface PendingTask {
 }
 
 const getQuickActions = (t: (key: string, fallback?: string) => string) => [
-  { id: 1, label: t('dashboard.actions.newDocument', 'Nouveau document'), icon: Plus, action: 'new-doc' },
-  { id: 2, label: t('dashboard.actions.startWorkflow', 'Lancer un workflow'), icon: GitBranch, action: 'new-workflow' },
+  {
+    id: 1,
+    label: t('dashboard.actions.newDocument', 'Nouveau document'),
+    icon: Plus,
+    action: 'new-doc',
+  },
+  {
+    id: 2,
+    label: t('dashboard.actions.startWorkflow', 'Lancer un workflow'),
+    icon: GitBranch,
+    action: 'new-workflow',
+  },
   { id: 3, label: t('dashboard.actions.sign', 'Signer'), icon: PenTool, action: 'sign' },
 ];
 
@@ -55,6 +67,7 @@ export const Dashboard: React.FC = () => {
   const location = useLocation();
   const [showNewDocModal, setShowNewDocModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const documentQuota = useDocumentQuota();
 
   // Stats state
   const [docCount, setDocCount] = useState(0);
@@ -125,7 +138,9 @@ export const Dashboard: React.FC = () => {
           // Recent documents (last 5)
           supabase
             .from('documents')
-            .select('id, title, status, created_at, document_type_id, created_by, document_types(name), profiles!documents_created_by_fkey(first_name, last_name)')
+            .select(
+              'id, title, status, created_at, document_type_id, created_by, document_types(name), profiles!documents_created_by_fkey(first_name, last_name)'
+            )
             .eq('organization_id', orgId)
             .is('deleted_at', null)
             .order('created_at', { ascending: false })
@@ -133,7 +148,8 @@ export const Dashboard: React.FC = () => {
           // Pending tasks: workflow steps assigned to current user that are pending
           supabase
             .from('workflow_assignees')
-            .select(`
+            .select(
+              `
               id,
               status,
               step:workflow_steps(
@@ -150,7 +166,8 @@ export const Dashboard: React.FC = () => {
                   starter:profiles!workflow_instances_started_by_fkey(first_name, last_name)
                 )
               )
-            `)
+            `
+            )
             .eq('user_id', user?.id)
             .eq('status', 'pending')
             .limit(10),
@@ -220,11 +237,11 @@ export const Dashboard: React.FC = () => {
               typeLabel: typeLabels[stepType] || stepType,
               deadline: step.due_date || '',
               priority: step.due_date
-                ? ((new Date(step.due_date).getTime() - Date.now()) < 24 * 60 * 60 * 1000
+                ? new Date(step.due_date).getTime() - Date.now() < 24 * 60 * 60 * 1000
                   ? 'high'
-                  : (new Date(step.due_date).getTime() - Date.now()) < 72 * 60 * 60 * 1000
+                  : new Date(step.due_date).getTime() - Date.now() < 72 * 60 * 60 * 1000
                     ? 'medium'
-                    : 'low')
+                    : 'low'
                 : 'low',
               assignedBy: {
                 name: inst.starter
@@ -250,48 +267,51 @@ export const Dashboard: React.FC = () => {
     fetchDashboardData();
   }, [orgId, user?.id, t]);
 
-  const stats = useMemo(() => [
-    {
-      label: t('dashboard.stats.documents', 'Documents'),
-      value: docCount,
-      icon: FileText,
-      change: '',
-      trend: 'up' as const,
-      color: 'from-advist-dark to-advist-dark/80',
-      bgLight: 'bg-advist-surface-dark',
-      textColor: 'text-advist-gray900',
-    },
-    {
-      label: t('dashboard.stats.activeWorkflows', 'Workflows actifs'),
-      value: activeWorkflowCount,
-      icon: GitBranch,
-      change: '',
-      trend: 'up' as const,
-      color: 'from-advist-gold to-advist-gold-dark',
-      bgLight: 'bg-advist-gold-light',
-      textColor: 'text-advist-gold-dark',
-    },
-    {
-      label: t('dashboard.stats.pending', 'En attente'),
-      value: pendingCount,
-      icon: Clock,
-      change: '',
-      trend: 'down' as const,
-      color: 'from-advist-warning to-advist-gold-dark',
-      bgLight: 'bg-advist-gold-light',
-      textColor: 'text-advist-gold-dark',
-    },
-    {
-      label: t('dashboard.stats.approved', 'Approuvés'),
-      value: approvedCount,
-      icon: CheckCircle,
-      change: '',
-      trend: 'up' as const,
-      color: 'from-advist-success to-advist-success/80',
-      bgLight: 'bg-green-50',
-      textColor: 'text-advist-success',
-    },
-  ], [t, docCount, activeWorkflowCount, pendingCount, approvedCount]);
+  const stats = useMemo(
+    () => [
+      {
+        label: t('dashboard.stats.documents', 'Documents'),
+        value: docCount,
+        icon: FileText,
+        change: '',
+        trend: 'up' as const,
+        color: 'from-advist-dark to-advist-dark/80',
+        bgLight: 'bg-advist-surface-dark',
+        textColor: 'text-advist-gray900',
+      },
+      {
+        label: t('dashboard.stats.activeWorkflows', 'Workflows actifs'),
+        value: activeWorkflowCount,
+        icon: GitBranch,
+        change: '',
+        trend: 'up' as const,
+        color: 'from-advist-gold to-advist-gold-dark',
+        bgLight: 'bg-advist-gold-light',
+        textColor: 'text-advist-gold-dark',
+      },
+      {
+        label: t('dashboard.stats.pending', 'En attente'),
+        value: pendingCount,
+        icon: Clock,
+        change: '',
+        trend: 'down' as const,
+        color: 'from-advist-warning to-advist-gold-dark',
+        bgLight: 'bg-advist-gold-light',
+        textColor: 'text-advist-gold-dark',
+      },
+      {
+        label: t('dashboard.stats.approved', 'Approuvés'),
+        value: approvedCount,
+        icon: CheckCircle,
+        change: '',
+        trend: 'up' as const,
+        color: 'from-advist-success to-advist-success/80',
+        bgLight: 'bg-green-50',
+        textColor: 'text-advist-success',
+      },
+    ],
+    [t, docCount, activeWorkflowCount, pendingCount, approvedCount]
+  );
 
   const quickActions = getQuickActions(t);
 
@@ -314,6 +334,11 @@ export const Dashboard: React.FC = () => {
   const handleQuickAction = (action: string) => {
     switch (action) {
       case 'new-doc':
+        if (documentQuota.limitReached) {
+          // Limit reached, redirect to upgrade
+          window.open('https://atlas-studio.org/applications/advist', '_blank');
+          return;
+        }
         setShowNewDocModal(true);
         break;
       case 'new-workflow':
@@ -325,7 +350,7 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  const handleTaskClick = (task: typeof pendingTasks[0]) => {
+  const handleTaskClick = (task: (typeof pendingTasks)[0]) => {
     setShowTaskDetail(task);
   };
 
@@ -393,7 +418,9 @@ export const Dashboard: React.FC = () => {
               </div>
               {/* Recent Documents */}
               <div>
-                <h2 className="text-lg font-semibold mb-2">{t('dashboard.recentDocuments', 'Documents récents')}</h2>
+                <h2 className="text-lg font-semibold mb-2">
+                  {t('dashboard.recentDocuments', 'Documents récents')}
+                </h2>
                 {recentDocuments.map((doc) => (
                   <div key={doc.id} className="py-2 border-b border-advist-border">
                     <span className="font-medium">{doc.title}</span> — {doc.type} — {doc.status}
@@ -402,7 +429,9 @@ export const Dashboard: React.FC = () => {
               </div>
               {/* Pending Tasks */}
               <div>
-                <h2 className="text-lg font-semibold mb-2">{t('dashboard.pendingTasks', 'Tâches en attente')}</h2>
+                <h2 className="text-lg font-semibold mb-2">
+                  {t('dashboard.pendingTasks', 'Tâches en attente')}
+                </h2>
                 {pendingTasks.map((task) => (
                   <div key={task.id} className="py-2 border-b border-advist-border">
                     <span className="font-medium">{task.document}</span> — {task.typeLabel}
@@ -411,24 +440,40 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
           </PrintButton>
-          {quickActions.map((action) => (
-            <button
-              key={action.id}
-              onClick={() => handleQuickAction(action.action)}
-              className={`
-                flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-200
-                ${action.action === 'new-doc'
-                  ? 'bg-advist-dark text-white hover:bg-advist-dark/90 shadow-lg shadow-advist-dark/20'
-                  : 'bg-white text-advist-gray900 border border-advist-border hover:border-advist-gold hover:shadow-md'
+          {quickActions.map((action) => {
+            const isNewDoc = action.action === 'new-doc';
+            const blocked = isNewDoc && documentQuota.limitReached;
+            return (
+              <button
+                key={action.id}
+                onClick={() => handleQuickAction(action.action)}
+                disabled={blocked}
+                title={
+                  blocked
+                    ? 'Limite mensuelle atteinte — passez en Entreprise pour un volume illimité'
+                    : action.label
                 }
-              `}
-            >
-              <action.icon size={18} />
-              <span className="hidden sm:inline">{action.label}</span>
-            </button>
-          ))}
+                className={`
+                  flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-200
+                  ${
+                    blocked
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : isNewDoc
+                        ? 'bg-advist-dark text-white hover:bg-advist-dark/90 shadow-lg shadow-advist-dark/20'
+                        : 'bg-white text-advist-gray900 border border-advist-border hover:border-advist-gold hover:shadow-md'
+                  }
+                `}
+              >
+                <action.icon size={18} />
+                <span className="hidden sm:inline">{action.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
+
+      {/* Document quota card (Business plan) */}
+      <DocumentQuotaCard />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -438,7 +483,9 @@ export const Dashboard: React.FC = () => {
             className="group relative bg-white rounded-2xl p-6 border border-advist-border hover:border-advist-gold hover:shadow-xl transition-all duration-300 overflow-hidden"
           >
             {/* Background gradient on hover */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+            />
 
             <div className="relative flex items-start justify-between">
               <div className="space-y-3">
@@ -470,7 +517,8 @@ export const Dashboard: React.FC = () => {
                   {t('dashboard.pendingTasks', 'Tâches en attente')}
                 </h2>
                 <p className="text-sm text-advist-text-secondary mt-0.5">
-                  {pendingTasks.length} {t('dashboard.tasksRequireAttention', 'tâches nécessitent votre attention')}
+                  {pendingTasks.length}{' '}
+                  {t('dashboard.tasksRequireAttention', 'tâches nécessitent votre attention')}
                 </p>
               </div>
               <Link
@@ -493,10 +541,12 @@ export const Dashboard: React.FC = () => {
                     className="w-full flex items-center gap-4 p-5 hover:bg-advist-surface-dark transition-all duration-240 text-left group"
                   >
                     {/* Priority indicator */}
-                    <div className={`
+                    <div
+                      className={`
                       w-1 h-12 rounded-full flex-shrink-0
                       ${task.priority === 'high' ? 'bg-advist-error' : task.priority === 'medium' ? 'bg-advist-gold' : 'bg-advist-success'}
-                    `} />
+                    `}
+                    />
 
                     {/* Avatar */}
                     <Avatar name={task.assignedBy.name} size="md" />
@@ -506,7 +556,13 @@ export const Dashboard: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-advist-gray900 truncate">{task.document}</p>
                         <Badge
-                          variant={task.type === 'signature' ? 'info' : task.type === 'approval' ? 'warning' : 'secondary'}
+                          variant={
+                            task.type === 'signature'
+                              ? 'info'
+                              : task.type === 'approval'
+                                ? 'warning'
+                                : 'secondary'
+                          }
                           size="sm"
                         >
                           {task.type === 'signature' && <PenTool size={10} className="mr-1" />}
@@ -521,16 +577,21 @@ export const Dashboard: React.FC = () => {
                     </div>
 
                     {/* Deadline */}
-                    <div className={`
+                    <div
+                      className={`
                       flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium
                       ${urgency === 'urgent' ? 'bg-advist-gold-light text-advist-error' : urgency === 'soon' ? 'bg-advist-gold-light text-advist-gold-dark' : 'bg-advist-surface-dark text-advist-gray900'}
-                    `}>
+                    `}
+                    >
                       <Calendar size={14} />
                       {formatDate(task.deadline)}
                     </div>
 
                     {/* Arrow */}
-                    <ChevronRight size={20} className="text-advist-text-secondary group-hover:text-advist-gray900 transition-all duration-240" />
+                    <ChevronRight
+                      size={20}
+                      className="text-advist-text-secondary group-hover:text-advist-gray900 transition-all duration-240"
+                    />
                   </button>
                 );
               })}
@@ -541,8 +602,12 @@ export const Dashboard: React.FC = () => {
                 <div className="w-16 h-16 bg-advist-gold-light rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle size={32} className="text-advist-success" />
                 </div>
-                <p className="text-advist-gray900 font-medium">{t('dashboard.allCaughtUp', 'Vous êtes à jour !')}</p>
-                <p className="text-sm text-advist-text-secondary mt-1">{t('dashboard.noTasksPending', 'Aucune tâche en attente')}</p>
+                <p className="text-advist-gray900 font-medium">
+                  {t('dashboard.allCaughtUp', 'Vous êtes à jour !')}
+                </p>
+                <p className="text-sm text-advist-text-secondary mt-1">
+                  {t('dashboard.noTasksPending', 'Aucune tâche en attente')}
+                </p>
               </div>
             )}
           </div>
@@ -551,16 +616,21 @@ export const Dashboard: React.FC = () => {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Quick Alert */}
-          {pendingTasks.some(t => getDeadlineUrgency(t.deadline) === 'urgent') && (
+          {pendingTasks.some((t) => getDeadlineUrgency(t.deadline) === 'urgent') && (
             <div className="bg-gradient-to-r from-advist-gold-light to-yellow-50 rounded-2xl p-5 border border-advist-gold">
               <div className="flex items-start gap-4">
                 <div className="p-2 bg-advist-gold rounded-xl">
                   <Zap size={20} className="text-advist-gray900" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-advist-gray900">{t('dashboard.urgentAttention', 'Attention urgente')}</h3>
+                  <h3 className="font-semibold text-advist-gray900">
+                    {t('dashboard.urgentAttention', 'Attention urgente')}
+                  </h3>
                   <p className="text-sm text-advist-text-secondary mt-1">
-                    {t('dashboard.urgentTasksCount', 'Vous avez des tâches dont la date limite approche dans les 24h')}
+                    {t(
+                      'dashboard.urgentTasksCount',
+                      'Vous avez des tâches dont la date limite approche dans les 24h'
+                    )}
                   </p>
                 </div>
               </div>
@@ -589,7 +659,10 @@ export const Dashboard: React.FC = () => {
                   className="flex items-center gap-3 p-4 hover:bg-advist-surface-dark transition-all duration-240 group"
                 >
                   <div className="p-2 bg-advist-surface-dark rounded-xl group-hover:bg-advist-dark transition-all duration-240">
-                    <FileText size={18} className="text-advist-gray900 group-hover:text-white transition-all duration-240" />
+                    <FileText
+                      size={18}
+                      className="text-advist-gray900 group-hover:text-white transition-all duration-240"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-advist-gray900 text-sm truncate">{doc.title}</p>
@@ -614,21 +687,27 @@ export const Dashboard: React.FC = () => {
           {/* Activity Summary */}
           <div className="bg-advist-dark rounded-2xl p-5 text-white">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">{t('dashboard.todayActivity', "Activité du jour")}</h3>
+              <h3 className="font-semibold">{t('dashboard.todayActivity', 'Activité du jour')}</h3>
               <Bell size={18} className="text-advist-gold" />
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-advist-success rounded-full" />
-                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.documentsApproved', { count: todayApproved })}</p>
+                <p className="text-sm text-advist-text-muted">
+                  {t('dashboard.activity.documentsApproved', { count: todayApproved })}
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-advist-gold rounded-full" />
-                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.signaturesCompleted', { count: todaySignatures })}</p>
+                <p className="text-sm text-advist-text-muted">
+                  {t('dashboard.activity.signaturesCompleted', { count: todaySignatures })}
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-advist-warning rounded-full" />
-                <p className="text-sm text-advist-text-muted">{t('dashboard.activity.workflowStarted', { count: todayWorkflows })}</p>
+                <p className="text-sm text-advist-text-muted">
+                  {t('dashboard.activity.workflowStarted', { count: todayWorkflows })}
+                </p>
               </div>
             </div>
           </div>
@@ -670,22 +749,40 @@ export const Dashboard: React.FC = () => {
             {/* Task details */}
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-advist-surface-dark rounded-xl">
-                <p className="text-xs text-advist-text-secondary uppercase tracking-wide">{t('dashboard.taskType', 'Type de tâche')}</p>
+                <p className="text-xs text-advist-text-secondary uppercase tracking-wide">
+                  {t('dashboard.taskType', 'Type de tâche')}
+                </p>
                 <p className="font-medium text-advist-gray900 mt-1">{showTaskDetail.typeLabel}</p>
               </div>
               <div className="p-4 bg-advist-surface-dark rounded-xl">
-                <p className="text-xs text-advist-text-secondary uppercase tracking-wide">{t('dashboard.deadline', 'Échéance')}</p>
-                <p className="font-medium text-advist-gray900 mt-1">{formatDate(showTaskDetail.deadline)}</p>
+                <p className="text-xs text-advist-text-secondary uppercase tracking-wide">
+                  {t('dashboard.deadline', 'Échéance')}
+                </p>
+                <p className="font-medium text-advist-gray900 mt-1">
+                  {formatDate(showTaskDetail.deadline)}
+                </p>
               </div>
             </div>
 
             {/* Priority */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-advist-gray900">{t('dashboard.priority', 'Priorité')}:</span>
+              <span className="text-sm text-advist-gray900">
+                {t('dashboard.priority', 'Priorité')}:
+              </span>
               <Badge
-                variant={showTaskDetail.priority === 'high' ? 'danger' : showTaskDetail.priority === 'medium' ? 'warning' : 'success'}
+                variant={
+                  showTaskDetail.priority === 'high'
+                    ? 'danger'
+                    : showTaskDetail.priority === 'medium'
+                      ? 'warning'
+                      : 'success'
+                }
               >
-                {showTaskDetail.priority === 'high' ? t('dashboard.high', 'Haute') : showTaskDetail.priority === 'medium' ? t('dashboard.medium', 'Moyenne') : t('dashboard.low', 'Basse')}
+                {showTaskDetail.priority === 'high'
+                  ? t('dashboard.high', 'Haute')
+                  : showTaskDetail.priority === 'medium'
+                    ? t('dashboard.medium', 'Moyenne')
+                    : t('dashboard.low', 'Basse')}
               </Badge>
             </div>
 
@@ -697,7 +794,11 @@ export const Dashboard: React.FC = () => {
               </Button>
               {showTaskDetail.type === 'approval' && (
                 <>
-                  <Button variant="outline" className="flex-1 text-advist-error border-advist-error/20 hover:bg-advist-gold-light" onClick={() => handleTaskAction('reject')}>
+                  <Button
+                    variant="outline"
+                    className="flex-1 text-advist-error border-advist-error/20 hover:bg-advist-gold-light"
+                    onClick={() => handleTaskAction('reject')}
+                  >
                     <X size={16} className="mr-2" />
                     {t('dashboard.reject', 'Refuser')}
                   </Button>
@@ -720,4 +821,3 @@ export const Dashboard: React.FC = () => {
     </div>
   );
 };
-

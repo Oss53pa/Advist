@@ -26,6 +26,7 @@ import { useIntegrationStore } from '../../stores';
 import { useTenantStore } from '../../stores';
 import type { IntegrationProvider, IntegrationConnection } from '../../services/integrations';
 import { INTEGRATION_PROVIDERS } from '../../services/integrations';
+import { FeatureGate, UpgradeBanner } from '../gating';
 
 type TabId = 'connections' | 'sync' | 'logs';
 
@@ -144,7 +145,7 @@ export const IntegrationSettings: React.FC = () => {
         const CategoryIcon = category.icon;
         const hasEnabledProvider = category.providers.some(isProviderEnabled);
 
-        return (
+        const categoryContent = (
           <div key={categoryKey}>
             <div className="flex items-center gap-3 mb-4">
               <CategoryIcon size={20} className="text-advist-gray900/60" />
@@ -179,6 +180,29 @@ export const IntegrationSettings: React.FC = () => {
             </div>
           </div>
         );
+
+        // Gate ERP and CRM categories behind integrations_erp_crm feature
+        if (categoryKey === 'erp' || categoryKey === 'crm') {
+          return (
+            <FeatureGate
+              key={categoryKey}
+              feature="integrations_erp_crm"
+              fallback={
+                <UpgradeBanner
+                  feature="integrations_erp_crm"
+                  requiredPlan="Entreprise"
+                  title={`${category.label} (SAP, Sage, Salesforce…)`}
+                  description="Connectez vos systèmes ERP et CRM dans le plan Entreprise."
+                  size="sm"
+                />
+              }
+            >
+              {categoryContent}
+            </FeatureGate>
+          );
+        }
+
+        return categoryContent;
       })}
     </div>
   );

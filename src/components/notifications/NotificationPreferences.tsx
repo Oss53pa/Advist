@@ -25,6 +25,8 @@ import { Button } from '../ui/Button';
 import { notificationsService } from '../../services/notifications';
 import type { NotificationPreferences, NotificationChannel } from '../../types';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../../services/translation';
+import { LockedToggle } from '../gating';
+import { useHasFeature } from '../../hooks/useTenantPlan';
 
 interface NotificationPreferencesProps {
   onSave?: () => void;
@@ -62,6 +64,7 @@ const DEFAULT_PREFERENCES: NotificationPreferences = {
 
 export const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ onSave }) => {
   const { _t } = useTranslation();
+  const hasWhatsAppSms = useHasFeature('notifications_whatsapp_sms');
   const [preferences, setPreferences] = useState<NotificationPreferences>(DEFAULT_PREFERENCES);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -277,123 +280,139 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           </div>
 
           {/* WhatsApp */}
-          <div className="p-4 bg-advist-bg rounded-xl">
-            <div className="flex items-center justify-between mb-3">
+          {!hasWhatsAppSms ? (
+            <LockedToggle
+              feature="notifications_whatsapp_sms"
+              label="WhatsApp"
+              description="Recevoir des notifications via WhatsApp"
+            />
+          ) : (
+            <div className="p-4 bg-advist-bg rounded-xl">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-advist-success rounded-lg">
+                    <MessageCircle size={20} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-advist-gray900">WhatsApp</p>
+                    <p className="text-sm text-advist-blue-light">
+                      {whatsappVerified ? whatsappNumber : 'Recevoir des notifications WhatsApp'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {whatsappVerified && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleTestChannel('whatsapp')}
+                      disabled={testingChannel === 'whatsapp'}
+                    >
+                      {testingChannel === 'whatsapp' ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Send size={14} />
+                      )}
+                    </Button>
+                  )}
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={preferences.whatsapp_enabled && whatsappVerified}
+                      onChange={(e) =>
+                        setPreferences((prev) => ({ ...prev, whatsapp_enabled: e.target.checked }))
+                      }
+                      disabled={!whatsappVerified}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-success peer-disabled:opacity-50"></div>
+                  </label>
+                </div>
+              </div>
+
+              {!whatsappVerified && (
+                <div className="flex gap-2 mt-3">
+                  <div className="flex-1 relative">
+                    <Phone
+                      size={16}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
+                    />
+                    <input
+                      type="tel"
+                      value={whatsappNumber}
+                      onChange={(e) => setWhatsappNumber(e.target.value)}
+                      placeholder="+225 07 XX XX XX XX"
+                      className="w-full pl-10 pr-4 py-2 bg-white border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/30"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleVerifyWhatsApp}
+                    disabled={isVerifyingWhatsApp || !whatsappNumber}
+                    className="bg-advist-success hover:bg-advist-success"
+                  >
+                    {isVerifyingWhatsApp ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <>
+                        <Check size={16} className="mr-1" />
+                        Vérifier
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {whatsappVerified && (
+                <div className="flex items-center gap-2 mt-2 text-sm text-advist-success">
+                  <CheckCircle size={14} />
+                  Numéro vérifié
+                  <button
+                    onClick={() => {
+                      setWhatsappVerified(false);
+                      setPreferences((prev) => ({ ...prev, whatsapp_enabled: false }));
+                    }}
+                    className="ml-auto text-advist-blue-light hover:text-advist-error"
+                  >
+                    Modifier
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* SMS */}
+          {!hasWhatsAppSms ? (
+            <LockedToggle
+              feature="notifications_whatsapp_sms"
+              label="SMS"
+              description="Recevoir des notifications par SMS"
+            />
+          ) : (
+            <div className="flex items-center justify-between p-4 bg-advist-bg rounded-xl">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-advist-success rounded-lg">
-                  <MessageCircle size={20} className="text-white" />
+                <div className="p-2 bg-white rounded-lg">
+                  <Smartphone size={20} className="text-advist-gray900" />
                 </div>
                 <div>
-                  <p className="font-medium text-advist-gray900">WhatsApp</p>
+                  <p className="font-medium text-advist-gray900">SMS</p>
                   <p className="text-sm text-advist-blue-light">
-                    {whatsappVerified ? whatsappNumber : 'Recevoir des notifications WhatsApp'}
+                    {preferences.sms_number || 'Non configuré'}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {whatsappVerified && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleTestChannel('whatsapp')}
-                    disabled={testingChannel === 'whatsapp'}
-                  >
-                    {testingChannel === 'whatsapp' ? (
-                      <Loader2 size={14} className="animate-spin" />
-                    ) : (
-                      <Send size={14} />
-                    )}
-                  </Button>
-                )}
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={preferences.whatsapp_enabled && whatsappVerified}
-                    onChange={(e) =>
-                      setPreferences((prev) => ({ ...prev, whatsapp_enabled: e.target.checked }))
-                    }
-                    disabled={!whatsappVerified}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-success peer-disabled:opacity-50"></div>
-                </label>
-              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={preferences.sms_enabled}
+                  onChange={(e) =>
+                    setPreferences((prev) => ({ ...prev, sms_enabled: e.target.checked }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-blue-light/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
+              </label>
             </div>
-
-            {!whatsappVerified && (
-              <div className="flex gap-2 mt-3">
-                <div className="flex-1 relative">
-                  <Phone
-                    size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-advist-blue-light"
-                  />
-                  <input
-                    type="tel"
-                    value={whatsappNumber}
-                    onChange={(e) => setWhatsappNumber(e.target.value)}
-                    placeholder="+225 07 XX XX XX XX"
-                    className="w-full pl-10 pr-4 py-2 bg-white border border-advist-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/30"
-                  />
-                </div>
-                <Button
-                  onClick={handleVerifyWhatsApp}
-                  disabled={isVerifyingWhatsApp || !whatsappNumber}
-                  className="bg-advist-success hover:bg-advist-success"
-                >
-                  {isVerifyingWhatsApp ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <>
-                      <Check size={16} className="mr-1" />
-                      Vérifier
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-
-            {whatsappVerified && (
-              <div className="flex items-center gap-2 mt-2 text-sm text-advist-success">
-                <CheckCircle size={14} />
-                Numéro vérifié
-                <button
-                  onClick={() => {
-                    setWhatsappVerified(false);
-                    setPreferences((prev) => ({ ...prev, whatsapp_enabled: false }));
-                  }}
-                  className="ml-auto text-advist-blue-light hover:text-advist-error"
-                >
-                  Modifier
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* SMS */}
-          <div className="flex items-center justify-between p-4 bg-advist-bg rounded-xl">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-white rounded-lg">
-                <Smartphone size={20} className="text-advist-gray900" />
-              </div>
-              <div>
-                <p className="font-medium text-advist-gray900">SMS</p>
-                <p className="text-sm text-advist-blue-light">
-                  {preferences.sms_number || 'Non configuré'}
-                </p>
-              </div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={preferences.sms_enabled}
-                onChange={(e) =>
-                  setPreferences((prev) => ({ ...prev, sms_enabled: e.target.checked }))
-                }
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-advist-blue-light/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
-            </label>
-          </div>
+          )}
 
           {/* Push */}
           <div className="flex items-center justify-between p-4 bg-advist-bg rounded-xl">

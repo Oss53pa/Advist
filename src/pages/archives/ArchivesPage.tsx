@@ -23,6 +23,7 @@ import { Modal } from '../../components/ui/Modal';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store';
 import { PrintButton } from '../../shared/PrintEngine';
+import { FeatureGate, UpgradeBanner } from '../../components/gating';
 
 interface ArchivedDocument {
   id: string;
@@ -80,7 +81,8 @@ export const ArchivesPage: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('documents')
-          .select(`
+          .select(
+            `
             id,
             title,
             file_size,
@@ -90,7 +92,8 @@ export const ArchivesPage: React.FC = () => {
             status,
             document_types(name),
             profiles!documents_updated_by_fkey(first_name, last_name)
-          `)
+          `
+          )
           .eq('organization_id', orgId)
           .eq('status', 'archived')
           .is('deleted_at', null)
@@ -147,18 +150,23 @@ export const ArchivesPage: React.FC = () => {
     });
   }, [archives, searchQuery, selectedStatus, selectedType]);
 
-  const stats = useMemo(() => ({
-    total: archives.length,
-    active: archives.filter((a) => a.status === 'active').length,
-    pendingDeletion: archives.filter((a) => a.status === 'pending_deletion').length,
-    legalHold: archives.filter((a) => a.status === 'legal_hold').length,
-  }), [archives]);
+  const stats = useMemo(
+    () => ({
+      total: archives.length,
+      active: archives.filter((a) => a.status === 'active').length,
+      pendingDeletion: archives.filter((a) => a.status === 'pending_deletion').length,
+      legalHold: archives.filter((a) => a.status === 'legal_hold').length,
+    }),
+    [archives]
+  );
 
   const totalSize = useMemo(() => {
-    return archives.reduce((acc, a) => {
-      const size = parseFloat(a.size);
-      return acc + (isNaN(size) ? 0 : size);
-    }, 0).toFixed(1);
+    return archives
+      .reduce((acc, a) => {
+        const size = parseFloat(a.size);
+        return acc + (isNaN(size) ? 0 : size);
+      }, 0)
+      .toFixed(1);
   }, [archives]);
 
   const documentTypes = useMemo(
@@ -173,13 +181,21 @@ export const ArchivesPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Valeur probante (Archivage légal) — gating */}
+      <FeatureGate
+        feature="archivage_legale_probante"
+        fallback={
+          <UpgradeBanner feature="archivage_legale_probante" requiredPlan="Entreprise" size="sm" />
+        }
+      >
+        <></>
+      </FeatureGate>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">{t('archives.title')}</h1>
-          <p className="text-advist-gray900 mt-1">
-            {t('archives.subtitle')}
-          </p>
+          <p className="text-advist-gray900 mt-1">{t('archives.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <PrintButton config={{ title: 'Archives documentaires', appName: 'Advist' }}>
@@ -201,8 +217,12 @@ export const ArchivesPage: React.FC = () => {
                       <td className="py-1">{archive.title}</td>
                       <td className="py-1">{archive.original_type}</td>
                       <td className="py-1">{archive.archived_by}</td>
-                      <td className="py-1">{new Date(archive.archived_at).toLocaleDateString('fr-FR')}</td>
-                      <td className="py-1">{new Date(archive.retention_until).toLocaleDateString('fr-FR')}</td>
+                      <td className="py-1">
+                        {new Date(archive.archived_at).toLocaleDateString('fr-FR')}
+                      </td>
+                      <td className="py-1">
+                        {new Date(archive.retention_until).toLocaleDateString('fr-FR')}
+                      </td>
                       <td className="py-1">{STATUS_CONFIG[archive.status].label}</td>
                     </tr>
                   ))}
@@ -327,11 +347,7 @@ export const ArchivesPage: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-advist-bg">
               {filteredArchives.map((archive) => (
-                <ArchiveRow
-                  key={archive.id}
-                  archive={archive}
-                  onRestore={handleRestore}
-                />
+                <ArchiveRow key={archive.id} archive={archive} onRestore={handleRestore} />
               ))}
             </tbody>
           </table>
@@ -340,12 +356,8 @@ export const ArchivesPage: React.FC = () => {
         {filteredArchives.length === 0 && (
           <div className="text-center py-12">
             <Archive size={48} className="mx-auto text-advist-blue-light mb-4" />
-            <h3 className="text-lg font-medium text-advist-gray900">
-              {t('archives.noArchives')}
-            </h3>
-            <p className="text-advist-gray900 mt-1">
-              {t('common.filter')}
-            </p>
+            <h3 className="text-lg font-medium text-advist-gray900">{t('archives.noArchives')}</h3>
+            <p className="text-advist-gray900 mt-1">{t('common.filter')}</p>
           </div>
         )}
       </Card>
@@ -407,9 +419,7 @@ const ArchiveRow: React.FC<{
   const isExpiringSoon = () => {
     const retentionDate = new Date(archive.retention_until);
     const now = new Date();
-    const diffDays = Math.ceil(
-      (retentionDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const diffDays = Math.ceil((retentionDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     return diffDays <= 90;
   };
 
@@ -466,16 +476,10 @@ const ArchiveRow: React.FC<{
       </td>
       <td className="px-4 py-3">
         <div className="relative flex items-center justify-end gap-1">
-          <button
-            className="p-1.5 rounded hover:bg-advist-bg"
-            title="Voir"
-          >
+          <button className="p-1.5 rounded hover:bg-advist-bg" title="Voir">
             <Eye size={14} className="text-advist-gray900" />
           </button>
-          <button
-            className="p-1.5 rounded hover:bg-advist-bg"
-            title="Telecharger"
-          >
+          <button className="p-1.5 rounded hover:bg-advist-bg" title="Telecharger">
             <Download size={14} className="text-advist-gray900" />
           </button>
           <button

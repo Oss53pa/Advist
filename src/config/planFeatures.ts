@@ -56,6 +56,22 @@ export const PLAN_FEATURES = {
     prioritySupport: false, // Enterprise only
     includedTraining: false, // Enterprise only
     sla: false, // Enterprise only
+
+    // === GATING SPEC COMMERCIALE — 14 clés ===
+    signature_electronique_avancee: false, // Enterprise only
+    signature_biometrique: false, // Enterprise only
+    circuits_validation_paralleles: true, // Autorisé en Business (conforme à parallelValidation)
+    circuits_conditionnels: false, // Enterprise only
+    notifications_whatsapp_sms: false, // Enterprise only
+    api_rest: false, // Enterprise only
+    webhooks: false, // Enterprise only
+    audit_trail_certifie_ohada: false, // Enterprise only
+    archivage_legale_probante: false, // Enterprise only
+    multi_equipes: false, // Enterprise only
+    branding_personnalise: false, // Enterprise only
+    integrations_erp_crm: false, // Enterprise only
+    rapports_analytiques: false, // Enterprise only
+    support_dedie: false, // Enterprise only
   },
 
   enterprise: {
@@ -108,6 +124,22 @@ export const PLAN_FEATURES = {
     prioritySupport: true,
     includedTraining: true,
     sla: true,
+
+    // === GATING SPEC COMMERCIALE — 14 clés ===
+    signature_electronique_avancee: true,
+    signature_biometrique: true,
+    circuits_validation_paralleles: true,
+    circuits_conditionnels: true,
+    notifications_whatsapp_sms: true,
+    api_rest: true,
+    webhooks: true,
+    audit_trail_certifie_ohada: true,
+    archivage_legale_probante: true,
+    multi_equipes: true,
+    branding_personnalise: true,
+    integrations_erp_crm: true,
+    rapports_analytiques: true,
+    support_dedie: true,
   },
 } as const;
 
@@ -166,4 +198,19 @@ export const FEATURE_LABELS: Record<PlanFeature, string> = {
   prioritySupport: 'Support prioritaire & account manager',
   includedTraining: 'Formation incluse',
   sla: 'SLA 99,9%',
+  // === 14 features spec commerciale ===
+  signature_electronique_avancee: 'Signature électronique avancée (eIDAS)',
+  signature_biometrique: 'Signature biométrique',
+  circuits_validation_paralleles: 'Validation en parallèle',
+  circuits_conditionnels: 'Étapes conditionnelles',
+  notifications_whatsapp_sms: 'Notifications WhatsApp & SMS',
+  api_rest: 'API REST',
+  webhooks: 'Webhooks',
+  audit_trail_certifie_ohada: 'Audit trail certifié OHADA',
+  archivage_legale_probante: 'Archivage à valeur légale probante',
+  multi_equipes: 'Multi-équipes & départements',
+  branding_personnalise: 'Branding personnalisé',
+  integrations_erp_crm: 'Intégrations ERP/CRM (SAP, Odoo, Salesforce)',
+  rapports_analytiques: 'Rapports analytiques avancés',
+  support_dedie: 'Support dédié',
 };

@@ -26,6 +26,8 @@ import { Modal } from '../../components/ui/Modal';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store';
 import { PrintButton } from '../../shared/PrintEngine';
+import { FeatureGate } from '../../components/gating';
+import { Lock } from 'lucide-react';
 
 interface AuditLog {
   id: string;
@@ -90,7 +92,8 @@ export const AuditPage: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('audit_logs')
-          .select(`
+          .select(
+            `
             id,
             action,
             resource_type,
@@ -106,7 +109,8 @@ export const AuditPage: React.FC = () => {
               last_name,
               email
             )
-          `)
+          `
+          )
           .eq('organization_id', orgId)
           .order('created_at', { ascending: false })
           .limit(200);
@@ -170,13 +174,19 @@ export const AuditPage: React.FC = () => {
     const matchesActionType =
       selectedActionType === 'all' || log.action_type === selectedActionType;
     const matchesStatus = selectedStatus === 'all' || log.status === selectedStatus;
-    const matchesResource =
-      selectedResource === 'all' || log.resource_type === selectedResource;
+    const matchesResource = selectedResource === 'all' || log.resource_type === selectedResource;
     const matchesDateStart =
       !dateRange.start || new Date(log.timestamp) >= new Date(dateRange.start);
     const matchesDateEnd =
-      !dateRange.end || new Date(log.timestamp) <= new Date(`${dateRange.end  }T23:59:59`);
-    return matchesSearch && matchesActionType && matchesStatus && matchesResource && matchesDateStart && matchesDateEnd;
+      !dateRange.end || new Date(log.timestamp) <= new Date(`${dateRange.end}T23:59:59`);
+    return (
+      matchesSearch &&
+      matchesActionType &&
+      matchesStatus &&
+      matchesResource &&
+      matchesDateStart &&
+      matchesDateEnd
+    );
   });
 
   const stats = {
@@ -199,12 +209,16 @@ export const AuditPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">{t('audit.title')}</h1>
-          <p className="text-advist-gray900 mt-1">
-            {t('audit.subtitle')}
-          </p>
+          <p className="text-advist-gray900 mt-1">{t('audit.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
-          <PrintButton config={{ title: 'Piste d\'audit', subtitle: 'Journal de traçabilité', appName: 'Advist' }}>
+          <PrintButton
+            config={{
+              title: "Piste d'audit",
+              subtitle: 'Journal de traçabilité',
+              appName: 'Advist',
+            }}
+          >
             <div>
               <table className="w-full text-sm">
                 <thead>
@@ -232,10 +246,32 @@ export const AuditPage: React.FC = () => {
               </table>
             </div>
           </PrintButton>
-          <Button variant="outline" size="sm">
-            <Download size={16} className="mr-2" />
-            {t('common.export')}
-          </Button>
+          <FeatureGate
+            feature="audit_trail_certifie_ohada"
+            fallback={
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="opacity-60 cursor-not-allowed"
+                title="Export certifié OHADA disponible en plan Entreprise"
+              >
+                <Lock size={14} className="mr-2" />
+                Export certifié OHADA
+                <span
+                  className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                  style={{ backgroundColor: 'rgba(239, 159, 39, 0.12)', color: '#EF9F27' }}
+                >
+                  Entreprise
+                </span>
+              </Button>
+            }
+          >
+            <Button variant="outline" size="sm">
+              <Download size={16} className="mr-2" />
+              Export certifié OHADA
+            </Button>
+          </FeatureGate>
           <Button variant="outline" size="sm">
             <RefreshCw size={16} className="mr-2" />
             {t('common.loading')}
@@ -245,12 +281,7 @@ export const AuditPage: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard
-          icon={Shield}
-          label={t('audit.allLogs')}
-          value={stats.total}
-          color="blue"
-        />
+        <StatsCard icon={Shield} label={t('audit.allLogs')} value={stats.total} color="blue" />
         <StatsCard
           icon={CheckCircle}
           label={t('audit.status.success')}
@@ -357,58 +388,50 @@ export const AuditPage: React.FC = () => {
           </div>
         </Card>
       ) : (
-      <Card className="overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-advist-bg">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
-                  Date/Heure
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
-                  Action
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
-                  Utilisateur
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
-                  Ressource
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
-                  Adresse IP
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
-                  Statut
-                </th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-advist-gray900">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-advist-bg">
-              {filteredLogs.map((log) => (
-                <AuditLogRow
-                  key={log.id}
-                  log={log}
-                  onViewDetails={handleViewDetails}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredLogs.length === 0 && (
-          <div className="text-center py-12">
-            <Shield size={48} className="mx-auto text-advist-blue-light mb-4" />
-            <h3 className="text-lg font-medium text-advist-gray900">
-              {t('audit.noLogs')}
-            </h3>
-            <p className="text-advist-gray900 mt-1">
-              {t('common.filter')}
-            </p>
+        <Card className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-advist-bg">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                    Date/Heure
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                    Action
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                    Utilisateur
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                    Ressource
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                    Adresse IP
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-advist-gray900">
+                    Statut
+                  </th>
+                  <th className="px-4 py-3 text-right text-sm font-semibold text-advist-gray900">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-advist-bg">
+                {filteredLogs.map((log) => (
+                  <AuditLogRow key={log.id} log={log} onViewDetails={handleViewDetails} />
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-      </Card>
+
+          {filteredLogs.length === 0 && (
+            <div className="text-center py-12">
+              <Shield size={48} className="mx-auto text-advist-blue-light mb-4" />
+              <h3 className="text-lg font-medium text-advist-gray900">{t('audit.noLogs')}</h3>
+              <p className="text-advist-gray900 mt-1">{t('common.filter')}</p>
+            </div>
+          )}
+        </Card>
       )}
 
       {/* Detail Modal */}
@@ -493,7 +516,12 @@ const AuditLogRow: React.FC<{
           </div>
           <div>
             <p className="text-sm font-medium text-advist-gray900">{log.action}</p>
-            <Badge variant={actionConfig.color as 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'} size="sm">
+            <Badge
+              variant={
+                actionConfig.color as 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'
+              }
+              size="sm"
+            >
               {actionConfig.label}
             </Badge>
           </div>
@@ -515,9 +543,7 @@ const AuditLogRow: React.FC<{
         </div>
       </td>
       <td className="px-4 py-3">
-        <code className="text-xs bg-advist-bg px-2 py-1 rounded">
-          {log.ip_address}
-        </code>
+        <code className="text-xs bg-advist-bg px-2 py-1 rounded">{log.ip_address}</code>
       </td>
       <td className="px-4 py-3">
         <Badge variant={statusConfig.color} size="sm">
@@ -556,8 +582,8 @@ const AuditDetailModal: React.FC<{
             log.status === 'success'
               ? 'bg-green-50'
               : log.status === 'failure'
-              ? 'bg-advist-gold-light'
-              : 'bg-advist-gold-light'
+                ? 'bg-advist-gold-light'
+                : 'bg-advist-gold-light'
           }`}
         >
           <StatusIcon
@@ -566,8 +592,8 @@ const AuditDetailModal: React.FC<{
               log.status === 'success'
                 ? 'text-advist-success'
                 : log.status === 'failure'
-                ? 'text-advist-error'
-                : 'text-advist-gold-dark'
+                  ? 'text-advist-error'
+                  : 'text-advist-gold-dark'
             }
           />
           <div>
@@ -599,15 +625,10 @@ const AuditDetailModal: React.FC<{
         {/* Changes (if any) */}
         {log.changes && log.changes.length > 0 && (
           <div>
-            <p className="text-sm font-medium text-advist-gray900 mb-2">
-              Modifications apportees
-            </p>
+            <p className="text-sm font-medium text-advist-gray900 mb-2">Modifications apportees</p>
             <div className="space-y-2">
               {log.changes.map((change, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-4 p-3 bg-advist-bg/50 rounded-xl"
-                >
+                <div key={index} className="flex items-center gap-4 p-3 bg-advist-bg/50 rounded-xl">
                   <span className="text-sm font-medium text-advist-gray900 min-w-24">
                     {change.field}
                   </span>
@@ -637,10 +658,7 @@ const AuditDetailModal: React.FC<{
 };
 
 // Detail Item Component
-const DetailItem: React.FC<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => (
+const DetailItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div>
     <p className="text-xs text-advist-blue-light mb-1">{label}</p>
     <p className="text-sm font-medium text-advist-gray900">{value}</p>
