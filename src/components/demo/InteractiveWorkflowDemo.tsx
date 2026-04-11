@@ -17,7 +17,7 @@ import {
   Sparkles,
   Building2,
   Calendar,
-  Euro,
+  Banknote,
   _ArrowRight,
   Play,
   Timer,
@@ -39,17 +39,17 @@ interface Approver {
 }
 
 const initialApprovers: Approver[] = [
-  { id: 1, name: 'Sophie Martin', role: 'Responsable Achats', avatar: 'SM', status: 'pending' },
-  { id: 2, name: 'Pierre Durand', role: 'Directeur Financier', avatar: 'PD', status: 'pending' },
-  { id: 3, name: 'Marie Leclerc', role: 'Directrice Générale', avatar: 'ML', status: 'pending' },
+  { id: 1, name: 'Aminata Koné', role: 'Responsable Achats', avatar: 'AK', status: 'pending' },
+  { id: 2, name: 'Ibrahim Traoré', role: 'Directeur Financier', avatar: 'IT', status: 'pending' },
+  { id: 3, name: 'Fatoumata Diallo', role: 'Directrice Générale', avatar: 'FD', status: 'pending' },
 ];
 
 const documentInfo = {
-  name: 'Contrat_Prestataire_TechCorp_2025.pdf',
+  name: 'Contrat_Prestataire_SONATEL_2026.pdf',
   type: 'Contrat de service',
-  amount: '45 000 €',
-  vendor: 'TechCorp Solutions',
-  date: '15 janvier 2025',
+  amount: '29 500 000 FCFA',
+  vendor: 'Sonatel Business Solutions',
+  date: '15 janvier 2026',
   pages: 12,
 };
 
@@ -176,7 +176,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
                   <span className="text-sm text-white/80">{documentInfo.vendor}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Euro className="w-4 h-4 text-white/40" />
+                  <Banknote className="w-4 h-4 text-white/40" />
                   <span className="text-sm text-white/80 font-semibold">{documentInfo.amount}</span>
                 </div>
                 <div className="flex items-center gap-2">
