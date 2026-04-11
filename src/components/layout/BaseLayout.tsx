@@ -7,6 +7,8 @@ import { ChatWidget } from '../ai/ChatWidget';
 import { UpgradePrompt } from '../subscription';
 import { PlanBadge } from '../dev/PlanSwitcher';
 import { usePlanTheme } from '../../hooks/usePlanTheme';
+import { OnboardingTour } from '../onboarding/OnboardingTour';
+import { HelpFab } from '../help/HelpFab';
 
 export type LayoutVariant = 'user' | 'admin';
 
@@ -115,6 +117,12 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ variant }) => {
 
       {/* AI Chat Widget — hidden in demo mode */}
       {!isDemo && <ChatWidget />}
+
+      {/* Help FAB — hidden in demo mode */}
+      {!isDemo && <HelpFab />}
+
+      {/* Onboarding tour — auto-shows on first login, hidden in demo mode */}
+      {!isDemo && <OnboardingTour />}
     </div>
   );
 };
