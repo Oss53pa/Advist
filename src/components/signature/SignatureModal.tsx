@@ -19,6 +19,8 @@ import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import SignaturePad, { SignatureData } from './SignaturePad';
 import { ConsentScreen } from './ConsentScreen';
+import { UpgradeBanner } from '../gating';
+import { useHasFeature } from '../../hooks/useTenantPlan';
 
 export interface SignatureRequest {
   id: string;
@@ -63,6 +65,11 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
   requirePin = true,
 }) => {
   const { t } = useTranslation();
+  const hasAdvancedSignature = useHasFeature('signature_electronique_avancee');
+  const hasBiometricSignature = useHasFeature('signature_biometrique');
+  const isLockedSignatureType =
+    (request.signatureType === 'advanced' && !hasAdvancedSignature) ||
+    (request.signatureType === 'qualified' && !hasBiometricSignature);
   const [currentStep, setCurrentStep] = useState<Step>('overview');
   const [selectedSignature, setSelectedSignature] = useState<SignatureData | null>(null);
   const [pin, setPin] = useState('');
@@ -208,9 +215,34 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
               <div className="flex items-center gap-2 mb-2">
                 {signatureTypeInfo.icon}
                 <Badge className={signatureTypeInfo.color}>{signatureTypeInfo.label}</Badge>
+                {isLockedSignatureType && (
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                    style={{
+                      backgroundColor: 'rgba(239, 159, 39, 0.12)',
+                      color: '#EF9F27',
+                    }}
+                  >
+                    <Lock className="w-3 h-3" />
+                    Entreprise
+                  </span>
+                )}
               </div>
               <p className="text-sm text-[#3A4654]">{signatureTypeInfo.description}</p>
             </div>
+
+            {/* Upgrade banner if signature type is locked */}
+            {isLockedSignatureType && (
+              <UpgradeBanner
+                feature={
+                  request.signatureType === 'qualified'
+                    ? 'signature_biometrique'
+                    : 'signature_electronique_avancee'
+                }
+                requiredPlan="Entreprise"
+                size="sm"
+              />
+            )}
 
             {/* Deadline warning */}
             {request.deadline && (
@@ -258,7 +290,14 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
                 <X size={16} className="mr-2" />
                 {t('signature.refuse', 'Refuser de signer')}
               </Button>
-              <Button className="flex-1" onClick={() => setCurrentStep('consent')}>
+              <Button
+                className="flex-1"
+                onClick={() => setCurrentStep('consent')}
+                disabled={isLockedSignatureType}
+                title={
+                  isLockedSignatureType ? 'Cette signature nécessite le plan Entreprise' : undefined
+                }
+              >
                 {t('signature.proceed', 'Procéder à la signature')}
                 <ChevronRight size={16} className="ml-2" />
               </Button>

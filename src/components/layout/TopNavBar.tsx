@@ -33,6 +33,7 @@ import { languages, changeLanguage } from '../../i18n';
 import { TrialBadge } from '../subscription';
 import { PlanSwitcher } from '../dev/PlanSwitcher';
 import { usePlanTheme } from '../../hooks/usePlanTheme';
+import { useHasFeature } from '../../hooks/useTenantPlan';
 
 interface TopNavBarProps {
   variant: 'user' | 'admin';
@@ -97,6 +98,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
   const { user, logout } = useAuthStore();
   const { unreadCount } = useNotificationStore();
   const { classes: planClasses, _plan } = usePlanTheme();
+  const hasDedicatedSupport = useHasFeature('support_dedie');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -271,15 +273,29 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
               <span className="hidden lg:inline">{t('common.switch')}</span>
             </button>
 
-            {/* Help Center button */}
-            <button
-              onClick={() => navigate('/help')}
-              className={`hidden sm:flex p-2 text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover} rounded-xl transition-colors`}
-              aria-label={t('nav.help', "Centre d'aide")}
-              title={t('nav.help', "Centre d'aide")}
-            >
-              <HelpCircle size={18} aria-hidden="true" />
-            </button>
+            {/* Help / Support button — dedicated support for Enterprise, email link otherwise */}
+            {hasDedicatedSupport ? (
+              <button
+                onClick={() => navigate('/help')}
+                className={`hidden sm:flex p-2 text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover} rounded-xl transition-colors`}
+                aria-label={t('nav.dedicatedSupport', 'Support dédié')}
+                title={t('nav.dedicatedSupport', 'Support dédié (Entreprise)')}
+              >
+                <HelpCircle size={18} aria-hidden="true" />
+              </button>
+            ) : (
+              <a
+                href="mailto:support@advist.io"
+                className={`hidden sm:flex p-2 text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover} rounded-xl transition-colors`}
+                aria-label={t('nav.help', 'Support email')}
+                title={t(
+                  'nav.help',
+                  'Support email — Pour un support dédié, passez en plan Entreprise'
+                )}
+              >
+                <HelpCircle size={18} aria-hidden="true" />
+              </a>
+            )}
 
             {/* Notifications - avec couleur du plan */}
             <div className="relative">

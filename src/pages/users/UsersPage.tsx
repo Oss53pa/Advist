@@ -15,8 +15,23 @@ import {
   Download,
   Upload,
 } from 'lucide-react';
-import { Button, Input, Card, Badge, Modal, Avatar, StatsCard, PageHeader, SearchInput, FilterSelect, ViewModeToggle } from '../../components/ui';
+import {
+  Button,
+  Input,
+  Card,
+  Badge,
+  Modal,
+  Avatar,
+  StatsCard,
+  PageHeader,
+  SearchInput,
+  FilterSelect,
+  ViewModeToggle,
+  Tooltip,
+} from '../../components/ui';
 import { PrintButton } from '../../shared/PrintEngine';
+import { useUserQuota, useTenantPlan } from '../../hooks/useTenantPlan';
+import { Lock } from 'lucide-react';
 
 interface TeamMember {
   id: number;
@@ -55,33 +70,48 @@ export const UsersPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<TeamMember | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [users, setUsers] = useState<TeamMember[]>([]);
+  const userQuota = useUserQuota();
+  const plan = useTenantPlan();
 
   useEffect(() => {
     const loadUsers = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
-      const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single();
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single();
       if (!profile) return;
       const orgId = profile.organization_id;
 
       const { data } = await supabase
         .from('profiles')
-        .select('id, first_name, last_name, email, phone, role, department, is_active, avatar_url, created_at, last_login')
+        .select(
+          'id, first_name, last_name, email, phone, role, department, is_active, avatar_url, created_at, last_login'
+        )
         .eq('organization_id', orgId);
 
-      setUsers((data || []).map(u => ({
-        id: u.id,
-        first_name: u.first_name || '',
-        last_name: u.last_name || '',
-        email: u.email || '',
-        phone: u.phone || undefined,
-        role: (u.role as TeamMember['role']) || 'user',
-        department: u.department || undefined,
-        status: u.is_active === false ? 'inactive' : (u.last_login ? 'active' : 'pending') as TeamMember['status'],
-        avatar: u.avatar_url || undefined,
-        created_at: u.created_at || '',
-        last_login: u.last_login || undefined,
-      })) as TeamMember[]);
+      setUsers(
+        (data || []).map((u) => ({
+          id: u.id,
+          first_name: u.first_name || '',
+          last_name: u.last_name || '',
+          email: u.email || '',
+          phone: u.phone || undefined,
+          role: (u.role as TeamMember['role']) || 'user',
+          department: u.department || undefined,
+          status:
+            u.is_active === false
+              ? 'inactive'
+              : ((u.last_login ? 'active' : 'pending') as TeamMember['status']),
+          avatar: u.avatar_url || undefined,
+          created_at: u.created_at || '',
+          last_login: u.last_login || undefined,
+        })) as TeamMember[]
+      );
     };
     loadUsers();
   }, []);
@@ -130,7 +160,9 @@ export const UsersPage: React.FC = () => {
                   <tbody>
                     {filteredUsers.map((user) => (
                       <tr key={user.id} className="border-b">
-                        <td className="py-2">{user.first_name} {user.last_name}</td>
+                        <td className="py-2">
+                          {user.first_name} {user.last_name}
+                        </td>
                         <td className="py-2">{user.email}</td>
                         <td className="py-2">{ROLE_CONFIG[user.role].label}</td>
                         <td className="py-2">{STATUS_CONFIG[user.status].label}</td>
@@ -148,10 +180,38 @@ export const UsersPage: React.FC = () => {
               <Download size={16} className="mr-2" />
               {t('common.export')}
             </Button>
-            <Button onClick={() => setShowCreateModal(true)}>
-              <Plus size={16} className="mr-2" />
-              {t('users.newUser')}
-            </Button>
+            <Tooltip
+              content={
+                userQuota.limitReached
+                  ? `Limite de ${userQuota.max} utilisateurs atteinte en plan ${plan.displayName}. Passez en Entreprise pour un nombre illimite.`
+                  : t('users.newUser', 'Inviter un utilisateur')
+              }
+              disabled={!userQuota.limitReached}
+            >
+              <Button
+                onClick={() => {
+                  if (userQuota.limitReached) {
+                    window.open('https://atlas-studio.org/applications/advist', '_blank');
+                    return;
+                  }
+                  setShowCreateModal(true);
+                }}
+                disabled={userQuota.limitReached}
+                className={userQuota.limitReached ? 'opacity-60 cursor-not-allowed' : ''}
+              >
+                {userQuota.limitReached ? (
+                  <Lock size={16} className="mr-2" />
+                ) : (
+                  <Plus size={16} className="mr-2" />
+                )}
+                {t('users.newUser')}
+                {!userQuota.isUnlimited && (
+                  <span className="ml-2 px-1.5 py-0.5 bg-white/20 rounded-full text-[10px] font-bold">
+                    {userQuota.current}/{userQuota.max}
+                  </span>
+                )}
+              </Button>
+            </Tooltip>
           </>
         }
       />
@@ -170,12 +230,7 @@ export const UsersPage: React.FC = () => {
           value={stats.active}
           color="green"
         />
-        <StatsCard
-          icon={UserX}
-          label={t('users.pending')}
-          value={stats.pending}
-          color="yellow"
-        />
+        <StatsCard icon={UserX} label={t('users.pending')} value={stats.pending} color="yellow" />
         <StatsCard
           icon={Shield}
           label={t('users.administrators', 'Administrateurs')}
@@ -242,10 +297,7 @@ export const UsersPage: React.FC = () => {
       )}
 
       {/* Create User Modal */}
-      <CreateUserModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-      />
+      <CreateUserModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} />
 
       {/* Edit User Modal */}
       {selectedUser && (
@@ -276,11 +328,7 @@ const UserCard: React.FC<{
     <Card className="p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <Avatar
-            name={`${user.first_name} ${user.last_name}`}
-            src={user.avatar}
-            size="lg"
-          />
+          <Avatar name={`${user.first_name} ${user.last_name}`} src={user.avatar} size="lg" />
           <div>
             <h3 className="font-semibold text-advist-gray900">
               {user.first_name} {user.last_name}
@@ -289,10 +337,7 @@ const UserCard: React.FC<{
           </div>
         </div>
         <div className="relative">
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="p-1 rounded hover:bg-advist-bg"
-          >
+          <button onClick={() => setShowMenu(!showMenu)} className="p-1 rounded hover:bg-advist-bg">
             <MoreVertical size={16} className="text-advist-gray900" />
           </button>
           {showMenu && (
@@ -425,9 +470,7 @@ const UsersTable: React.FC<{
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-sm text-advist-gray900">
-                    {user.last_login
-                      ? new Date(user.last_login).toLocaleDateString('fr-FR')
-                      : '-'}
+                    {user.last_login ? new Date(user.last_login).toLocaleDateString('fr-FR') : '-'}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
@@ -540,9 +583,7 @@ const CreateUserModal: React.FC<{
             type="checkbox"
             id="send_invitation"
             checked={formData.send_invitation}
-            onChange={(e) =>
-              setFormData({ ...formData, send_invitation: e.target.checked })
-            }
+            onChange={(e) => setFormData({ ...formData, send_invitation: e.target.checked })}
             className="w-4 h-4 rounded border-advist-border text-advist-gray900 focus:ring-advist-gold"
           />
           <label htmlFor="send_invitation" className="text-sm text-advist-gray900">

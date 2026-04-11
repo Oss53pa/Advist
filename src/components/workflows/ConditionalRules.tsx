@@ -23,6 +23,8 @@ import {
   _Settings,
 } from 'lucide-react';
 import { Button, Card, Modal, Input, Badge } from '../ui';
+import { UpgradeBanner } from '../gating';
+import { useHasFeature } from '../../hooks/useTenantPlan';
 
 export interface ConditionalRule {
   id: string;
@@ -168,6 +170,7 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
   readOnly = false,
 }) => {
   const { t } = useTranslation();
+  const allowed = useHasFeature('circuits_conditionnels');
   const [selectedRule, setSelectedRule] = useState<ConditionalRule | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [expandedRules, setExpandedRules] = useState<string[]>([]);
@@ -340,6 +343,10 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
     };
     return ops[operator] || operator;
   };
+
+  if (!allowed) {
+    return <UpgradeBanner feature="circuits_conditionnels" requiredPlan="Entreprise" />;
+  }
 
   return (
     <div className="space-y-4">

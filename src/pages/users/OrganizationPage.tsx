@@ -26,6 +26,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
+import { FeatureGate, UpgradeBanner } from '../../components/gating';
 
 interface OrganizationSettings {
   name: string;
@@ -78,6 +79,22 @@ export const OrganizationPage: React.FC = () => {
         <h1 className="text-2xl font-bold text-advist-gray900">{t('organization.title')}</h1>
         <p className="text-advist-gray900 mt-1">{t('organization.subtitle')}</p>
       </div>
+
+      {/* Multi-équipes & Départements — gating */}
+      <FeatureGate
+        feature="multi_equipes"
+        fallback={
+          <UpgradeBanner
+            feature="multi_equipes"
+            requiredPlan="Entreprise"
+            title="Équipes & Départements"
+            description="Gérez plusieurs équipes et départements dans le plan Entreprise. En Business, une équipe par défaut est utilisée."
+            size="sm"
+          />
+        }
+      >
+        <></>
+      </FeatureGate>
 
       {/* Tabs */}
       <div className="border-b border-advist-bg">
