@@ -13,6 +13,7 @@ import {
   BarChart3,
   Settings,
   Bell,
+  HelpCircle,
   Search,
   ChevronDown,
   LogOut,
@@ -268,6 +269,16 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
             >
               <ArrowLeftRight size={14} />
               <span className="hidden lg:inline">{t('common.switch')}</span>
+            </button>
+
+            {/* Help Center button */}
+            <button
+              onClick={() => navigate('/help')}
+              className={`hidden sm:flex p-2 text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover} rounded-xl transition-colors`}
+              aria-label={t('nav.help', "Centre d'aide")}
+              title={t('nav.help', "Centre d'aide")}
+            >
+              <HelpCircle size={18} aria-hidden="true" />
             </button>
 
             {/* Notifications - avec couleur du plan */}

@@ -26,3 +26,4 @@ export { EmptyState } from './EmptyState';
 export { MiniChart } from './MiniChart';
 export { ProgressCircle } from './ProgressCircle';
 export { ViewModeToggle } from './ViewModeToggle';
+export { Tooltip } from './Tooltip';
