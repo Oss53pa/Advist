@@ -1,44 +1,41 @@
-import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.98.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { serve } from 'https://deno.land/std@0.208.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.98.0';
+import { getCorsHeaders, optionsResponse } from '../_shared/cors.ts';
 
 serve(async (req: Request) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  const origin = req.headers.get('origin') || '';
+
+  if (req.method === 'OPTIONS') {
+    return optionsResponse(origin);
   }
 
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+  const cors = getCorsHeaders(origin);
+
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 
   try {
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
     // Auth check
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get('Authorization')!;
     const {
       data: { user },
-    } = await createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    ).auth.getUser();
+    } = await createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      global: { headers: { Authorization: authHeader } },
+    }).auth.getUser();
 
     if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
@@ -47,65 +44,66 @@ serve(async (req: Request) => {
     if (!report_id || !recipients || !Array.isArray(recipients) || recipients.length === 0) {
       return new Response(
         JSON.stringify({
-          error: "report_id and recipients (non-empty array) are required",
+          error: 'report_id and recipients (non-empty array) are required',
         }),
         {
           status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...cors, 'Content-Type': 'application/json' },
         }
       );
     }
 
     // Fetch the report from Supabase Storage
     const { data: reportData, error: downloadError } = await supabase.storage
-      .from("validation-reports")
+      .from('validation-reports')
       .download(`${report_id}.json`);
 
     if (downloadError) {
-      return new Response(
-        JSON.stringify({
-          error: "Report not found",
-          details: downloadError.message,
-        }),
-        {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Report not found' }), {
+        status: 404,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
     // Parse report content
     const reportText = await reportData.text();
     const report = JSON.parse(reportText);
 
-    // Get sender profile
-    const { data: senderProfile } = await supabase
-      .from("profiles")
-      .select("first_name, last_name, email")
-      .eq("id", user.id)
+    // Authorization: verify user belongs to the report's organization
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('organization_id, first_name, last_name, email')
+      .eq('id', user.id)
       .single();
 
-    const senderName = senderProfile
-      ? `${senderProfile.first_name || ""} ${senderProfile.last_name || ""}`.trim()
-      : "ADVIST";
+    if (report.organization_id && userProfile?.organization_id !== report.organization_id) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        status: 403,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const senderName = userProfile
+      ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim()
+      : 'ADVIST';
 
     // Generate a signed URL for the report (valid 7 days)
     const { data: signedUrlData } = await supabase.storage
-      .from("validation-reports")
+      .from('validation-reports')
       .createSignedUrl(`${report_id}.json`, 60 * 60 * 24 * 7);
 
-    const reportUrl = signedUrlData?.signedUrl || "";
+    const reportUrl = signedUrlData?.signedUrl || '';
 
     // Build email HTML
-    const docName = document_name || report.document_name || "Document";
-    const reportDate = new Date().toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
+    const docName = document_name || report.document_name || 'Document';
+    const reportDate = new Date().toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
     });
 
-    const statusColor = report.status === "valid" ? "#059669" : "#d97706";
-    const statusLabel = report.status === "valid" ? "Valide" : "En attente";
+    const statusColor = report.status === 'valid' ? '#059669' : '#d97706';
+    const statusLabel = report.status === 'valid' ? 'Valide' : 'En attente';
 
     const emailHtml = `<!DOCTYPE html>
 <html lang="fr">
@@ -148,13 +146,17 @@ serve(async (req: Request) => {
             </td></tr>
           </table>
 
-          ${reportUrl ? `
+          ${
+            reportUrl
+              ? `
           <p style="margin:0 0 20px;" align="center">
             <a href="${reportUrl}" style="display:inline-block;background-color:#1e293b;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 32px;border-radius:8px;">
               Telecharger le rapport
             </a>
           </p>
-          ` : ""}
+          `
+              : ''
+          }
         </td></tr>
 
         <!-- Footer -->
@@ -172,29 +174,26 @@ serve(async (req: Request) => {
 </html>`;
 
     // Send email to all recipients via Resend
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
     if (!RESEND_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: "Email service not configured (RESEND_API_KEY missing)" }),
-        {
-          status: 503,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Email service not configured' }), {
+        status: 503,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
     const sendResults: Array<{ email: string; success: boolean; error?: string }> = [];
 
     for (const recipientEmail of recipients) {
       try {
-        const emailResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
+        const emailResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${RESEND_API_KEY}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: "Advist <notifications@advist.app>",
+            from: 'Advist <notifications@advist.app>',
             to: recipientEmail,
             subject: `[ADVIST] Compte-Rendu de Validation - ${docName}`,
             html: emailHtml,
@@ -206,11 +205,11 @@ serve(async (req: Request) => {
           success: emailResponse.ok,
           error: emailResponse.ok ? undefined : `HTTP ${emailResponse.status}`,
         });
-      } catch (err) {
+      } catch {
         sendResults.push({
           email: recipientEmail,
           success: false,
-          error: (err as Error).message,
+          error: 'Send failed',
         });
       }
     }
@@ -225,16 +224,15 @@ serve(async (req: Request) => {
         total_recipients: recipients.length,
         sent: sentCount,
         failed: recipients.length - sentCount,
-        results: sendResults,
       }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 });

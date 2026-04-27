@@ -1,11 +1,6 @@
-import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.98.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { serve } from 'https://deno.land/std@0.208.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.98.0';
+import { getCorsHeaders, optionsResponse } from '../_shared/cors.ts';
 
 /**
  * Validates that a phone number is in international format.
@@ -18,15 +13,15 @@ function validatePhoneFormat(phone: string): {
   error?: string;
 } {
   // Remove spaces, dashes, parentheses
-  const cleaned = phone.replace(/[\s\-()]/g, "");
+  const cleaned = phone.replace(/[\s\-()]/g, '');
 
   // Must start with +
-  if (!cleaned.startsWith("+")) {
+  if (!cleaned.startsWith('+')) {
     return {
       valid: false,
       formatted: cleaned,
-      country_code: "",
-      error: "Phone number must start with + (international format)",
+      country_code: '',
+      error: 'Phone number must start with + (international format)',
     };
   }
 
@@ -36,29 +31,28 @@ function validatePhoneFormat(phone: string): {
     return {
       valid: false,
       formatted: cleaned,
-      country_code: "",
-      error:
-        "Phone number must contain 7-15 digits after the country code",
+      country_code: '',
+      error: 'Phone number must contain 7-15 digits after the country code',
     };
   }
 
   // Extract country code (common codes for West Africa and others)
   const countryCodes: Record<string, string> = {
-    "225": "CI", // Cote d'Ivoire
-    "33": "FR",  // France
-    "1": "US",   // United States
-    "44": "GB",  // United Kingdom
-    "221": "SN", // Senegal
-    "223": "ML", // Mali
-    "226": "BF", // Burkina Faso
-    "228": "TG", // Togo
-    "229": "BJ", // Benin
-    "233": "GH", // Ghana
-    "234": "NG", // Nigeria
-    "237": "CM", // Cameroon
+    '225': 'CI', // Cote d'Ivoire
+    '33': 'FR', // France
+    '1': 'US', // United States
+    '44': 'GB', // United Kingdom
+    '221': 'SN', // Senegal
+    '223': 'ML', // Mali
+    '226': 'BF', // Burkina Faso
+    '228': 'TG', // Togo
+    '229': 'BJ', // Benin
+    '233': 'GH', // Ghana
+    '234': 'NG', // Nigeria
+    '237': 'CM', // Cameroon
   };
 
-  let countryCode = "";
+  let countryCode = '';
   for (const [code, country] of Object.entries(countryCodes)) {
     if (digits.startsWith(code)) {
       countryCode = country;
@@ -69,50 +63,49 @@ function validatePhoneFormat(phone: string): {
   return {
     valid: true,
     formatted: cleaned,
-    country_code: countryCode || "UNKNOWN",
+    country_code: countryCode || 'UNKNOWN',
   };
 }
 
 serve(async (req: Request) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  const origin = req.headers.get('origin') || '';
+
+  if (req.method === 'OPTIONS') {
+    return optionsResponse(origin);
   }
 
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+  const cors = getCorsHeaders(origin);
+
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 
   try {
     // Auth check
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get('Authorization')!;
     const {
       data: { user },
-    } = await createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    ).auth.getUser();
+    } = await createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      global: { headers: { Authorization: authHeader } },
+    }).auth.getUser();
 
     if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
     const { phone } = await req.json();
 
     if (!phone) {
-      return new Response(
-        JSON.stringify({ error: "phone is required" }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'phone is required' }), {
+        status: 400,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
     // Validate format
@@ -127,14 +120,14 @@ serve(async (req: Request) => {
           error: validation.error,
         }),
         {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...cors, 'Content-Type': 'application/json' },
         }
       );
     }
 
     // Check if number is reachable via WhatsApp using the contacts API
-    const WHATSAPP_TOKEN = Deno.env.get("WHATSAPP_API_TOKEN");
-    const WHATSAPP_PHONE_ID = Deno.env.get("WHATSAPP_PHONE_ID");
+    const WHATSAPP_TOKEN = Deno.env.get('WHATSAPP_API_TOKEN');
+    const WHATSAPP_PHONE_ID = Deno.env.get('WHATSAPP_PHONE_ID');
 
     let whatsapp_registered = false;
 
@@ -143,13 +136,13 @@ serve(async (req: Request) => {
         const contactResponse = await fetch(
           `https://graph.facebook.com/v18.0/${WHATSAPP_PHONE_ID}/contacts`,
           {
-            method: "POST",
+            method: 'POST',
             headers: {
               Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              blocking: "wait",
+              blocking: 'wait',
               contacts: [validation.formatted],
             }),
           }
@@ -158,7 +151,7 @@ serve(async (req: Request) => {
         if (contactResponse.ok) {
           const contactResult = await contactResponse.json();
           const contact = contactResult.contacts?.[0];
-          whatsapp_registered = contact?.status === "valid";
+          whatsapp_registered = contact?.status === 'valid';
         }
       } catch {
         // If the contacts API call fails, we still return the format validation
@@ -173,13 +166,13 @@ serve(async (req: Request) => {
         whatsapp_registered,
       }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 });

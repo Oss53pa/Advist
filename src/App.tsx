@@ -178,6 +178,35 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
+// Admin Route wrapper - checks auth + subscription + admin/org_admin role
+const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+  const { isLoading, canAccess, blockReason } = useSubscriptionGuard();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
+  if (!canAccess && blockReason) {
+    return <Navigate to={`/subscription-blocked?reason=${blockReason}`} replace />;
+  }
+
+  const isAdmin =
+    user?.role === 'admin' ||
+    user?.role === 'org_admin' ||
+    user?.is_org_admin ||
+    user?.is_super_admin;
+  if (!isAdmin) {
+    return <Navigate to="/user" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 // Super Admin Route wrapper - checks auth + super_admin role
 const SuperAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -318,11 +347,11 @@ function App() {
                 <Route
                   path="/admin"
                   element={
-                    <SubscriptionProtectedRoute>
+                    <AdminRoute>
                       <ErrorBoundary>
                         <AdminLayout />
                       </ErrorBoundary>
-                    </SubscriptionProtectedRoute>
+                    </AdminRoute>
                   }
                 >
                   <Route index element={<AdminDashboard />} />

@@ -1,11 +1,6 @@
-import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.98.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { serve } from 'https://deno.land/std@0.208.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.98.0';
+import { getCorsHeaders, optionsResponse } from '../_shared/cors.ts';
 
 /**
  * Generates an HTML report suitable for client-side PDF rendering.
@@ -14,45 +9,45 @@ const corsHeaders = {
  * or stores the HTML in Supabase Storage for later retrieval.
  */
 function generateReportHtml(report: Record<string, unknown>): string {
-  const docName = (report.document_name as string) || "Document";
-  const status = (report.status as string) || "pending";
+  const docName = (report.document_name as string) || 'Document';
+  const status = (report.status as string) || 'pending';
   const createdAt = (report.created_at as string) || new Date().toISOString();
   const signers = (report.signers as Array<Record<string, unknown>>) || [];
   const auditTrail = (report.audit_trail as Array<Record<string, unknown>>) || [];
 
-  const statusColor = status === "valid" ? "#059669" : "#d97706";
-  const statusLabel = status === "valid" ? "VALIDE" : "EN ATTENTE";
-  const reportDate = new Date(createdAt).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  const statusColor = status === 'valid' ? '#059669' : '#d97706';
+  const statusLabel = status === 'valid' ? 'VALIDE' : 'EN ATTENTE';
+  const reportDate = new Date(createdAt).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 
   const signersRows = signers
     .map(
       (s) => `
     <tr>
-      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${s.name || "-"}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${s.role || "-"}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${s.status || "-"}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${s.signed_at ? new Date(s.signed_at as string).toLocaleDateString("fr-FR") : "-"}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${s.name || '-'}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${s.role || '-'}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${s.status || '-'}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${s.signed_at ? new Date(s.signed_at as string).toLocaleDateString('fr-FR') : '-'}</td>
     </tr>`
     )
-    .join("");
+    .join('');
 
   const auditRows = auditTrail
     .map(
       (entry) => `
     <tr>
-      <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;">${entry.timestamp ? new Date(entry.timestamp as string).toLocaleString("fr-FR") : "-"}</td>
-      <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;">${entry.action || "-"}</td>
-      <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;">${entry.actor || "-"}</td>
-      <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;">${entry.details || "-"}</td>
+      <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;">${entry.timestamp ? new Date(entry.timestamp as string).toLocaleString('fr-FR') : '-'}</td>
+      <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;">${entry.action || '-'}</td>
+      <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;">${entry.actor || '-'}</td>
+      <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;">${entry.details || '-'}</td>
     </tr>`
     )
-    .join("");
+    .join('');
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -88,10 +83,12 @@ function generateReportHtml(report: Record<string, unknown>): string {
   <div class="meta">
     <div class="meta-item"><strong>${docName}</strong>Document</div>
     <div class="meta-item"><strong>${reportDate}</strong>Date du rapport</div>
-    <div class="meta-item"><strong>${report.report_id || report.id || "-"}</strong>Reference</div>
+    <div class="meta-item"><strong>${report.report_id || report.id || '-'}</strong>Reference</div>
   </div>
 
-  ${signers.length > 0 ? `
+  ${
+    signers.length > 0
+      ? `
   <h2>Signataires</h2>
   <table>
     <thead>
@@ -104,9 +101,13 @@ function generateReportHtml(report: Record<string, unknown>): string {
     </thead>
     <tbody>${signersRows}</tbody>
   </table>
-  ` : ""}
+  `
+      : ''
+  }
 
-  ${auditTrail.length > 0 ? `
+  ${
+    auditTrail.length > 0
+      ? `
   <h2>Piste d'audit</h2>
   <table>
     <thead>
@@ -119,7 +120,9 @@ function generateReportHtml(report: Record<string, unknown>): string {
     </thead>
     <tbody>${auditRows}</tbody>
   </table>
-  ` : ""}
+  `
+      : ''
+  }
 
   <div class="footer">
     <p>Ce document a ete genere automatiquement par ADVIST (Atlas Studio).</p>
@@ -130,93 +133,93 @@ function generateReportHtml(report: Record<string, unknown>): string {
 }
 
 serve(async (req: Request) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  const origin = req.headers.get('origin') || '';
+
+  if (req.method === 'OPTIONS') {
+    return optionsResponse(origin);
   }
 
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+  const cors = getCorsHeaders(origin);
+
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 
   try {
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
     // Auth check
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get('Authorization')!;
     const {
       data: { user },
-    } = await createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    ).auth.getUser();
+    } = await createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      global: { headers: { Authorization: authHeader } },
+    }).auth.getUser();
 
     if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
     const { report_id } = await req.json();
 
     if (!report_id) {
-      return new Response(
-        JSON.stringify({ error: "report_id is required" }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'report_id is required' }), {
+        status: 400,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
     // Fetch report data from storage
     const { data: reportData, error: downloadError } = await supabase.storage
-      .from("validation-reports")
+      .from('validation-reports')
       .download(`${report_id}.json`);
 
     if (downloadError) {
-      return new Response(
-        JSON.stringify({
-          error: "Report not found",
-          details: downloadError.message,
-        }),
-        {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Report not found' }), {
+        status: 404,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
     const reportText = await reportData.text();
     const report = JSON.parse(reportText);
 
+    // Authorization: verify user belongs to the report's organization
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single();
+
+    if (report.organization_id && userProfile?.organization_id !== report.organization_id) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        status: 403,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+
     // Generate HTML report
     const html = generateReportHtml(report);
 
     // Store the HTML version in Supabase Storage for later retrieval
-    const htmlBlob = new Blob([html], { type: "text/html" });
-    const { error: uploadError } = await supabase.storage
-      .from("validation-reports")
-      .upload(`${report_id}.html`, htmlBlob, {
-        contentType: "text/html",
-        upsert: true,
-      });
-
-    if (uploadError) {
-      // Non-fatal: still return the HTML even if storage fails
-      console.error("Failed to store HTML report:", uploadError.message);
-    }
+    const htmlBlob = new Blob([html], { type: 'text/html' });
+    await supabase.storage.from('validation-reports').upload(`${report_id}.html`, htmlBlob, {
+      contentType: 'text/html',
+      upsert: true,
+    });
 
     // Generate a signed URL for the HTML report
     const { data: signedUrlData } = await supabase.storage
-      .from("validation-reports")
+      .from('validation-reports')
       .createSignedUrl(`${report_id}.html`, 60 * 60 * 24); // 24h
 
     // Encode HTML as base64 for client-side use
@@ -228,19 +231,19 @@ serve(async (req: Request) => {
       JSON.stringify({
         success: true,
         report_id,
-        format: "html",
+        format: 'html',
         html_base64: base64Html,
         download_url: signedUrlData?.signedUrl || null,
-        note: "Use window.print() or a client-side library to convert this HTML to PDF",
+        note: 'Use window.print() or a client-side library to convert this HTML to PDF',
       }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 });

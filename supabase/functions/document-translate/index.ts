@@ -1,24 +1,25 @@
-import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.98.0";
+import { serve } from 'https://deno.land/std@0.208.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.98.0';
+import { getCorsHeaders, optionsResponse } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+const SUPPORTED_LANGUAGES = ['en', 'fr', 'es', 'de', 'pt', 'ar'];
 
 serve(async (req: Request) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  const origin = req.headers.get('origin') || '';
+
+  if (req.method === 'OPTIONS') {
+    return optionsResponse(origin);
   }
+
+  const cors = getCorsHeaders(origin);
 
   try {
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
       {
         global: {
-          headers: { Authorization: req.headers.get("Authorization")! },
+          headers: { Authorization: req.headers.get('Authorization')! },
         },
       }
     );
@@ -27,78 +28,84 @@ serve(async (req: Request) => {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
     }
 
     const { document_id, target_language } = await req.json();
 
+    // Validate target_language
+    if (!target_language || !SUPPORTED_LANGUAGES.includes(target_language)) {
+      return new Response(
+        JSON.stringify({
+          error: `Invalid target_language. Supported: ${SUPPORTED_LANGUAGES.join(', ')}`,
+        }),
+        {
+          status: 400,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     // Fetch document content
     const { data: doc, error } = await supabase
-      .from("documents")
-      .select("title, content, summary")
-      .eq("id", document_id)
+      .from('documents')
+      .select('title, content, summary')
+      .eq('id', document_id)
       .single();
 
     if (error || !doc) {
-      return new Response(
-        JSON.stringify({ error: "Document not found" }),
-        {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Document not found' }), {
+        status: 404,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
     // Use Claude for translation via server-side API key
-    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
     if (!ANTHROPIC_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: "Translation service not configured" }),
-        {
-          status: 503,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Translation service not configured' }), {
+        status: 503,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
 
     const languageNames: Record<string, string> = {
-      en: "English",
-      fr: "French",
-      es: "Spanish",
-      de: "German",
-      pt: "Portuguese",
-      ar: "Arabic",
+      en: 'English',
+      fr: 'French',
+      es: 'Spanish',
+      de: 'German',
+      pt: 'Portuguese',
+      ar: 'Arabic',
     };
 
     const targetLangName = languageNames[target_language] || target_language;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
       headers: {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 8192,
         system:
-          "You are a professional document translator. Translate the provided document content accurately while preserving formatting. Return a JSON object with keys: title, summary, content.",
+          'You are a professional document translator. Translate the provided document content accurately while preserving formatting. Return a JSON object with keys: title, summary, content.',
         messages: [
           {
-            role: "user",
-            content: `Translate the following document to ${targetLangName}. Return ONLY valid JSON with keys "title", "summary", "content".\n\nTitle: ${doc.title}\nSummary: ${doc.summary || ""}\nContent: ${doc.content || ""}`,
+            role: 'user',
+            content: `Translate the following document to ${targetLangName}. Return ONLY valid JSON with keys "title", "summary", "content".\n\nTitle: ${doc.title}\nSummary: ${doc.summary || ''}\nContent: ${doc.content || ''}`,
           },
         ],
       }),
     });
 
     const aiResult = await response.json();
-    const translatedText =
-      aiResult?.content?.[0]?.text || "{}";
+    const translatedText = aiResult?.content?.[0]?.text || '{}';
 
     let translated;
     try {
@@ -106,7 +113,7 @@ serve(async (req: Request) => {
     } catch {
       translated = {
         title: translatedText,
-        summary: "",
+        summary: '',
         content: translatedText,
       };
     }
@@ -117,13 +124,13 @@ serve(async (req: Request) => {
         language: target_language,
       }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, 'Content-Type': 'application/json' },
       }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, 'Content-Type': 'application/json' },
     });
   }
 });
