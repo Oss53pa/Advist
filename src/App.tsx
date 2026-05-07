@@ -29,6 +29,7 @@ const SignaturesPage = lazy(() => import('./pages/signatures/SignaturesPage'));
 const SignDocumentPage = lazy(() => import('./pages/signatures/SignDocumentPage'));
 const SettingsPage = lazy(() => import('./pages/settings/SettingsPage'));
 const ProfilePage = lazy(() => import('./pages/settings/ProfilePage'));
+const TeamSettingsPage = lazy(() => import('./pages/settings/TeamSettingsPage'));
 const NotificationsPage = lazy(() => import('./pages/notifications/NotificationsPage'));
 const CalendarPage = lazy(() => import('./pages/calendar/CalendarPage'));
 const ProjectsPage = lazy(() => import('./pages/projects/ProjectsPage'));
@@ -330,6 +331,7 @@ function App() {
                   <Route path="signatures" element={<SignaturesPage />} />
                   <Route path="signatures/:id" element={<SignDocumentPage />} />
                   <Route path="settings" element={<SettingsPage />} />
+                  <Route path="settings/team" element={<TeamSettingsPage />} />
                   <Route path="profile" element={<ProfilePage />} />
                   <Route path="notifications" element={<NotificationsPage />} />
                   <Route path="calendar" element={<CalendarPage />} />
