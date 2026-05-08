@@ -255,8 +255,18 @@ function App() {
                     </PublicRoute>
                   }
                 />
-                {/* Registration + checkout handled by Atlas Studio portal */}
-                <Route path="/register" element={<AtlasStudioRedirect destination="register" />} />
+                {/* Format unifié Atlas Studio Suite — auth centralisée */}
+                <Route path="/signup" element={<AtlasStudioRedirect destination="signup" />} />
+                <Route
+                  path="/forgot-password"
+                  element={<AtlasStudioRedirect destination="forgot-password" />}
+                />
+                <Route
+                  path="/reset-password"
+                  element={<AtlasStudioRedirect destination="reset-password" />}
+                />
+                {/* Alias rétro-compatibles vers /signup */}
+                <Route path="/register" element={<Navigate to="/signup" replace />} />
                 <Route
                   path="/register/success"
                   element={<AtlasStudioRedirect destination="portal" />}

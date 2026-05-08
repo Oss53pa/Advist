@@ -4,9 +4,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, Sparkles, ExternalLink } from 'lucide-react';
 import { Button, Input, Card } from '../../components/ui';
 import { useAuthStore } from '../../store';
+
+const ATLAS_STUDIO_URL = 'https://atlas-studio.org';
 
 type LoginForm = {
   email: string;
@@ -67,6 +69,24 @@ export const LoginPage: React.FC = () => {
 
         <Card padding="lg" className="!bg-[#1A1A1D] !border !border-white/5">
           <h2 className="text-xl font-light text-white mb-6">{t('auth.login')}</h2>
+
+          {/* SSO Atlas Studio — primary CTA */}
+          <a
+            href={`${ATLAS_STUDIO_URL}/portal/login?next=${encodeURIComponent(`${window.location.origin}/user`)}`}
+            className="flex items-center justify-center gap-2 w-full px-4 py-3 mb-4 bg-[#C8A961] text-[#0A0A0B] rounded-xl font-semibold hover:bg-[#C8A961]/90 transition-all"
+          >
+            <Sparkles size={16} />
+            Se connecter avec Atlas Studio
+            <ExternalLink size={12} className="opacity-70" />
+          </a>
+
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-[11px] uppercase tracking-wider text-white/40">
+              ou avec votre email
+            </span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
 
           {error && (
             <div className="mb-4 p-3 bg-advist-red/10 border border-advist-red/30 rounded-xl text-advist-red text-sm">
@@ -129,13 +149,13 @@ export const LoginPage: React.FC = () => {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <span className="text-white/40">{t('auth.noAccount')}</span>{' '}
+          <div className="mt-6 pt-5 border-t border-white/10 text-center">
+            <span className="text-white/40">{t('auth.noAccount', 'Pas encore de compte ?')}</span>{' '}
             <Link
-              to="/register"
+              to="/signup"
               className="text-[#C8A961] font-medium hover:text-[#C8A961]/80 transition-colors"
             >
-              {t('auth.register')}
+              {t('auth.register', "S'inscrire")}
             </Link>
           </div>
         </Card>
