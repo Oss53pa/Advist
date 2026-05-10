@@ -265,27 +265,6 @@
         ]
       }
     },
-    "profileSelect": {
-      "demoAccess": "الوصول التجريبي",
-      "chooseProfile": "اختر ملفك الشخصي",
-      "selectAccessType": "اختر نوع الوصول المناسب لدورك للوصول إلى الواجهة المناسبة",
-      "user": "مستخدم",
-      "userDescription": "الوصول إلى ميزات إدارة المستندات والتحقق",
-      "userFeature1": "عرض مستنداتي",
-      "userFeature2": "إرسال المستندات",
-      "userFeature3": "التحقق والتوقيع",
-      "userFeature4": "متابعة سير عملي",
-      "admin": "مسؤول",
-      "adminDescription": "وصول كامل مع إدارة المستخدمين والإعدادات",
-      "adminFeature1": "إدارة المستخدمين",
-      "adminFeature2": "تكوين سير العمل",
-      "adminFeature3": "عرض التدقيق",
-      "adminFeature4": "إعدادات متقدمة",
-      "access": "الوصول",
-      "noAccount": "ليس لديك حساب؟",
-      "createAccount": "إنشاء حساب",
-      "backToHome": "العودة للرئيسية"
-    },
     "activateLicense": {
       "title": "تفعيل المؤسسات",
       "subtitle": "فعّل ترخيصك لفتح جميع الميزات",
@@ -845,7 +824,6 @@
     "deleteAccount": "حذف الحساب",
     "deleteAccountWarning": "حذف حسابك لا رجعة فيه. سيتم حذف جميع بياناتك نهائياً.",
     "deleteMyAccount": "حذف حسابي",
-    "switchProfile": "تبديل الملف الشخصي",
     "editProfile": "تعديل الملف الشخصي",
     "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
     "updateError": "خطأ في تحديث الملف الشخصي",

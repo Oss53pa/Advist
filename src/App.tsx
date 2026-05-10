@@ -1,4 +1,4 @@
-﻿import React, { Suspense, lazy, useEffect } from 'react';
+﻿import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -8,11 +8,23 @@ import { ThemeProvider } from './components/theme';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useAuthStore } from './store';
 import { useSubscriptionGuard } from './hooks/useSubscriptionGuard';
+import { getPostLoginRoute } from './services/postLoginRoute';
+import { isAdminUser } from './types';
 
 // Pages d'auth chargées immédiatement (small bundles)
-import { LoginPage, ProfileSelectPage } from './pages';
+import { LoginPage } from './pages';
 import { AtlasStudioRedirect } from './pages/AtlasStudioRedirect';
 const ExternalAuthPage = lazy(() => import('./pages/auth/ExternalAuthPage'));
+const AcceptInvite = lazy(() => import('./pages/auth/AcceptInvite'));
+
+// Atlas Studio external URL for redirects to billing/pricing/subscription pages
+const ATLAS_STUDIO_BILLING = (
+  <AtlasStudioRedirect
+    destination="billing"
+    message="La gestion de la facturation et des abonnements est centralisée sur le portail Atlas Studio."
+  />
+);
+const ATLAS_STUDIO_PRICING = <AtlasStudioRedirect destination="pricing" />;
 
 // LandingPage lazy loaded (large bundle)
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -38,8 +50,6 @@ const ExecutiveReportPage = lazy(() => import('./pages/analytics/ExecutiveReport
 
 // Lazy loading des pages admin
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const UsersPage = lazy(() => import('./pages/users/UsersPage'));
-const RolesPage = lazy(() => import('./pages/users/RolesPage'));
 const OrganizationPage = lazy(() => import('./pages/users/OrganizationPage'));
 const ArchivesPage = lazy(() => import('./pages/archives/ArchivesPage'));
 const AuditPage = lazy(() => import('./pages/archives/AuditPage'));
@@ -56,14 +66,7 @@ const SuperAdminLogsPage = lazy(() => import('./pages/superadmin/SuperAdminLogsP
 const SuperAdminAlertsPage = lazy(() => import('./pages/superadmin/SuperAdminAlertsPage'));
 const SuperAdminSettingsPage = lazy(() => import('./pages/superadmin/SuperAdminSettingsPage'));
 const LandingPageEditorPage = lazy(() => import('./pages/superadmin/LandingPageEditorPage'));
-const PricingEditorPage = lazy(() => import('./pages/superadmin/PricingEditorPage'));
-const AddonEditorPage = lazy(() => import('./pages/superadmin/AddonEditorPage'));
-
-// Lazy loading des pages billing SuperAdmin
-const BillingDashboard = lazy(() => import('./pages/superadmin/billing/BillingDashboard'));
-const SubscriptionsPage = lazy(() => import('./pages/superadmin/billing/SubscriptionsPage'));
-const InvoicesPage = lazy(() => import('./pages/superadmin/billing/InvoicesPage'));
-const PaymentSettingsPage = lazy(() => import('./pages/superadmin/billing/PaymentSettingsPage'));
+// Billing/pricing/addons management is owned by Atlas Studio — no super-admin pages in Advist.
 
 // Lazy loading des pages support
 const SuperAdminSupportPage = lazy(() => import('./pages/superadmin/SupportPage'));
@@ -94,9 +97,6 @@ const MarketingNewslettersPage = lazy(
   () => import('./pages/superadmin/marketing/MarketingNewslettersPage')
 );
 
-// Lazy loading des pages billing Client
-// ClientBillingPage removed — billing handled by Atlas Studio portal
-
 // Pages externes
 const ExternalUserPage = lazy(() => import('./pages/external/ExternalUserPage'));
 const ValidationReportPage = lazy(() => import('./pages/reports/ValidationReportPage'));
@@ -110,8 +110,6 @@ const ResourcePage = lazy(() => import('./pages/resources/ResourcePage'));
 const BlogPage = lazy(() => import('./pages/blog/BlogPage'));
 const BlogArticlePage = lazy(() => import('./pages/blog/BlogArticlePage'));
 
-// Pages subscription/licence
-const ActivateLicensePage = lazy(() => import('./pages/auth/ActivateLicensePage'));
 const SubscriptionBlockedPage = lazy(() => import('./pages/subscription/SubscriptionBlockedPage'));
 
 // Create a client
@@ -137,17 +135,6 @@ const PageLoader: React.FC = () => {
   );
 };
 
-// Protected Route wrapper
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-};
-
 // Subscription Protected Route - vérifie l'abonnement en plus de l'auth
 const SubscriptionProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -171,9 +158,17 @@ const SubscriptionProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ c
 // Public Route wrapper (redirect to app if already logged in)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
+  const [target, setTarget] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getPostLoginRoute().then(setTarget);
+    }
+  }, [isAuthenticated]);
 
   if (isAuthenticated) {
-    return <Navigate to="/user" replace />;
+    if (!target) return <PageLoader />;
+    return <Navigate to={target} replace />;
   }
 
   return <>{children}</>;
@@ -196,12 +191,7 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return <Navigate to={`/subscription-blocked?reason=${blockReason}`} replace />;
   }
 
-  const isAdmin =
-    user?.role === 'admin' ||
-    user?.role === 'org_admin' ||
-    user?.is_org_admin ||
-    user?.is_super_admin;
-  if (!isAdmin) {
+  if (!isAdminUser(user) && !user?.is_atlas_super_admin) {
     return <Navigate to="/user" replace />;
   }
 
@@ -216,7 +206,7 @@ const SuperAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) 
     return <Navigate to="/login" replace />;
   }
 
-  if (!user?.is_super_admin) {
+  if (!user?.is_atlas_super_admin) {
     return <Navigate to="/user" replace />;
   }
 
@@ -281,9 +271,14 @@ function App() {
                     </Suspense>
                   }
                 />
-
-                {/* Profile Selection */}
-                <Route path="/select-profile" element={<ProfileSelectPage />} />
+                <Route
+                  path="/auth/accept-invite"
+                  element={
+                    <Suspense fallback={<div />}>
+                      <AcceptInvite />
+                    </Suspense>
+                  }
+                />
 
                 {/* Public Demo Page (no auth required) */}
                 <Route path="/demo" element={<DemoPage />} />
@@ -311,15 +306,9 @@ function App() {
                 <Route path="/integrations" element={<ResourcePage />} />
                 <Route path="/api-docs" element={<ResourcePage />} />
 
-                {/* Subscription/License Routes */}
-                <Route
-                  path="/activate-license"
-                  element={
-                    <ProtectedRoute>
-                      <ActivateLicensePage />
-                    </ProtectedRoute>
-                  }
-                />
+                {/* License activation is handled by Atlas Studio. The legacy
+                    /activate-license route redirects to the Atlas portal. */}
+                <Route path="/activate-license" element={ATLAS_STUDIO_PRICING} />
                 <Route path="/subscription-blocked" element={<SubscriptionBlockedPage />} />
 
                 {/* User Interface Routes */}
@@ -373,8 +362,11 @@ function App() {
                   <Route path="workflows/:id" element={<WorkflowsPage />} />
                   <Route path="signatures" element={<SignaturesPage />} />
                   <Route path="signatures/:id" element={<SignDocumentPage />} />
-                  <Route path="users" element={<UsersPage />} />
-                  <Route path="roles" element={<RolesPage />} />
+                  {/* Team & roles management is owned by Atlas Studio Suite (licence_seats).
+                      Redirect legacy paths to the unified /admin/settings/team page. */}
+                  <Route path="users" element={<Navigate to="/admin/settings/team" replace />} />
+                  <Route path="roles" element={<Navigate to="/admin/settings/team" replace />} />
+                  <Route path="settings/team" element={<TeamSettingsPage />} />
                   <Route path="organization" element={<OrganizationPage />} />
                   <Route path="archives" element={<ArchivesPage />} />
                   <Route path="audit" element={<AuditPage />} />
@@ -414,16 +406,12 @@ function App() {
                   <Route path="logs" element={<SuperAdminLogsPage />} />
                   <Route path="alerts" element={<SuperAdminAlertsPage />} />
                   <Route path="landing-page" element={<LandingPageEditorPage />} />
-                  <Route path="pricing" element={<PricingEditorPage />} />
-                  <Route path="addons" element={<AddonEditorPage />} />
                   <Route path="settings" element={<SuperAdminSettingsPage />} />
-                  {/* Billing Routes */}
-                  <Route path="billing" element={<BillingDashboard />} />
-                  <Route path="billing/subscriptions" element={<SubscriptionsPage />} />
-                  <Route path="billing/invoices" element={<InvoicesPage />} />
-                  <Route path="billing/payments" element={<InvoicesPage />} />
-                  <Route path="billing/plans" element={<SubscriptionsPage />} />
-                  <Route path="billing/settings" element={<PaymentSettingsPage />} />
+                  {/* Billing/pricing/addons → Atlas Studio portal */}
+                  <Route path="pricing" element={ATLAS_STUDIO_PRICING} />
+                  <Route path="addons" element={ATLAS_STUDIO_PRICING} />
+                  <Route path="billing" element={ATLAS_STUDIO_BILLING} />
+                  <Route path="billing/*" element={ATLAS_STUDIO_BILLING} />
                   {/* Support */}
                   <Route path="support" element={<SuperAdminSupportPage />} />
                   {/* Marketing */}

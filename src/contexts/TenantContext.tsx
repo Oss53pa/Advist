@@ -37,17 +37,18 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const { currentTenant, isLoading, error, checkFeature, checkQuota } = useTenantStore();
   const { user } = useAuthStore();
 
-  // Sync tenant from user's organization
+  // Sync tenant from user's organization. Plan-driven feature gating is owned
+  // by Atlas Studio (read via useSubscriptionGuard from licences). This
+  // bootstrap tenant is a non-blocking fallback used while the licence query
+  // resolves — defaults to a permissive 'business' tier.
   useEffect(() => {
     if (user?.organization && !currentTenant) {
-      // In a real app, this would fetch the full tenant data from the API
-      // For now, we create a basic tenant from the user's organization
       const org = user.organization;
       useTenantStore.getState().setTenant({
         id: org.id,
         name: org.name,
         slug: org.slug,
-        plan: org.subscription_plan || 'business',
+        plan: 'business',
         status: org.is_active ? 'active' : 'inactive',
         quotas: {
           maxUsers: org.quotas?.max_users || 50,
@@ -74,12 +75,12 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
           workflowTemplates: true,
           simpleSignature: true,
           advancedSignature: true,
-          qualifiedSignature: org.subscription_plan === 'enterprise',
+          qualifiedSignature: false,
           ohadaCompliance: org.ohada_compliant || true,
           signatureCertificates: true,
           ssoEnabled: true,
           twoFactorAuth: true,
-          ipRestriction: org.subscription_plan === 'enterprise',
+          ipRestriction: false,
           auditLogs: true,
           dataExport: true,
           offlineMode: true,
@@ -106,55 +107,54 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   }, [user, currentTenant]);
 
-  const value = useMemo<TenantContextValue>(() => ({
-    tenant: currentTenant,
-    isLoading,
-    error,
+  const value = useMemo<TenantContextValue>(
+    () => ({
+      tenant: currentTenant,
+      isLoading,
+      error,
 
-    hasFeature: (feature: keyof TenantFeatures) => {
-      return checkFeature(feature);
-    },
+      hasFeature: (feature: keyof TenantFeatures) => {
+        return checkFeature(feature);
+      },
 
-    checkQuota: (quota: keyof TenantQuotas) => {
-      return checkQuota(quota);
-    },
+      checkQuota: (quota: keyof TenantQuotas) => {
+        return checkQuota(quota);
+      },
 
-    isQuotaExceeded: (quota: keyof TenantQuotas) => {
-      const result = checkQuota(quota);
-      return !result.allowed;
-    },
+      isQuotaExceeded: (quota: keyof TenantQuotas) => {
+        const result = checkQuota(quota);
+        return !result.allowed;
+      },
 
-    getQuotaWarning: (quota: keyof TenantQuotas) => {
-      const result = checkQuota(quota);
-      if (result.max === -1) return 'ok'; // Unlimited
-      if (result.percentage >= 100) return 'exceeded';
-      if (result.percentage >= 90) return 'critical';
-      if (result.percentage >= 75) return 'warning';
-      return 'ok';
-    },
+      getQuotaWarning: (quota: keyof TenantQuotas) => {
+        const result = checkQuota(quota);
+        if (result.max === -1) return 'ok'; // Unlimited
+        if (result.percentage >= 100) return 'exceeded';
+        if (result.percentage >= 90) return 'critical';
+        if (result.percentage >= 75) return 'warning';
+        return 'ok';
+      },
 
-    getTenantPrefix: () => {
-      if (!currentTenant) return 'default';
-      return `tenant_${currentTenant.id}`;
-    },
+      getTenantPrefix: () => {
+        if (!currentTenant) return 'default';
+        return `tenant_${currentTenant.id}`;
+      },
 
-    getTenantStorageKey: (key: string) => {
-      if (!currentTenant) return key;
-      return `tenant_${currentTenant.id}_${key}`;
-    },
+      getTenantStorageKey: (key: string) => {
+        if (!currentTenant) return key;
+        return `tenant_${currentTenant.id}_${key}`;
+      },
 
-    isPlanAtLeast: (plan: 'business' | 'enterprise') => {
-      if (!currentTenant) return false;
-      const planOrder: Record<string, number> = { business: 0, enterprise: 1 };
-      return (planOrder[currentTenant.plan] ?? 0) >= (planOrder[plan] ?? 0);
-    },
-  }), [currentTenant, isLoading, error, checkFeature, checkQuota]);
-
-  return (
-    <TenantContext.Provider value={value}>
-      {children}
-    </TenantContext.Provider>
+      isPlanAtLeast: (plan: 'business' | 'enterprise') => {
+        if (!currentTenant) return false;
+        const planOrder: Record<string, number> = { business: 0, enterprise: 1 };
+        return (planOrder[currentTenant.plan] ?? 0) >= (planOrder[plan] ?? 0);
+      },
+    }),
+    [currentTenant, isLoading, error, checkFeature, checkQuota]
   );
+
+  return <TenantContext.Provider value={value}>{children}</TenantContext.Provider>;
 };
 
 // Custom hook to use tenant context
@@ -185,8 +185,8 @@ export const withFeature = <P extends object>(
             Fonctionnalité non disponible
           </h3>
           <p className="text-[#A29790]">
-            Cette fonctionnalité n'est pas incluse dans votre plan actuel.
-            Mettez à niveau pour y accéder.
+            Cette fonctionnalité n'est pas incluse dans votre plan actuel. Mettez à niveau pour y
+            accéder.
           </p>
         </div>
       );
@@ -269,10 +269,15 @@ export const QuotaDisplay: React.FC<{
         />
       </div>
       {warning !== 'ok' && (
-        <p className={`text-xs mt-1 ${
-          warning === 'exceeded' ? 'text-advist-error' :
-          warning === 'critical' ? 'text-advist-gold-dark' : 'text-advist-gold-dark'
-        }`}>
+        <p
+          className={`text-xs mt-1 ${
+            warning === 'exceeded'
+              ? 'text-advist-error'
+              : warning === 'critical'
+                ? 'text-advist-gold-dark'
+                : 'text-advist-gold-dark'
+          }`}
+        >
           {warning === 'exceeded' && 'Quota dépassé'}
           {warning === 'critical' && 'Quota presque atteint'}
           {warning === 'warning' && 'Attention au quota'}

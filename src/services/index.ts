@@ -8,7 +8,6 @@ export { workflowsService } from './workflows';
 export { notificationsService } from './notifications';
 export { offlineService } from './offline';
 export { validationReportService } from './validationReport';
-export { subscriptionsService } from './subscriptions';
 export { whatsappService } from './whatsapp';
 export { deadlinesService } from './deadlines';
 export { anomalyDetectionService } from './anomalyDetection';
@@ -28,11 +27,7 @@ export {
   complianceDashboardService,
 } from './compliance';
 export { default as complianceService } from './compliance';
-export {
-  integrationService,
-  salesforceService,
-  INTEGRATION_PROVIDERS,
-} from './integrations';
+export { integrationService, salesforceService, INTEGRATION_PROVIDERS } from './integrations';
 export type {
   IntegrationConnection,
   IntegrationProvider,

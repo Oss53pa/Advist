@@ -19,7 +19,8 @@ export interface AuthResponse {
     email: string;
     first_name: string;
     last_name: string;
-    role: string;
+    role: 'app_super_admin' | 'app_admin' | 'editor' | 'viewer';
+    is_atlas_super_admin?: boolean;
     organization?: {
       id: string;
       name: string;
@@ -38,7 +39,9 @@ interface LoginCredentials {
 
 /**
  * Map a Supabase user to our AuthResponse user shape.
- * Profile data is fetched from the profiles table.
+ *
+ * Source of truth for the role: licence_seats.role (Atlas Studio Suite).
+ * Profile data is fetched from profiles for first/last name and organization.
  */
 async function mapSupabaseUser(supabaseUser: SupabaseUser): Promise<AuthResponse['user']> {
   // Fetch profile with organization data
@@ -58,23 +61,32 @@ async function mapSupabaseUser(supabaseUser: SupabaseUser): Promise<AuthResponse
     .eq('id', supabaseUser.id)
     .single();
 
-  // Fetch user role
-  const { data: userRole } = await supabase
-    .from('user_roles')
-    .select('roles (name)')
+  // Fetch the active Atlas Studio seat for the Advist product specifically.
+  // Filtering by products.slug='advist' avoids cross-app role contamination
+  // when a user holds seats for multiple Atlas Studio Suite apps.
+  const { data: seat } = await supabase
+    .from('licence_seats')
+    .select('role, licences!inner(products!inner(slug))')
     .eq('user_id', supabaseUser.id)
-    .eq('is_active', true)
+    .eq('status', 'active')
+    .eq('licences.products.slug', 'advist')
+    .order('created_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const org = profile?.organizations as { id: string; name: string } | null;
+  const role = (seat?.role as AuthResponse['user']['role'] | undefined) ?? 'viewer';
+  const isAtlasSuperAdmin =
+    (supabaseUser.app_metadata as Record<string, unknown> | undefined)?.is_atlas_super_admin ===
+    true;
 
   return {
     id: supabaseUser.id,
     email: supabaseUser.email || '',
     first_name: profile?.first_name || supabaseUser.user_metadata?.first_name || '',
     last_name: profile?.last_name || supabaseUser.user_metadata?.last_name || '',
-    role: (userRole?.roles as { name: string } | null)?.name || 'member',
+    role,
+    is_atlas_super_admin: isAtlasSuperAdmin,
     organization: org ? { id: org.id, name: org.name } : null,
   };
 }

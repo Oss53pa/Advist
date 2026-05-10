@@ -1,2 +1,1 @@
-export { ChangePlanModal } from './ChangePlanModal';
-export { PaymentNotificationsWidget } from './PaymentNotificationsWidget';
+// Billing/subscription management is owned by Atlas Studio.

@@ -325,27 +325,6 @@
         ]
       }
     },
-    "profileSelect": {
-      "demoAccess": "Accès démo",
-      "chooseProfile": "Choisissez votre profil",
-      "selectAccessType": "Sélectionnez le type d'accès correspondant à votre rôle pour accéder à l'interface adaptée",
-      "user": "Utilisateur",
-      "userDescription": "Accès aux fonctionnalités de gestion documentaire et validation",
-      "userFeature1": "Consulter mes documents",
-      "userFeature2": "Soumettre des documents",
-      "userFeature3": "Valider et signer",
-      "userFeature4": "Suivre mes workflows",
-      "admin": "Administrateur",
-      "adminDescription": "Accès complet avec gestion des utilisateurs et configurations",
-      "adminFeature1": "Gérer les utilisateurs",
-      "adminFeature2": "Configurer les workflows",
-      "adminFeature3": "Consulter les audits",
-      "adminFeature4": "Paramètres avancés",
-      "access": "Accéder",
-      "noAccount": "Vous n'avez pas de compte ?",
-      "createAccount": "Créer un compte",
-      "backToHome": "Retour à l'accueil"
-    },
     "activateLicense": {
       "title": "Activation Enterprise",
       "subtitle": "Activez votre licence pour débloquer toutes les fonctionnalités",
@@ -1513,7 +1492,6 @@
     "deleteAccount": "Supprimer le compte",
     "deleteAccountWarning": "La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.",
     "deleteMyAccount": "Supprimer mon compte",
-    "switchProfile": "Changer de profil",
     "editProfile": "Modifier le profil",
     "updateSuccess": "Profil mis à jour avec succès",
     "updateError": "Erreur lors de la mise à jour du profil",

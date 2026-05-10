@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Bell, Menu, LogOut, User, Settings, ArrowLeftRight, Shield } from 'lucide-react';
+import { Search, Bell, Menu, LogOut, User, Settings, Shield } from 'lucide-react';
 import { useAuthStore, useNotificationStore } from '../../store';
 import { Avatar } from '../ui/Avatar';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
@@ -23,10 +23,6 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({ onMenuClick }) => {
   const handleLogout = async () => {
     await logout();
     navigate('/');
-  };
-
-  const handleSwitchProfile = () => {
-    navigate('/select-profile');
   };
 
   return (
@@ -65,16 +61,6 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({ onMenuClick }) => {
           {/* Offline Indicator */}
           <OfflineIndicator />
 
-          {/* Switch Profile */}
-          <button
-            onClick={handleSwitchProfile}
-            className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-advist-gray900 hover:bg-advist-surface-dark rounded-xl transition-all duration-300"
-            title="Changer de profil"
-          >
-            <ArrowLeftRight size={16} />
-            <span className="hidden lg:inline">Changer</span>
-          </button>
-
           {/* Language Switcher */}
           <LanguageSwitcher showLabel={false} />
 
@@ -86,14 +72,19 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({ onMenuClick }) => {
             >
               <Bell size={20} className="text-advist-gray900" />
               {unreadCount > 0 && (
-                <span className={`absolute top-1.5 right-1.5 w-4 h-4 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}>
+                <span
+                  className={`absolute top-1.5 right-1.5 w-4 h-4 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
+                >
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
             </button>
 
             {showNotifications && (
-              <AdminNotificationDropdown onClose={() => setShowNotifications(false)} planTheme={planTheme} />
+              <AdminNotificationDropdown
+                onClose={() => setShowNotifications(false)}
+                planTheme={planTheme}
+              />
             )}
           </div>
 
@@ -109,7 +100,9 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({ onMenuClick }) => {
                   src={user?.avatar}
                   size="sm"
                 />
-                <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 ${planTheme.bgGradient} rounded-full border-2 border-white flex items-center justify-center shadow-lg`}>
+                <div
+                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 ${planTheme.bgGradient} rounded-full border-2 border-white flex items-center justify-center shadow-lg`}
+                >
                   <Shield size={7} className={planTheme.textOnBg} />
                 </div>
               </div>
@@ -122,7 +115,11 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({ onMenuClick }) => {
             </button>
 
             {showUserMenu && (
-              <AdminDropdownMenu onClose={() => setShowUserMenu(false)} onLogout={handleLogout} planTheme={planTheme} />
+              <AdminDropdownMenu
+                onClose={() => setShowUserMenu(false)}
+                onLogout={handleLogout}
+                planTheme={planTheme}
+              />
             )}
           </div>
         </div>
@@ -141,7 +138,9 @@ const AdminNotificationDropdown: React.FC<{
     <>
       <div className="fixed inset-0" onClick={onClose} />
       <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-advist-border overflow-hidden">
-        <div className={`flex items-center justify-between px-4 py-3 border-b border-advist-border ${planTheme.bgGradient}`}>
+        <div
+          className={`flex items-center justify-between px-4 py-3 border-b border-advist-border ${planTheme.bgGradient}`}
+        >
           <h3 className={`font-semibold ${planTheme.textOnBg}`}>Notifications Admin</h3>
           <button
             onClick={() => markAllAsRead()}
@@ -152,9 +151,7 @@ const AdminNotificationDropdown: React.FC<{
         </div>
         <div className="max-h-96 overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="p-4 text-center text-advist-text-muted">
-              Aucune notification
-            </div>
+            <div className="p-4 text-center text-advist-text-muted">Aucune notification</div>
           ) : (
             notifications.slice(0, 5).map((notif) => (
               <div
@@ -188,12 +185,7 @@ const AdminDropdownMenu: React.FC<{
   onClose: () => void;
   onLogout: () => void;
   planTheme: ReturnType<typeof usePlanTheme>['theme'];
-}> = ({
-  onClose,
-  onLogout,
-  planTheme,
-}) => {
-  const navigate = useNavigate();
+}> = ({ onClose, onLogout, planTheme }) => {
   const { user } = useAuthStore();
 
   return (
@@ -227,16 +219,6 @@ const AdminDropdownMenu: React.FC<{
             <Settings size={18} />
             <span>Paramètres</span>
           </Link>
-          <button
-            onClick={() => {
-              onClose();
-              navigate('/select-profile');
-            }}
-            className="flex items-center gap-3 w-full px-4 py-2.5 text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900 transition-all duration-300"
-          >
-            <ArrowLeftRight size={18} />
-            <span>Changer de profil</span>
-          </button>
         </div>
         <div className="border-t border-advist-border py-1">
           <button

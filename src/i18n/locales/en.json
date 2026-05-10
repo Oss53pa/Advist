@@ -284,27 +284,6 @@
         ]
       }
     },
-    "profileSelect": {
-      "demoAccess": "Demo access",
-      "chooseProfile": "Choose your profile",
-      "selectAccessType": "Select the access type that matches your role to access the appropriate interface",
-      "user": "User",
-      "userDescription": "Access to document management and validation features",
-      "userFeature1": "View my documents",
-      "userFeature2": "Submit documents",
-      "userFeature3": "Validate and sign",
-      "userFeature4": "Track my workflows",
-      "admin": "Administrator",
-      "adminDescription": "Full access with user management and configurations",
-      "adminFeature1": "Manage users",
-      "adminFeature2": "Configure workflows",
-      "adminFeature3": "View audits",
-      "adminFeature4": "Advanced settings",
-      "access": "Access",
-      "noAccount": "Don't have an account?",
-      "createAccount": "Create an account",
-      "backToHome": "Back to home"
-    },
     "activateLicense": {
       "title": "Enterprise Activation",
       "subtitle": "Activate your license to unlock all features",
@@ -1365,7 +1344,6 @@
     "deleteAccount": "Delete account",
     "deleteAccountWarning": "Deleting your account is irreversible. All your data will be permanently deleted.",
     "deleteMyAccount": "Delete my account",
-    "switchProfile": "Switch profile",
     "editProfile": "Edit profile",
     "updateSuccess": "Profile updated successfully",
     "updateError": "Error updating profile",

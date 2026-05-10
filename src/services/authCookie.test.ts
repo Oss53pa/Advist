@@ -21,8 +21,10 @@ const createChainedQuery = () => {
   const chain: Record<string, unknown> = {};
   chain.select = vi.fn(() => chain);
   chain.eq = vi.fn(() => chain);
+  chain.order = vi.fn(() => chain);
   chain.limit = vi.fn(() => chain);
   chain.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+  chain.maybeSingle = vi.fn(() => Promise.resolve({ data: null, error: null }));
   return chain;
 };
 const mockFrom = vi.fn(() => createChainedQuery());

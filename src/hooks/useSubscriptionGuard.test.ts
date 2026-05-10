@@ -238,7 +238,6 @@ describe('useSubscriptionGuard', () => {
           name: 'Local Org',
           slug: 'local-org',
           is_active: true,
-          subscription_plan: 'business',
           quotas: { max_users: 50, current_users: 1 },
         },
       },

@@ -1,8 +1,17 @@
 /**
  * Edge Function: atlas-sso
- * Receives a JWT from Atlas Studio portal, validates it, and creates/finds
- * a local Supabase user + profile + organization. Returns a magic link
- * token_hash so the frontend can establish a session via verifyOtp().
+ *
+ * Receives a JWT from Atlas Studio portal, validates it, ensures the local
+ * Supabase auth user + profile exist, and returns a magic link token_hash so
+ * the frontend can establish a session via verifyOtp().
+ *
+ * Source of truth (Atlas Studio Suite):
+ *  - Roles: licence_seats.role (app_super_admin / app_admin / editor / viewer)
+ *  - Subscription / plan: Atlas Studio licences (managed in atlas-studio.org)
+ *
+ * This function MUST NOT create or modify roles, subscriptions, or plans
+ * locally. The buyer of the application in Atlas Studio is automatically
+ * provisioned as app_super_admin via licence_seats — Advist only reads that.
  *
  * Deploy: supabase functions deploy atlas-sso
  */
@@ -39,8 +48,16 @@ Deno.serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // 2. Find or create user in Supabase Auth
+    // 2. Find or create user in Supabase Auth.
+    //    user_metadata: identity only (full_name, atlas_studio_id).
+    //    app_metadata: server-authoritative cache of the plan tier from the
+    //    verified JWT — used by the frontend as a non-critical UI hint.
+    //    The authoritative plan source is public.licences.plan_id → plans.name.
+    //    If claims.plan is missing the cache key is simply omitted, and the
+    //    frontend falls back to querying licences.
     let userId: string;
+
+    const planMetadata = claims.plan ? { advist_plan: claims.plan } : {};
 
     const { data: existingUsers } = await supabase.auth.admin.listUsers();
     const existingUser = existingUsers?.users?.find((u) => u.email === claims.email);
@@ -51,7 +68,10 @@ Deno.serve(async (req) => {
         user_metadata: {
           full_name: claims.fullName,
           atlas_studio_id: claims.userId,
-          atlas_plan: claims.plan,
+        },
+        app_metadata: {
+          ...(existingUser.app_metadata ?? {}),
+          ...planMetadata,
         },
       });
     } else {
@@ -63,8 +83,8 @@ Deno.serve(async (req) => {
         user_metadata: {
           full_name: claims.fullName,
           atlas_studio_id: claims.userId,
-          atlas_plan: claims.plan,
         },
+        app_metadata: planMetadata,
       });
 
       if (createError || !newUser.user) {
@@ -74,55 +94,76 @@ Deno.serve(async (req) => {
       userId = newUser.user.id;
     }
 
-    // 3. Find or create profile + organization
+    // 3. Look up the user's active Advist seat (provisioned by Atlas Studio
+    //    before the SSO redirect). The seat carries the tenant_id which we
+    //    use as the local organization_id so Advist's RLS / data scoping
+    //    aligns with Atlas Studio Suite tenancy.
+    const { data: advistSeat } = await supabase
+      .from('licence_seats')
+      .select('id, tenant_id, invitation_accepted_at, licences!inner(products!inner(slug))')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .eq('licences.products.slug', 'advist')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    // 3.b Fallback: maybe the seat was provisioned by email but not yet
+    //     bound to a user_id (invitation pending). Bind it now.
+    let seatTenantId: string | null = (advistSeat?.tenant_id as string | null) ?? null;
+    if (!advistSeat) {
+      const { data: pendingSeat } = await supabase
+        .from('licence_seats')
+        .select('id, tenant_id, licences!inner(products!inner(slug))')
+        .eq('email', claims.email)
+        .eq('status', 'active')
+        .eq('licences.products.slug', 'advist')
+        .is('user_id', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (pendingSeat) {
+        await supabase
+          .from('licence_seats')
+          .update({
+            user_id: userId,
+            invitation_accepted_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', pendingSeat.id as string);
+        seatTenantId = pendingSeat.tenant_id as string;
+      }
+    } else if (!advistSeat.invitation_accepted_at) {
+      await supabase
+        .from('licence_seats')
+        .update({
+          invitation_accepted_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', advistSeat.id as string);
+    }
+
+    // 4. Ensure a profile row exists, with organization_id mirroring the
+    //    Atlas Studio tenant. Advist data is scoped by organization_id, so
+    //    this mirroring is required for the tenant to see their own data.
     const { data: existingProfile } = await supabase
       .from('profiles')
       .select('id, organization_id')
       .eq('id', userId)
       .single();
 
-    let organizationId: string | null = existingProfile?.organization_id || null;
-
     if (!existingProfile) {
-      // 3a. Create organization for new user
-      const orgName = `${claims.fullName}`;
-      const orgSlug =
-        claims.email
-          .split('@')[0]
-          .replace(/[^a-z0-9-]/gi, '-')
-          .toLowerCase() +
-        '-' +
-        Date.now().toString(36);
-
-      const { data: org, error: orgError } = await supabase
-        .from('organizations')
-        .insert({
-          name: orgName,
-          slug: orgSlug,
-          email: claims.email,
-          is_active: true,
-        })
-        .select('id')
-        .single();
-
-      if (orgError) {
-        console.error('Create org error:', orgError);
-        return errorResponse("Impossible de créer l'organisation", 500, origin);
-      }
-      organizationId = org.id;
-
-      // 3b. Create profile
       const nameParts = claims.fullName.split(' ');
       const firstName = nameParts[0] || claims.fullName;
       const lastName = nameParts.slice(1).join(' ') || '';
 
       const { error: profileError } = await supabase.from('profiles').insert({
         id: userId,
-        organization_id: organizationId,
         email: claims.email,
         first_name: firstName,
         last_name: lastName,
         display_name: claims.fullName,
+        organization_id: seatTenantId,
         is_active: true,
       });
 
@@ -130,56 +171,7 @@ Deno.serve(async (req) => {
         console.error('Create profile error:', profileError);
         return errorResponse('Impossible de créer le profil', 500, origin);
       }
-
-      // 3c. Assign admin role
-      const { data: adminRole } = await supabase
-        .from('roles')
-        .select('id')
-        .eq('organization_id', organizationId)
-        .eq('name', 'admin')
-        .single();
-
-      if (!adminRole) {
-        // Create default admin role for this organization
-        const { data: newRole } = await supabase
-          .from('roles')
-          .insert({
-            organization_id: organizationId,
-            name: 'admin',
-            display_name: 'Administrateur',
-            description: "Accès complet à l'organisation",
-            permissions: JSON.stringify([
-              'documents:*',
-              'workflows:*',
-              'signatures:*',
-              'users:*',
-              'settings:*',
-              'billing:*',
-            ]),
-            is_system: true,
-            is_active: true,
-          })
-          .select('id')
-          .single();
-
-        if (newRole) {
-          await supabase.from('user_roles').insert({
-            user_id: userId,
-            role_id: newRole.id,
-            organization_id: organizationId,
-            is_active: true,
-          });
-        }
-      } else {
-        await supabase.from('user_roles').insert({
-          user_id: userId,
-          role_id: adminRole.id,
-          organization_id: organizationId,
-          is_active: true,
-        });
-      }
     } else {
-      // 3d. Update existing profile
       await supabase
         .from('profiles')
         .update({
@@ -187,6 +179,7 @@ Deno.serve(async (req) => {
           first_name: claims.fullName.split(' ')[0] || claims.fullName,
           last_name: claims.fullName.split(' ').slice(1).join(' ') || '',
           display_name: claims.fullName,
+          organization_id: seatTenantId ?? existingProfile.organization_id,
           is_active: true,
           updated_at: new Date().toISOString(),
         })

@@ -1,6 +1,7 @@
-import { Shield, UserCheck, Users, User, Crown } from 'lucide-react';
+import { Shield, UserCheck, User, Crown } from 'lucide-react';
 
-export type RoleType = 'super_admin' | 'admin' | 'manager' | 'validator' | 'user' | 'external';
+// Atlas Studio Suite seat roles (source of truth: licence_seats.role).
+export type RoleType = 'app_super_admin' | 'app_admin' | 'editor' | 'viewer';
 
 export interface RoleConfig {
   label: string;
@@ -10,46 +11,34 @@ export interface RoleConfig {
 }
 
 export const ROLE_CONFIG: Record<RoleType, RoleConfig> = {
-  super_admin: {
-    label: 'Super Admin',
+  app_super_admin: {
+    label: 'Super-admin',
     color: 'red',
     icon: Crown,
-    description: 'Acces complet a toutes les organisations',
+    description: "Acces total, gere l'abonnement et l'equipe",
   },
-  admin: {
-    label: 'Administrateur',
-    color: 'red',
-    icon: Shield,
-    description: 'Gestion complete de l\'organisation',
-  },
-  manager: {
-    label: 'Manager',
+  app_admin: {
+    label: 'Admin',
     color: 'purple',
-    icon: UserCheck,
-    description: 'Gestion des equipes et workflows',
+    icon: Shield,
+    description: "Gere l'equipe et les parametres applicatifs",
   },
-  validator: {
-    label: 'Validateur',
+  editor: {
+    label: 'Editeur',
     color: 'blue',
     icon: UserCheck,
-    description: 'Validation des documents',
+    description: 'Peut creer et modifier les donnees',
   },
-  user: {
-    label: 'Utilisateur',
+  viewer: {
+    label: 'Lecteur',
     color: 'gray',
     icon: User,
-    description: 'Acces standard',
-  },
-  external: {
-    label: 'Externe',
-    color: 'yellow',
-    icon: Users,
-    description: 'Acces limite aux documents partages',
+    description: 'Consultation uniquement',
   },
 };
 
 export const getRoleConfig = (role: RoleType): RoleConfig => {
-  return ROLE_CONFIG[role] || ROLE_CONFIG.user;
+  return ROLE_CONFIG[role] || ROLE_CONFIG.viewer;
 };
 
 export const ROLE_OPTIONS = Object.entries(ROLE_CONFIG).map(([value, config]) => ({

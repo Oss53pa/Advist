@@ -260,27 +260,6 @@
         ]
       }
     },
-    "profileSelect": {
-      "demoAccess": "Acceso demo",
-      "chooseProfile": "Elige tu perfil",
-      "selectAccessType": "Selecciona el tipo de acceso que corresponde a tu rol para acceder a la interfaz apropiada",
-      "user": "Usuario",
-      "userDescription": "Acceso a funciones de gestion y validacion de documentos",
-      "userFeature1": "Ver mis documentos",
-      "userFeature2": "Enviar documentos",
-      "userFeature3": "Validar y firmar",
-      "userFeature4": "Seguir mis flujos",
-      "admin": "Administrador",
-      "adminDescription": "Acceso completo con gestion de usuarios y configuraciones",
-      "adminFeature1": "Gestionar usuarios",
-      "adminFeature2": "Configurar flujos",
-      "adminFeature3": "Ver auditorias",
-      "adminFeature4": "Configuracion avanzada",
-      "access": "Acceder",
-      "noAccount": "No tienes una cuenta?",
-      "createAccount": "Crear una cuenta",
-      "backToHome": "Volver al inicio"
-    },
     "activateLicense": {
       "title": "Activacion Enterprise",
       "subtitle": "Activa tu licencia para desbloquear todas las funciones",
@@ -840,7 +819,6 @@
     "deleteAccount": "Eliminar cuenta",
     "deleteAccountWarning": "Eliminar tu cuenta es irreversible. Todos tus datos seran eliminados permanentemente.",
     "deleteMyAccount": "Eliminar mi cuenta",
-    "switchProfile": "Cambiar perfil",
     "editProfile": "Editar perfil",
     "updateSuccess": "Perfil actualizado exitosamente",
     "updateError": "Error al actualizar el perfil",

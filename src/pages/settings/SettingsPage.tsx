@@ -51,6 +51,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
 import { useAuthStore } from '../../store';
+import { isAdminUser } from '../../types';
 import { OfflineManager } from '../../components/offline';
 import { ThemeCustomizer } from '../../components/theme';
 import { NotificationPreferences } from '../../components/notifications';
@@ -141,7 +142,7 @@ export const SettingsPage: React.FC = () => {
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  const isOrgAdmin = user?.is_org_admin ?? false;
+  const isOrgAdmin = isAdminUser(user);
 
   const tabs = [
     {
@@ -978,14 +979,14 @@ const AccountsManagement: React.FC = () => {
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
-  // Mock users
+  // Mock users — roles aligned with Atlas Studio Suite (licence_seats.role)
   const users = [
     {
       id: 1,
       first_name: 'Jean',
       last_name: 'Dupont',
       email: 'jean@example.com',
-      role: 'admin',
+      role: 'app_super_admin',
       is_active: true,
       last_login: '2024-11-28T10:00:00Z',
     },
@@ -994,7 +995,7 @@ const AccountsManagement: React.FC = () => {
       first_name: 'Marie',
       last_name: 'Martin',
       email: 'marie@example.com',
-      role: 'manager',
+      role: 'app_admin',
       is_active: true,
       last_login: '2024-11-27T15:30:00Z',
     },
@@ -1003,7 +1004,7 @@ const AccountsManagement: React.FC = () => {
       first_name: 'Pierre',
       last_name: 'Durand',
       email: 'pierre@example.com',
-      role: 'user',
+      role: 'editor',
       is_active: true,
       last_login: '2024-11-25T09:00:00Z',
     },
@@ -1012,7 +1013,7 @@ const AccountsManagement: React.FC = () => {
       first_name: 'Sophie',
       last_name: 'Laurent',
       email: 'sophie@example.com',
-      role: 'user',
+      role: 'viewer',
       is_active: false,
       last_login: '2024-10-15T11:00:00Z',
     },
@@ -1022,23 +1023,27 @@ const AccountsManagement: React.FC = () => {
     {
       id: 1,
       email: 'nouveau@example.com',
-      role: 'user',
+      role: 'editor',
       invited_at: '2024-11-26T10:00:00Z',
       expires_at: '2024-12-03T10:00:00Z',
     },
   ];
 
   const roleLabels: Record<string, { label: string; color: string }> = {
-    admin: {
-      label: t('settings.roles.admin', 'Administrateur'),
+    app_super_admin: {
+      label: t('settings.roles.app_super_admin', 'Super-admin'),
       color: 'bg-advist-surface-dark text-advist-gray900',
     },
-    manager: {
-      label: t('settings.roles.manager', 'Manager'),
+    app_admin: {
+      label: t('settings.roles.app_admin', 'Admin'),
       color: 'bg-advist-gold-light text-advist-gray900',
     },
-    user: {
-      label: t('settings.roles.user', 'Utilisateur'),
+    editor: {
+      label: t('settings.roles.editor', 'Éditeur'),
+      color: 'bg-advist-surface-dark text-advist-gray900',
+    },
+    viewer: {
+      label: t('settings.roles.viewer', 'Lecteur'),
       color: 'bg-advist-surface-dark text-advist-gray900',
     },
   };
@@ -1192,9 +1197,9 @@ const AccountsManagement: React.FC = () => {
               {t('settings.role', 'Rôle')}
             </label>
             <select className="w-full px-4 py-2 border border-advist-blue-light rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold">
-              <option value="user">{t('settings.roles.user', 'Utilisateur')}</option>
-              <option value="manager">{t('settings.roles.manager', 'Manager')}</option>
-              <option value="admin">{t('settings.roles.admin', 'Administrateur')}</option>
+              <option value="viewer">{t('settings.roles.viewer', 'Lecteur')}</option>
+              <option value="editor">{t('settings.roles.editor', 'Éditeur')}</option>
+              <option value="app_admin">{t('settings.roles.app_admin', 'Admin')}</option>
             </select>
           </div>
           <div className="flex justify-end gap-3 pt-4">

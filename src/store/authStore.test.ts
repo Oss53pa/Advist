@@ -28,7 +28,9 @@ vi.mock('../services/authCookie', () => ({
 vi.mock('../lib/supabase', () => ({
   supabase: {
     auth: {
-      getSession: vi.fn(() => Promise.resolve({ data: { session: { access_token: 'test-token' } } })),
+      getSession: vi.fn(() =>
+        Promise.resolve({ data: { session: { access_token: 'test-token' } } })
+      ),
       onAuthStateChange: vi.fn(() => ({
         data: { subscription: { unsubscribe: vi.fn() } },
       })),
@@ -76,11 +78,10 @@ describe('useAuthStore', () => {
         email: 'test@example.com',
         first_name: 'Test',
         last_name: 'User',
-        role: 'admin',
+        role: 'app_admin' as const,
         organization: null,
         is_active: true,
-        is_org_admin: false,
-        is_super_admin: false,
+        is_atlas_super_admin: false,
         language: 'fr',
         timezone: 'Africa/Abidjan',
         created_at: '2024-01-01T00:00:00Z',

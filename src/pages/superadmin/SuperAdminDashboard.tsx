@@ -28,7 +28,6 @@ import {
   Zap,
 } from 'lucide-react';
 import { Button, Modal } from '../../components/ui';
-import { PaymentNotificationsWidget } from '../../components/superadmin';
 
 // Mock data for tenants/organizations
 const mockTenants = [
@@ -429,9 +428,6 @@ export const SuperAdminDashboard: React.FC = () => {
               ))}
             </div>
           </div>
-
-          {/* Payment Notifications Widget */}
-          <PaymentNotificationsWidget compact />
 
           {/* Recent Alerts */}
           <div className="bg-advist-dark rounded-xl p-5 text-white">

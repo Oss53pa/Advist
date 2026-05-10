@@ -3,7 +3,6 @@
  * Affiché quand le trial arrive à expiration ou quand les quotas sont presque atteints
  */
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Clock,
   AlertTriangle,
@@ -14,10 +13,12 @@ import {
   Star,
   Check,
   CreditCard,
-  Key,
 } from 'lucide-react';
 import { useTenantStore, getPlanInfo } from '../../stores/tenantStore';
 import { Button } from '../ui';
+
+// Atlas Studio owns billing/subscription. All upgrade flows go to the portal.
+const ATLAS_STUDIO_PRICING_URL = 'https://atlas-studio.org/applications/advist';
 
 interface UpgradePromptProps {
   variant?: 'banner' | 'modal' | 'inline';
@@ -85,7 +86,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to={`/checkout?plan=${recommendedPlan}`}>
+            <a href={ATLAS_STUDIO_PRICING_URL} target="_blank" rel="noopener noreferrer">
               <Button
                 size="sm"
                 className={
@@ -97,7 +98,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
                 <Zap size={14} className="mr-1" />
                 Passer à {planInfo.name}
               </Button>
-            </Link>
+            </a>
             {dismissable && (
               <button onClick={handleDismiss} className="p-1 hover:bg-white/10 rounded">
                 <X size={18} />
@@ -132,17 +133,17 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
                 : 'Passez au plan supérieur pour débloquer plus de capacité.'}
             </p>
             <div className="flex gap-2 mt-3">
-              <Link to={`/checkout?plan=${recommendedPlan}`}>
+              <a href={ATLAS_STUDIO_PRICING_URL} target="_blank" rel="noopener noreferrer">
                 <Button size="sm">
                   Passer à {planInfo.name}
                   <ArrowRight size={14} className="ml-1" />
                 </Button>
-              </Link>
-              <Link to="/pricing">
+              </a>
+              <a href={ATLAS_STUDIO_PRICING_URL} target="_blank" rel="noopener noreferrer">
                 <Button variant="ghost" size="sm">
                   Voir les plans
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
           {dismissable && (
@@ -216,36 +217,30 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
             ))}
           </ul>
 
-          {/* Actions */}
+          {/* Actions — all subscription flows go through Atlas Studio */}
           <div className="space-y-3">
-            {recommendedPlan === 'enterprise' ? (
-              <>
-                <Link to="/activate-license" className="block">
-                  <Button className="w-full" size="lg">
-                    <Key size={18} className="mr-2" />
-                    Activer une licence Enterprise
-                  </Button>
-                </Link>
-                <Button variant="outline" className="w-full" size="lg">
-                  Contacter les ventes
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to={`/checkout?plan=${recommendedPlan}`} className="block">
-                  <Button className="w-full" size="lg">
-                    <CreditCard size={18} className="mr-2" />
-                    Souscrire à {planInfo.name}
-                    <ArrowRight size={18} className="ml-2" />
-                  </Button>
-                </Link>
-                <Link to="/pricing" className="block">
-                  <Button variant="outline" className="w-full" size="lg">
-                    Comparer tous les plans
-                  </Button>
-                </Link>
-              </>
-            )}
+            <a
+              href={ATLAS_STUDIO_PRICING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <Button className="w-full" size="lg">
+                <CreditCard size={18} className="mr-2" />
+                Souscrire à {planInfo.name}
+                <ArrowRight size={18} className="ml-2" />
+              </Button>
+            </a>
+            <a
+              href={ATLAS_STUDIO_PRICING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <Button variant="outline" className="w-full" size="lg">
+                Comparer tous les plans
+              </Button>
+            </a>
           </div>
 
           {isTrialEnding && (
@@ -326,9 +321,14 @@ export const QuotaWarning: React.FC<QuotaWarningProps> = ({
           ? `${quotaName} : limite atteinte (${current}/${max}${unit})`
           : `${quotaName} : ${percentage}% utilisé (${current}/${max}${unit})`}
       </span>
-      <Link to="/pricing" className="ml-auto font-medium hover:underline">
+      <a
+        href={ATLAS_STUDIO_PRICING_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="ml-auto font-medium hover:underline"
+      >
         Augmenter →
-      </Link>
+      </a>
     </div>
   );
 };

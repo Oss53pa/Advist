@@ -334,7 +334,7 @@ export const BlogPage: React.FC = () => {
               </Link>
             </nav>
             <div className="flex items-center gap-3">
-              <Link to="/select-profile">
+              <Link to="/login">
                 <button className="px-4 py-2 text-sm font-medium text-primary-700 hover:text-primary-900 transition-colors">
                   Connexion
                 </button>

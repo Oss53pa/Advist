@@ -59,7 +59,9 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
     [isAuthenticated, user, setTenant]
   );
 
-  // Create local tenant as fallback
+  // Fallback tenant when the Atlas Studio licence read fails (network/transient).
+  // Plan defaults to 'business' since plan info is owned by Atlas Studio and
+  // is not stored locally. Real values are populated by fetchSubscriptionFromAPI.
   const createLocalTenant = useCallback(() => {
     if (!user) return;
 
@@ -69,24 +71,21 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
         id: org.id,
         name: org.name,
         slug: org.slug,
-        plan: org.subscription_plan || 'business',
+        plan: 'business',
         status: org.is_active ? 'active' : 'suspended',
         quotas: {
-          maxUsers: org.quotas?.max_users || (org.subscription_plan === 'enterprise' ? -1 : 5),
+          maxUsers: org.quotas?.max_users || 5,
           currentUsers: org.quotas?.current_users || 1,
-          maxStorage:
-            org.quotas?.max_storage_gb || (org.subscription_plan === 'enterprise' ? -1 : 10),
+          maxStorage: org.quotas?.max_storage_gb || 10,
           currentStorage: org.quotas?.current_storage_gb || 0,
-          maxDocuments:
-            org.quotas?.max_documents || (org.subscription_plan === 'enterprise' ? -1 : 50),
+          maxDocuments: org.quotas?.max_documents || 50,
           currentDocuments: org.quotas?.current_documents || 0,
-          maxWorkflows:
-            org.quotas?.max_active_workflows || (org.subscription_plan === 'enterprise' ? -1 : 10),
+          maxWorkflows: org.quotas?.max_active_workflows || 10,
           currentWorkflows: org.quotas?.current_active_workflows || 0,
-          maxSignaturesMonth: org.subscription_plan === 'enterprise' ? -1 : 50,
+          maxSignaturesMonth: 50,
           currentSignaturesMonth: 0,
         },
-        features: mapPlanToFeatures(org.subscription_plan || 'business', org.ohada_compliant),
+        features: mapPlanToFeatures('business', org.ohada_compliant),
         settings: {
           language: 'fr',
           timezone: 'Africa/Abidjan',

@@ -31,6 +31,10 @@ import {
 } from 'lucide-react';
 import { Button, Modal, Input, Badge } from '../ui';
 
+// Atlas Studio Suite seat roles — fixed, not configurable per organization.
+// Source of truth: licence_seats.role (Atlas Studio).
+const ATLAS_STUDIO_SEAT_ROLES = ['app_super_admin', 'app_admin', 'editor', 'viewer'] as const;
+
 export interface ExternalAssignee {
   id: string;
   email: string;
@@ -148,24 +152,24 @@ export const WorkflowEditor: React.FC<WorkflowEditorProps> = ({
       if (!profile) return;
       const orgId = profile.organization_id;
 
-      const [usersRes, rolesRes, deptsRes] = await Promise.all([
+      const [usersRes, deptsRes] = await Promise.all([
         supabase
           .from('profiles')
-          .select('id, first_name, last_name, email, role')
+          .select('id, first_name, last_name, email')
           .eq('organization_id', orgId)
           .eq('is_active', true),
-        supabase.from('roles').select('id, name').eq('organization_id', orgId),
         supabase.from('departments').select('id, name').eq('organization_id', orgId),
       ]);
       setAvailableUsers(
         (usersRes.data || []).map((u) => ({
           id: Number(u.id) || u.id,
           name: `${u.first_name} ${u.last_name}`,
-          role: u.role || '',
+          role: '',
         })) as Array<{ id: number; name: string; role: string }>
       );
+      // Atlas Studio Suite roles (licence_seats.role) — fixed, not org-defined.
       setAvailableRoles(
-        (rolesRes.data || []).map((r) => ({ id: Number(r.id) || r.id, name: r.name })) as Array<{
+        ATLAS_STUDIO_SEAT_ROLES.map((name, i) => ({ id: i + 1, name })) as Array<{
           id: number;
           name: string;
         }>

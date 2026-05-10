@@ -104,9 +104,10 @@ export default function TeamSettingsPage() {
 
       const { data: mySeat, error: seatErr } = await supabase
         .from('licence_seats')
-        .select('licence_id, tenant_id, role')
+        .select('licence_id, tenant_id, role, licences!inner(products!inner(slug))')
         .eq('user_id', user.id)
         .eq('status', 'active')
+        .eq('licences.products.slug', 'advist')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();

@@ -18,7 +18,6 @@ import {
   ChevronDown,
   LogOut,
   User,
-  ArrowLeftRight,
   _Sparkles,
   Shield,
   CreditCard,
@@ -78,7 +77,7 @@ const getUserNavItems = (t: (key: string) => string): NavItem[] => [
 const getAdminNavItems = (t: (key: string) => string): NavItem[] => [
   { id: 'dashboard', label: t('nav.dashboard'), icon: LayoutDashboard, path: '/admin' },
   { id: 'projects', label: t('nav.projects'), icon: Folder, path: '/admin/projects' },
-  { id: 'users', label: t('nav.users'), icon: Users, path: '/admin/users' },
+  { id: 'users', label: t('nav.users'), icon: Users, path: '/admin/settings/team' },
   {
     id: 'organization',
     label: t('nav.organization'),
@@ -110,10 +109,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
   const handleLogout = async () => {
     await logout();
     navigate('/');
-  };
-
-  const handleSwitchProfile = () => {
-    navigate('/select-profile');
   };
 
   const isActive = (path: string) => {
@@ -264,15 +259,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
               )}
             </div>
 
-            {/* Switch Profile - Hidden on small mobile */}
-            <button
-              onClick={handleSwitchProfile}
-              className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-surface-dark rounded-lg transition-colors text-sm"
-            >
-              <ArrowLeftRight size={14} />
-              <span className="hidden lg:inline">{t('common.switch')}</span>
-            </button>
-
             {/* Help / Support button — dedicated support for Enterprise, email link otherwise */}
             {hasDedicatedSupport ? (
               <button
@@ -411,20 +397,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                   </NavLink>
                 );
               })}
-
-              {/* Mobile-only items */}
-              <div className="border-t border-advist-border mt-4 pt-4 space-y-1">
-                <button
-                  onClick={() => {
-                    setShowMobileMenu(false);
-                    handleSwitchProfile();
-                  }}
-                  className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-surface-dark transition-all"
-                >
-                  <ArrowLeftRight size={20} />
-                  <span>{t('profile.switchProfile')}</span>
-                </button>
-              </div>
             </nav>
           </div>
         </>
@@ -496,7 +468,6 @@ const UserMenuDropdown: React.FC<{
   onLogout: () => void;
 }> = ({ variant, onClose, onLogout }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { user } = useAuthStore();
   const basePath = variant === 'user' ? '/user' : '/admin';
 
@@ -543,16 +514,6 @@ const UserMenuDropdown: React.FC<{
               <span className="text-sm">{t('nav.settings')}</span>
             </NavLink>
           )}
-          <button
-            onClick={() => {
-              onClose();
-              navigate('/select-profile');
-            }}
-            className="flex items-center gap-3 w-full px-4 py-2.5 text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900 transition-colors"
-          >
-            <ArrowLeftRight size={16} />
-            <span className="text-sm">{t('profile.switchProfile')}</span>
-          </button>
         </div>
         <div className="border-t border-advist-border py-1">
           <button

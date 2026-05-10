@@ -114,7 +114,7 @@ export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
     localStorage.setItem('demo_mode', 'true');
     localStorage.setItem('demo_started', new Date().toISOString());
     onClose();
-    navigate('/select-profile');
+    navigate('/login');
   };
 
   const handleRequestDemo = async (e: React.FormEvent) => {

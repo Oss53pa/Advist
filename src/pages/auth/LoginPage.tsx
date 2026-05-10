@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, Sparkles, ExternalLink } from 'lucide-react';
 import { Button, Input, Card } from '../../components/ui';
 import { useAuthStore } from '../../store';
+import { getPostLoginRoute } from '../../services/postLoginRoute';
 
 const ATLAS_STUDIO_URL = 'https://atlas-studio.org';
 
@@ -37,7 +38,8 @@ export const LoginPage: React.FC = () => {
   const onSubmit = async (data: LoginForm) => {
     try {
       await login(data.email, data.password);
-      navigate('/user');
+      const target = await getPostLoginRoute();
+      navigate(target);
     } catch {
       // Error is handled by the store
     }

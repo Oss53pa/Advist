@@ -48,7 +48,7 @@ const adminNavItems: NavItem[] = [
     id: 'users',
     label: 'Utilisateurs',
     icon: Users,
-    path: '/admin/users',
+    path: '/admin/settings/team',
     hasAdd: true,
   },
   {

@@ -6,7 +6,7 @@
 
 // Critical pages loaded immediately (not lazy)
 export { LandingPage } from './LandingPage';
-export { LoginPage, RegisterPage, ProfileSelectPage } from './auth';
+export { LoginPage } from './auth';
 
 // Legacy exports (kept for backwards compatibility if needed elsewhere)
 export { Dashboard } from './Dashboard';

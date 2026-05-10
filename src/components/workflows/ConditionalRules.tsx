@@ -198,16 +198,22 @@ export const ConditionalRules: React.FC<ConditionalRulesProps> = ({
       if (!profile) return;
       const orgId = profile.organization_id;
 
-      const [usersRes, rolesRes, docTypesRes, deptsRes] = await Promise.all([
+      const [usersRes, docTypesRes, deptsRes] = await Promise.all([
         supabase
           .from('profiles')
           .select('id, first_name, last_name')
           .eq('organization_id', orgId)
           .eq('is_active', true),
-        supabase.from('roles').select('id, name').eq('organization_id', orgId),
         supabase.from('document_types').select('id, name').eq('organization_id', orgId),
         supabase.from('departments').select('id, name').eq('organization_id', orgId),
       ]);
+      // Atlas Studio Suite seat roles — fixed, source of truth: licence_seats.role
+      const rolesRes = {
+        data: ['app_super_admin', 'app_admin', 'editor', 'viewer'].map((name, i) => ({
+          id: i + 1,
+          name,
+        })),
+      };
       setAvailableUsers(
         (usersRes.data || []).map((u) => ({
           id: Number(u.id) || u.id,

@@ -3,12 +3,11 @@
  * ou quand l'abonnement n'est plus valide
  */
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Clock,
   AlertTriangle,
   CreditCard,
-  Key,
   Check,
   ArrowRight,
   Shield,
@@ -22,12 +21,14 @@ import {
 import { useTenantStore, getPlanInfo, PlanType } from '../../stores/tenantStore';
 import { Button } from '../ui';
 
+// Atlas Studio owns billing/subscription. All upgrade flows go to the portal.
+const ATLAS_STUDIO_PRICING_URL = 'https://atlas-studio.org/applications/advist';
+
 interface SubscriptionBlockerProps {
   reason: 'trial_expired' | 'subscription_expired' | 'suspended' | 'cancelled' | 'no_tenant';
 }
 
 export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason }) => {
-  const navigate = useNavigate();
   const { currentTenant } = useTenantStore();
   const [selectedPlan, setSelectedPlan] = useState<PlanType>('business');
 
@@ -120,7 +121,6 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
               {plans.map((plan) => {
                 const info = getPlanInfo(plan);
                 const isSelected = selectedPlan === plan;
-                const isEnterprise = plan === 'enterprise';
 
                 return (
                   <button
@@ -159,15 +159,6 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
                       ))}
                     </ul>
 
-                    {isEnterprise && (
-                      <div className="mt-4 p-3 bg-primary-50 rounded-lg">
-                        <div className="flex items-center gap-2 text-primary-800 text-sm font-medium">
-                          <Key size={14} />
-                          Nécessite une clé de licence
-                        </div>
-                      </div>
-                    )}
-
                     {isSelected && (
                       <div className="absolute top-4 right-4 w-6 h-6 bg-primary-900 rounded-full flex items-center justify-center">
                         <Check size={14} className="text-white" />
@@ -178,35 +169,20 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
               })}
             </div>
 
-            {/* Action buttons */}
+            {/* Action buttons — all flows go through Atlas Studio */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {selectedPlan === 'enterprise' ? (
-                <>
-                  <Link to="/activate-license">
-                    <Button size="lg" className="w-full sm:w-auto">
-                      <Key size={18} className="mr-2" />
-                      Activer une licence
-                    </Button>
-                  </Link>
-                  <Button variant="outline" size="lg">
-                    <Phone size={18} className="mr-2" />
-                    Contacter les ventes
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Link to={`/checkout?plan=${selectedPlan}`}>
-                    <Button size="lg" className="w-full sm:w-auto">
-                      <CreditCard size={18} className="mr-2" />
-                      Souscrire maintenant
-                      <ArrowRight size={18} className="ml-2" />
-                    </Button>
-                  </Link>
-                  <Button variant="outline" size="lg" onClick={() => navigate('/pricing')}>
-                    Comparer les plans
-                  </Button>
-                </>
-              )}
+              <a href={ATLAS_STUDIO_PRICING_URL} target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="w-full sm:w-auto">
+                  <CreditCard size={18} className="mr-2" />
+                  Souscrire maintenant
+                  <ArrowRight size={18} className="ml-2" />
+                </Button>
+              </a>
+              <a href={ATLAS_STUDIO_PRICING_URL} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="lg">
+                  Comparer les plans
+                </Button>
+              </a>
             </div>
           </div>
         )}

@@ -1,9 +1,30 @@
+/**
+ * Atlas Studio Suite SSO JWT verification.
+ *
+ * Atlas Studio portal signs a JWT (HMAC-SHA256) and redirects the user to
+ * `/auth?token=<jwt>`. The atlas-sso Edge Function then calls
+ * `verifyAtlasJWT(token, JWT_SECRET)` to authenticate the inbound user.
+ *
+ * Required claims (Atlas Studio team must include these):
+ *   - userId   : string  Atlas Studio user UUID
+ *   - email    : string  user's email (will become the Supabase auth email)
+ *   - fullName : string  user's full name
+ *   - appId    : string  must equal "advist"
+ *   - plan     : string  current plan slug — used to populate
+ *                        auth.users.app_metadata.advist_plan as a UI hint.
+ *                        Authoritative plan/tier still reads from
+ *                        public.licences.plan_id → plans.name.
+ *   - iat / exp: number  standard JWT timestamps
+ *
+ * If `plan` is missing the SSO flow still succeeds; the frontend simply
+ * doesn't get the cached plan hint and falls back to the licences query.
+ */
 export interface AtlasStudioClaims {
   userId: string;
   email: string;
   fullName: string;
   appId: string;
-  plan: string;
+  plan?: string;
   iat: number;
   exp: number;
 }
@@ -54,7 +75,7 @@ export async function verifyAtlasJWT(token: string, secret: string): Promise<Atl
     throw new Error('Token expiré');
   }
 
-  // Validate required claims
+  // Validate required claims (plan is optional — see header comment)
   if (!claims.email || !claims.userId) {
     throw new Error('Claims obligatoires manquants (email, userId)');
   }

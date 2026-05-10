@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { getPostLoginRoute } from '../../services/postLoginRoute';
 
 type Status = 'loading' | 'error';
 
@@ -53,25 +54,12 @@ export default function ExternalAuthPage() {
         throw new Error(otpError.message);
       }
 
-      // Fetch plan tier from Supabase (server-side source of truth)
-      // Never trust JWT payload for plan tier — it is unverified client-side
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('organization:organizations(plan)')
-            .eq('id', user.id)
-            .single();
+      // Plan/subscription tier is owned by Atlas Studio (licences table).
+      // Advist no longer caches plan locally — useSubscriptionGuard reads it
+      // on demand from the Atlas Studio licences source of truth.
 
-          const plan = (profile?.organization as { plan?: string } | null)?.plan || 'business';
-          localStorage.setItem('advist_plan_tier', plan.toLowerCase());
-        }
-      } catch {
-        // Non-blocking: plan will be resolved on next page load from tenant store
-      }
-
-      navigate('/user', { replace: true });
+      const target = await getPostLoginRoute();
+      navigate(target, { replace: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
       console.error('External auth error:', message);
