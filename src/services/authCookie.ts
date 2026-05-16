@@ -23,6 +23,8 @@ export interface AuthResponse {
     organization?: {
       id: string;
       name: string;
+      slug?: string;
+      plan?: string;
     } | null;
   };
 }
@@ -51,7 +53,9 @@ async function mapSupabaseUser(supabaseUser: SupabaseUser): Promise<AuthResponse
       organization_id,
       organizations (
         id,
-        name
+        name,
+        slug,
+        plan
       )
     `
     )
@@ -67,7 +71,12 @@ async function mapSupabaseUser(supabaseUser: SupabaseUser): Promise<AuthResponse
     .limit(1)
     .single();
 
-  const org = profile?.organizations as { id: string; name: string } | null;
+  const org = profile?.organizations as {
+    id: string;
+    name: string;
+    slug: string | null;
+    plan: string | null;
+  } | null;
 
   return {
     id: supabaseUser.id,
@@ -75,7 +84,14 @@ async function mapSupabaseUser(supabaseUser: SupabaseUser): Promise<AuthResponse
     first_name: profile?.first_name || supabaseUser.user_metadata?.first_name || '',
     last_name: profile?.last_name || supabaseUser.user_metadata?.last_name || '',
     role: (userRole?.roles as { name: string } | null)?.name || 'member',
-    organization: org ? { id: org.id, name: org.name } : null,
+    organization: org
+      ? {
+          id: org.id,
+          name: org.name,
+          slug: org.slug ?? undefined,
+          plan: org.plan ?? undefined,
+        }
+      : null,
   };
 }
 
