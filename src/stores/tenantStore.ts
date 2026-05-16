@@ -625,6 +625,18 @@ export const useTenantStore = create<TenantState>()(
     }),
     {
       name: 'advist-tenant',
+      // Bump this whenever the source-of-truth for the tenant changes shape.
+      // v1 → v2: tenant is now hydrated from Atlas Studio (licence_seats +
+      // licences + subscriptions). Older persisted tenants were produced by
+      // a now-removed local fallback and could carry a bogus 'suspended'
+      // status. Discard them on first load so the user gets a fresh fetch.
+      version: 2,
+      migrate: (_persisted: unknown, fromVersion: number) => {
+        if (fromVersion < 2) {
+          return { currentTenant: null };
+        }
+        return _persisted as { currentTenant: Tenant | null };
+      },
       partialize: (state) => ({
         currentTenant: state.currentTenant,
       }),

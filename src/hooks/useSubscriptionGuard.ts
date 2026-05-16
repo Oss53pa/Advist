@@ -1,6 +1,8 @@
 /**
  * useSubscriptionGuard - Hook pour protéger les routes selon le statut de l'abonnement
- * Vérifie si l'utilisateur peut accéder à l'application via le backend API
+ * Source de vérité : Atlas Studio (licence_seats + licences + subscriptions).
+ * Aucun fallback local : si Atlas Studio ne reconnaît pas de licence active,
+ * l'utilisateur est bloqué avec blockReason='no_licence'.
  */
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,12 +15,21 @@ import {
   subscribeToUpdates,
   clearCache,
   SubscriptionInfo,
+  NoActiveLicenceError,
 } from '../services/features';
+
+export type BlockReason =
+  | 'trial_expired'
+  | 'subscription_expired'
+  | 'suspended'
+  | 'cancelled'
+  | 'no_tenant'
+  | 'no_licence';
 
 export interface SubscriptionGuardResult {
   isLoading: boolean;
   canAccess: boolean;
-  blockReason?: 'trial_expired' | 'subscription_expired' | 'suspended' | 'cancelled' | 'no_tenant';
+  blockReason?: BlockReason;
   daysRemaining: number;
   shouldShowUpgradePrompt: boolean;
   isTrialEnding: boolean;
@@ -31,102 +42,58 @@ export interface SubscriptionGuardResult {
  * Se synchronise avec le backend pour les features et quotas
  */
 export const useSubscriptionGuard = (): SubscriptionGuardResult => {
-  const { currentTenant, canAccessApp, getDaysRemaining, shouldShowUpgradePrompt, setTenant } =
-    useTenantStore();
+  const {
+    currentTenant,
+    canAccessApp,
+    getDaysRemaining,
+    shouldShowUpgradePrompt,
+    setTenant,
+    clearTenant,
+  } = useTenantStore();
 
   const { user, isAuthenticated } = useAuthStore();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [licenceMissing, setLicenceMissing] = useState(false);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
-  // Function to fetch subscription from API and update tenant store
+  // Fetch the user's licence + subscription state from Atlas Studio.
+  // No local fallback: if Atlas Studio has no active licence for this user,
+  // the app is blocked with a clear "no_licence" reason instead of inventing
+  // a trial tenant locally.
   const fetchSubscriptionFromAPI = useCallback(
     async (forceRefresh = false) => {
       if (!isAuthenticated) return;
 
       try {
         const subscriptionInfo = await getSubscriptionInfo(forceRefresh);
-
-        // Update tenant store with data from API
-        const tenantFromAPI = mapSubscriptionToTenant(subscriptionInfo, user);
-        setTenant(tenantFromAPI);
+        setLicenceMissing(false);
+        setTenant(mapSubscriptionToTenant(subscriptionInfo, user));
       } catch (error) {
-        console.warn('Failed to fetch subscription from API, using local data:', error);
-        // Fallback to local tenant creation if API fails
-        createLocalTenant();
+        if (error instanceof NoActiveLicenceError) {
+          setLicenceMissing(true);
+          clearTenant();
+          return;
+        }
+        console.warn('Failed to fetch subscription from Atlas Studio:', error);
+        setLicenceMissing(true);
+        clearTenant();
       }
     },
-    [isAuthenticated, user, setTenant]
+    [isAuthenticated, user, setTenant, clearTenant]
   );
 
-  // Create local tenant as fallback
-  const createLocalTenant = useCallback(() => {
-    if (!user) return;
-
-    if (user.organization) {
-      const org = user.organization;
-      setTenant({
-        id: org.id,
-        name: org.name,
-        slug: org.slug,
-        plan: org.subscription_plan || 'business',
-        status: org.is_active ? 'active' : 'suspended',
-        quotas: {
-          maxUsers: org.quotas?.max_users || (org.subscription_plan === 'enterprise' ? -1 : 5),
-          currentUsers: org.quotas?.current_users || 1,
-          maxStorage:
-            org.quotas?.max_storage_gb || (org.subscription_plan === 'enterprise' ? -1 : 10),
-          currentStorage: org.quotas?.current_storage_gb || 0,
-          maxDocuments:
-            org.quotas?.max_documents || (org.subscription_plan === 'enterprise' ? -1 : 50),
-          currentDocuments: org.quotas?.current_documents || 0,
-          maxWorkflows:
-            org.quotas?.max_active_workflows || (org.subscription_plan === 'enterprise' ? -1 : 10),
-          currentWorkflows: org.quotas?.current_active_workflows || 0,
-          maxSignaturesMonth: org.subscription_plan === 'enterprise' ? -1 : 50,
-          currentSignaturesMonth: 0,
-        },
-        features: mapPlanToFeatures(org.subscription_plan || 'business', org.ohada_compliant),
-        settings: {
-          language: 'fr',
-          timezone: 'Africa/Abidjan',
-          dateFormat: 'DD/MM/YYYY',
-          workingDays: org.working_days || [1, 2, 3, 4, 5],
-          workingHours: { start: '08:00', end: '18:00' },
-          retentionPeriodDays: 3650,
-          autoArchiveDays: 365,
-          notifications: {
-            emailEnabled: true,
-            pushEnabled: true,
-            digestFrequency: 'daily',
-          },
-        },
-        subscription: {
-          status: 'active',
-          autoRenew: true,
-        },
-        createdAt: new Date().toISOString(),
-      });
-    } else {
-      // No organization found — user must complete onboarding
-      console.warn('User has no organization assigned. Subscription guard cannot create tenant.');
-    }
-  }, [user, setTenant]);
-
-  // Refresh subscription manually
   const refreshSubscription = useCallback(async () => {
     clearCache();
     await fetchSubscriptionFromAPI(true);
   }, [fetchSubscriptionFromAPI]);
 
-  // Initial load and subscription sync
   useEffect(() => {
     if (!isAuthenticated) {
       setIsLoading(false);
       return;
     }
 
-    // Fetch subscription from API
     const initSubscription = async () => {
       setIsLoading(true);
       await fetchSubscriptionFromAPI();
@@ -135,10 +102,9 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
 
     initSubscription();
 
-    // Subscribe to real-time updates
     unsubscribeRef.current = subscribeToUpdates((subscription) => {
-      const tenantFromAPI = mapSubscriptionToTenant(subscription, user);
-      setTenant(tenantFromAPI);
+      setLicenceMissing(false);
+      setTenant(mapSubscriptionToTenant(subscription, user));
     });
 
     return () => {
@@ -173,6 +139,20 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
     };
   }
 
+  // Licence manquante côté Atlas Studio → bloquer avant tout autre check.
+  if (licenceMissing) {
+    return {
+      isLoading: false,
+      canAccess: false,
+      blockReason: 'no_licence',
+      daysRemaining: 0,
+      shouldShowUpgradePrompt: false,
+      isTrialEnding: false,
+      isQuotaNearLimit: false,
+      refreshSubscription,
+    };
+  }
+
   const access = canAccessApp();
   const daysRemaining = getDaysRemaining();
   const showUpgrade = shouldShowUpgradePrompt();
@@ -182,13 +162,15 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
     currentTenant?.status === 'trial' && daysRemaining > 0 && daysRemaining <= 5;
 
   // Vérifier si un quota est proche de la limite (> 80%)
+  // (skip si une dimension est marquée illimitée = -1)
   const isQuotaNearLimit = (() => {
     if (!currentTenant || currentTenant.plan !== 'business') return false;
     const { quotas } = currentTenant;
+    const ratio = (current: number, max: number) => (max > 0 ? current / max : 0);
     return (
-      quotas.currentDocuments / quotas.maxDocuments >= 0.8 ||
-      quotas.currentUsers / quotas.maxUsers >= 0.8 ||
-      quotas.currentSignaturesMonth / quotas.maxSignaturesMonth >= 0.8
+      ratio(quotas.currentDocuments, quotas.maxDocuments) >= 0.8 ||
+      ratio(quotas.currentUsers, quotas.maxUsers) >= 0.8 ||
+      ratio(quotas.currentSignaturesMonth, quotas.maxSignaturesMonth) >= 0.8
     );
   })();
 
@@ -367,73 +349,6 @@ function mapSubscriptionToTenant(subscription: SubscriptionInfo, user: any) {
       currentPeriodEnd: subscription.currentPeriodEnd,
     },
     createdAt: new Date().toISOString(),
-  };
-}
-
-// Helper: Map plan to features (fallback when API unavailable)
-// Aligné sur la spécification commerciale — Business = fonctions de base uniquement
-function mapPlanToFeatures(plan: string, _ohadaCompliant?: boolean): TenantFeatures {
-  const isEnterprise = plan === 'enterprise';
-
-  return {
-    // Documents
-    documentVersioning: true,
-    documentAnnotations: true,
-    documentComparison: true,
-    trackChanges: true,
-    bulkImport: true,
-    cloudIntegration: true,
-    documentTemplates: isEnterprise, // Enterprise only
-    ocrRecognition: true,
-    // Workflows
-    basicWorkflows: true,
-    advancedWorkflows: true,
-    conditionalRules: isEnterprise, // Enterprise only
-    parallelSignatures: true,
-    workflowTemplates: isEnterprise, // Enterprise only
-    workflowAnalytics: isEnterprise, // Enterprise only
-    // Signatures
-    simpleSignature: true,
-    advancedSignature: isEnterprise, // Enterprise only (eIDAS)
-    qualifiedSignature: isEnterprise, // Enterprise only
-    ohadaCompliance: isEnterprise, // Enterprise only
-    signatureCertificates: isEnterprise, // Enterprise only
-    biometricSignature: isEnterprise,
-    // Sécurité
-    ssoEnabled: isEnterprise, // Enterprise only (SSO/SAML)
-    twoFactorAuth: true,
-    ipRestriction: isEnterprise,
-    auditLogs: true,
-    advancedAuditLogs: isEnterprise,
-    dataExport: true,
-    dataEncryption: true,
-    // Intégrations
-    apiAccess: isEnterprise, // Enterprise only
-    webhooks: isEnterprise,
-    zapierIntegration: isEnterprise,
-    customIntegrations: isEnterprise,
-    // External system integrations
-    advancedCloudSync: isEnterprise,
-    erpIntegration: isEnterprise,
-    crmIntegration: isEnterprise,
-    workflowTriggers: isEnterprise,
-    contractGeneration: isEnterprise,
-    // Projets
-    basicProjects: true,
-    advancedProjects: isEnterprise,
-    projectAnalytics: isEnterprise,
-    // Rapports
-    basicReports: true,
-    advancedReports: isEnterprise,
-    reportsExport: true,
-    // Autres
-    offlineMode: isEnterprise,
-    customBranding: isEnterprise,
-    whiteLabel: isEnterprise,
-    prioritySupport: isEnterprise, // Enterprise only
-    dedicatedManager: isEnterprise,
-    customReports: isEnterprise,
-    aiAssistant: isEnterprise,
   };
 }
 

@@ -23,7 +23,13 @@ import { useTenantStore, getPlanInfo, PlanType } from '../../stores/tenantStore'
 import { Button } from '../ui';
 
 interface SubscriptionBlockerProps {
-  reason: 'trial_expired' | 'subscription_expired' | 'suspended' | 'cancelled' | 'no_tenant';
+  reason:
+    | 'trial_expired'
+    | 'subscription_expired'
+    | 'suspended'
+    | 'cancelled'
+    | 'no_tenant'
+    | 'no_licence';
 }
 
 export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason }) => {
@@ -72,6 +78,16 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
           description:
             "Votre abonnement a été annulé. Vous pouvez le réactiver à tout moment pour retrouver l'accès à vos données.",
           showPlans: true,
+        };
+      case 'no_licence':
+        return {
+          icon: Key,
+          iconColor: 'text-primary-900',
+          bgColor: 'bg-primary-50',
+          title: 'Aucune licence active',
+          description:
+            "Aucune licence Advist active n'est associée à votre compte. Contactez l'administrateur de votre organisation pour vous attribuer un siège, ou activez une clé de licence.",
+          showPlans: false,
         };
       default:
         return {
@@ -226,6 +242,30 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
               <Button variant="outline" size="lg">
                 <Phone size={18} className="mr-2" />
                 +225 01 02 03 04 05
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* No licence: activate a key or contact admin */}
+        {reason === 'no_licence' && (
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <h2 className="text-xl font-semibold text-primary-900 mb-4">Activer votre licence</h2>
+            <p className="text-primary-600 mb-6">
+              Si vous disposez d'une clé d'activation, saisissez-la ci-dessous. Sinon, demandez à
+              l'administrateur de votre organisation de vous ajouter à une licence Advist depuis
+              Atlas Studio.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/activate-license">
+                <Button size="lg" className="w-full sm:w-auto">
+                  <Key size={18} className="mr-2" />
+                  Activer une clé de licence
+                </Button>
+              </Link>
+              <Button variant="outline" size="lg">
+                <Mail size={18} className="mr-2" />
+                support@advist.com
               </Button>
             </div>
           </div>

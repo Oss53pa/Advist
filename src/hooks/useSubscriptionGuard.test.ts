@@ -14,13 +14,26 @@ const mockCheckQuota = vi.fn();
 const mockSubscribeToUpdates = vi.fn(() => vi.fn());
 const mockClearCache = vi.fn();
 
-vi.mock('../services/features', () => ({
-  getSubscriptionInfo: (...args: unknown[]) => mockGetSubscriptionInfo(...(args as [boolean?])),
-  checkFeature: (...args: unknown[]) => mockCheckFeature(...args),
-  checkQuota: (...args: unknown[]) => mockCheckQuota(...args),
-  subscribeToUpdates: (...args: unknown[]) => mockSubscribeToUpdates(...args),
-  clearCache: (...args: unknown[]) => mockClearCache(...args),
-}));
+vi.mock('../services/features', () => {
+  class NoActiveLicenceError extends Error {
+    constructor(message = 'No active licence for the current user') {
+      super(message);
+      this.name = 'NoActiveLicenceError';
+    }
+  }
+  return {
+    getSubscriptionInfo: (...args: unknown[]) => mockGetSubscriptionInfo(...(args as [boolean?])),
+    checkFeature: (...args: unknown[]) => mockCheckFeature(...args),
+    checkQuota: (...args: unknown[]) => mockCheckQuota(...args),
+    subscribeToUpdates: (...args: unknown[]) => mockSubscribeToUpdates(...args),
+    clearCache: (...args: unknown[]) => mockClearCache(...args),
+    NoActiveLicenceError,
+  };
+});
+
+// Re-import the mocked NoActiveLicenceError so tests can construct it.
+// vi.mock is hoisted, so this works at the top level after the mock is set up.
+const { NoActiveLicenceError } = await import('../services/features');
 
 // Mock tenantStore as a zustand-like store with getState/setState
 let tenantState: Record<string, unknown> = {};
@@ -28,16 +41,29 @@ let tenantState: Record<string, unknown> = {};
 const mockSetTenant = vi.fn((tenant: unknown) => {
   tenantState.currentTenant = tenant;
 });
+const mockClearTenant = vi.fn(() => {
+  tenantState.currentTenant = null;
+});
+const mockCanAccessApp = vi.fn(() => ({ allowed: true }) as { allowed: boolean; reason?: string });
+const mockGetDaysRemaining = vi.fn(() => 0);
+const mockShouldShowUpgradePrompt = vi.fn(() => false);
+const mockTenantCheckFeature = vi.fn(() => false);
+const mockTenantCheckQuota = vi.fn(() => ({
+  allowed: true,
+  current: 0,
+  max: 100,
+  percentage: 0,
+}));
 
 const defaultTenantActions = () => ({
   currentTenant: tenantState.currentTenant ?? null,
   setTenant: mockSetTenant,
-  canAccessApp: vi.fn(() => ({ allowed: true })),
-  getDaysRemaining: vi.fn(() => 0),
-  shouldShowUpgradePrompt: vi.fn(() => false),
-  clearTenant: vi.fn(),
-  checkFeature: vi.fn(() => false),
-  checkQuota: vi.fn(() => ({ allowed: true, current: 0, max: 100, percentage: 0 })),
+  canAccessApp: mockCanAccessApp,
+  getDaysRemaining: mockGetDaysRemaining,
+  shouldShowUpgradePrompt: mockShouldShowUpgradePrompt,
+  clearTenant: mockClearTenant,
+  checkFeature: mockTenantCheckFeature,
+  checkQuota: mockTenantCheckQuota,
 });
 
 let tenantStoreOverrides: Record<string, unknown> = {};
@@ -138,6 +164,17 @@ describe('useSubscriptionGuard', () => {
     authStoreState = {};
     mockGetSubscriptionInfo.mockResolvedValue(makeSubscriptionInfo());
     mockSubscribeToUpdates.mockReturnValue(vi.fn());
+    // Restore default implementations on stable mocks after clearAllMocks.
+    mockCanAccessApp.mockReturnValue({ allowed: true });
+    mockGetDaysRemaining.mockReturnValue(0);
+    mockShouldShowUpgradePrompt.mockReturnValue(false);
+    mockTenantCheckFeature.mockReturnValue(false);
+    mockTenantCheckQuota.mockReturnValue({
+      allowed: true,
+      current: 0,
+      max: 100,
+      percentage: 0,
+    });
   });
 
   // 1. Not authenticated => canAccess true
@@ -228,20 +265,29 @@ describe('useSubscriptionGuard', () => {
     expect(result.current.blockReason).toBe('subscription_expired');
   });
 
-  // 5. API error falls back to local tenant
-  it('falls back to local tenant when API call fails', async () => {
+  // 5. No active licence in Atlas Studio => block with no_licence
+  it('blocks with reason "no_licence" when Atlas Studio has no active seat', async () => {
     authStoreState = {
-      user: {
-        id: '1',
-        organization: {
-          id: 1,
-          name: 'Local Org',
-          slug: 'local-org',
-          is_active: true,
-          subscription_plan: 'business',
-          quotas: { max_users: 50, current_users: 1 },
-        },
-      },
+      user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
+      isAuthenticated: true,
+    };
+
+    mockGetSubscriptionInfo.mockRejectedValue(new NoActiveLicenceError());
+
+    const { result } = renderHook(() => useSubscriptionGuard());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.canAccess).toBe(false);
+    expect(result.current.blockReason).toBe('no_licence');
+  });
+
+  // 5b. Network / transient errors also block (no local fallback)
+  it('blocks with reason "no_licence" on network errors (no local fallback)', async () => {
+    authStoreState = {
+      user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
       isAuthenticated: true,
     };
 
@@ -255,8 +301,8 @@ describe('useSubscriptionGuard', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    // Should have called setTenant with local data as fallback
-    expect(mockSetTenant).toHaveBeenCalled();
+    expect(result.current.canAccess).toBe(false);
+    expect(result.current.blockReason).toBe('no_licence');
     expect(consoleWarnSpy).toHaveBeenCalled();
 
     consoleWarnSpy.mockRestore();
