@@ -345,28 +345,33 @@ export const clearCache = (): void => {
 };
 
 export const subscribeToUpdates = (onUpdate: (sub: SubscriptionInfo) => void): (() => void) => {
-  const channel = supabase.channel('subscription-updates');
-  getOrgId().then((orgId) => {
-    channel
-      .on(
-        'postgres_changes' as any,
-        {
-          event: '*',
-          schema: 'public',
-          table: 'subscriptions',
-          filter: `organization_id=eq.${orgId}`,
-        },
-        async () => {
-          cache.clear();
-          try {
-            onUpdate(await getSubscriptionInfo(true));
-          } catch {
-            /* ignore */
+  const channel = supabase.channel('licence-updates');
+  // Listen for changes on licences table. On any change, flush the cache
+  // and re-fetch so the UI picks up plan/status updates from Atlas Studio.
+  getCurrentUserId()
+    .then(() => {
+      channel
+        .on(
+          'postgres_changes' as any,
+          {
+            event: '*',
+            schema: 'public',
+            table: 'licences',
+          },
+          async () => {
+            cache.clear();
+            try {
+              onUpdate(await getSubscriptionInfo(true));
+            } catch {
+              /* ignore */
+            }
           }
-        }
-      )
-      .subscribe();
-  });
+        )
+        .subscribe();
+    })
+    .catch(() => {
+      /* not authenticated — skip realtime subscription */
+    });
   return () => {
     supabase.removeChannel(channel);
   };
