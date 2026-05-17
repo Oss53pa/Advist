@@ -25,7 +25,8 @@ export const Layout: React.FC = () => {
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [fetchUser, fetchNotifications, fetchUnreadCount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -38,7 +39,9 @@ export const Layout: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
       {/* Plan Color Bar */}
-      <div className={`fixed top-0 left-0 right-0 h-1 ${planTheme.bgGradient} z-[60] print:hidden`} />
+      <div
+        className={`fixed top-0 left-0 right-0 h-1 ${planTheme.bgGradient} z-[60] print:hidden`}
+      />
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block print:hidden">

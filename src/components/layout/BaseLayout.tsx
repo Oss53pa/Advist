@@ -68,7 +68,8 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ variant }) => {
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [fetchUser, fetchNotifications, fetchUnreadCount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">

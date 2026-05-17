@@ -50,28 +50,23 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
   const [isLoading, setIsLoading] = useState(true);
   const [licenceMissing, setLicenceMissing] = useState(false);
   const unsubscribeRef = useRef<(() => void) | null>(null);
+  const userRef = useRef(user);
+  const isAuthenticatedRef = useRef(isAuthenticated);
+  userRef.current = user;
+  isAuthenticatedRef.current = isAuthenticated;
 
-  // Fetch the user's licence + subscription state from Atlas Studio.
-  //
-  // FAIL-OPEN: when Atlas Studio is unreachable, the response shape is
-  // unexpected, or the user simply doesn't have a seat yet, we DO NOT lock
-  // them out of the app. Locking them out is the very bug we were trying
-  // to fix in the first place. Instead we surface a generic active tenant
-  // so the app shell renders, log a warning, and let per-feature guards
-  // (FeatureGuard, useFeatureCheck) decide what's permitted later.
   const fetchSubscriptionFromAPI = useCallback(
     async (forceRefresh = false) => {
-      if (!isAuthenticated) return;
+      if (!isAuthenticatedRef.current) return;
+
+      const currentUser = userRef.current;
 
       const ensureFallbackTenant = () => {
-        // Synthesize a permissive tenant so the app shell can render.
-        // The plan defaults to 'enterprise' to avoid hiding features the
-        // user may actually be entitled to via Atlas Studio.
         setTenant(
           mapSubscriptionToTenant(
             {
               id: 'fallback',
-              tenantId: user?.organization?.id?.toString() ?? 'fallback',
+              tenantId: currentUser?.organization?.id?.toString() ?? 'fallback',
               plan: 'enterprise',
               status: 'active',
               currentPeriodStart: '',
@@ -92,7 +87,7 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
               },
               limits: {},
             },
-            user
+            currentUser
           )
         );
       };
@@ -100,7 +95,7 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
       try {
         const subscriptionInfo = await getSubscriptionInfo(forceRefresh);
         setLicenceMissing(false);
-        setTenant(mapSubscriptionToTenant(subscriptionInfo, user));
+        setTenant(mapSubscriptionToTenant(subscriptionInfo, currentUser));
       } catch (error) {
         if (error instanceof NoActiveLicenceError) {
           console.warn(
@@ -117,7 +112,7 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
         ensureFallbackTenant();
       }
     },
-    [isAuthenticated, user, setTenant]
+    [setTenant]
   );
 
   const refreshSubscription = useCallback(async () => {
@@ -141,7 +136,7 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
 
     unsubscribeRef.current = subscribeToUpdates((subscription) => {
       setLicenceMissing(false);
-      setTenant(mapSubscriptionToTenant(subscription, user));
+      setTenant(mapSubscriptionToTenant(subscription, userRef.current));
     });
 
     return () => {
@@ -149,7 +144,8 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
         unsubscribeRef.current();
       }
     };
-  }, [isAuthenticated, user, fetchSubscriptionFromAPI, setTenant]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   // Si pas authentifié, autoriser l'accès (les routes privées gèrent ça séparément)
   if (!isAuthenticated) {

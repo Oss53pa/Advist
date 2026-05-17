@@ -43,33 +43,50 @@ interface LoginCredentials {
  * Profile data is fetched from the profiles table.
  */
 async function mapSupabaseUser(supabaseUser: SupabaseUser): Promise<AuthResponse['user']> {
-  // Fetch profile with organization data
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select(
+  // Fetch profile with organization data (gracefully handle errors)
+  let profile: {
+    first_name: string | null;
+    last_name: string | null;
+    organization_id: string | null;
+    organizations: { id: string; name: string; slug: string | null; plan: string | null } | null;
+  } | null = null;
+  try {
+    const { data } = await supabase
+      .from('profiles')
+      .select(
+        `
+        first_name,
+        last_name,
+        organization_id,
+        organizations (
+          id,
+          name,
+          slug,
+          plan
+        )
       `
-      first_name,
-      last_name,
-      organization_id,
-      organizations (
-        id,
-        name,
-        slug,
-        plan
       )
-    `
-    )
-    .eq('id', supabaseUser.id)
-    .single();
+      .eq('id', supabaseUser.id)
+      .maybeSingle();
+    profile = data;
+  } catch {
+    // profiles query failed — use metadata fallback
+  }
 
-  // Fetch user role
-  const { data: userRole } = await supabase
-    .from('user_roles')
-    .select('roles (name)')
-    .eq('user_id', supabaseUser.id)
-    .eq('is_active', true)
-    .limit(1)
-    .single();
+  // Fetch user role (gracefully handle missing table/rows)
+  let userRole: { roles: { name: string } | null } | null = null;
+  try {
+    const { data } = await supabase
+      .from('user_roles')
+      .select('roles (name)')
+      .eq('user_id', supabaseUser.id)
+      .eq('is_active', true)
+      .limit(1)
+      .maybeSingle();
+    userRole = data;
+  } catch {
+    // user_roles query failed — default to 'member'
+  }
 
   const org = profile?.organizations as {
     id: string;

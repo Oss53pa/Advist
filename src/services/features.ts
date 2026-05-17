@@ -67,11 +67,12 @@ const cache = new Map<string, { data: SubscriptionInfo; timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
 
 async function getCurrentUserId(): Promise<string> {
+  // Use getSession() instead of getUser() to avoid network call + lock contention
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-  return user.id;
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session?.user) throw new Error('Not authenticated');
+  return session.user.id;
 }
 
 // Normalize Atlas Studio plan names (e.g. "Entreprise", "Business", "Group",

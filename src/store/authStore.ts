@@ -43,7 +43,9 @@ export const useAuthStore = create<AuthState>()(
           const user = await authService.getCurrentUser();
 
           // Get access token for Realtime channels
-          const { data: { session } } = await supabase.auth.getSession();
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
 
           set({
             user,
@@ -74,9 +76,13 @@ export const useAuthStore = create<AuthState>()(
       },
 
       fetchUser: async () => {
+        // Prevent concurrent fetches
+        if (get().isLoading) return;
         set({ isLoading: true });
         try {
-          const { data: { session } } = await supabase.auth.getSession();
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
           if (!session) {
             set({ user: null, isAuthenticated: false, isLoading: false, accessToken: null });
             return;
@@ -105,7 +111,9 @@ export const useAuthStore = create<AuthState>()(
         set({ _initialized: true });
 
         // Check for existing session
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (session?.user) {
           try {
             const user = await authService.getCurrentUser();
@@ -120,19 +128,29 @@ export const useAuthStore = create<AuthState>()(
           }
         }
 
-        // Listen for auth state changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, session) => {
-            if (event === 'SIGNED_IN' && session?.user) {
+        // Listen for auth state changes (debounced to prevent loops)
+        let fetchingUser = false;
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange(async (event, session) => {
+          if (event === 'SIGNED_IN' && session?.user) {
+            // Guard against re-entrant calls (prevents infinite loop)
+            if (fetchingUser) return;
+            fetchingUser = true;
+            try {
               const user = await authService.getCurrentUser();
               set({ user, isAuthenticated: true, accessToken: session.access_token });
-            } else if (event === 'SIGNED_OUT') {
-              set({ user: null, isAuthenticated: false, accessToken: null });
-            } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-              set({ accessToken: session.access_token });
+            } catch {
+              // Don't crash on getCurrentUser failure
+            } finally {
+              fetchingUser = false;
             }
+          } else if (event === 'SIGNED_OUT') {
+            set({ user: null, isAuthenticated: false, accessToken: null });
+          } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+            set({ accessToken: session.access_token });
           }
-        );
+        });
 
         return () => subscription.unsubscribe();
       },
