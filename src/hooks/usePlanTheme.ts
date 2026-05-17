@@ -17,33 +17,36 @@ export const PLAN_ICONS: Record<PlanType, React.ElementType> = {
 // ============================================
 // COULEURS UNIFIÉES PAR PLAN
 // ============================================
-export const PLAN_THEME: Record<PlanType, {
-  // Couleurs de base
-  primary: string;        // Couleur principale (500)
-  primaryLight: string;   // Couleur claire (400)
-  primaryDark: string;    // Couleur foncée (600)
+export const PLAN_THEME: Record<
+  PlanType,
+  {
+    // Couleurs de base
+    primary: string; // Couleur principale (500)
+    primaryLight: string; // Couleur claire (400)
+    primaryDark: string; // Couleur foncée (600)
 
-  // Classes Tailwind
-  bg: string;             // bg-{color}-500
-  bgLight: string;        // bg-{color}-50
-  bgMedium: string;       // bg-{color}-100
-  bgGradient: string;     // gradient
-  text: string;           // text-{color}-600
-  textLight: string;      // text-{color}-500
-  textOnBg: string;       // text sur fond coloré
-  border: string;         // border-{color}-300
-  borderLight: string;    // border-{color}-200
-  ring: string;           // ring-{color}-500/30
+    // Classes Tailwind
+    bg: string; // bg-{color}-500
+    bgLight: string; // bg-{color}-50
+    bgMedium: string; // bg-{color}-100
+    bgGradient: string; // gradient
+    text: string; // text-{color}-600
+    textLight: string; // text-{color}-500
+    textOnBg: string; // text sur fond coloré
+    border: string; // border-{color}-300
+    borderLight: string; // border-{color}-200
+    ring: string; // ring-{color}-500/30
 
-  // Combinaisons prêtes à l'emploi
-  badge: string;          // Badge léger (bg light + text)
-  badgeSolid: string;     // Badge solide (bg + text on bg)
-  button: string;         // Bouton principal
-  buttonOutline: string;  // Bouton outline
-  navActive: string;      // Navigation active
-  navHover: string;       // Navigation hover
-  cardBorder: string;     // Bordure de carte mise en avant
-}> = {
+    // Combinaisons prêtes à l'emploi
+    badge: string; // Badge léger (bg light + text)
+    badgeSolid: string; // Badge solide (bg + text on bg)
+    button: string; // Bouton principal
+    buttonOutline: string; // Bouton outline
+    navActive: string; // Navigation active
+    navHover: string; // Navigation hover
+    cardBorder: string; // Bordure de carte mise en avant
+  }
+> = {
   business: {
     primary: '#8B5CF6',
     primaryLight: '#A78BFA',
@@ -93,9 +96,23 @@ export const PLAN_THEME: Record<PlanType, {
 // ============================================
 // HOOK usePlanTheme
 // ============================================
+/** Coerce any incoming plan string to a valid PlanType so PLAN_THEME /
+ *  PLAN_ICONS lookups never return undefined. Defensive against tenants
+ *  built from upstream sources (Atlas Studio) that may use other names. */
+function safePlan(raw: unknown): PlanType {
+  if (raw === 'enterprise' || raw === 'business') return raw;
+  if (typeof raw === 'string') {
+    const lc = raw.toLowerCase();
+    if (lc.includes('entreprise') || lc.includes('enterprise') || lc.includes('premium')) {
+      return 'enterprise';
+    }
+  }
+  return 'business';
+}
+
 export const usePlanTheme = () => {
   const { currentTenant } = useTenantStore();
-  const plan = currentTenant?.plan || 'business';
+  const plan = safePlan(currentTenant?.plan);
   const theme = PLAN_THEME[plan];
   const Icon = PLAN_ICONS[plan];
 
