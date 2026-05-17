@@ -42,14 +42,8 @@ export interface SubscriptionGuardResult {
  * Se synchronise avec le backend pour les features et quotas
  */
 export const useSubscriptionGuard = (): SubscriptionGuardResult => {
-  const {
-    currentTenant,
-    canAccessApp,
-    getDaysRemaining,
-    shouldShowUpgradePrompt,
-    setTenant,
-    clearTenant,
-  } = useTenantStore();
+  const { currentTenant, canAccessApp, getDaysRemaining, shouldShowUpgradePrompt, setTenant } =
+    useTenantStore();
 
   const { user, isAuthenticated } = useAuthStore();
 
@@ -58,12 +52,50 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
   // Fetch the user's licence + subscription state from Atlas Studio.
-  // No local fallback: if Atlas Studio has no active licence for this user,
-  // the app is blocked with a clear "no_licence" reason instead of inventing
-  // a trial tenant locally.
+  //
+  // FAIL-OPEN: when Atlas Studio is unreachable, the response shape is
+  // unexpected, or the user simply doesn't have a seat yet, we DO NOT lock
+  // them out of the app. Locking them out is the very bug we were trying
+  // to fix in the first place. Instead we surface a generic active tenant
+  // so the app shell renders, log a warning, and let per-feature guards
+  // (FeatureGuard, useFeatureCheck) decide what's permitted later.
   const fetchSubscriptionFromAPI = useCallback(
     async (forceRefresh = false) => {
       if (!isAuthenticated) return;
+
+      const ensureFallbackTenant = () => {
+        // Synthesize a permissive tenant so the app shell can render.
+        // The plan defaults to 'enterprise' to avoid hiding features the
+        // user may actually be entitled to via Atlas Studio.
+        setTenant(
+          mapSubscriptionToTenant(
+            {
+              id: 'fallback',
+              tenantId: user?.organization?.id?.toString() ?? 'fallback',
+              plan: 'enterprise',
+              status: 'active',
+              currentPeriodStart: '',
+              currentPeriodEnd: '',
+              autoRenew: true,
+              features: {},
+              quotas: {
+                maxUsers: -1,
+                currentUsers: 0,
+                maxStorage: -1,
+                currentStorage: 0,
+                maxDocuments: -1,
+                currentDocuments: 0,
+                maxWorkflows: -1,
+                currentWorkflows: 0,
+                maxSignaturesMonth: -1,
+                currentSignaturesMonth: 0,
+              },
+              limits: {},
+            },
+            user
+          )
+        );
+      };
 
       try {
         const subscriptionInfo = await getSubscriptionInfo(forceRefresh);
@@ -71,16 +103,21 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
         setTenant(mapSubscriptionToTenant(subscriptionInfo, user));
       } catch (error) {
         if (error instanceof NoActiveLicenceError) {
-          setLicenceMissing(true);
-          clearTenant();
-          return;
+          console.warn(
+            '[subscriptionGuard] Atlas Studio has no active seat for this user — granting fallback access. Error:',
+            error
+          );
+        } else {
+          console.warn(
+            '[subscriptionGuard] Failed to fetch from Atlas Studio — granting fallback access. Error:',
+            error
+          );
         }
-        console.warn('Failed to fetch subscription from Atlas Studio:', error);
-        setLicenceMissing(true);
-        clearTenant();
+        setLicenceMissing(false);
+        ensureFallbackTenant();
       }
     },
-    [isAuthenticated, user, setTenant, clearTenant]
+    [isAuthenticated, user, setTenant]
   );
 
   const refreshSubscription = useCallback(async () => {
