@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Grand+Hotel&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600;700;800&family=Grand+Hotel&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -6,45 +6,45 @@
 @tailwind utilities;
 
 /* =====================================================
-   ADVIST Design System
+   ADVIST Design System — Premium
    =====================================================
-   Palette : Grayscale Professional
-   Fonts : Exo 2, Grand Hotel, JetBrains Mono
+   Palette : Obsidian + Indigo accent
+   Fonts : Inter, Plus Jakarta Sans, JetBrains Mono
    ===================================================== */
 
 @layer base {
   :root {
-    /* Fond gris tres clair */
-    --color-background: #fafafa;
-    --color-background-rgb: 250 250 250;
+    /* Midnight Banking — fond institutionnel */
+    --color-background: #f7f8fa;
+    --color-background-rgb: 247 248 250;
     --color-surface: #ffffff;
     --color-surface-rgb: 255 255 255;
-    --color-surface-alt: #f5f5f5;
+    --color-surface-alt: #f0f2f5;
 
-    /* Noir pour elements forts */
-    --color-primary: #171717;
-    --color-primary-rgb: 23 23 23;
+    /* Navy primaire */
+    --color-primary: #0f172a;
+    --color-primary-rgb: 15 23 42;
 
-    /* Gold accent */
-    --color-gold: #c8a961;
-    --color-gold-light: #d4b872;
-    --color-gold-dark: #b89a52;
+    /* Gold accent institutionnel */
+    --color-gold: #b8a47e;
+    --color-gold-light: #d4c6a5;
+    --color-gold-dark: #9a8561;
 
     /* Texte */
-    --color-text-primary: #171717;
-    --color-text-secondary: #737373;
-    --color-text-muted: #a3a3a3;
-    --color-text-label: #525252;
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #5e6b7d;
+    --color-text-muted: #8b95a5;
+    --color-text-label: #3d4a5c;
 
     /* Bordures */
-    --color-border: #e5e5e5;
-    --color-border-dark: #d4d4d4;
+    --color-border: #e1e5ec;
+    --color-border-dark: #c8cfd9;
 
     /* Etats */
-    --color-success: #22c55e;
+    --color-success: #10b981;
     --color-warning: #f59e0b;
     --color-error: #ef4444;
-    --color-info: #3b82f6;
+    --color-info: #6366f1;
 
     /* Severite */
     --color-severity-low: #6b7280;
@@ -54,34 +54,39 @@
   }
 
   .dark {
-    --color-background: #171717;
-    --color-background-rgb: 23 23 23;
-    --color-surface: #262626;
-    --color-surface-rgb: 38 38 38;
-    --color-surface-alt: #404040;
-    --color-primary: #ffffff;
-    --color-primary-rgb: 255 255 255;
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #a3a3a3;
-    --color-text-muted: #737373;
-    --color-text-label: #d4d4d4;
-    --color-border: #404040;
-    --color-border-dark: #525252;
-    --color-success: #22c55e;
+    --color-background: #080e1b;
+    --color-background-rgb: 8 14 27;
+    --color-surface: #0f172a;
+    --color-surface-rgb: 15 23 42;
+    --color-surface-alt: #1e293b;
+    --color-primary: #f7f8fa;
+    --color-primary-rgb: 247 248 250;
+    --color-gold: #d4c6a5;
+    --color-gold-light: #b8a47e;
+    --color-gold-dark: #e8dcc4;
+    --color-text-primary: #f7f8fa;
+    --color-text-secondary: #8b95a5;
+    --color-text-muted: #5e6b7d;
+    --color-text-label: #c8cfd9;
+    --color-border: #1e293b;
+    --color-border-dark: #334155;
+    --color-success: #10b981;
     --color-warning: #f59e0b;
     --color-error: #ef4444;
-    --color-info: #3b82f6;
+    --color-info: #818cf8;
   }
 
   html {
     font-family:
-      'Exo 2',
+      'Dosis',
       system-ui,
       -apple-system,
       sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
@@ -672,7 +677,7 @@ html[dir='rtl'] .-translate-x-full {
 html[lang='ar'] {
   font-family:
     'Noto Sans Arabic',
-    'Exo 2',
+    'Dosis',
     system-ui,
     -apple-system,
     sans-serif;

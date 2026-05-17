@@ -7,15 +7,55 @@ import { persist } from 'zustand/middleware';
 
 // Available font families with Google Fonts URL parameter
 export const FONT_FAMILIES = [
-  { id: 'exo2', name: 'Exo 2', value: '"Exo 2", system-ui, -apple-system, sans-serif', googleFont: null }, // Loaded in index.css
-  { id: 'system', name: 'Système', value: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', googleFont: null },
-  { id: 'inter', name: 'Inter', value: '"Inter", sans-serif', googleFont: 'Inter:wght@300;400;500;600;700' },
-  { id: 'roboto', name: 'Roboto', value: '"Roboto", sans-serif', googleFont: 'Roboto:wght@300;400;500;700' },
-  { id: 'poppins', name: 'Poppins', value: '"Poppins", sans-serif', googleFont: 'Poppins:wght@300;400;500;600;700' },
-  { id: 'opensans', name: 'Open Sans', value: '"Open Sans", sans-serif', googleFont: 'Open+Sans:wght@300;400;500;600;700' },
+  {
+    id: 'dosis',
+    name: 'Dosis',
+    value: '"Dosis", system-ui, -apple-system, sans-serif',
+    googleFont: null,
+  }, // Loaded in index.css
+  {
+    id: 'system',
+    name: 'Système',
+    value: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    googleFont: null,
+  },
+  {
+    id: 'inter',
+    name: 'Inter',
+    value: '"Inter", sans-serif',
+    googleFont: 'Inter:wght@300;400;500;600;700',
+  },
+  {
+    id: 'roboto',
+    name: 'Roboto',
+    value: '"Roboto", sans-serif',
+    googleFont: 'Roboto:wght@300;400;500;700',
+  },
+  {
+    id: 'poppins',
+    name: 'Poppins',
+    value: '"Poppins", sans-serif',
+    googleFont: 'Poppins:wght@300;400;500;600;700',
+  },
+  {
+    id: 'opensans',
+    name: 'Open Sans',
+    value: '"Open Sans", sans-serif',
+    googleFont: 'Open+Sans:wght@300;400;500;600;700',
+  },
   { id: 'lato', name: 'Lato', value: '"Lato", sans-serif', googleFont: 'Lato:wght@300;400;700' },
-  { id: 'montserrat', name: 'Montserrat', value: '"Montserrat", sans-serif', googleFont: 'Montserrat:wght@300;400;500;600;700' },
-  { id: 'sourcesans', name: 'Source Sans Pro', value: '"Source Sans Pro", sans-serif', googleFont: 'Source+Sans+Pro:wght@300;400;600;700' },
+  {
+    id: 'montserrat',
+    name: 'Montserrat',
+    value: '"Montserrat", sans-serif',
+    googleFont: 'Montserrat:wght@300;400;500;600;700',
+  },
+  {
+    id: 'sourcesans',
+    name: 'Source Sans Pro',
+    value: '"Source Sans Pro", sans-serif',
+    googleFont: 'Source+Sans+Pro:wght@300;400;600;700',
+  },
 ];
 
 // Available font sizes
@@ -66,32 +106,92 @@ export const COLOR_PRESETS = [
   {
     id: 'ocean',
     name: 'Océan',
-    colors: { primary: '#1E3A5F', secondary: '#4A90D9', accent: '#FF6B35', background: '#E8F4F8', surface: '#FFFFFF' },
-    darkColors: { primary: '#E8F4F8', secondary: '#4A90D9', accent: '#FF8B5C', background: '#0D1B2A', surface: '#1E3A5F' },
+    colors: {
+      primary: '#1E3A5F',
+      secondary: '#4A90D9',
+      accent: '#FF6B35',
+      background: '#E8F4F8',
+      surface: '#FFFFFF',
+    },
+    darkColors: {
+      primary: '#E8F4F8',
+      secondary: '#4A90D9',
+      accent: '#FF8B5C',
+      background: '#0D1B2A',
+      surface: '#1E3A5F',
+    },
   },
   {
     id: 'forest',
     name: 'Forêt',
-    colors: { primary: '#2D4739', secondary: '#6B9080', accent: '#A4C3B2', background: '#EAF4F4', surface: '#FFFFFF' },
-    darkColors: { primary: '#EAF4F4', secondary: '#6B9080', accent: '#A4C3B2', background: '#1A2520', surface: '#2D4739' },
+    colors: {
+      primary: '#2D4739',
+      secondary: '#6B9080',
+      accent: '#A4C3B2',
+      background: '#EAF4F4',
+      surface: '#FFFFFF',
+    },
+    darkColors: {
+      primary: '#EAF4F4',
+      secondary: '#6B9080',
+      accent: '#A4C3B2',
+      background: '#1A2520',
+      surface: '#2D4739',
+    },
   },
   {
     id: 'sunset',
     name: 'Coucher de soleil',
-    colors: { primary: '#4A3728', secondary: '#D4A373', accent: '#E76F51', background: '#FEFAE0', surface: '#FFFFFF' },
-    darkColors: { primary: '#FEFAE0', secondary: '#D4A373', accent: '#FF8C69', background: '#1F1814', surface: '#4A3728' },
+    colors: {
+      primary: '#4A3728',
+      secondary: '#D4A373',
+      accent: '#E76F51',
+      background: '#FEFAE0',
+      surface: '#FFFFFF',
+    },
+    darkColors: {
+      primary: '#FEFAE0',
+      secondary: '#D4A373',
+      accent: '#FF8C69',
+      background: '#1F1814',
+      surface: '#4A3728',
+    },
   },
   {
     id: 'lavender',
     name: 'Lavande',
-    colors: { primary: '#4A4063', secondary: '#9D8EC7', accent: '#E07BE0', background: '#F3E8FF', surface: '#FFFFFF' },
-    darkColors: { primary: '#F3E8FF', secondary: '#9D8EC7', accent: '#E07BE0', background: '#1A1625', surface: '#4A4063' },
+    colors: {
+      primary: '#4A4063',
+      secondary: '#9D8EC7',
+      accent: '#E07BE0',
+      background: '#F3E8FF',
+      surface: '#FFFFFF',
+    },
+    darkColors: {
+      primary: '#F3E8FF',
+      secondary: '#9D8EC7',
+      accent: '#E07BE0',
+      background: '#1A1625',
+      surface: '#4A4063',
+    },
   },
   {
     id: 'midnight',
     name: 'Minuit',
-    colors: { primary: '#1A1A2E', secondary: '#4A4E69', accent: '#F72585', background: '#E8E8E8', surface: '#F8F8F8' },
-    darkColors: { primary: '#E8E8E8', secondary: '#6B7094', accent: '#F72585', background: '#0F0F1A', surface: '#1A1A2E' },
+    colors: {
+      primary: '#1A1A2E',
+      secondary: '#4A4E69',
+      accent: '#F72585',
+      background: '#E8E8E8',
+      surface: '#F8F8F8',
+    },
+    darkColors: {
+      primary: '#E8E8E8',
+      secondary: '#6B7094',
+      accent: '#F72585',
+      background: '#0F0F1A',
+      surface: '#1A1A2E',
+    },
   },
 ];
 
@@ -196,8 +296,7 @@ export const useThemeStore = create<ThemeState>()(
             ...state.settings,
             ...(isDark
               ? { customDarkColors: { ...state.settings.customDarkColors, [colorKey]: value } }
-              : { customColors: { ...state.settings.customColors, [colorKey]: value } }
-            ),
+              : { customColors: { ...state.settings.customColors, [colorKey]: value } }),
             useCustomColors: true,
           },
         }));

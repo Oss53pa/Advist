@@ -1,27 +1,33 @@
 /**
- * ADVIST Design System - Theme Professionnel
+ * ADVIST Design System - Premium
  * ==========================================
- * Palette : Grayscale Professional
- * Fonts : Exo 2, Grand Hotel, JetBrains Mono
+ * Palette : Obsidian + Indigo accent
+ * Fonts : Inter, Plus Jakarta Sans, JetBrains Mono
  */
 
 // =============================================================================
-// PALETTE PRINCIPALE (Grayscale Professional)
+// PALETTE PRINCIPALE — Midnight Banking
+// Inspired by Stripe, Goldman Sachs, institutional finance
 // =============================================================================
 
 export const palette = {
-  // Grayscale
-  primary50: '#fafafa',   // Fond de page, fond clair
-  primary100: '#f5f5f5',  // Fond de cartes, scrollbar
-  primary200: '#e5e5e5',  // Bordures, separateurs
-  primary300: '#d4d4d4',  // Scrollbar thumb
-  primary400: '#a3a3a3',  // Texte placeholder, icones desactivees
-  primary500: '#737373',  // Texte secondaire, descriptions
-  primary600: '#525252',  // Texte intermediaire, labels
-  primary700: '#404040',  // Texte boutons ghost
-  primary800: '#262626',  // Boutons hover
-  primary900: '#171717',  // Texte principal, boutons primaires
-  primary950: '#0a0a0a',  // Boutons actifs
+  // Midnight scale (navy → white)
+  primary50: '#f7f8fa', // Fond de page
+  primary100: '#f0f2f5', // Fond de cartes alt, scrollbar
+  primary200: '#e1e5ec', // Bordures, separateurs
+  primary300: '#c8cfd9', // Scrollbar thumb
+  primary400: '#8b95a5', // Texte placeholder, icones desactivees
+  primary500: '#5e6b7d', // Texte secondaire, descriptions
+  primary600: '#3d4a5c', // Texte intermediaire, labels
+  primary700: '#1e293b', // Texte boutons ghost
+  primary800: '#162032', // Boutons hover
+  primary900: '#0f172a', // Texte principal, boutons primaires
+  primary950: '#080e1b', // Boutons actifs
+
+  // Gold accent
+  gold: '#b8a47e', // Accent dore institutionnel
+  goldLight: '#d4c6a5',
+  goldDark: '#9a8561',
 
   // White
   white: '#FFFFFF',
@@ -32,10 +38,10 @@ export const palette = {
 // =============================================================================
 
 export const severity = {
-  low: '#6b7280',       // Gris
-  medium: '#f59e0b',    // Ambre/Orange
-  high: '#ef4444',      // Rouge
-  critical: '#7f1d1d',  // Rouge fonce
+  low: '#6b7280', // Gris
+  medium: '#f59e0b', // Ambre/Orange
+  high: '#ef4444', // Rouge
+  critical: '#7f1d1d', // Rouge fonce
 } as const;
 
 // =============================================================================
@@ -43,10 +49,10 @@ export const severity = {
 // =============================================================================
 
 export const status = {
-  success: '#22c55e',   // Vert
-  warning: '#f59e0b',   // Ambre
-  error: '#ef4444',     // Rouge
-  info: '#3b82f6',      // Bleu
+  success: '#10b981', // Emerald
+  warning: '#f59e0b', // Ambre
+  error: '#ef4444', // Rouge
+  info: '#6366f1', // Indigo
 } as const;
 
 // =============================================================================
@@ -161,11 +167,11 @@ export const tailwindColors = {
     dark: palette.primary900,
     'dark-hover': palette.primary800,
 
-    // Accent (garde compatibilite avec gold)
-    gold: palette.primary900,
-    'gold-dark': palette.primary950,
-    'gold-light': palette.primary100,
-    'gold-muted': palette.primary100,
+    // Gold accent institutionnel
+    gold: palette.gold,
+    'gold-dark': palette.goldDark,
+    'gold-light': palette.goldLight,
+    'gold-muted': '#f5f0e8',
 
     bg: palette.primary50,
     surface: palette.white,
@@ -223,12 +229,13 @@ export const tailwindColors = {
 export const cssVariables = {
   light: {
     '--color-background': palette.primary50,
-    '--color-background-rgb': '250 250 250',
+    '--color-background-rgb': '247 248 250',
     '--color-surface': palette.white,
     '--color-surface-rgb': '255 255 255',
     '--color-surface-alt': palette.primary100,
     '--color-primary': palette.primary900,
-    '--color-primary-rgb': '23 23 23',
+    '--color-primary-rgb': '15 23 42',
+    '--color-gold': palette.gold,
     '--color-text-primary': palette.primary900,
     '--color-text-secondary': palette.primary500,
     '--color-text-muted': palette.primary400,
@@ -241,19 +248,20 @@ export const cssVariables = {
     '--color-info': status.info,
   },
   dark: {
-    '--color-background': palette.primary900,
-    '--color-background-rgb': '23 23 23',
-    '--color-surface': palette.primary800,
-    '--color-surface-rgb': '38 38 38',
+    '--color-background': palette.primary950,
+    '--color-background-rgb': '8 14 27',
+    '--color-surface': palette.primary900,
+    '--color-surface-rgb': '15 23 42',
     '--color-surface-alt': palette.primary700,
-    '--color-primary': palette.white,
-    '--color-primary-rgb': '255 255 255',
-    '--color-text-primary': palette.white,
+    '--color-primary': palette.primary50,
+    '--color-primary-rgb': '247 248 250',
+    '--color-gold': palette.goldLight,
+    '--color-text-primary': palette.primary50,
     '--color-text-secondary': palette.primary400,
     '--color-text-muted': palette.primary500,
     '--color-text-label': palette.primary300,
     '--color-border': palette.primary700,
-    '--color-border-dark': palette.primary600,
+    '--color-border-dark': '#334155',
     '--color-success': status.success,
     '--color-warning': status.warning,
     '--color-error': status.error,
@@ -278,7 +286,8 @@ export const shadows = {
 // =============================================================================
 
 export const fonts = {
-  body: "'Exo 2', system-ui, -apple-system, sans-serif",
+  body: "'Dosis', system-ui, -apple-system, sans-serif",
+  display: "'Dosis', system-ui, sans-serif",
   decorative: "'Grand Hotel', cursive",
   mono: "'JetBrains Mono', ui-monospace, monospace",
   weights: {
