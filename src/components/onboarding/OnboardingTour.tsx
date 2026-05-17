@@ -2,8 +2,8 @@
  * OnboardingTour — Visite guidée au premier login
  *
  * Affiche un overlay step-by-step la première fois qu'un utilisateur se connecte.
- * Stocke un flag dans Supabase (profiles.preferences.onboarding_completed)
- * pour ne plus l'afficher après. Peut être relancé manuellement depuis /help.
+ * Stocke un flag dans localStorage pour ne plus l'afficher après.
+ * Peut être relancé manuellement depuis /help.
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ import {
   HelpCircle,
   PartyPopper,
 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+
 import { useAuthStore } from '../../store';
 
 interface OnboardingStep {
@@ -99,56 +99,19 @@ export const OnboardingTour: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
-  // Check if onboarding should be shown
+  // Check if onboarding should be shown (localStorage only —
+  // profiles table has no preferences column on Atlas Studio)
   useEffect(() => {
     if (!user) return;
-
-    const checkOnboarding = async () => {
-      // Check localStorage first (fast path)
-      const localFlag = localStorage.getItem(STORAGE_KEY);
-      if (localFlag === '1') return;
-
-      // Check Supabase profile preferences
-      try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('preferences')
-          .eq('id', user.id)
-          .maybeSingle();
-
-        const prefs = (profile?.preferences || {}) as Record<string, unknown>;
-        if (prefs.onboarding_completed === true) {
-          localStorage.setItem(STORAGE_KEY, '1');
-          return;
-        }
-
-        // Show the tour
-        setOpen(true);
-      } catch {
-        // On error, fall back to local flag only
-      }
-    };
-
-    checkOnboarding();
+    const localFlag = localStorage.getItem(STORAGE_KEY);
+    if (localFlag === '1') return;
+    setOpen(true);
   }, [user]);
 
-  const finish = useCallback(async () => {
+  const finish = useCallback(() => {
     setOpen(false);
     localStorage.setItem(STORAGE_KEY, '1');
-
-    if (user) {
-      try {
-        await supabase
-          .from('profiles')
-          .update({
-            preferences: { onboarding_completed: true },
-          })
-          .eq('id', user.id);
-      } catch {
-        // Non-blocking
-      }
-    }
-  }, [user]);
+  }, []);
 
   const skip = () => finish();
 
