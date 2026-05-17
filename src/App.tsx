@@ -243,8 +243,16 @@ function App() {
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
               <Routes>
-                {/* Public landing page */}
-                <Route path="/" element={<LandingPage />} />
+                {/* Public landing page — authenticated users go straight to
+                    the app instead of seeing the marketing page. */}
+                <Route
+                  path="/"
+                  element={
+                    <PublicRoute>
+                      <LandingPage />
+                    </PublicRoute>
+                  }
+                />
 
                 {/* Auth routes */}
                 <Route
