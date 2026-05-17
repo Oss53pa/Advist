@@ -196,7 +196,7 @@ export const landingConfigApi = {
    */
   async updateSection(
     section: SectionType,
-    data: Record<string, unknown>,
+    data: Record<string, unknown>
   ): Promise<LandingPageConfig> {
     // Section fields map to top-level columns, so we just update the relevant keys
     const current = await fetchSingleConfig();
@@ -290,7 +290,7 @@ export const landingConfigApi = {
    */
   async uploadImage(
     type: 'hero_background' | 'seo_og',
-    file: File,
+    file: File
   ): Promise<{ message: string; config: LandingPageConfig }> {
     const folder = type === 'hero_background' ? 'hero' : 'seo';
     const imageUrl = await uploadLandingImage(file, folder);
@@ -316,20 +316,38 @@ export const landingConfigApi = {
 // =========================================================================
 // Public API (no auth required)
 // =========================================================================
+
+// The `landing_config` table doesn't exist on every Atlas Studio
+// deployment. When it's missing (404) or unreadable, we surface an empty
+// config rather than throwing — the landing-page sections all have their
+// own static fallbacks.
+const EMPTY_LANDING_CONFIG = {
+  trusted_companies: [] as TrustedCompany[],
+  stats: [] as LandingPageStat[],
+  features: [] as LandingPageFeature[],
+  testimonials: [] as LandingPageTestimonial[],
+  how_it_works_steps: [] as HowItWorksStep[],
+} as unknown as LandingPageConfig;
+
 export const publicLandingApi = {
   /**
-   * Get the public landing page configuration
+   * Get the public landing page configuration. Resilient to a missing
+   * `landing_config` table: returns an empty config instead of throwing.
    */
   async getConfig(): Promise<LandingPageConfig> {
-    const { data, error } = await supabase
-      .from(TABLE)
-      .select('*')
-      .eq('is_active', true)
-      .limit(1)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from(TABLE)
+        .select('*')
+        .eq('is_active', true)
+        .limit(1)
+        .maybeSingle();
 
-    if (error) throw parseSupabaseError(error);
-    return data as LandingPageConfig;
+      if (error) return EMPTY_LANDING_CONFIG;
+      return (data as LandingPageConfig | null) ?? EMPTY_LANDING_CONFIG;
+    } catch {
+      return EMPTY_LANDING_CONFIG;
+    }
   },
 };
 
