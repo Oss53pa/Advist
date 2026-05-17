@@ -131,16 +131,24 @@ export class ErrorBoundary extends Component<Props, State> {
               travaille à résoudre le problème.
             </p>
 
-            {/* Error details (development only) */}
-            {import.meta.env.DEV && error && (
-              <div className="mb-6 p-4 bg-gray-100 rounded-lg text-left">
-                <p className="text-sm font-mono text-red-600 break-all">{error.message}</p>
-                {error.stack && (
-                  <pre className="mt-2 text-xs text-gray-500 overflow-auto max-h-32">
-                    {error.stack}
-                  </pre>
-                )}
-              </div>
+            {/* Error details — always shown so support can diagnose
+                without needing devtools open. Collapsed by default. */}
+            {error && (
+              <details className="mb-6 text-left">
+                <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700 select-none">
+                  Détails techniques (cliquez pour développer)
+                </summary>
+                <div className="mt-3 p-4 bg-gray-100 rounded-lg">
+                  <p className="text-sm font-mono text-red-600 break-all">
+                    {error.name}: {error.message}
+                  </p>
+                  {error.stack && (
+                    <pre className="mt-2 text-xs text-gray-500 overflow-auto max-h-48 whitespace-pre-wrap break-all">
+                      {error.stack}
+                    </pre>
+                  )}
+                </div>
+              </details>
             )}
 
             {/* Actions */}
