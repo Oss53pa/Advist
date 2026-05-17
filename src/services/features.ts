@@ -74,6 +74,21 @@ async function getCurrentUserId(): Promise<string> {
   return user.id;
 }
 
+// Normalize Atlas Studio plan names (e.g. "Entreprise", "Business", "Group",
+// "Premium") to the strict tenantStore PlanType ('business' | 'enterprise').
+// Anything mentioning enterprise/entreprise/premium is treated as enterprise;
+// everything else falls back to business. This MUST stay in sync with the
+// PlanType union in src/stores/tenantStore.ts — passing any other string
+// breaks code that indexes into PLAN_FEATURES/PLAN_QUOTAS by plan.
+function normalizePlan(planName: string | null | undefined): 'business' | 'enterprise' {
+  if (!planName) return 'business';
+  const lc = planName.toLowerCase();
+  if (lc.includes('entreprise') || lc.includes('enterprise') || lc.includes('premium')) {
+    return 'enterprise';
+  }
+  return 'business';
+}
+
 // Map Atlas Studio subscription status to the internal status vocabulary
 // used by tenantStore (`trial` | `active` | `expired` | `suspended` | `cancelled`).
 function mapAtlasStatus(licenceStatus: string | null, subStatus: string | null): string {
@@ -203,7 +218,7 @@ export const getSubscriptionInfo = async (force = false): Promise<SubscriptionIn
   const info: SubscriptionInfo = {
     id: (sub.id as string) ?? licence.id,
     tenantId: (seat as { tenant_id: string }).tenant_id,
-    plan: (plan.name as string) ?? 'business',
+    plan: normalizePlan(plan.name as string | null | undefined),
     status,
     trialEndsAt: (sub.trial_ends_at as string) ?? undefined,
     currentPeriodStart: (sub.current_period_start as string) ?? '',
