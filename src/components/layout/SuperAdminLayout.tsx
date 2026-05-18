@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React, { useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -98,8 +98,16 @@ export const SuperAdminLayout: React.FC = () => {
     navigate('/login');
   };
 
+  // Apply the Midnight Bank theme on the SuperAdmin surface as well.
+  useEffect(() => {
+    document.body.classList.add('theme-midnight');
+    return () => {
+      document.body.classList.remove('theme-midnight');
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
+    <div className="min-h-screen bg-[#0A0A0B]">
       {/* Skip Links for keyboard navigation */}
       <a
         href="#main-content"

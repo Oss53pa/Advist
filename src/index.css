@@ -839,3 +839,209 @@ html.dark .border-primary-200,
 html.dark .border-primary-300 {
   border-color: #404040 !important;
 }
+
+/* =====================================================
+   THEME — MIDNIGHT BANK
+   =====================================================
+   Active on authenticated layouts (BaseLayout / AdminLayout /
+   SuperAdminLayout) via the `theme-midnight` class on <body>.
+   The landing page intentionally renders outside this scope.
+
+   Palette
+     bg     #0A0A0B   deepest background
+     bg2    #0F0F11   alternate section background
+     bg3    #1A1A1D   card surface
+     line5  rgba(255,255,255,0.05)
+     line10 rgba(255,255,255,0.10)
+     gold   #C8A961   accent (CTAs, highlights, focus)
+     goldHi #D4B872   hover accent
+
+   We override the most heavily-used utilities so the migration is
+   surgical: a single CSS pass repaints the entire authenticated
+   surface without touching ~150 component files.
+   ===================================================== */
+
+body.theme-midnight {
+  background-color: #0a0a0b !important;
+  color: rgba(255, 255, 255, 0.85);
+  color-scheme: dark;
+}
+
+/* Backgrounds */
+body.theme-midnight .bg-white,
+body.theme-midnight .bg-primary-50,
+body.theme-midnight .bg-primary-100,
+body.theme-midnight .bg-primary-200,
+body.theme-midnight .bg-advist-bg,
+body.theme-midnight .bg-advist-surface,
+body.theme-midnight .bg-advist-surface-dark,
+body.theme-midnight .bg-gradient-to-br.from-primary-50.to-primary-100,
+body.theme-midnight .bg-gradient-to-br.from-primary-50.to-primary-100\/50 {
+  background-color: #1a1a1d !important;
+  background-image: none !important;
+}
+
+body.theme-midnight main,
+body.theme-midnight .bg-page,
+body.theme-midnight .min-h-screen.bg-gradient-to-br {
+  background-color: #0a0a0b !important;
+  background-image: none !important;
+}
+
+/* Subtle / alt surfaces — between bg and card */
+body.theme-midnight .bg-primary-50\/50,
+body.theme-midnight .bg-primary-100\/50,
+body.theme-midnight .bg-gray-50,
+body.theme-midnight .bg-neutral-50,
+body.theme-midnight .bg-slate-50 {
+  background-color: #0f0f11 !important;
+}
+
+/* Text — invert the gray scale */
+body.theme-midnight .text-primary-900,
+body.theme-midnight .text-advist-text-primary,
+body.theme-midnight .text-advist-dark,
+body.theme-midnight .text-advist-gray900 {
+  color: #f5f5f5 !important;
+}
+
+body.theme-midnight .text-primary-800,
+body.theme-midnight .text-primary-700 {
+  color: #e5e5e5 !important;
+}
+
+body.theme-midnight .text-primary-600,
+body.theme-midnight .text-advist-text-secondary,
+body.theme-midnight .text-advist-gray700,
+body.theme-midnight .text-advist-gray600 {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme-midnight .text-primary-500,
+body.theme-midnight .text-primary-400,
+body.theme-midnight .text-advist-text-muted,
+body.theme-midnight .text-advist-gray500,
+body.theme-midnight .text-advist-gray400 {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Headings — keep them crisp */
+body.theme-midnight h1,
+body.theme-midnight h2,
+body.theme-midnight h3,
+body.theme-midnight h4,
+body.theme-midnight h5,
+body.theme-midnight h6 {
+  color: #ffffff;
+}
+
+/* Borders — almost invisible, just hint of separation */
+body.theme-midnight .border,
+body.theme-midnight .border-t,
+body.theme-midnight .border-b,
+body.theme-midnight .border-l,
+body.theme-midnight .border-r,
+body.theme-midnight .border-x,
+body.theme-midnight .border-y,
+body.theme-midnight .border-primary-100,
+body.theme-midnight .border-primary-200,
+body.theme-midnight .border-primary-300,
+body.theme-midnight .border-advist-border,
+body.theme-midnight .border-advist-border-dark,
+body.theme-midnight .border-gray-100,
+body.theme-midnight .border-gray-200,
+body.theme-midnight .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Inputs */
+body.theme-midnight input,
+body.theme-midnight textarea,
+body.theme-midnight select {
+  background-color: #1a1a1d !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f5f5f5 !important;
+}
+
+body.theme-midnight input::placeholder,
+body.theme-midnight textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+body.theme-midnight input:focus,
+body.theme-midnight textarea:focus,
+body.theme-midnight select:focus {
+  border-color: #c8a961 !important;
+  box-shadow: 0 0 0 3px rgba(200, 169, 97, 0.18) !important;
+}
+
+/* Buttons — primary becomes gold, dark stays dark */
+body.theme-midnight .bg-primary-900,
+body.theme-midnight .bg-primary-950,
+body.theme-midnight .bg-advist-dark,
+body.theme-midnight .bg-advist-gold {
+  background-color: #c8a961 !important;
+  color: #0a0a0b !important;
+}
+
+body.theme-midnight .hover\:bg-primary-900:hover,
+body.theme-midnight .hover\:bg-primary-800:hover,
+body.theme-midnight .hover\:bg-advist-dark-hover:hover,
+body.theme-midnight .hover\:bg-advist-gold-dark:hover {
+  background-color: #d4b872 !important;
+  color: #0a0a0b !important;
+}
+
+body.theme-midnight .text-white {
+  color: #ffffff;
+}
+
+/* Accent text (primary actions, links inside the gray scale) */
+body.theme-midnight .text-advist-accent,
+body.theme-midnight .text-advist-gold {
+  color: #c8a961 !important;
+}
+
+/* Card primitives — soft elevated panels */
+body.theme-midnight .advist-card,
+body.theme-midnight .rounded-2xl.bg-white,
+body.theme-midnight .rounded-xl.bg-white,
+body.theme-midnight .rounded-lg.bg-white,
+body.theme-midnight .rounded-card {
+  background-color: #1a1a1d !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.02) inset,
+    0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Shadows on dark — strip light shadows that look like seams */
+body.theme-midnight .shadow,
+body.theme-midnight .shadow-sm,
+body.theme-midnight .shadow-md,
+body.theme-midnight .shadow-card,
+body.theme-midnight .shadow-card-hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.theme-midnight .shadow-lg,
+body.theme-midnight .shadow-xl,
+body.theme-midnight .shadow-2xl {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Scrollbar */
+body.theme-midnight ::-webkit-scrollbar-track {
+  background: #0a0a0b;
+}
+body.theme-midnight ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+body.theme-midnight ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Focus outline switches to gold so it reads on the dark surface */
+body.theme-midnight :focus-visible {
+  outline-color: #c8a961;
+}

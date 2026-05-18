@@ -71,8 +71,19 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ variant }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Apply the Midnight Bank theme to authenticated layouts. The class is
+  // scoped on <body>, so the marketing landing page (rendered outside
+  // BaseLayout) keeps its own design. Cleanup on unmount so logging out
+  // returns to the default light theme.
+  useEffect(() => {
+    document.body.classList.add('theme-midnight');
+    return () => {
+      document.body.classList.remove('theme-midnight');
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
+    <div className="min-h-screen bg-[#0A0A0B]">
       {/* Plan Color Bar - Barre colorée en haut indiquant le plan */}
       <div
         className={`fixed top-0 left-0 right-0 h-1 ${planClasses.bgGradient} z-[60] print:hidden`}
