@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { Button, Input, Card } from '../../components/ui';
 import { useAuthStore } from '../../store';
 
 type LoginForm = {
@@ -42,103 +41,158 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center p-4">
-      {/* Decorative Elements */}
-      <div className="fixed bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-[#C8A961]/10 to-transparent rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
-      <div className="fixed top-1/4 right-0 w-96 h-96 bg-[#C8A961]/5 rounded-full blur-3xl translate-x-1/3" />
+    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Ambient glow */}
+      <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#b8a47e]/8 to-transparent rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3" />
+      <div className="fixed top-0 right-0 w-[400px] h-[400px] bg-[#b8a47e]/4 rounded-full blur-[100px] translate-x-1/4 -translate-y-1/4" />
 
-      <div className="relative w-full max-w-md">
-        {/* Retour */}
+      <div className="relative w-full max-w-[420px]">
+        {/* Back */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-4 py-2 text-white/40 hover:text-white hover:bg-white/5 rounded-xl mb-6 transition-all duration-300"
+          className="inline-flex items-center gap-2 px-3 py-2 text-white/30 hover:text-white/70 hover:bg-white/[0.04] rounded-xl mb-8 transition-all text-sm"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={16} />
           <span>{t('common.back')}</span>
         </Link>
 
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="mb-4">
-            <h1 className="font-decorative text-3xl text-[#C8A961]">Advist</h1>
-          </div>
-          <p className="text-white/40">{t('landing.hero.subtitle', 'Gestion Documentaire')}</p>
+        <div className="text-center mb-10">
+          <h1 className="font-decorative text-4xl text-[#b8a47e] mb-2">Advist</h1>
+          <p className="text-[13px] text-white/25 font-medium uppercase tracking-[0.15em]">
+            {t('landing.hero.subtitle', 'Gestion Documentaire')}
+          </p>
         </div>
 
-        <Card padding="lg" className="!bg-[#1A1A1D] !border !border-white/5">
-          <h2 className="text-xl font-light text-white mb-6">{t('auth.login')}</h2>
+        {/* Card */}
+        <div className="bg-[#1e293b]/80 backdrop-blur-xl rounded-2xl border border-white/[0.06] p-8 shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
+          <h2 className="text-lg font-semibold text-white mb-6">{t('auth.login')}</h2>
 
           {error && (
-            <div className="mb-4 p-3 bg-advist-red/10 border border-advist-red/30 rounded-xl text-advist-red text-sm">
-              {error}
+            <div className="mb-5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center justify-between">
+              <span>{error}</span>
               <button
                 onClick={clearError}
-                className="float-right text-advist-red hover:text-advist-red/80"
+                className="text-red-400/60 hover:text-red-400 ml-2 text-lg leading-none"
               >
                 &times;
               </button>
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input
-              label={t('auth.email')}
-              type="email"
-              placeholder="votre@email.com"
-              leftIcon={<Mail size={18} />}
-              error={errors.email?.message}
-              {...register('email')}
-            />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-[0.08em] text-white/40 mb-2">
+                {t('auth.email')}
+              </label>
+              <div className="relative">
+                <Mail
+                  size={16}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/20"
+                />
+                <input
+                  type="email"
+                  placeholder="votre@email.com"
+                  className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#b8a47e]/40 focus:ring-1 focus:ring-[#b8a47e]/20 transition-all"
+                  {...register('email')}
+                />
+              </div>
+              {errors.email && (
+                <p className="mt-1.5 text-xs text-red-400">{errors.email.message}</p>
+              )}
+            </div>
 
-            <Input
-              label={t('auth.password')}
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('auth.passwordPlaceholder', 'Votre mot de passe')}
-              leftIcon={<Lock size={18} />}
-              rightIcon={
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-[0.08em] text-white/40 mb-2">
+                {t('auth.password')}
+              </label>
+              <div className="relative">
+                <Lock
+                  size={16}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/20"
+                />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={t('auth.passwordPlaceholder', 'Votre mot de passe')}
+                  className="w-full pl-10 pr-12 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#b8a47e]/40 focus:ring-1 focus:ring-[#b8a47e]/20 transition-all"
+                  {...register('password')}
+                />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="focus:outline-none"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/50 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
-              }
-              error={errors.password?.message}
-              {...register('password')}
-            />
+              </div>
+              {errors.password && (
+                <p className="mt-1.5 text-xs text-red-400">{errors.password.message}</p>
+              )}
+            </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2.5 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-white/10 bg-white/5 text-[#C8A961] focus:ring-[#C8A961]"
+                  className="w-4 h-4 rounded border-white/10 bg-white/[0.04] text-[#b8a47e] focus:ring-[#b8a47e]/30 focus:ring-offset-0"
                 />
-                <span className="text-sm text-white/80">{t('auth.rememberMe')}</span>
+                <span className="text-[13px] text-white/50">{t('auth.rememberMe')}</span>
               </label>
               <Link
                 to="/forgot-password"
-                className="text-sm text-[#C8A961] hover:text-[#C8A961]/80"
+                className="text-[13px] text-[#b8a47e] hover:text-[#d4c6a5] transition-colors"
               >
                 {t('auth.forgotPassword')}
               </Link>
             </div>
 
-            <Button type="submit" className="w-full" isLoading={isLoading}>
-              {t('auth.login')}
-            </Button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-[#b8a47e] text-[#0f172a] text-sm font-bold rounded-xl hover:bg-[#d4c6a5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#b8a47e]/15 hover:shadow-[#b8a47e]/25"
+            >
+              {isLoading ? (
+                <svg
+                  className="animate-spin h-4 w-4 mx-auto"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              ) : (
+                t('auth.login')
+              )}
+            </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <span className="text-white/40">{t('auth.noAccount')}</span>{' '}
+          <div className="mt-6 pt-6 border-t border-white/[0.06] text-center">
+            <span className="text-[13px] text-white/30">{t('auth.noAccount')}</span>{' '}
             <Link
               to="/register"
-              className="text-[#C8A961] font-medium hover:text-[#C8A961]/80 transition-colors"
+              className="text-[13px] text-[#b8a47e] font-semibold hover:text-[#d4c6a5] transition-colors"
             >
               {t('auth.register')}
             </Link>
           </div>
-        </Card>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center mt-8 text-[11px] text-white/15">
+          &copy; {new Date().getFullYear()} Advist &middot; Atlas Studio
+        </p>
       </div>
     </div>
   );
