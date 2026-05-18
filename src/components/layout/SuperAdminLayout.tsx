@@ -107,7 +107,7 @@ export const SuperAdminLayout: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0B]">
+    <div className="min-h-screen bg-[#0f172a]">
       {/* Skip Links for keyboard navigation */}
       <a
         href="#main-content"
