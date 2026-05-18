@@ -847,14 +847,15 @@ html.dark .border-primary-300 {
    SuperAdminLayout) via the `theme-midnight` class on <body>.
    The landing page intentionally renders outside this scope.
 
-   Palette
-     bg     #0A0A0B   deepest background
-     bg2    #0F0F11   alternate section background
-     bg3    #1A1A1D   card surface
+   Palette — aligned with the marketing landing page (slate-900 / navy
+   institutional + muted gold accent, NOT pure black + bright gold).
+     bg     #0f172a   slate-900, deepest background
+     bg2    #080e1b   alt section (deeper navy)
+     bg3    #1e293b   slate-800, card surface
      line5  rgba(255,255,255,0.05)
      line10 rgba(255,255,255,0.10)
-     gold   #C8A961   accent (CTAs, highlights, focus)
-     goldHi #D4B872   hover accent
+     gold   #b8a47e   muted institutional gold (CTAs, focus)
+     goldHi #c8b894   hover accent
 
    We override the most heavily-used utilities so the migration is
    surgical: a single CSS pass repaints the entire authenticated
@@ -864,15 +865,15 @@ html.dark .border-primary-300 {
 body.theme-midnight {
   /* Hard-pin the body to pure black. Override the institutional CSS
      variables that would otherwise tint the page navy/indigo. */
-  --color-background: #0a0a0b;
+  --color-background: #0f172a;
   --color-background-rgb: 10 10 11;
-  --color-surface: #1a1a1d;
+  --color-surface: #1e293b;
   --color-surface-rgb: 26 26 29;
-  --color-surface-alt: #0f0f11;
+  --color-surface-alt: #080e1b;
   --color-primary: #ffffff;
   --color-primary-rgb: 255 255 255;
-  --color-gold: #c8a961;
-  --color-gold-light: #d4b872;
+  --color-gold: #b8a47e;
+  --color-gold-light: #c8b894;
   --color-gold-dark: #b89a52;
   --color-text-primary: #ffffff;
   --color-text-secondary: rgba(255, 255, 255, 0.72);
@@ -887,7 +888,7 @@ body.theme-midnight {
   --color-warning: #f5c97a;
   --color-error: #fb7185;
 
-  background-color: #0a0a0b !important;
+  background-color: #0f172a !important;
   background-image: none !important;
   color: rgba(255, 255, 255, 0.88);
   color-scheme: dark;
@@ -912,7 +913,7 @@ body.theme-midnight main,
 body.theme-midnight .bg-page,
 body.theme-midnight .min-h-screen,
 body.theme-midnight .min-h-\[100vh\] {
-  background-color: #0a0a0b !important;
+  background-color: #0f172a !important;
   background-image: none !important;
 }
 
@@ -928,7 +929,7 @@ body.theme-midnight .bg-slate-100,
 body.theme-midnight .bg-slate-200,
 body.theme-midnight .bg-gray-100,
 body.theme-midnight .bg-neutral-100 {
-  background-color: #1a1a1d !important;
+  background-color: #1e293b !important;
   background-image: none !important;
 }
 
@@ -953,7 +954,7 @@ body.theme-midnight .bg-primary-100\/50,
 body.theme-midnight .bg-gray-50,
 body.theme-midnight .bg-neutral-50,
 body.theme-midnight .bg-slate-50 {
-  background-color: #0f0f11 !important;
+  background-color: #080e1b !important;
 }
 
 /* Text — invert every common gray scale to neutral whites at readable
@@ -1048,7 +1049,7 @@ body.theme-midnight .border-gray-300 {
 body.theme-midnight input,
 body.theme-midnight textarea,
 body.theme-midnight select {
-  background-color: #1a1a1d !important;
+  background-color: #1e293b !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
   color: #f5f5f5 !important;
 }
@@ -1061,7 +1062,7 @@ body.theme-midnight textarea::placeholder {
 body.theme-midnight input:focus,
 body.theme-midnight textarea:focus,
 body.theme-midnight select:focus {
-  border-color: #c8a961 !important;
+  border-color: #b8a47e !important;
   box-shadow: 0 0 0 3px rgba(200, 169, 97, 0.18) !important;
 }
 
@@ -1070,16 +1071,16 @@ body.theme-midnight .bg-primary-900,
 body.theme-midnight .bg-primary-950,
 body.theme-midnight .bg-advist-dark,
 body.theme-midnight .bg-advist-gold {
-  background-color: #c8a961 !important;
-  color: #0a0a0b !important;
+  background-color: #b8a47e !important;
+  color: #0f172a !important;
 }
 
 body.theme-midnight .hover\:bg-primary-900:hover,
 body.theme-midnight .hover\:bg-primary-800:hover,
 body.theme-midnight .hover\:bg-advist-dark-hover:hover,
 body.theme-midnight .hover\:bg-advist-gold-dark:hover {
-  background-color: #d4b872 !important;
-  color: #0a0a0b !important;
+  background-color: #c8b894 !important;
+  color: #0f172a !important;
 }
 
 body.theme-midnight .text-white {
@@ -1089,7 +1090,7 @@ body.theme-midnight .text-white {
 /* Accent text (primary actions, links inside the gray scale) */
 body.theme-midnight .text-advist-accent,
 body.theme-midnight .text-advist-gold {
-  color: #c8a961 !important;
+  color: #b8a47e !important;
 }
 
 /* Card primitives — soft elevated panels */
@@ -1098,7 +1099,7 @@ body.theme-midnight .rounded-2xl.bg-white,
 body.theme-midnight .rounded-xl.bg-white,
 body.theme-midnight .rounded-lg.bg-white,
 body.theme-midnight .rounded-card {
-  background-color: #1a1a1d !important;
+  background-color: #1e293b !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.02) inset,
@@ -1122,7 +1123,7 @@ body.theme-midnight .shadow-2xl {
 
 /* Scrollbar */
 body.theme-midnight ::-webkit-scrollbar-track {
-  background: #0a0a0b;
+  background: #0f172a;
 }
 body.theme-midnight ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
@@ -1133,5 +1134,5 @@ body.theme-midnight ::-webkit-scrollbar-thumb:hover {
 
 /* Focus outline switches to gold so it reads on the dark surface */
 body.theme-midnight :focus-visible {
-  outline-color: #c8a961;
+  outline-color: #b8a47e;
 }
