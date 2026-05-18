@@ -46,7 +46,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
   }, [ANIMATED_WORDS.length]);
 
   return (
-    <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0A0A0B]">
+    <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0f172a]">
       {/* Subtle background */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/[0.02] rounded-full blur-[150px]" />
@@ -131,7 +131,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
                   {[...Array(4)].map((_, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full bg-white/10 border-2 border-[#0A0A0B] flex items-center justify-center text-xs font-bold text-white/70"
+                      className="w-8 h-8 rounded-full bg-white/10 border-2 border-[#0f172a] flex items-center justify-center text-xs font-bold text-white/70"
                     >
                       {['JD', 'AM', 'SK', 'LM'][i]}
                     </div>

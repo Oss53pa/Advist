@@ -15,10 +15,10 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
   const ctaTitle = remoteCta?.title ?? 'Pret a transformer votre gestion documentaire ?';
 
   return (
-    <section ref={ref} className="py-32 bg-[#0A0A0B] relative overflow-hidden">
+    <section ref={ref} className="py-32 bg-[#0f172a] relative overflow-hidden">
       {/* Subtle background */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#C8A961]/[0.02] rounded-full blur-[200px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#b8a47e]/[0.02] rounded-full blur-[200px]" />
       </div>
 
       {/* Grid pattern */}
@@ -50,7 +50,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
           className={`flex flex-col sm:flex-row gap-4 justify-center mb-12 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <a href="https://atlas-studio.org/portal?app=advist">
-            <button className="group relative flex items-center justify-center gap-3 px-7 py-3.5 bg-[#C8A961] text-[#0A0A0B] text-sm font-medium rounded-xl overflow-hidden transition-all duration-300 hover:bg-[#D4B872] hover:shadow-[0_0_40px_8px_rgba(200,169,97,0.15)] hover:scale-[1.02]">
+            <button className="group relative flex items-center justify-center gap-3 px-7 py-3.5 bg-[#b8a47e] text-[#0f172a] text-sm font-medium rounded-xl overflow-hidden transition-all duration-300 hover:bg-[#d4c6a5] hover:shadow-[0_0_40px_8px_rgba(200,169,97,0.15)] hover:scale-[1.02]">
               <span className="relative z-10">Demarrer gratuitement</span>
               <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -69,15 +69,15 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
           className={`flex flex-wrap items-center justify-center gap-6 transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="flex items-center gap-2">
-            <Check className="w-5 h-5 text-[#C8A961]/40" />
+            <Check className="w-5 h-5 text-[#b8a47e]/40" />
             <span className="text-sm text-white/40">Souscrivez maintenant</span>
           </div>
           <div className="flex items-center gap-2">
-            <Check className="w-5 h-5 text-[#C8A961]/40" />
+            <Check className="w-5 h-5 text-[#b8a47e]/40" />
             <span className="text-sm text-white/40">Sans carte bancaire</span>
           </div>
           <div className="flex items-center gap-2">
-            <Check className="w-5 h-5 text-[#C8A961]/40" />
+            <Check className="w-5 h-5 text-[#b8a47e]/40" />
             <span className="text-sm text-white/40">Support inclus</span>
           </div>
         </div>
@@ -86,10 +86,10 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
         <div
           className={`mt-16 max-w-xl mx-auto transition-all duration-700 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-[#C8A961]/10">
+          <div className="p-6 bg-white/5 backdrop-blur-xl rounded-2xl border border-[#b8a47e]/10">
             <div className="flex items-center gap-1 justify-center mb-4">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 fill-[#C8A961]/60 text-[#C8A961]/60" />
+                <Star key={i} className="w-5 h-5 fill-[#b8a47e]/60 text-[#b8a47e]/60" />
               ))}
             </div>
             <p className="text-white/60 italic mb-4">
@@ -97,7 +97,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
               de validation de nos contrats."
             </p>
             <div className="flex items-center justify-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#C8A961]/10 flex items-center justify-center text-[#C8A961] font-bold text-sm">
+              <div className="w-10 h-10 rounded-full bg-[#b8a47e]/10 flex items-center justify-center text-[#b8a47e] font-bold text-sm">
                 AK
               </div>
               <div className="text-left">
@@ -118,7 +118,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
                 key={i}
                 className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10"
               >
-                <Shield className="w-4 h-4 text-[#C8A961]/30" />
+                <Shield className="w-4 h-4 text-[#b8a47e]/30" />
                 <span className="text-sm font-medium text-white/50">{badge.label}</span>
               </div>
             )

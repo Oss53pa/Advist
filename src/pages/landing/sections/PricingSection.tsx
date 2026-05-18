@@ -14,15 +14,15 @@ export const PricingSection: React.FC = () => {
     remotePricing?.subtitle ?? 'Souscrivez maintenant. Annulation a tout moment.';
 
   return (
-    <section ref={ref} id="pricing" className="py-32 bg-[#0F0F11] relative overflow-hidden">
+    <section ref={ref} id="pricing" className="py-32 bg-[#080e1b] relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6">
         {/* Header */}
         <div
           className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#C8A961]/10 rounded-full border border-[#C8A961]/20 mb-6">
-            <Zap className="w-4 h-4 text-[#C8A961]" />
-            <span className="text-sm font-medium text-[#C8A961]">Tarifs transparents</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#b8a47e]/10 rounded-full border border-[#b8a47e]/20 mb-6">
+            <Zap className="w-4 h-4 text-[#b8a47e]" />
+            <span className="text-sm font-medium text-[#b8a47e]">Tarifs transparents</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">Choisissez votre plan</h2>
           <p className="text-base text-white/40 font-light mb-2">{pricingSubtitle}</p>
@@ -35,13 +35,13 @@ export const PricingSection: React.FC = () => {
         <div className="grid md:grid-cols-2 max-w-5xl mx-auto gap-6 lg:gap-8">
           {/* Business Plan */}
           <div
-            className={`relative rounded-3xl bg-[#1A1A1D] border border-[#C8A961]/20 shadow-2xl shadow-[#C8A961]/5 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            className={`relative rounded-3xl bg-[#1e293b] border border-[#b8a47e]/20 shadow-2xl shadow-[#b8a47e]/5 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Popular badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-              <div className="flex items-center gap-1.5 px-4 py-1.5 bg-[#C8A961] rounded-full shadow-lg">
-                <Star className="w-4 h-4 text-[#0A0A0B] fill-[#0A0A0B]" />
-                <span className="text-sm font-medium text-[#0A0A0B]">Plus populaire</span>
+              <div className="flex items-center gap-1.5 px-4 py-1.5 bg-[#b8a47e] rounded-full shadow-lg">
+                <Star className="w-4 h-4 text-[#0f172a] fill-[#0f172a]" />
+                <span className="text-sm font-medium text-[#0f172a]">Plus populaire</span>
               </div>
             </div>
 
@@ -49,7 +49,7 @@ export const PricingSection: React.FC = () => {
               {/* Plan header */}
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Building2 className="w-5 h-5 text-[#C8A961]/60" />
+                  <Building2 className="w-5 h-5 text-[#b8a47e]/60" />
                   <h3 className="text-lg font-medium text-white">Business</h3>
                 </div>
                 <p className="text-sm text-white/40">PME, directions juridiques, services achats</p>
@@ -58,7 +58,7 @@ export const PricingSection: React.FC = () => {
               {/* Price */}
               <div className="mb-2">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-medium text-[#C8A961]">
+                  <span className="text-3xl font-medium text-[#b8a47e]">
                     {businessPrice.toLocaleString('fr-FR')}
                   </span>
                   <span className="text-sm text-white/40">FCFA/mois</span>
@@ -72,13 +72,13 @@ export const PricingSection: React.FC = () => {
               <div className="mb-6 px-3 py-2 bg-white/5 rounded-xl border border-white/10">
                 <p className="text-xs text-white/40">
                   DocuSign Standard = 45 $/mois/utilisateur.{' '}
-                  <span className="text-[#C8A961] font-medium">ADVIST = 2x moins cher</span>, concu
+                  <span className="text-[#b8a47e] font-medium">ADVIST = 2x moins cher</span>, concu
                   pour l'Afrique.
                 </p>
               </div>
 
               {/* Section title */}
-              <p className="text-xs font-medium text-[#C8A961]/60 uppercase tracking-wider mb-3">
+              <p className="text-xs font-medium text-[#b8a47e]/60 uppercase tracking-wider mb-3">
                 Workflow documentaire complet
               </p>
 
@@ -104,8 +104,8 @@ export const PricingSection: React.FC = () => {
                   'Support email',
                 ].map((feature, j) => (
                   <li key={j} className="flex items-start gap-2">
-                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-[#C8A961]/10">
-                      <Check className="w-2.5 h-2.5 text-[#C8A961]" />
+                    <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-[#b8a47e]/10">
+                      <Check className="w-2.5 h-2.5 text-[#b8a47e]" />
                     </div>
                     <span className="text-xs text-white/50">{feature}</span>
                   </li>
@@ -116,17 +116,17 @@ export const PricingSection: React.FC = () => {
               <div className="mb-6 space-y-2">
                 <div className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg">
                   <span className="text-xs text-white/40">Emetteur supplementaire</span>
-                  <span className="text-xs font-medium text-[#C8A961]">15 000 FCFA/mois</span>
+                  <span className="text-xs font-medium text-[#b8a47e]">15 000 FCFA/mois</span>
                 </div>
                 <div className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg">
                   <span className="text-xs text-white/40">Pack 100 documents suppl.</span>
-                  <span className="text-xs font-medium text-[#C8A961]">10 000 FCFA/mois</span>
+                  <span className="text-xs font-medium text-[#b8a47e]">10 000 FCFA/mois</span>
                 </div>
               </div>
 
               {/* CTA */}
               <a href="https://atlas-studio.org/portal?app=advist&plan=Business">
-                <button className="w-full py-3.5 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 group bg-[#C8A961] text-[#0A0A0B] hover:bg-[#D4B872]">
+                <button className="w-full py-3.5 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 group bg-[#b8a47e] text-[#0f172a] hover:bg-[#d4c6a5]">
                   S'abonner maintenant
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -136,13 +136,13 @@ export const PricingSection: React.FC = () => {
 
           {/* Entreprise Plan */}
           <div
-            className={`relative rounded-3xl bg-[#1A1A1D] border border-white/10 hover:border-[#C8A961]/20 hover:shadow-lg transition-all duration-500 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            className={`relative rounded-3xl bg-[#1e293b] border border-white/10 hover:border-[#b8a47e]/20 hover:shadow-lg transition-all duration-500 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Premium badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
               <div className="flex items-center gap-1.5 px-4 py-1.5 bg-white/10 border border-white/20 rounded-full shadow-lg">
-                <Shield className="w-4 h-4 text-[#C8A961]" />
-                <span className="text-sm font-medium text-[#C8A961]">Premium</span>
+                <Shield className="w-4 h-4 text-[#b8a47e]" />
+                <span className="text-sm font-medium text-[#b8a47e]">Premium</span>
               </div>
             </div>
 
@@ -244,7 +244,7 @@ export const PricingSection: React.FC = () => {
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Ce que DocuSign ne fait pas */}
-            <div className="p-6 bg-[#1A1A1D] rounded-2xl border border-white/10">
+            <div className="p-6 bg-[#1e293b] rounded-2xl border border-white/10">
               <p className="text-sm font-medium text-red-400 uppercase tracking-wider mb-4">
                 Ce que DocuSign ne fait pas
               </p>
@@ -266,8 +266,8 @@ export const PricingSection: React.FC = () => {
             </div>
 
             {/* L'avantage ADVIST */}
-            <div className="p-6 bg-[#C8A961]/5 rounded-2xl border border-[#C8A961]/20">
-              <p className="text-sm font-medium text-[#C8A961] uppercase tracking-wider mb-4">
+            <div className="p-6 bg-[#b8a47e]/5 rounded-2xl border border-[#b8a47e]/20">
+              <p className="text-sm font-medium text-[#b8a47e] uppercase tracking-wider mb-4">
                 L'avantage ADVIST
               </p>
               <ul className="space-y-3">
@@ -280,7 +280,7 @@ export const PricingSection: React.FC = () => {
                   '2 a 3x moins cher que DocuSign',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-[#C8A961] flex-shrink-0 mt-0.5" />
+                    <Check className="w-4 h-4 text-[#b8a47e] flex-shrink-0 mt-0.5" />
                     <span className="text-sm text-white/60">{item}</span>
                   </li>
                 ))}
@@ -293,9 +293,9 @@ export const PricingSection: React.FC = () => {
         <div
           className={`mt-16 text-center transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex flex-col items-center gap-3 p-6 bg-[#1A1A1D] rounded-2xl border border-white/10">
+          <div className="inline-flex flex-col items-center gap-3 p-6 bg-[#1e293b] rounded-2xl border border-white/10">
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-[#C8A961]/60" />
+              <Clock className="w-5 h-5 text-[#b8a47e]/60" />
               <span className="text-sm font-medium text-white">Bientot disponible</span>
             </div>
             <div className="flex flex-wrap justify-center gap-3 text-xs">

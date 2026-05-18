@@ -103,7 +103,7 @@ export const Header: React.FC = () => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'bg-[#0A0A0B]/90 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20'
+            ? 'bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20'
             : 'bg-transparent'
         }`}
       >
@@ -159,21 +159,21 @@ export const Header: React.FC = () => {
                       href={item.href}
                       className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                         isActive
-                          ? 'bg-[#C8A961]/20 text-[#C8A961]'
+                          ? 'bg-[#b8a47e]/20 text-[#b8a47e]'
                           : 'text-white/70 hover:text-white hover:bg-white/10'
                       }`}
                     >
                       <span className="flex items-center gap-1.5">
                         {isProph3t ? (
                           <>
-                            <Sparkles className="w-3.5 h-3.5 text-[#C8A961]" />
-                            <span className="text-[#C8A961] font-semibold">{item.label}</span>
+                            <Sparkles className="w-3.5 h-3.5 text-[#b8a47e]" />
+                            <span className="text-[#b8a47e] font-semibold">{item.label}</span>
                           </>
                         ) : (
                           item.label
                         )}
                         {item.isNew && !isProph3t && (
-                          <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#C8A961] text-[#0A0A0B] rounded-full">
+                          <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#b8a47e] text-[#0f172a] rounded-full">
                             NEW
                           </span>
                         )}
@@ -188,7 +188,7 @@ export const Header: React.FC = () => {
                     onClick={() => setIsMoreOpen(!isMoreOpen)}
                     className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                       MORE_ITEMS.some((item) => activeSection === item.href.replace('#', ''))
-                        ? 'bg-[#C8A961]/20 text-[#C8A961]'
+                        ? 'bg-[#b8a47e]/20 text-[#b8a47e]'
                         : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -200,7 +200,7 @@ export const Header: React.FC = () => {
 
                   {/* Dropdown menu */}
                   <div
-                    className={`absolute top-full right-0 mt-2 w-64 py-2 bg-[#1A1A1D] rounded-2xl shadow-xl border border-white/10 transition-all duration-200 ${
+                    className={`absolute top-full right-0 mt-2 w-64 py-2 bg-[#1e293b] rounded-2xl shadow-xl border border-white/10 transition-all duration-200 ${
                       isMoreOpen
                         ? 'opacity-100 translate-y-0 pointer-events-auto'
                         : 'opacity-0 -translate-y-2 pointer-events-none'
@@ -221,14 +221,14 @@ export const Header: React.FC = () => {
                         >
                           <div
                             className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                              isActive ? 'bg-[#C8A961] text-[#0A0A0B]' : 'bg-white/10 text-white/60'
+                              isActive ? 'bg-[#b8a47e] text-[#0f172a]' : 'bg-white/10 text-white/60'
                             }`}
                           >
                             <Icon className="w-5 h-5" />
                           </div>
                           <div>
                             <p
-                              className={`text-sm font-medium ${isActive ? 'text-[#C8A961]' : 'text-white/80'}`}
+                              className={`text-sm font-medium ${isActive ? 'text-[#b8a47e]' : 'text-white/80'}`}
                             >
                               {item.label}
                             </p>
@@ -253,7 +253,7 @@ export const Header: React.FC = () => {
               </Link>
 
               <a href="https://atlas-studio.org/portal?app=advist">
-                <button className="group relative px-5 py-2.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 bg-[#C8A961] text-[#0A0A0B] hover:bg-[#D4B872]">
+                <button className="group relative px-5 py-2.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 bg-[#b8a47e] text-[#0f172a] hover:bg-[#d4c6a5]">
                   <span className="relative z-10 flex items-center gap-2">
                     {t('landingNav.subscribe', 'Souscrire')}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -288,7 +288,7 @@ export const Header: React.FC = () => {
 
         {/* Menu panel */}
         <div
-          className={`absolute top-0 right-0 w-full max-w-sm h-full bg-[#0A0A0B] shadow-2xl transition-transform duration-300 overflow-y-auto ${
+          className={`absolute top-0 right-0 w-full max-w-sm h-full bg-[#0f172a] shadow-2xl transition-transform duration-300 overflow-y-auto ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
@@ -308,7 +308,7 @@ export const Header: React.FC = () => {
               href="https://atlas-studio.org"
               className="flex items-center gap-3 p-3 mb-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all border border-gray-200"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#0A0A0B] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-[#0f172a] flex items-center justify-center">
                 <span className="font-decorative text-sm" style={{ color: '#EF9F27' }}>
                   A
                 </span>
@@ -332,7 +332,7 @@ export const Header: React.FC = () => {
 
             {/* Main navigation links */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-[#C8A961]/60 uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#b8a47e]/60 uppercase tracking-wider mb-3">
                 Navigation
               </p>
               <nav className="space-y-1">
@@ -347,35 +347,35 @@ export const Header: React.FC = () => {
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
                       className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                        isActive ? 'bg-[#C8A961]/10' : 'hover:bg-white/5'
+                        isActive ? 'bg-[#b8a47e]/10' : 'hover:bg-white/5'
                       }`}
                     >
                       <div
                         className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                           isProph3t
-                            ? 'bg-[#C8A961]'
+                            ? 'bg-[#b8a47e]'
                             : isActive
-                              ? 'bg-[#C8A961] text-[#0A0A0B]'
+                              ? 'bg-[#b8a47e] text-[#0f172a]'
                               : 'bg-white/10'
                         }`}
                       >
                         <Icon
-                          className={`w-5 h-5 ${isProph3t || isActive ? 'text-[#0A0A0B]' : 'text-white/60'}`}
+                          className={`w-5 h-5 ${isProph3t || isActive ? 'text-[#0f172a]' : 'text-white/60'}`}
                         />
                       </div>
                       <span
                         className={`font-medium ${
                           isProph3t
-                            ? 'text-[#C8A961]'
+                            ? 'text-[#b8a47e]'
                             : isActive
-                              ? 'text-[#C8A961]'
+                              ? 'text-[#b8a47e]'
                               : 'text-white/80'
                         }`}
                       >
                         {item.label}
                       </span>
                       {item.isNew && (
-                        <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-[#C8A961] text-[#0A0A0B] rounded-full">
+                        <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-[#b8a47e] text-[#0f172a] rounded-full">
                           NEW
                         </span>
                       )}
@@ -387,7 +387,7 @@ export const Header: React.FC = () => {
 
             {/* More sections */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-[#C8A961]/60 uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#b8a47e]/60 uppercase tracking-wider mb-3">
                 Découvrir
               </p>
               <nav className="space-y-1">
@@ -401,21 +401,21 @@ export const Header: React.FC = () => {
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
                       className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                        isActive ? 'bg-[#C8A961]/10' : 'hover:bg-white/5'
+                        isActive ? 'bg-[#b8a47e]/10' : 'hover:bg-white/5'
                       }`}
                     >
                       <div
                         className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          isActive ? 'bg-[#C8A961] text-[#0A0A0B]' : 'bg-white/10'
+                          isActive ? 'bg-[#b8a47e] text-[#0f172a]' : 'bg-white/10'
                         }`}
                       >
                         <Icon
-                          className={`w-5 h-5 ${isActive ? 'text-[#0A0A0B]' : 'text-white/60'}`}
+                          className={`w-5 h-5 ${isActive ? 'text-[#0f172a]' : 'text-white/60'}`}
                         />
                       </div>
                       <div>
                         <p
-                          className={`font-medium ${isActive ? 'text-[#C8A961]' : 'text-white/80'}`}
+                          className={`font-medium ${isActive ? 'text-[#b8a47e]' : 'text-white/80'}`}
                         >
                           {item.label}
                         </p>
@@ -439,7 +439,7 @@ export const Header: React.FC = () => {
                 className="block"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <button className="w-full py-3.5 bg-[#C8A961] text-[#0A0A0B] font-semibold rounded-xl hover:bg-[#D4B872] transition-colors flex items-center justify-center gap-2">
+                <button className="w-full py-3.5 bg-[#b8a47e] text-[#0f172a] font-semibold rounded-xl hover:bg-[#d4c6a5] transition-colors flex items-center justify-center gap-2">
                   {t('landingNav.subscribe', 'Souscrire')}
                   <ArrowRight className="w-4 h-4" />
                 </button>
