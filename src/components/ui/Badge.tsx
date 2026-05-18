@@ -1,6 +1,16 @@
-﻿import React from 'react';
+import React from 'react';
 
-type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'outline' | 'primary' | 'danger' | 'critical';
+type BadgeVariant =
+  | 'default'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | 'outline'
+  | 'primary'
+  | 'danger'
+  | 'critical'
+  | 'secondary';
 type BadgeSize = 'sm' | 'md';
 
 interface BadgeProps {
@@ -11,20 +21,21 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: 'bg-advist-surface-dark text-advist-text-secondary',
-  success: 'bg-green-50 text-advist-success',
-  warning: 'bg-advist-gold-light text-advist-gold-dark',
-  error: 'bg-advist-gold-light text-advist-gold-dark',
-  info: 'bg-advist-gold-light text-advist-gold-dark',
-  outline: 'bg-transparent border border-advist-border text-advist-text-secondary',
-  primary: 'bg-advist-gold text-advist-gray900',
-  danger: 'bg-advist-dark text-white',
-  critical: 'bg-advist-gold text-advist-gray900',
+  default: 'bg-[#f7f8fa] text-[#5e6b7d]',
+  secondary: 'bg-[#f0f2f5] text-[#5e6b7d]',
+  success: 'bg-emerald-50 text-emerald-700',
+  warning: 'bg-amber-50 text-amber-700',
+  error: 'bg-red-50 text-red-600',
+  info: 'bg-indigo-50 text-indigo-600',
+  outline: 'bg-transparent border border-[#e1e5ec] text-[#5e6b7d]',
+  primary: 'bg-[#0f172a] text-white',
+  danger: 'bg-red-500 text-white',
+  critical: 'bg-[#b8a47e] text-[#0f172a]',
 };
 
 const sizeStyles: Record<BadgeSize, string> = {
-  sm: 'px-2.5 py-0.5 text-xs',
-  md: 'px-3 py-1 text-sm',
+  sm: 'px-2 py-0.5 text-[11px]',
+  md: 'px-2.5 py-0.5 text-xs',
 };
 
 export const Badge: React.FC<BadgeProps> = ({
@@ -36,7 +47,7 @@ export const Badge: React.FC<BadgeProps> = ({
   return (
     <span
       className={`
-        inline-flex items-center font-medium rounded-full
+        inline-flex items-center font-semibold rounded-full
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${className}
@@ -47,8 +58,15 @@ export const Badge: React.FC<BadgeProps> = ({
   );
 };
 
-// Status badge helper for documents/workflows
-type StatusType = 'draft' | 'pending' | 'approved' | 'rejected' | 'archived' | 'in_progress' | 'completed' | 'cancelled';
+type StatusType =
+  | 'draft'
+  | 'pending'
+  | 'approved'
+  | 'rejected'
+  | 'archived'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled';
 
 const statusVariantMap: Record<StatusType, BadgeVariant> = {
   draft: 'default',
@@ -56,7 +74,7 @@ const statusVariantMap: Record<StatusType, BadgeVariant> = {
   approved: 'success',
   rejected: 'danger',
   archived: 'default',
-  in_progress: 'primary',
+  in_progress: 'info',
   completed: 'success',
   cancelled: 'critical',
 };

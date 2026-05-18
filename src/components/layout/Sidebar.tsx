@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,7 +20,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { usePlanTheme } from '../../hooks/usePlanTheme';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -38,12 +37,7 @@ interface NavItem {
 }
 
 const getMainNavItems = (t: (key: string, fallback?: string) => string): NavItem[] => [
-  {
-    id: 'dashboard',
-    label: t('nav.dashboard', 'Dashboard'),
-    icon: LayoutDashboard,
-    path: '/app',
-  },
+  { id: 'dashboard', label: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard, path: '/app' },
   {
     id: 'documents',
     label: t('nav.documents', 'Documents'),
@@ -72,7 +66,7 @@ const getMainNavItems = (t: (key: string, fallback?: string) => string): NavItem
       },
       {
         id: 'workflows-completed',
-        label: t('nav.workflowsCompleted', 'Terminés'),
+        label: t('nav.workflowsCompleted', 'Termines'),
         icon: CheckCircle,
         path: '/app/workflows?status=completed',
       },
@@ -86,20 +80,20 @@ const getMainNavItems = (t: (key: string, fallback?: string) => string): NavItem
     children: [
       {
         id: 'signatures-pending',
-        label: t('nav.signaturesToSign', 'À signer'),
+        label: t('nav.signaturesToSign', 'A signer'),
         icon: AlertCircle,
         path: '/app/signatures',
         badge: 5,
       },
       {
         id: 'signatures-sent',
-        label: t('nav.signaturesSent', 'Envoyées'),
+        label: t('nav.signaturesSent', 'Envoyees'),
         icon: Send,
         path: '/app/signatures?tab=sent',
       },
       {
         id: 'signatures-completed',
-        label: t('nav.signaturesCompleted', 'Complétées'),
+        label: t('nav.signaturesCompleted', 'Completees'),
         icon: CheckCircle,
         path: '/app/signatures?tab=completed',
       },
@@ -115,12 +109,7 @@ const getAdminNavItems = (t: (key: string, fallback?: string) => string): NavIte
     path: '/app/users',
     hasAdd: true,
   },
-  {
-    id: 'archives',
-    label: t('nav.archives', 'Archives'),
-    icon: Archive,
-    path: '/app/archives',
-  },
+  { id: 'archives', label: t('nav.archives', 'Archives'), icon: Archive, path: '/app/archives' },
 ];
 
 const getBottomNavItems = (t: (key: string, fallback?: string) => string): NavItem[] => [
@@ -131,21 +120,14 @@ const getBottomNavItems = (t: (key: string, fallback?: string) => string): NavIt
     path: '/app/notifications',
     badge: 8,
   },
-  {
-    id: 'settings',
-    label: t('nav.settings', 'Paramètres'),
-    icon: Settings,
-    path: '/app/settings',
-  },
+  { id: 'settings', label: t('nav.settings', 'Parametres'), icon: Settings, path: '/app/settings' },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const { theme: planTheme } = usePlanTheme();
   const [expandedItems, setExpandedItems] = useState<string[]>(['workflows', 'signatures']);
 
-  // Get translated nav items
   const mainNavItems = getMainNavItems(t);
   const adminNavItems = getAdminNavItems(t);
   const bottomNavItems = getBottomNavItems(t);
@@ -170,50 +152,45 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
     <aside
       className={`
         fixed left-0 top-0 z-40 h-screen
-        bg-white border-r border-advist-border
+        bg-[#0f172a] text-white
         flex flex-col
         transition-all duration-300 ease-in-out
         ${isCollapsed ? 'w-[72px]' : 'w-[260px]'}
       `}
     >
-      {/* Header with Logo - couleur du plan */}
+      {/* Logo */}
       <div
-        className={`
-        h-16 flex items-center border-b border-advist-border
-        ${isCollapsed ? 'justify-center px-3' : 'justify-between px-4'}
-      `}
+        className={`h-16 flex items-center border-b border-white/[0.06] ${isCollapsed ? 'justify-center px-3' : 'justify-between px-5'}`}
       >
         <div className="flex items-center gap-3">
           {isCollapsed ? (
-            <span className={`font-decorative text-xl ${planTheme.text}`}>A</span>
+            <span className="font-decorative text-xl text-[#b8a47e]">A</span>
           ) : (
-            <span className={`font-decorative text-xl ${planTheme.text}`}>Advist</span>
+            <span className="font-decorative text-xl text-[#b8a47e]">Advist</span>
           )}
         </div>
         {!isCollapsed && (
           <button
             onClick={onToggle}
-            className="p-1.5 rounded-lg hover:bg-advist-surface-dark transition-colors"
+            className="p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
           >
-            <ChevronLeft size={18} className="text-advist-text-muted" />
+            <ChevronLeft size={16} className="text-white/30" />
           </button>
         )}
       </div>
 
-      {/* Toggle button when collapsed */}
       {isCollapsed && (
         <button
           onClick={onToggle}
-          className="mx-auto mt-3 p-1.5 rounded-lg hover:bg-advist-surface-dark transition-colors"
+          className="mx-auto mt-3 p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
         >
-          <ChevronRight size={18} className="text-advist-text-muted" />
+          <ChevronRight size={16} className="text-white/30" />
         </button>
       )}
 
-      {/* Navigation */}
+      {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-4 px-3">
-        {/* Main items */}
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {mainNavItems.map((item) => (
             <NavMenuItem
               key={item.id}
@@ -226,16 +203,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
           ))}
         </div>
 
-        {/* Separator */}
-        {!isCollapsed && (
-          <div className="my-4 flex items-center gap-3 px-3">
-            <div className="flex-1 h-px bg-advist-surface-dark" />
-          </div>
+        {!isCollapsed ? (
+          <div className="my-5 mx-3 h-px bg-white/[0.06]" />
+        ) : (
+          <div className="my-4 mx-auto w-8 h-px bg-white/[0.06]" />
         )}
-        {isCollapsed && <div className="my-4 mx-auto w-8 h-px bg-advist-surface-dark" />}
 
-        {/* Admin items */}
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {adminNavItems.map((item) => (
             <NavMenuItem
               key={item.id}
@@ -249,8 +223,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
         </div>
       </nav>
 
-      {/* Bottom section */}
-      <div className="border-t border-advist-border py-4 px-3 space-y-1">
+      {/* Bottom */}
+      <div className="border-t border-white/[0.06] py-4 px-3 space-y-0.5">
         {bottomNavItems.map((item) => (
           <NavMenuItem
             key={item.id}
@@ -262,20 +236,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
           />
         ))}
       </div>
-
-      {/* Scroll indicator (only when collapsed) - couleur du plan */}
-      {isCollapsed && (
-        <div className="pb-4 flex justify-center">
-          <div className="w-1 h-12 bg-advist-surface-dark rounded-full overflow-hidden">
-            <div className={`w-full h-1/3 ${planTheme.bgGradient} rounded-full`} />
-          </div>
-        </div>
-      )}
     </aside>
   );
 };
 
-// Nav Menu Item Component - avec couleurs du plan
 const NavMenuItem: React.FC<{
   item: NavItem;
   isCollapsed: boolean;
@@ -284,54 +248,40 @@ const NavMenuItem: React.FC<{
   isActive: boolean;
 }> = ({ item, isCollapsed, expanded, onToggle, isActive }) => {
   const location = useLocation();
-  const { theme: planTheme } = usePlanTheme();
   const Icon = item.icon;
   const hasChildren = item.children && item.children.length > 0;
 
-  // Collapsed view - just icon
   if (isCollapsed) {
     return (
       <div className="relative group">
         <NavLink
           to={item.path || '#'}
           onClick={(e) => {
-            if (hasChildren) {
-              e.preventDefault();
-            }
+            if (hasChildren) e.preventDefault();
           }}
           className={`
             w-full flex items-center justify-center p-3 rounded-xl transition-all duration-200
             ${
               isActive
-                ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-                : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+                ? 'bg-[#b8a47e] text-[#0f172a] shadow-lg shadow-[#b8a47e]/20'
+                : 'text-white/40 hover:bg-white/[0.06] hover:text-white/70'
             }
           `}
         >
           <Icon size={20} />
           {item.badge && (
-            <span
-              className={`absolute -top-1 -right-1 w-5 h-5 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
-            >
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#b8a47e] text-[#0f172a] text-[10px] font-bold rounded-full flex items-center justify-center">
               {item.badge > 9 ? '9+' : item.badge}
             </span>
           )}
         </NavLink>
-
-        {/* Tooltip on hover */}
-        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-advist-dark text-white text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-lg">
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[#1e293b] text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-xl border border-white/[0.06]">
           {item.label}
-          {item.badge && (
-            <span className={`ml-2 px-1.5 py-0.5 ${planTheme.bgMedium} rounded text-xs`}>
-              {item.badge}
-            </span>
-          )}
         </div>
       </div>
     );
   }
 
-  // Expanded view with children
   if (hasChildren) {
     return (
       <div>
@@ -341,8 +291,8 @@ const NavMenuItem: React.FC<{
             w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200
             ${
               isActive
-                ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-                : 'text-advist-text-secondary hover:bg-advist-surface-dark'
+                ? 'bg-[#b8a47e] text-[#0f172a] shadow-lg shadow-[#b8a47e]/20'
+                : 'text-white/50 hover:bg-white/[0.06] hover:text-white/80'
             }
           `}
         >
@@ -350,38 +300,31 @@ const NavMenuItem: React.FC<{
           <span className="flex-1 font-medium text-sm">{item.label}</span>
           {item.badge && (
             <span
-              className={`
-              px-1.5 py-0.5 text-[10px] font-bold rounded-full
-              ${isActive ? 'bg-white/20 text-white' : `${planTheme.bgMedium} ${planTheme.text}`}
-            `}
+              className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${isActive ? 'bg-[#0f172a]/20 text-[#0f172a]' : 'bg-[#b8a47e]/15 text-[#b8a47e]'}`}
             >
               {item.badge}
             </span>
           )}
           {item.hasAdd && (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-white/10' : 'hover:bg-advist-border'}`}
+              onClick={(e) => e.stopPropagation()}
+              className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-[#0f172a]/10' : 'hover:bg-white/[0.06]'}`}
             >
               <Plus size={14} />
             </button>
           )}
           <ChevronDown
-            size={16}
+            size={14}
             className={`transition-transform duration-200 ${expanded ? 'rotate-0' : '-rotate-90'}`}
           />
         </button>
 
-        {/* Children - bordure colorée */}
         {expanded && (
-          <div className={`ml-4 mt-1 pl-4 border-l-2 ${planTheme.border} space-y-1`}>
+          <div className="ml-4 mt-1 pl-4 border-l border-[#b8a47e]/20 space-y-0.5">
             {item.children?.map((child) => {
               const ChildIcon = child.icon;
               const childActive =
                 child.path && location.pathname.startsWith(child.path.split('?')[0]);
-
               return (
                 <NavLink
                   key={child.id}
@@ -390,17 +333,15 @@ const NavMenuItem: React.FC<{
                     flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
                     ${
                       childActive
-                        ? `${planTheme.bgLight} text-advist-gray900 font-medium`
-                        : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
+                        ? 'bg-white/[0.08] text-white font-medium'
+                        : 'text-white/40 hover:bg-white/[0.04] hover:text-white/60'
                     }
                   `}
                 >
-                  <ChildIcon size={16} />
-                  <span className="flex-1 text-sm">{child.label}</span>
+                  <ChildIcon size={15} />
+                  <span className="flex-1 text-[13px]">{child.label}</span>
                   {child.badge && (
-                    <span
-                      className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${planTheme.bgMedium} ${planTheme.text}`}
-                    >
+                    <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-[#b8a47e]/15 text-[#b8a47e]">
                       {child.badge}
                     </span>
                   )}
@@ -413,7 +354,6 @@ const NavMenuItem: React.FC<{
     );
   }
 
-  // Simple item without children
   return (
     <NavLink
       to={item.path || '#'}
@@ -421,8 +361,8 @@ const NavMenuItem: React.FC<{
         flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
         ${
           isActive
-            ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
-            : 'text-advist-text-secondary hover:bg-advist-surface-dark'
+            ? 'bg-[#b8a47e] text-[#0f172a] shadow-lg shadow-[#b8a47e]/20'
+            : 'text-white/50 hover:bg-white/[0.06] hover:text-white/80'
         }
       `}
     >
@@ -430,20 +370,15 @@ const NavMenuItem: React.FC<{
       <span className="flex-1 font-medium text-sm">{item.label}</span>
       {item.badge && (
         <span
-          className={`
-          px-1.5 py-0.5 text-[10px] font-bold rounded-full
-          ${isActive ? 'bg-white/20 text-white' : `${planTheme.bgMedium} ${planTheme.text}`}
-        `}
+          className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${isActive ? 'bg-[#0f172a]/20 text-[#0f172a]' : 'bg-[#b8a47e]/15 text-[#b8a47e]'}`}
         >
           {item.badge}
         </span>
       )}
       {item.hasAdd && (
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-white/10' : 'hover:bg-advist-border'}`}
+          onClick={(e) => e.stopPropagation()}
+          className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-[#0f172a]/10' : 'hover:bg-white/[0.06]'}`}
         >
           <Plus size={14} />
         </button>
