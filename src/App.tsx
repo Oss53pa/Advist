@@ -243,16 +243,10 @@ function App() {
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
               <Routes>
-                {/* Public landing page — authenticated users go straight to
-                    the app instead of seeing the marketing page. */}
-                <Route
-                  path="/"
-                  element={
-                    <PublicRoute>
-                      <LandingPage />
-                    </PublicRoute>
-                  }
-                />
+                {/* Public landing page — always accessible (auth users
+                    can reach it via the "Site vitrine" button in the
+                    TopNavBar; unauth users land here by default). */}
+                <Route path="/" element={<LandingPage />} />
 
                 {/* Auth routes */}
                 <Route

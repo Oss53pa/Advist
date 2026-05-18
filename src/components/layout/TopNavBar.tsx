@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
@@ -26,6 +26,7 @@ import {
   Menu,
   X,
   Globe,
+  Home,
 } from 'lucide-react';
 import { useAuthStore, useNotificationStore } from '../../store';
 import { Avatar } from '../ui/Avatar';
@@ -150,11 +151,15 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
             )}
           </button>
 
-          {/* Logo */}
+          {/* Logo + lien vers la landing publique */}
           <div className="flex items-center gap-2 mr-4 lg:mr-8">
-            <span className="font-decorative text-advist-gray900 text-2xl lg:text-3xl font-bold">
+            <Link
+              to={basePath}
+              className="font-decorative text-advist-gray900 text-2xl lg:text-3xl font-bold hover:opacity-80 transition-opacity"
+              aria-label={t('nav.home', 'Accueil')}
+            >
               Advist
-            </span>
+            </Link>
             {variant === 'admin' && (
               <span
                 className={`hidden sm:inline px-2 py-1 ${planClasses.bg} ${planClasses.textOnBg} text-[10px] font-bold rounded-lg uppercase shadow-lg`}
@@ -162,6 +167,14 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                 Admin
               </span>
             )}
+            <Link
+              to="/"
+              className="hidden md:inline-flex items-center gap-1.5 ml-2 px-2.5 py-1 rounded-lg border border-advist-border text-xs text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-surface-dark transition-colors"
+              title={t('nav.publicSite', 'Site vitrine')}
+            >
+              <Home size={12} aria-hidden="true" />
+              <span>{t('nav.publicSite', 'Site vitrine')}</span>
+            </Link>
           </div>
 
           {/* Navigation Tabs - Desktop - avec couleurs du plan */}
@@ -553,6 +566,14 @@ const UserMenuDropdown: React.FC<{
             <ArrowLeftRight size={16} />
             <span className="text-sm">{t('profile.switchProfile')}</span>
           </button>
+          <Link
+            to="/"
+            onClick={onClose}
+            className="flex items-center gap-3 px-4 py-2.5 text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900 transition-colors"
+          >
+            <Home size={16} />
+            <span className="text-sm">{t('nav.publicSite', 'Site vitrine')}</span>
+          </Link>
         </div>
         <div className="border-t border-advist-border py-1">
           <button
