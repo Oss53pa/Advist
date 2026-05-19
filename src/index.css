@@ -933,19 +933,71 @@ body.theme-midnight .bg-neutral-100 {
   background-image: none !important;
 }
 
-/* Indigo / violet / blue accents (dates, info chips) → neutral mid-gray */
+/* Indigo / violet / blue accents (dates, info chips) → neutral mid-gray.
+   text-advist-blue-light is the `status.info` token used pervasively for
+   metadata (date pills, activity timestamps) in UserDashboard. */
 body.theme-midnight .text-info,
+body.theme-midnight .text-advist-info,
+body.theme-midnight .text-advist-blue-light,
+body.theme-midnight .text-indigo-300,
 body.theme-midnight .text-indigo-400,
 body.theme-midnight .text-indigo-500,
 body.theme-midnight .text-indigo-600,
+body.theme-midnight .text-blue-300,
 body.theme-midnight .text-blue-400,
 body.theme-midnight .text-blue-500,
 body.theme-midnight .text-blue-600,
+body.theme-midnight .text-sky-300,
+body.theme-midnight .text-sky-400,
+body.theme-midnight .text-sky-500,
+body.theme-midnight .text-cyan-300,
+body.theme-midnight .text-cyan-400,
+body.theme-midnight .text-cyan-500,
 body.theme-midnight .text-violet-400,
 body.theme-midnight .text-violet-500,
 body.theme-midnight .text-purple-400,
 body.theme-midnight .text-purple-500 {
   color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Legacy `advist-*` near-black grayscale tokens (advist-dark, advist-navy,
+   advist-onyx, advist-rust) all resolve to ~#171717 in theme.ts. Under
+   Midnight Bank we want them to read as the slate-800 card surface so the
+   quick-action icon wells and similar primitives blend with the rest of
+   the dark UI instead of sitting as pure-black blobs. */
+body.theme-midnight .bg-advist-dark,
+body.theme-midnight .bg-advist-navy,
+body.theme-midnight .bg-advist-onyx,
+body.theme-midnight .bg-advist-rust {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* Status-light wells — keep semantic hue but transluce them over dark */
+body.theme-midnight .bg-advist-warning-light {
+  background-color: rgba(245, 201, 122, 0.16) !important;
+  color: #f5c97a !important;
+}
+body.theme-midnight .bg-advist-success-light {
+  background-color: rgba(52, 211, 153, 0.16) !important;
+  color: #34d399 !important;
+}
+body.theme-midnight .bg-advist-error-light {
+  background-color: rgba(251, 113, 133, 0.16) !important;
+  color: #fb7185 !important;
+}
+body.theme-midnight .bg-advist-info-light {
+  background-color: rgba(184, 164, 126, 0.16) !important;
+}
+body.theme-midnight .bg-advist-gold-light\/20,
+body.theme-midnight .bg-advist-gold\/10 {
+  background-color: rgba(184, 164, 126, 0.16) !important;
+}
+
+/* Quick-action tile surface — was a near-black grayscale gradient. Make
+   it a frosted-glass over the navy background. */
+body.theme-midnight .bg-advist-surface-dark {
+  background-color: rgba(255, 255, 255, 0.04) !important;
 }
 
 /* Subtle / alt surfaces — between bg and card */
