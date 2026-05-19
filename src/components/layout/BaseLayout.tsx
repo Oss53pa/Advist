@@ -83,7 +83,7 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ variant }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
+    <div className="min-h-screen bg-[#f7f8fa]">
       {/* Plan Color Bar - Barre colorée en haut indiquant le plan */}
       <div
         className={`fixed top-0 left-0 right-0 h-1 ${planClasses.bgGradient} z-[60] print:hidden`}
