@@ -841,208 +841,114 @@ html.dark .border-primary-300 {
 }
 
 /* =====================================================
-   THEME — MIDNIGHT BANK
+   THEME — MIDNIGHT BANKING (Institutional Light)
    =====================================================
-   Active on authenticated layouts (BaseLayout / AdminLayout /
-   SuperAdminLayout) via the `theme-midnight` class on <body>.
-   The landing page intentionally renders outside this scope.
+   Brand identity for authenticated layouts: a light institutional
+   surface with navy text and a muted gold accent — Goldman / Stripe
+   inspired, NOT a dark mode. The marketing landing page keeps its
+   own dark navy hero (rendered outside this scope).
 
-   Palette — aligned with the marketing landing page (slate-900 / navy
-   institutional + muted gold accent, NOT pure black + bright gold).
-     bg     #0f172a   slate-900, deepest background
-     bg2    #080e1b   alt section (deeper navy)
-     bg3    #1e293b   slate-800, card surface
-     line5  rgba(255,255,255,0.05)
-     line10 rgba(255,255,255,0.10)
-     gold   #b8a47e   muted institutional gold (CTAs, focus)
-     goldHi #c8b894   hover accent
-
-   We override the most heavily-used utilities so the migration is
-   surgical: a single CSS pass repaints the entire authenticated
-   surface without touching ~150 component files.
+   Official palette (user reference card):
+     bg          #f7f8fa   page background
+     surface     #ffffff   card / panel
+     border      #e1e5ec   subtle separators
+     accent gold #b8a47e   secondary CTAs, highlights
+     primary     #0f172a   text + primary CTA
    ===================================================== */
 
 body.theme-midnight {
-  /* Hard-pin the body to pure black. Override the institutional CSS
-     variables that would otherwise tint the page navy/indigo. */
-  --color-background: #0f172a;
-  --color-background-rgb: 10 10 11;
-  --color-surface: #1e293b;
-  --color-surface-rgb: 26 26 29;
-  --color-surface-alt: #080e1b;
-  --color-primary: #ffffff;
-  --color-primary-rgb: 255 255 255;
+  --color-background: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f0f2f5;
+  --color-primary: #0f172a;
   --color-gold: #b8a47e;
-  --color-gold-light: #c8b894;
-  --color-gold-dark: #b89a52;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.72);
-  --color-text-muted: rgba(255, 255, 255, 0.55);
-  --color-text-label: rgba(255, 255, 255, 0.78);
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-dark: rgba(255, 255, 255, 0.14);
-  /* Replace the indigo `--color-info` so date/time captions stop
-     reading as bright violet on the dark surface. */
-  --color-info: rgba(255, 255, 255, 0.6);
-  --color-success: #34d399;
-  --color-warning: #f5c97a;
-  --color-error: #fb7185;
+  --color-gold-light: #d4c6a5;
+  --color-gold-dark: #9a8561;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #5e6b7d;
+  --color-text-muted: #8b95a5;
+  --color-text-label: #3d4a5c;
+  --color-border: #e1e5ec;
+  --color-border-dark: #c8cfd9;
 
-  background-color: #0f172a !important;
+  background-color: #f7f8fa !important;
   background-image: none !important;
-  color: rgba(255, 255, 255, 0.88);
-  color-scheme: dark;
+  color: #0f172a;
+  color-scheme: light;
 }
 
-/* Strip every gradient that would bring back the navy/violet hue
-   from the institutional palette. */
-body.theme-midnight [class*='bg-gradient'],
-body.theme-midnight .bg-gradient-to-r,
-body.theme-midnight .bg-gradient-to-l,
-body.theme-midnight .bg-gradient-to-t,
-body.theme-midnight .bg-gradient-to-b,
-body.theme-midnight .bg-gradient-to-br,
-body.theme-midnight .bg-gradient-to-bl,
-body.theme-midnight .bg-gradient-to-tr,
-body.theme-midnight .bg-gradient-to-tl {
-  background-image: none !important;
-}
-
-/* Page-level backgrounds — pure black */
 body.theme-midnight main,
 body.theme-midnight .bg-page,
-body.theme-midnight .min-h-screen,
-body.theme-midnight .min-h-\[100vh\] {
-  background-color: #0f172a !important;
+body.theme-midnight .min-h-screen {
+  background-color: #f7f8fa !important;
   background-image: none !important;
 }
 
-/* Surface backgrounds → elevated card #1A1A1D */
+/* Surfaces — cards pure white */
 body.theme-midnight .bg-white,
+body.theme-midnight .bg-advist-surface,
+body.theme-midnight .bg-advist-bg {
+  background-color: #ffffff !important;
+}
+
 body.theme-midnight .bg-primary-50,
 body.theme-midnight .bg-primary-100,
-body.theme-midnight .bg-primary-200,
-body.theme-midnight .bg-advist-bg,
-body.theme-midnight .bg-advist-surface,
 body.theme-midnight .bg-advist-surface-dark,
-body.theme-midnight .bg-slate-100,
-body.theme-midnight .bg-slate-200,
-body.theme-midnight .bg-gray-100,
-body.theme-midnight .bg-neutral-100 {
-  background-color: #1e293b !important;
-  background-image: none !important;
+body.theme-midnight .bg-gray-50,
+body.theme-midnight .bg-slate-50,
+body.theme-midnight .bg-neutral-50 {
+  background-color: #f0f2f5 !important;
 }
 
-/* Indigo / violet / blue accents (dates, info chips) → neutral mid-gray.
-   text-advist-blue-light is the `status.info` token used pervasively for
-   metadata (date pills, activity timestamps) in UserDashboard. */
-body.theme-midnight .text-info,
-body.theme-midnight .text-advist-info,
-body.theme-midnight .text-advist-blue-light,
-body.theme-midnight .text-indigo-300,
-body.theme-midnight .text-indigo-400,
-body.theme-midnight .text-indigo-500,
-body.theme-midnight .text-indigo-600,
-body.theme-midnight .text-blue-300,
-body.theme-midnight .text-blue-400,
-body.theme-midnight .text-blue-500,
-body.theme-midnight .text-blue-600,
-body.theme-midnight .text-sky-300,
-body.theme-midnight .text-sky-400,
-body.theme-midnight .text-sky-500,
-body.theme-midnight .text-cyan-300,
-body.theme-midnight .text-cyan-400,
-body.theme-midnight .text-cyan-500,
-body.theme-midnight .text-violet-400,
-body.theme-midnight .text-violet-500,
-body.theme-midnight .text-purple-400,
-body.theme-midnight .text-purple-500 {
-  color: rgba(255, 255, 255, 0.6) !important;
-}
-
-/* Legacy `advist-*` near-black grayscale tokens (advist-dark, advist-navy,
-   advist-onyx, advist-rust) all resolve to ~#171717 in theme.ts. Under
-   Midnight Bank we want them to read as the slate-800 card surface so the
-   quick-action icon wells and similar primitives blend with the rest of
-   the dark UI instead of sitting as pure-black blobs. */
+/* Primary CTA — navy with white text */
+body.theme-midnight .bg-primary-900,
+body.theme-midnight .bg-primary-950,
 body.theme-midnight .bg-advist-dark,
-body.theme-midnight .bg-advist-navy,
-body.theme-midnight .bg-advist-onyx,
-body.theme-midnight .bg-advist-rust {
+body.theme-midnight .bg-advist-navy {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+body.theme-midnight .hover\:bg-primary-900:hover,
+body.theme-midnight .hover\:bg-primary-800:hover,
+body.theme-midnight .hover\:bg-advist-dark-hover:hover {
   background-color: #1e293b !important;
   color: #ffffff !important;
 }
 
-/* Status-light wells — keep semantic hue but transluce them over dark */
-body.theme-midnight .bg-advist-warning-light {
-  background-color: rgba(245, 201, 122, 0.16) !important;
-  color: #f5c97a !important;
+/* Gold accent surfaces */
+body.theme-midnight .bg-advist-gold {
+  background-color: #b8a47e !important;
+  color: #0f172a !important;
 }
-body.theme-midnight .bg-advist-success-light {
-  background-color: rgba(52, 211, 153, 0.16) !important;
-  color: #34d399 !important;
+
+body.theme-midnight .text-advist-gold,
+body.theme-midnight .text-advist-accent {
+  color: #b8a47e !important;
 }
-body.theme-midnight .bg-advist-error-light {
-  background-color: rgba(251, 113, 133, 0.16) !important;
-  color: #fb7185 !important;
-}
-body.theme-midnight .bg-advist-info-light {
-  background-color: rgba(184, 164, 126, 0.16) !important;
-}
+
 body.theme-midnight .bg-advist-gold-light\/20,
 body.theme-midnight .bg-advist-gold\/10 {
-  background-color: rgba(184, 164, 126, 0.16) !important;
+  background-color: rgba(184, 164, 126, 0.18) !important;
+  color: #9a8561 !important;
 }
 
-/* Quick-action tile surface — was a near-black grayscale gradient. Make
-   it a frosted-glass over the navy background. */
-body.theme-midnight .bg-advist-surface-dark {
-  background-color: rgba(255, 255, 255, 0.04) !important;
-}
-
-/* Subtle / alt surfaces — between bg and card */
-body.theme-midnight .bg-primary-50\/50,
-body.theme-midnight .bg-primary-100\/50,
-body.theme-midnight .bg-gray-50,
-body.theme-midnight .bg-neutral-50,
-body.theme-midnight .bg-slate-50 {
-  background-color: #080e1b !important;
-}
-
-/* Text — invert every common gray scale to neutral whites at readable
-   opacities. Muted gets 58 % (was 45 %) so KPI labels, captions and
-   small timestamps still come through. */
+/* Text scale — institutional navy gradient */
 body.theme-midnight .text-primary-900,
-body.theme-midnight .text-primary-950,
-body.theme-midnight .text-advist-text-primary,
 body.theme-midnight .text-advist-dark,
 body.theme-midnight .text-advist-gray900,
-body.theme-midnight .text-gray-900,
-body.theme-midnight .text-neutral-900,
-body.theme-midnight .text-slate-900,
 body.theme-midnight .text-black {
-  color: #ffffff !important;
+  color: #0f172a !important;
 }
 
-body.theme-midnight .text-primary-800,
 body.theme-midnight .text-primary-700,
-body.theme-midnight .text-gray-800,
-body.theme-midnight .text-gray-700,
-body.theme-midnight .text-neutral-800,
-body.theme-midnight .text-neutral-700,
-body.theme-midnight .text-slate-800,
-body.theme-midnight .text-slate-700 {
-  color: rgba(255, 255, 255, 0.88) !important;
-}
-
 body.theme-midnight .text-primary-600,
 body.theme-midnight .text-advist-text-secondary,
 body.theme-midnight .text-advist-gray700,
 body.theme-midnight .text-advist-gray600,
-body.theme-midnight .text-gray-600,
-body.theme-midnight .text-neutral-600,
-body.theme-midnight .text-slate-600 {
-  color: rgba(255, 255, 255, 0.72) !important;
+body.theme-midnight .text-gray-700,
+body.theme-midnight .text-gray-600 {
+  color: #5e6b7d !important;
 }
 
 body.theme-midnight .text-primary-500,
@@ -1051,34 +957,11 @@ body.theme-midnight .text-advist-text-muted,
 body.theme-midnight .text-advist-gray500,
 body.theme-midnight .text-advist-gray400,
 body.theme-midnight .text-gray-500,
-body.theme-midnight .text-gray-400,
-body.theme-midnight .text-neutral-500,
-body.theme-midnight .text-neutral-400,
-body.theme-midnight .text-slate-500,
-body.theme-midnight .text-slate-400 {
-  color: rgba(255, 255, 255, 0.58) !important;
+body.theme-midnight .text-gray-400 {
+  color: #8b95a5 !important;
 }
 
-body.theme-midnight .text-primary-300,
-body.theme-midnight .text-primary-200,
-body.theme-midnight .text-gray-300,
-body.theme-midnight .text-gray-200,
-body.theme-midnight .text-slate-300,
-body.theme-midnight .text-slate-200 {
-  color: rgba(255, 255, 255, 0.42) !important;
-}
-
-/* Headings — keep them crisp */
-body.theme-midnight h1,
-body.theme-midnight h2,
-body.theme-midnight h3,
-body.theme-midnight h4,
-body.theme-midnight h5,
-body.theme-midnight h6 {
-  color: #ffffff;
-}
-
-/* Borders — almost invisible, just hint of separation */
+/* Borders — hairline #e1e5ec */
 body.theme-midnight .border,
 body.theme-midnight .border-t,
 body.theme-midnight .border-b,
@@ -1088,103 +971,71 @@ body.theme-midnight .border-x,
 body.theme-midnight .border-y,
 body.theme-midnight .border-primary-100,
 body.theme-midnight .border-primary-200,
-body.theme-midnight .border-primary-300,
 body.theme-midnight .border-advist-border,
-body.theme-midnight .border-advist-border-dark,
 body.theme-midnight .border-gray-100,
 body.theme-midnight .border-gray-200,
+body.theme-midnight .border-slate-100,
+body.theme-midnight .border-slate-200 {
+  border-color: #e1e5ec !important;
+}
+
+body.theme-midnight .border-primary-300,
+body.theme-midnight .border-advist-border-dark,
 body.theme-midnight .border-gray-300 {
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: #c8cfd9 !important;
+}
+
+/* Cards — soft elevated panels */
+body.theme-midnight .advist-card,
+body.theme-midnight .rounded-2xl.bg-white,
+body.theme-midnight .rounded-xl.bg-white {
+  background-color: #ffffff !important;
+  border: 1px solid #e1e5ec !important;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 2px 6px rgba(15, 23, 42, 0.03) !important;
 }
 
 /* Inputs */
 body.theme-midnight input,
 body.theme-midnight textarea,
 body.theme-midnight select {
-  background-color: #1e293b !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #f5f5f5 !important;
+  background-color: #ffffff !important;
+  border-color: #e1e5ec !important;
+  color: #0f172a !important;
 }
 
 body.theme-midnight input::placeholder,
 body.theme-midnight textarea::placeholder {
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: #8b95a5 !important;
 }
 
 body.theme-midnight input:focus,
 body.theme-midnight textarea:focus,
 body.theme-midnight select:focus {
-  border-color: #b8a47e !important;
-  box-shadow: 0 0 0 3px rgba(200, 169, 97, 0.18) !important;
+  border-color: #0f172a !important;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08) !important;
 }
 
-/* Buttons — primary becomes gold, dark stays dark */
-body.theme-midnight .bg-primary-900,
-body.theme-midnight .bg-primary-950,
-body.theme-midnight .bg-advist-dark,
-body.theme-midnight .bg-advist-gold {
-  background-color: #b8a47e !important;
-  color: #0f172a !important;
+/* Status pills — soft tints over white */
+body.theme-midnight .bg-advist-warning-light {
+  background-color: #fff7ed !important;
+  color: #c2410c !important;
+}
+body.theme-midnight .bg-advist-success-light {
+  background-color: #ecfdf5 !important;
+  color: #047857 !important;
+}
+body.theme-midnight .bg-advist-error-light {
+  background-color: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+body.theme-midnight .bg-advist-info-light {
+  background-color: #eff6ff !important;
+  color: #1d4ed8 !important;
 }
 
-body.theme-midnight .hover\:bg-primary-900:hover,
-body.theme-midnight .hover\:bg-primary-800:hover,
-body.theme-midnight .hover\:bg-advist-dark-hover:hover,
-body.theme-midnight .hover\:bg-advist-gold-dark:hover {
-  background-color: #c8b894 !important;
-  color: #0f172a !important;
-}
-
-body.theme-midnight .text-white {
-  color: #ffffff;
-}
-
-/* Accent text (primary actions, links inside the gray scale) */
-body.theme-midnight .text-advist-accent,
-body.theme-midnight .text-advist-gold {
-  color: #b8a47e !important;
-}
-
-/* Card primitives — soft elevated panels */
-body.theme-midnight .advist-card,
-body.theme-midnight .rounded-2xl.bg-white,
-body.theme-midnight .rounded-xl.bg-white,
-body.theme-midnight .rounded-lg.bg-white,
-body.theme-midnight .rounded-card {
-  background-color: #1e293b !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.02) inset,
-    0 8px 24px rgba(0, 0, 0, 0.35) !important;
-}
-
-/* Shadows on dark — strip light shadows that look like seams */
-body.theme-midnight .shadow,
-body.theme-midnight .shadow-sm,
-body.theme-midnight .shadow-md,
-body.theme-midnight .shadow-card,
-body.theme-midnight .shadow-card-hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
-}
-
-body.theme-midnight .shadow-lg,
-body.theme-midnight .shadow-xl,
-body.theme-midnight .shadow-2xl {
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5) !important;
-}
-
-/* Scrollbar */
-body.theme-midnight ::-webkit-scrollbar-track {
-  background: #0f172a;
-}
-body.theme-midnight ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-}
-body.theme-midnight ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Focus outline switches to gold so it reads on the dark surface */
+/* Focus outline uses the institutional navy */
 body.theme-midnight :focus-visible {
-  outline-color: #b8a47e;
+  outline-color: #0f172a;
 }
