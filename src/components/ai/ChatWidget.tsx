@@ -16,9 +16,20 @@ import {
   Minimize2,
   Maximize2,
   GripVertical,
+  Cloud,
+  Shield,
 } from 'lucide-react';
 import { useAIStore } from '../../store/aiStore';
 import { aiService, AIMessage } from '../../services/ai';
+import {
+  askProph3t,
+  buildGroundingBlock,
+  logAudit,
+  isProph3tConfigured,
+  DEFAULT_SENSITIVITY,
+  type Sensitivity,
+} from '../../lib/proph3t';
+import { useTenantStore } from '../../stores/tenantStore';
 
 interface ChatMessage {
   id: string;
@@ -44,6 +55,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Atlas Studio « Proph3t core » : choix du moteur + gouvernance par sensibilité.
+  const tenantId = useTenantStore((s) => s.currentTenant?.id);
+  const societyId = tenantId !== undefined ? String(tenantId) : undefined;
+  const coreConfigured = isProph3tConfigured();
+  const [mode, setMode] = useState<'local' | 'core'>('local');
+  const [sensitivity, setSensitivity] = useState<Sensitivity>(DEFAULT_SENSITIVITY);
+  const [coreConversationId, setCoreConversationId] = useState<string | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -155,6 +174,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
 
   // Check if chat is disabled (but allow display even without API config for demo)
   const isConfigured = isReady();
+  // En mode « core », l'app n'a pas besoin d'un provider local configuré :
+  // c'est le core qui orchestre. En mode « local », on garde le gating existant.
+  const canInteract = mode === 'core' ? coreConfigured : isConfigured;
   if (!config.features.chatEnabled) {
     return null;
   }
@@ -196,17 +218,55 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
       }));
       messageHistory.push({ role: 'user', content: userMessage.content });
 
-      // Add document context if available
-      let systemPrompt = undefined;
-      if (context?.documentName) {
-        systemPrompt = `Tu es Proph3t, l'assistant IA intégré dans ADVIST. L'utilisateur travaille actuellement sur le document "${context.documentName}". Aide-le avec ses questions concernant ce document ou toute autre question.`;
-      }
+      let answer: string;
 
-      const response = await aiService.chat(messageHistory, systemPrompt);
+      if (mode === 'core') {
+        // ── Mode B : déléguer tout le tour au Proph3t core (orchestrateur
+        // hébergé), gouverné par la sensibilité des données. En 'confidential',
+        // le core ne sollicite que des providers sans rétention (Ollama/Claude).
+        const res = await askProph3t({
+          message: userMessage.content,
+          sensitivity,
+          societyId,
+          conversationId: coreConversationId,
+        });
+        setCoreConversationId(res.conversation_id);
+        answer = res.disclaimer ? `${res.answer}\n\n— ${res.disclaimer}` : res.answer;
+      } else {
+        // ── Voie locale (LLM Advist via ai-proxy), inchangée, enrichie Mode A.
+        let systemPrompt: string | undefined = context?.documentName
+          ? `Tu es Proph3t, l'assistant IA intégré dans ADVIST. L'utilisateur travaille actuellement sur le document "${context.documentName}". Aide-le avec ses questions concernant ce document ou toute autre question.`
+          : undefined;
+
+        // Mode A : ancrage RAG (SYSCOHADA/OHADA/CGI) + mémoire inter-apps.
+        // No-op tant que le SDK fédéré n'est pas installé (dégradation propre).
+        try {
+          const grounding = await buildGroundingBlock(userMessage.content, { societyId });
+          if (grounding) {
+            const base =
+              systemPrompt ??
+              "Tu es Proph3t, l'assistant IA d'ADVIST. Réponds en français, de manière claire et concise.";
+            systemPrompt = `${base}${grounding}`;
+          }
+        } catch {
+          // enrichissement best-effort : on poursuit en local pur
+        }
+
+        const response = await aiService.chat(messageHistory, systemPrompt);
+        answer = response.content;
+
+        // Audit chaîné best-effort (no-op si Mode A indisponible).
+        void logAudit('advist_chat_local_response', {
+          subjectType: context?.documentId !== undefined ? 'document' : undefined,
+          subjectId: context?.documentId !== undefined ? String(context.documentId) : undefined,
+          content: { question: userMessage.content },
+          societyId,
+        });
+      }
 
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantMessageId ? { ...m, content: response.content, isStreaming: false } : m
+          m.id === assistantMessageId ? { ...m, content: answer, isStreaming: false } : m
         )
       );
     } catch (error) {
@@ -316,6 +376,55 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
 
       {!isMinimized && (
         <>
+          {/* Sélecteur de moteur : LLM local (Advist) vs Proph3t core (Mode B) */}
+          <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-primary-100 bg-primary-50/60">
+            <div className="inline-flex rounded-lg bg-primary-100 p-0.5 text-xs font-medium">
+              <button
+                onClick={() => setMode('local')}
+                className={`px-2.5 py-1 rounded-md transition-colors ${
+                  mode === 'local'
+                    ? 'bg-white text-primary-900 shadow-sm'
+                    : 'text-primary-500 hover:text-primary-900'
+                }`}
+              >
+                Local
+              </button>
+              <button
+                onClick={() => coreConfigured && setMode('core')}
+                disabled={!coreConfigured}
+                title={
+                  coreConfigured
+                    ? 'Déléguer la question au Proph3t core Atlas Studio'
+                    : 'Proph3t core non configuré (VITE_ATLAS_SUPABASE_URL / _ANON_KEY)'
+                }
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors disabled:opacity-40 ${
+                  mode === 'core'
+                    ? 'bg-white text-primary-900 shadow-sm'
+                    : 'text-primary-500 hover:text-primary-900'
+                }`}
+              >
+                <Cloud className="w-3.5 h-3.5" /> Atlas core
+              </button>
+            </div>
+            {mode === 'core' && (
+              <div
+                className="inline-flex items-center gap-1"
+                title="Sensibilité des données (gouverne les providers autorisés côté core)"
+              >
+                <Shield className="w-3.5 h-3.5 text-primary-500" />
+                <select
+                  value={sensitivity}
+                  onChange={(e) => setSensitivity(e.target.value as Sensitivity)}
+                  className="text-xs bg-white border border-primary-200 rounded-md px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                >
+                  <option value="confidential">Confidentiel</option>
+                  <option value="internal">Interne</option>
+                  <option value="public">Public</option>
+                </select>
+              </div>
+            )}
+          </div>
+
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 h-[calc(100%-8rem)]">
             {messages.length === 0 ? (
@@ -329,7 +438,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
                 >
                   Proph3t
                 </h3>
-                {!isConfigured ? (
+                {!canInteract ? (
                   <p className="text-sm text-primary-500">
                     {t(
                       'ai.chat.notConfigured',
@@ -408,16 +517,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder={
-                    !isConfigured
+                    !canInteract
                       ? t('ai.chat.configureFirst', "Configurez d'abord l'API...")
                       : t('ai.chat.placeholder', 'Posez votre question...')
                   }
-                  disabled={isLoading || !isConfigured}
+                  disabled={isLoading || !canInteract}
                   className="w-full px-4 py-2.5 pr-12 bg-primary-50 border border-primary-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50"
                 />
                 <button
                   onClick={handleSend}
-                  disabled={!inputValue.trim() || isLoading || !isConfigured}
+                  disabled={!inputValue.trim() || isLoading || !canInteract}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white bg-primary-900 rounded-lg hover:bg-primary-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}

@@ -5,6 +5,7 @@
 import { useAIStore } from '../store/aiStore';
 import { openRouterService, OpenRouterMessage } from './openrouter';
 import { claudeService, ClaudeMessage, DocumentAnalysisResult } from './claude';
+import { askProph3t } from '../lib/proph3t';
 
 export interface AIMessage {
   role: 'user' | 'assistant';
@@ -58,24 +59,77 @@ Format de réponse OBLIGATOIRE (JSON uniquement, sans markdown):
 }`,
 };
 
+/**
+ * Analyse documentaire déléguée au « Proph3t core » (Mode B, confidentiel).
+ * L'orchestrateur ne prend qu'un `message` : on y embarque la consigne JSON
+ * (SYSTEM_PROMPTS.documentAnalysis) puis le contenu du document.
+ */
+async function analyzeDocumentViaCore(
+  documentContent: string,
+  documentType?: string,
+  societyId?: string
+): Promise<DocumentAnalysisResult> {
+  const typeLine = documentType ? `Type de document : "${documentType}".\n` : '';
+  const message = `${SYSTEM_PROMPTS.documentAnalysis}\n\n${typeLine}Document à analyser :\n\n${documentContent}`;
+
+  const result = await askProph3t({
+    message,
+    sensitivity: 'confidential',
+    societyId,
+  });
+
+  return parseDocumentAnalysis(result.answer, documentType, result.confidence);
+}
+
+/** Extrait le JSON d'analyse de la réponse du core, avec repli défensif. */
+function parseDocumentAnalysis(
+  content: string,
+  documentType: string | undefined,
+  confidence?: number
+): DocumentAnalysisResult {
+  try {
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]) as DocumentAnalysisResult;
+      if (typeof parsed.confidence !== 'number' && typeof confidence === 'number') {
+        parsed.confidence = confidence;
+      }
+      return parsed;
+    }
+    throw new Error('Format de réponse invalide');
+  } catch {
+    return {
+      summary: {
+        type: documentType || 'Document',
+        description: 'Analyse non disponible',
+        keyPoints: [],
+      },
+      attentionPoints: [
+        {
+          severity: 'warning',
+          title: 'Analyse incomplète',
+          description: "L'analyse n'a pas pu être effectuée correctement",
+        },
+      ],
+      validationChecklist: [],
+      confidence: 0,
+    };
+  }
+}
+
 export const aiService = {
   /**
    * Send a chat message and get a response
    * Automatically uses the configured provider
    */
-  async chat(
-    messages: AIMessage[],
-    systemPrompt?: string
-  ): Promise<AIResponse> {
+  async chat(messages: AIMessage[], systemPrompt?: string): Promise<AIResponse> {
     const store = useAIStore.getState();
     const { config } = store;
 
     if (config.provider === 'openrouter') {
-      const apiKey = config.openrouter.apiKey
-        ? store.getApiKey()
-        : undefined;
+      const apiKey = config.openrouter.apiKey ? store.getApiKey() : undefined;
 
-      const openRouterMessages: OpenRouterMessage[] = messages.map(m => ({
+      const openRouterMessages: OpenRouterMessage[] = messages.map((m) => ({
         role: m.role,
         content: m.content,
       }));
@@ -100,7 +154,7 @@ export const aiService = {
       };
     } else {
       // Claude provider
-      const claudeMessages: ClaudeMessage[] = messages.map(m => ({
+      const claudeMessages: ClaudeMessage[] = messages.map((m) => ({
         role: m.role,
         content: m.content,
       }));
@@ -121,19 +175,28 @@ export const aiService = {
   },
 
   /**
-   * Analyze a document and return structured analysis
+   * Analyze a document and return structured analysis.
+   *
+   * `options.useCore` route l'analyse via l'orchestrateur Atlas « Proph3t core »
+   * (Mode B) avec sensitivity:'confidential' : un document est par nature
+   * confidentiel (contrats, pièces, etc.) → le core ne sollicite alors que des
+   * providers sans rétention (Ollama/Claude). La voie locale (Claude/OpenRouter
+   * via ai-proxy) reste la voie par défaut, inchangée.
    */
   async analyzeDocument(
     documentContent: string,
-    documentType?: string
+    documentType?: string,
+    options?: { useCore?: boolean; societyId?: string }
   ): Promise<DocumentAnalysisResult> {
+    if (options?.useCore) {
+      return analyzeDocumentViaCore(documentContent, documentType, options.societyId);
+    }
+
     const store = useAIStore.getState();
     const { config } = store;
 
     if (config.provider === 'openrouter') {
-      const apiKey = config.openrouter.apiKey
-        ? store.getApiKey()
-        : undefined;
+      const apiKey = config.openrouter.apiKey ? store.getApiKey() : undefined;
 
       return openRouterService.analyzeDocument(documentContent, {
         apiKey,
@@ -153,9 +216,7 @@ export const aiService = {
     const { config } = store;
 
     if (config.provider === 'openrouter') {
-      const apiKey = config.openrouter.apiKey
-        ? store.getApiKey()
-        : undefined;
+      const apiKey = config.openrouter.apiKey ? store.getApiKey() : undefined;
 
       return openRouterService.summarize(text, {
         apiKey,

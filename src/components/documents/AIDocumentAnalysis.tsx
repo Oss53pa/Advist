@@ -21,9 +21,12 @@ import {
   MapPin,
   _Loader2,
   Settings,
+  Cloud,
 } from 'lucide-react';
 import { useAIStore } from '../../store/aiStore';
 import { aiService, DocumentAnalysisResult } from '../../services/ai';
+import { isProph3tConfigured } from '../../lib/proph3t';
+import { useTenantStore } from '../../stores/tenantStore';
 
 // Types
 interface DocumentSummary {
@@ -308,10 +311,15 @@ export const AIDocumentAnalysis: React.FC<AIDocumentAnalysisProps> = ({
   onAnalysisComplete,
 }) => {
   const { config, isReady } = useAIStore();
+  const tenantId = useTenantStore((s) => s.currentTenant?.id);
+  const societyId = tenantId !== undefined ? String(tenantId) : undefined;
+  const coreAvailable = isProph3tConfigured();
+  const [useCore, setUseCore] = useState(false);
   const [analysis, setAnalysis] = useState<AIAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isUsingRealAI, setIsUsingRealAI] = useState(false);
+  const [usedCore, setUsedCore] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     summary: true,
     attention: true,
@@ -323,13 +331,25 @@ export const AIDocumentAnalysis: React.FC<AIDocumentAnalysisProps> = ({
     setError(null);
 
     try {
-      // Check if Claude is configured and document analysis is enabled
-      const canUseRealAI = isReady() && config.features.documentAnalysisEnabled && documentContent;
-      setIsUsingRealAI(canUseRealAI);
+      // Voie « Atlas core » (Mode B, confidentiel) : prioritaire si activée.
+      const canUseCore = useCore && coreAvailable && !!documentContent;
+      // Voie locale (Claude/OpenRouter via ai-proxy), inchangée.
+      const canUseRealAI =
+        isReady() && config.features.documentAnalysisEnabled && !!documentContent;
+      setIsUsingRealAI(canUseCore || canUseRealAI);
+      setUsedCore(canUseCore);
 
       let result: AIAnalysis;
 
-      if (canUseRealAI && documentContent) {
+      if (canUseCore && documentContent) {
+        // Document = donnée confidentielle → le core ne sollicite que des
+        // providers sans rétention (Ollama/Claude). Jamais un tier gratuit.
+        const aiResult = await aiService.analyzeDocument(documentContent, documentType, {
+          useCore: true,
+          societyId,
+        });
+        result = convertClaudeAnalysis(aiResult);
+      } else if (canUseRealAI && documentContent) {
         // Use real AI API (Claude or OpenRouter)
         const aiResult = await aiService.analyzeDocument(documentContent, documentType);
         result = convertClaudeAnalysis(aiResult);
@@ -350,7 +370,8 @@ export const AIDocumentAnalysis: React.FC<AIDocumentAnalysisProps> = ({
 
   useEffect(() => {
     loadAnalysis();
-  }, [documentId, documentType, documentContent]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [documentId, documentType, documentContent, useCore]);
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -467,11 +488,15 @@ export const AIDocumentAnalysis: React.FC<AIDocumentAnalysisProps> = ({
                 <h3 className="font-semibold">
                   Analyse <span style={{ fontFamily: "'Grand Hotel', cursive" }}>Proph3t</span>
                 </h3>
-                {!isUsingRealAI && (
+                {usedCore ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-white/20 rounded-full">
+                    <Cloud className="w-3 h-3" /> Atlas core · confidentiel
+                  </span>
+                ) : !isUsingRealAI ? (
                   <span className="px-2 py-0.5 text-xs font-medium bg-white/20 rounded-full">
                     Démo
                   </span>
-                )}
+                ) : null}
               </div>
               <p className="text-sm text-white/80">
                 Confiance: {analysis.confidence}% • Analysé{' '}
@@ -479,13 +504,28 @@ export const AIDocumentAnalysis: React.FC<AIDocumentAnalysisProps> = ({
               </p>
             </div>
           </div>
-          <button
-            onClick={loadAnalysis}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-            title="Relancer l'analyse"
-          >
-            <RefreshCw className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {coreAvailable && (
+              <button
+                onClick={() => setUseCore((v) => !v)}
+                disabled={isLoading}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${
+                  useCore ? 'bg-white text-primary-900' : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
+                title="Analyser via le Proph3t core Atlas Studio (confidentiel, sans rétention)"
+              >
+                <Cloud className="w-4 h-4" />
+                {useCore ? 'Core' : 'Local'}
+              </button>
+            )}
+            <button
+              onClick={loadAnalysis}
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              title="Relancer l'analyse"
+            >
+              <RefreshCw className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Hint to configure AI */}
