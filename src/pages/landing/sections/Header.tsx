@@ -246,7 +246,7 @@ export const Header: React.FC = () => {
             <div className="hidden lg:flex items-center gap-3">
               <LanguageSwitcher />
 
-              <Link to="/select-profile">
+              <Link to="/login">
                 <button className="px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 text-white/80 hover:text-white hover:bg-white/10">
                   {t('auth.login', 'Connexion')}
                 </button>
@@ -429,7 +429,7 @@ export const Header: React.FC = () => {
 
             {/* Action buttons */}
             <div className="space-y-3 pt-4 border-t border-white/10">
-              <Link to="/select-profile" className="block" onClick={() => setIsMenuOpen(false)}>
+              <Link to="/login" className="block" onClick={() => setIsMenuOpen(false)}>
                 <button className="w-full py-3.5 text-white/80 font-medium border border-white/20 rounded-xl hover:bg-white/5 transition-colors">
                   {t('auth.login', 'Connexion')}
                 </button>
