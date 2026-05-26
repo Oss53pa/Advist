@@ -13,12 +13,20 @@ interface AtlasStudioRedirectProps {
   message?: string;
 }
 
-const DESTINATIONS = {
+/**
+ * Canonical Atlas Studio portal URLs. Subscriptions, payments and plan
+ * upgrades are handled exclusively on the Atlas Studio client portal —
+ * never inside the Advist app. Import this map wherever an upgrade /
+ * billing CTA is rendered.
+ */
+export const ATLAS_STUDIO_URLS = {
   pricing: 'https://atlas-studio.org/applications/advist',
   register: 'https://atlas-studio.org/register',
   portal: 'https://atlas-studio.org/portal',
   billing: 'https://atlas-studio.org/portal/billing',
-};
+} as const;
+
+const DESTINATIONS = ATLAS_STUDIO_URLS;
 
 export const AtlasStudioRedirect: React.FC<AtlasStudioRedirectProps> = ({
   destination = 'pricing',
