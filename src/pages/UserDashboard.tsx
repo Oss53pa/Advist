@@ -12,16 +12,13 @@ import {
   Clock,
   ArrowRight,
   Calendar,
-  Sparkles,
   _Zap,
-  BarChart3,
-  Cloud,
 } from 'lucide-react';
 import { Modal } from '../components/ui';
 import { NewDocumentForm } from '../components/documents/NewDocumentForm';
 import { SmartCalendar } from '../components/calendar';
 import { useAuthStore } from '../store';
-import { FeatureGuard, CurrentPlanIndicator, PlanRequiredBadge } from '../components/subscription';
+import { CurrentPlanIndicator } from '../components/subscription';
 import { useTenantStore } from '../stores/tenantStore';
 
 // Mock data
@@ -311,79 +308,6 @@ export const UserDashboard: React.FC = () => {
           </Link>
         </div>
         <SmartCalendar compact />
-      </div>
-
-      {/* Feature-gated sections - Shows plan-based access */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* AI Assistant - Business+ */}
-        <FeatureGuard feature="aiAssistant" mode="overlay">
-          <div className="bg-white rounded-xl border border-advist-border p-5 h-full">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                <Sparkles size={20} className="text-primary-900" />
-              </div>
-              <div>
-                <h3
-                  className="font-semibold text-advist-gray900"
-                  style={{ fontFamily: "'Grand Hotel', cursive" }}
-                >
-                  Proph3t
-                </h3>
-                <PlanRequiredBadge feature="aiAssistant" />
-              </div>
-            </div>
-            <p className="text-sm text-advist-gray900/70 mb-4">
-              Utilisez l'IA pour analyser vos documents, extraire des informations et générer des
-              résumés automatiques.
-            </p>
-            <button className="w-full py-2 bg-primary-100 text-primary-800 rounded-lg font-medium hover:bg-primary-200 transition-colors">
-              Ouvrir l'assistant
-            </button>
-          </div>
-        </FeatureGuard>
-
-        {/* Cloud Integration - Starter+ */}
-        <FeatureGuard feature="cloudIntegration" mode="overlay">
-          <div className="bg-white rounded-xl border border-advist-border p-5 h-full">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                <Cloud size={20} className="text-primary-900" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-advist-gray900">Intégration Cloud</h3>
-                <PlanRequiredBadge feature="cloudIntegration" />
-              </div>
-            </div>
-            <p className="text-sm text-advist-gray900/70 mb-4">
-              Synchronisez vos documents avec Google Drive, OneDrive, Dropbox et autres services
-              cloud.
-            </p>
-            <button className="w-full py-2 bg-primary-100 text-primary-800 rounded-lg font-medium hover:bg-primary-200 transition-colors">
-              Connecter un service
-            </button>
-          </div>
-        </FeatureGuard>
-
-        {/* Advanced Analytics - Business+ */}
-        <FeatureGuard feature="workflowAnalytics" mode="overlay">
-          <div className="bg-white rounded-xl border border-advist-border p-5 h-full">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                <BarChart3 size={20} className="text-primary-900" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-advist-gray900">Analytics avancés</h3>
-                <PlanRequiredBadge feature="workflowAnalytics" />
-              </div>
-            </div>
-            <p className="text-sm text-advist-gray900/70 mb-4">
-              Analysez les performances de vos workflows et identifiez les goulots d'étranglement.
-            </p>
-            <button className="w-full py-2 bg-primary-100 text-primary-700 rounded-lg font-medium hover:bg-primary-200 transition-colors">
-              Voir les rapports
-            </button>
-          </div>
-        </FeatureGuard>
       </div>
 
       {/* New Document Modal */}
