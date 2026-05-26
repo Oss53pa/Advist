@@ -33,6 +33,7 @@ import { languages, changeLanguage } from '../../i18n';
 import { TrialBadge } from '../subscription';
 import { usePlanTheme } from '../../hooks/usePlanTheme';
 import { useHasFeature } from '../../hooks/useTenantPlan';
+import { ATLAS_STUDIO_URLS } from '../../pages/AtlasStudioRedirect';
 
 interface TopNavBarProps {
   variant: 'user' | 'admin';
@@ -517,14 +518,16 @@ const UserMenuDropdown: React.FC<{
             <User size={16} />
             <span className="text-sm">{t('profile.title')}</span>
           </NavLink>
-          <NavLink
-            to={`${basePath}/billing`}
+          <a
+            href={ATLAS_STUDIO_URLS.billing}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-3 px-4 py-2.5 text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900 transition-colors"
             onClick={onClose}
           >
             <CreditCard size={16} />
             <span className="text-sm">{t('organization.billing')}</span>
-          </NavLink>
+          </a>
           {variant === 'admin' && (
             <NavLink
               to={`${basePath}/settings`}

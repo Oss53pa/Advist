@@ -284,8 +284,9 @@ describe('useSubscriptionGuard', () => {
     expect(result.current.blockReason).toBe('no_licence');
   });
 
-  // 5b. Network / transient errors also block (no local fallback)
-  it('blocks with reason "no_licence" on network errors (no local fallback)', async () => {
+  // 5b. Transient / network errors fail OPEN (don't punish the user for a
+  // backend blip). Only a definitive NoActiveLicenceError blocks.
+  it('fails open (grants access) on transient network errors', async () => {
     authStoreState = {
       user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
       isAuthenticated: true,
@@ -301,8 +302,9 @@ describe('useSubscriptionGuard', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.canAccess).toBe(false);
-    expect(result.current.blockReason).toBe('no_licence');
+    // A synthetic fallback tenant is set, so the app shell still renders.
+    expect(result.current.blockReason).toBeUndefined();
+    expect(mockSetTenant).toHaveBeenCalled();
     expect(consoleWarnSpy).toHaveBeenCalled();
 
     consoleWarnSpy.mockRestore();

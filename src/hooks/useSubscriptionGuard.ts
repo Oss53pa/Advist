@@ -42,8 +42,14 @@ export interface SubscriptionGuardResult {
  * Se synchronise avec le backend pour les features et quotas
  */
 export const useSubscriptionGuard = (): SubscriptionGuardResult => {
-  const { currentTenant, canAccessApp, getDaysRemaining, shouldShowUpgradePrompt, setTenant } =
-    useTenantStore();
+  const {
+    currentTenant,
+    canAccessApp,
+    getDaysRemaining,
+    shouldShowUpgradePrompt,
+    setTenant,
+    clearTenant,
+  } = useTenantStore();
 
   const { user, isAuthenticated } = useAuthStore();
 
@@ -98,21 +104,30 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
         setTenant(mapSubscriptionToTenant(subscriptionInfo, currentUser));
       } catch (error) {
         if (error instanceof NoActiveLicenceError) {
+          // Atlas Studio gave a DEFINITIVE answer: this user has no active
+          // Advist seat. Block cleanly with the "no_licence" screen instead
+          // of granting fake access.
           console.warn(
-            '[subscriptionGuard] Atlas Studio has no active seat for this user — granting fallback access. Error:',
+            '[subscriptionGuard] No active Advist seat for this user — blocking.',
             error
           );
-        } else {
-          console.warn(
-            '[subscriptionGuard] Failed to fetch from Atlas Studio — granting fallback access. Error:',
-            error
-          );
+          setLicenceMissing(true);
+          clearTenant();
+          return;
         }
+        // Transient / network error: we could NOT reach Atlas Studio. Don't
+        // punish a (possibly paying) user for a backend blip — fail open with
+        // a synthetic tenant so the app shell still renders. This is the only
+        // remaining fail-open path and it is intentionally narrow.
+        console.warn(
+          '[subscriptionGuard] Could not reach Atlas Studio — granting transient fallback access.',
+          error
+        );
         setLicenceMissing(false);
         ensureFallbackTenant();
       }
     },
-    [setTenant]
+    [setTenant, clearTenant]
   );
 
   const refreshSubscription = useCallback(async () => {

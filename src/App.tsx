@@ -111,7 +111,6 @@ const BlogPage = lazy(() => import('./pages/blog/BlogPage'));
 const BlogArticlePage = lazy(() => import('./pages/blog/BlogArticlePage'));
 
 // Pages subscription/licence
-const ActivateLicensePage = lazy(() => import('./pages/auth/ActivateLicensePage'));
 const SubscriptionBlockedPage = lazy(() => import('./pages/subscription/SubscriptionBlockedPage'));
 
 // Create a client
@@ -135,17 +134,6 @@ const PageLoader: React.FC = () => {
       </div>
     </div>
   );
-};
-
-// Protected Route wrapper
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
 };
 
 // Subscription Protected Route - vérifie l'abonnement en plus de l'auth
@@ -300,15 +288,7 @@ function App() {
                 <Route path="/integrations" element={<ResourcePage />} />
                 <Route path="/api-docs" element={<ResourcePage />} />
 
-                {/* Subscription/License Routes */}
-                <Route
-                  path="/activate-license"
-                  element={
-                    <ProtectedRoute>
-                      <ActivateLicensePage />
-                    </ProtectedRoute>
-                  }
-                />
+                {/* Subscription Routes — licences managed on Atlas Studio */}
                 <Route path="/subscription-blocked" element={<SubscriptionBlockedPage />} />
 
                 {/* User Interface Routes */}
