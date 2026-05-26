@@ -5,9 +5,9 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Lock, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { useTenantStore, PlanType, TenantFeatures, getPlanInfo } from '../../stores/tenantStore';
-import { Link } from 'react-router-dom';
 import { getPlanTheme, getPlanIcon } from '../../hooks/usePlanTheme';
 import { supabase } from '../../lib/supabase';
+import { ATLAS_STUDIO_URLS } from '../../pages/AtlasStudioRedirect';
 
 // Ré-exporter pour compatibilité
 export { PLAN_THEME as PLAN_COLORS, PLAN_ICONS } from '../../hooks/usePlanTheme';
@@ -258,14 +258,16 @@ export const FeatureGuard: React.FC<FeatureGuardProps> = ({
             </p>
           </div>
           {showUpgrade && (
-            <Link
-              to="/user/billing"
+            <a
+              href={ATLAS_STUDIO_URLS.billing}
+              target="_blank"
+              rel="noopener noreferrer"
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium ${requiredTheme.button} transition-all`}
             >
               <RequiredIcon size={16} />
               <span>Passer au plan {requiredPlanInfo.name}</span>
               <ArrowRight size={16} />
-            </Link>
+            </a>
           )}
         </div>
       </div>
@@ -321,16 +323,18 @@ export const FeatureGuard: React.FC<FeatureGuardProps> = ({
             </span>
           </div>
 
-          {/* Bouton upgrade */}
+          {/* Bouton upgrade — vers le portail client Atlas Studio */}
           {showUpgrade && (
-            <Link
-              to="/user/billing"
+            <a
+              href={ATLAS_STUDIO_URLS.billing}
+              target="_blank"
+              rel="noopener noreferrer"
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium ${requiredTheme.button} hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5 transition-all shadow-md`}
             >
               <Zap size={16} />
               <span>Passer au plan {requiredPlanInfo.name}</span>
               <ArrowRight size={16} />
-            </Link>
+            </a>
           )}
         </div>
       </div>

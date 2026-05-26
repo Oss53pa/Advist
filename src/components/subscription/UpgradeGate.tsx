@@ -8,12 +8,12 @@
  * to prevent client-side plan spoofing (P1-S007).
  */
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { useFeatureGate } from '../../hooks/useFeatureGate';
 import { type PlanFeature } from '../../config/planFeatures';
 import { supabase } from '../../lib/supabase';
 import { useTenantStore } from '../../stores/tenantStore';
+import { ATLAS_STUDIO_URLS } from '../../pages/AtlasStudioRedirect';
 
 interface UpgradeGateProps {
   feature: PlanFeature;
@@ -115,13 +115,15 @@ export const UpgradeGate: React.FC<UpgradeGateProps> = ({
           </div>
           <p className="font-semibold text-gray-900 mb-1">{featureLabel}</p>
           <p className="text-sm text-gray-500 mb-4">Disponible dans le plan Entreprise</p>
-          <Link
-            to="/user/billing"
+          <a
+            href={ATLAS_STUDIO_URLS.billing}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
           >
             Passer a Entreprise
             <ArrowRight size={14} />
-          </Link>
+          </a>
         </div>
       </div>
     </div>
