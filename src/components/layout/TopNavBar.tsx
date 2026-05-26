@@ -18,7 +18,6 @@ import {
   ChevronDown,
   LogOut,
   User,
-  ArrowLeftRight,
   _Sparkles,
   Shield,
   CreditCard,
@@ -32,7 +31,6 @@ import { useAuthStore, useNotificationStore } from '../../store';
 import { Avatar } from '../ui/Avatar';
 import { languages, changeLanguage } from '../../i18n';
 import { TrialBadge } from '../subscription';
-import { PlanSwitcher } from '../dev/PlanSwitcher';
 import { usePlanTheme } from '../../hooks/usePlanTheme';
 import { useHasFeature } from '../../hooks/useTenantPlan';
 
@@ -111,10 +109,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
   const handleLogout = async () => {
     await logout();
     navigate('/');
-  };
-
-  const handleSwitchProfile = () => {
-    navigate('/select-profile');
   };
 
   const isActive = (path: string) => {
@@ -222,9 +216,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
 
           {/* Right Section */}
           <div className="flex items-center gap-1 sm:gap-2 ml-auto">
-            {/* Plan Switcher (Dev only) */}
-            <PlanSwitcher />
-
             {/* Trial Badge - Shows remaining trial days */}
             <TrialBadge />
 
@@ -276,15 +267,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                 </>
               )}
             </div>
-
-            {/* Switch Profile - Hidden on small mobile */}
-            <button
-              onClick={handleSwitchProfile}
-              className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-surface-dark rounded-lg transition-colors text-sm"
-            >
-              <ArrowLeftRight size={14} />
-              <span className="hidden lg:inline">{t('common.switch')}</span>
-            </button>
 
             {/* Help / Support button — dedicated support for Enterprise, email link otherwise */}
             {hasDedicatedSupport ? (
@@ -427,16 +409,14 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
 
               {/* Mobile-only items */}
               <div className="border-t border-advist-border mt-4 pt-4 space-y-1">
-                <button
-                  onClick={() => {
-                    setShowMobileMenu(false);
-                    handleSwitchProfile();
-                  }}
+                <Link
+                  to="/"
+                  onClick={() => setShowMobileMenu(false)}
                   className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-surface-dark transition-all"
                 >
-                  <ArrowLeftRight size={20} />
-                  <span>{t('profile.switchProfile')}</span>
-                </button>
+                  <Home size={20} />
+                  <span>{t('nav.publicSite', 'Site vitrine')}</span>
+                </Link>
               </div>
             </nav>
           </div>
@@ -509,7 +489,6 @@ const UserMenuDropdown: React.FC<{
   onLogout: () => void;
 }> = ({ variant, onClose, onLogout }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { user } = useAuthStore();
   const basePath = variant === 'user' ? '/user' : '/admin';
 
@@ -556,16 +535,6 @@ const UserMenuDropdown: React.FC<{
               <span className="text-sm">{t('nav.settings')}</span>
             </NavLink>
           )}
-          <button
-            onClick={() => {
-              onClose();
-              navigate('/select-profile');
-            }}
-            className="flex items-center gap-3 w-full px-4 py-2.5 text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900 transition-colors"
-          >
-            <ArrowLeftRight size={16} />
-            <span className="text-sm">{t('profile.switchProfile')}</span>
-          </button>
           <Link
             to="/"
             onClick={onClose}

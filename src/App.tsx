@@ -10,7 +10,7 @@ import { useAuthStore } from './store';
 import { useSubscriptionGuard } from './hooks/useSubscriptionGuard';
 
 // Pages d'auth chargées immédiatement (small bundles)
-import { LoginPage, ProfileSelectPage } from './pages';
+import { LoginPage } from './pages';
 import { AtlasStudioRedirect } from './pages/AtlasStudioRedirect';
 const ExternalAuthPage = lazy(() => import('./pages/auth/ExternalAuthPage'));
 
@@ -273,9 +273,6 @@ function App() {
                     </Suspense>
                   }
                 />
-
-                {/* Profile Selection */}
-                <Route path="/select-profile" element={<ProfileSelectPage />} />
 
                 {/* Public Demo Page (no auth required) */}
                 <Route path="/demo" element={<DemoPage />} />
