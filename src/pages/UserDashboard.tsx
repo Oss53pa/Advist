@@ -118,61 +118,30 @@ export const UserDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* Stats Row */}
+      {/* Stats Row — premium cards with a unified gold accent + top hairline */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-advist-border p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-3xl font-bold text-advist-gray900">
-                {userStats.documentsThisMonth}
-              </p>
-              <p className="text-sm text-advist-gray900/70 mt-1">Documents ce mois</p>
-            </div>
-            <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
-              <FileText size={22} className="text-primary-900" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-advist-border p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-3xl font-bold text-advist-gray900">
-                {userStats.pendingSignatures}
-              </p>
-              <p className="text-sm text-advist-gray900/70 mt-1">À signer</p>
-            </div>
-            <div className="w-12 h-12 bg-advist-gold-light/20 rounded-xl flex items-center justify-center">
-              <PenTool size={22} className="text-advist-gray900" />
+        {[
+          { value: userStats.documentsThisMonth, label: 'Documents ce mois', Icon: FileText },
+          { value: userStats.pendingSignatures, label: 'À signer', Icon: PenTool },
+          { value: userStats.activeWorkflows, label: 'Workflows actifs', Icon: GitBranch },
+          { value: userStats.completedThisWeek, label: 'Complétés cette semaine', Icon: Clock },
+        ].map(({ value, label, Icon }) => (
+          <div
+            key={label}
+            className="relative overflow-hidden bg-white rounded-2xl border border-[#e8ebf0] p-5 shadow-[0_1px_3px_rgba(15,23,42,0.04),0_10px_30px_-12px_rgba(15,23,42,0.10)] transition-shadow hover:shadow-[0_1px_3px_rgba(15,23,42,0.05),0_16px_40px_-12px_rgba(15,23,42,0.16)]"
+          >
+            <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-[#b8a47e] to-[#d4c6a5]" />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-3xl font-bold text-[#0f172a] tracking-tight">{value}</p>
+                <p className="text-sm text-[#5e6b7d] mt-1">{label}</p>
+              </div>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[#b8a47e]/12 ring-1 ring-[#b8a47e]/20">
+                <Icon size={22} className="text-[#9a8561]" />
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-advist-border p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-3xl font-bold text-advist-gray900">{userStats.activeWorkflows}</p>
-              <p className="text-sm text-advist-gray900/70 mt-1">Workflows actifs</p>
-            </div>
-            <div className="w-12 h-12 bg-advist-dark rounded-xl flex items-center justify-center">
-              <GitBranch size={22} className="text-white" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-advist-border p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-3xl font-bold text-advist-gray900">
-                {userStats.completedThisWeek}
-              </p>
-              <p className="text-sm text-advist-gray900/70 mt-1">Complétés cette semaine</p>
-            </div>
-            <div className="w-12 h-12 bg-advist-dark rounded-xl flex items-center justify-center">
-              <Clock size={22} className="text-white" />
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Main Content - 2 Columns */}

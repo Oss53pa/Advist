@@ -985,15 +985,29 @@ body.theme-midnight .border-gray-300 {
   border-color: #c8cfd9 !important;
 }
 
-/* Cards — soft elevated panels */
+/* Cards — premium elevated panels: hairline border + layered depth so
+   white cards lift off the cool-grey background instead of reading flat. */
 body.theme-midnight .advist-card,
 body.theme-midnight .rounded-2xl.bg-white,
 body.theme-midnight .rounded-xl.bg-white {
   background-color: #ffffff !important;
-  border: 1px solid #e1e5ec !important;
+  border: 1px solid #e8ebf0 !important;
   box-shadow:
-    0 1px 2px rgba(15, 23, 42, 0.04),
-    0 2px 6px rgba(15, 23, 42, 0.03) !important;
+    0 1px 3px rgba(15, 23, 42, 0.04),
+    0 10px 30px -12px rgba(15, 23, 42, 0.1) !important;
+}
+
+/* Primary navy buttons / surfaces get a subtle gold underglow so the
+   navy + gold identity reads premium rather than flat blue. */
+body.theme-midnight .bg-advist-dark,
+body.theme-midnight .bg-primary-900 {
+  box-shadow: 0 8px 20px -10px rgba(15, 23, 42, 0.45);
+}
+
+/* Gold accent tiles (icon containers using the gold tint) get a hairline
+   ring for a crisper, more deliberate look. */
+body.theme-midnight .bg-advist-gold-light\/20 {
+  background-color: rgba(184, 164, 126, 0.14) !important;
 }
 
 /* Inputs */
