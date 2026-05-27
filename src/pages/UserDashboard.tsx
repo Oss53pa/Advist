@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,95 +6,102 @@ import {
   GitBranch,
   Plus,
   Upload,
-  _X,
   PenTool,
   Eye,
   Clock,
   ArrowRight,
   Calendar,
-  _Zap,
+  Loader2,
 } from 'lucide-react';
 import { Modal } from '../components/ui';
 import { NewDocumentForm } from '../components/documents/NewDocumentForm';
 import { SmartCalendar } from '../components/calendar';
 import { useAuthStore } from '../store';
 import { CurrentPlanIndicator } from '../components/subscription';
-import { useTenantStore } from '../stores/tenantStore';
+import {
+  getDashboardStats,
+  getRecentActivity,
+  getPendingDocuments,
+  type DashboardStats,
+  type RecentActivityItem,
+  type PendingDocumentItem,
+} from '../services/dashboardOverview';
 
-// Mock data
-const userStats = {
-  documentsThisMonth: 12,
-  pendingSignatures: 5,
-  activeWorkflows: 3,
-  completedThisWeek: 8,
-};
+// --- helpers -------------------------------------------------------------
 
-const recentActivity = [
-  {
-    id: 1,
-    action: 'Document signé',
-    document: 'Contrat de prestation Q4',
-    time: '2 min',
-    icon: PenTool,
-  },
-  {
-    id: 2,
-    action: 'Document consulté',
-    document: 'Rapport financier 2024',
-    time: '15 min',
-    icon: Eye,
-  },
-  {
-    id: 3,
-    action: 'Workflow démarré',
-    document: 'Procédure qualité v2',
-    time: '1h',
-    icon: GitBranch,
-  },
-  {
-    id: 4,
-    action: 'Document importé',
-    document: 'Budget prévisionnel 2025',
-    time: '2h',
-    icon: Upload,
-  },
-];
+/** Pick an icon for an audit-log action label. */
+function activityIcon(action: string): React.ElementType {
+  const a = action.toLowerCase();
+  if (a.includes('sign')) return PenTool;
+  if (a.includes('view') || a.includes('consult') || a.includes('read')) return Eye;
+  if (a.includes('workflow')) return GitBranch;
+  if (a.includes('import') || a.includes('upload') || a.includes('create')) return Upload;
+  return FileText;
+}
 
-const pendingDocuments = [
-  {
-    id: 1,
-    title: 'Contrat de prestation Q4 2024',
-    type: 'Contrat',
-    deadline: '29 Nov',
-    priority: 'high',
-    assignedBy: 'Marie Dupont',
-  },
-  {
-    id: 2,
-    title: 'Budget prévisionnel 2025',
-    type: 'Budget',
-    deadline: '30 Nov',
-    priority: 'medium',
-    assignedBy: 'Pierre Martin',
-  },
-  {
-    id: 3,
-    title: 'Rapport annuel 2024',
-    type: 'Rapport',
-    deadline: '5 Déc',
-    priority: 'low',
-    assignedBy: 'Sophie Bernard',
-  },
-];
+/** Compact relative time, FR. */
+function relativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return "à l'instant";
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `${h} h`;
+  const d = Math.floor(h / 24);
+  return `${d} j`;
+}
+
+/** Day/month, FR (e.g. "29 nov."). */
+function formatDueDate(iso: string | null): string {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+}
 
 export const UserDashboard: React.FC = () => {
   const { _t } = useTranslation();
   const { user } = useAuthStore();
-  const { _currentTenant } = useTenantStore();
   const navigate = useNavigate();
   const [showNewDocModal, setShowNewDocModal] = useState(false);
 
   const basePath = '/user';
+  const orgId = user?.organization?.id;
+  const userId = user?.id;
+
+  const [stats, setStats] = useState<DashboardStats>({
+    documentsThisMonth: 0,
+    pendingSignatures: 0,
+    activeWorkflows: 0,
+    completedThisWeek: 0,
+  });
+  const [recentActivity, setRecentActivity] = useState<RecentActivityItem[]>([]);
+  const [pendingDocuments, setPendingDocuments] = useState<PendingDocumentItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!orgId || !userId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    Promise.all([
+      getDashboardStats(orgId, userId),
+      getRecentActivity(orgId, 4),
+      getPendingDocuments(orgId, 3),
+    ])
+      .then(([s, a, p]) => {
+        if (cancelled) return;
+        setStats(s);
+        setRecentActivity(a);
+        setPendingDocuments(p);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId, userId]);
 
   return (
     <div className="space-y-6">
@@ -121,10 +128,10 @@ export const UserDashboard: React.FC = () => {
       {/* Stats Row — premium cards with a unified gold accent + top hairline */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { value: userStats.documentsThisMonth, label: 'Documents ce mois', Icon: FileText },
-          { value: userStats.pendingSignatures, label: 'À signer', Icon: PenTool },
-          { value: userStats.activeWorkflows, label: 'Workflows actifs', Icon: GitBranch },
-          { value: userStats.completedThisWeek, label: 'Complétés cette semaine', Icon: Clock },
+          { value: stats.documentsThisMonth, label: 'Documents ce mois', Icon: FileText },
+          { value: stats.pendingSignatures, label: 'À signer', Icon: PenTool },
+          { value: stats.activeWorkflows, label: 'Workflows actifs', Icon: GitBranch },
+          { value: stats.completedThisWeek, label: 'Complétés cette semaine', Icon: Clock },
         ].map(({ value, label, Icon }) => (
           <div
             key={label}
@@ -194,21 +201,42 @@ export const UserDashboard: React.FC = () => {
               </Link>
             </div>
             <div className="space-y-3">
-              {recentActivity.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-center gap-3 p-3 bg-advist-surface-dark rounded-xl"
-                >
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-advist-gold-light/20">
-                    <activity.icon size={16} className="text-advist-gray900" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-advist-gray900">{activity.action}</p>
-                    <p className="text-xs text-advist-gray900/70 truncate">{activity.document}</p>
-                  </div>
-                  <span className="text-xs text-advist-blue-light">{activity.time}</span>
+              {loading ? (
+                <div className="flex items-center justify-center py-8 text-advist-gray900/40">
+                  <Loader2 size={18} className="animate-spin" />
                 </div>
-              ))}
+              ) : recentActivity.length === 0 ? (
+                <p className="py-8 text-center text-sm text-advist-gray900/50">
+                  Aucune activité récente
+                </p>
+              ) : (
+                recentActivity.map((activity) => {
+                  const ActivityIcon = activityIcon(activity.action);
+                  return (
+                    <div
+                      key={activity.id}
+                      className="flex items-center gap-3 p-3 bg-advist-surface-dark rounded-xl"
+                    >
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#b8a47e]/14 ring-1 ring-[#b8a47e]/20">
+                        <ActivityIcon size={16} className="text-[#9a8561]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-advist-gray900 capitalize">
+                          {activity.action}
+                        </p>
+                        {activity.resourceName && (
+                          <p className="text-xs text-advist-gray900/70 truncate">
+                            {activity.resourceName}
+                          </p>
+                        )}
+                      </div>
+                      <span className="text-xs text-advist-gray900/50">
+                        {relativeTime(activity.at)}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
@@ -225,36 +253,34 @@ export const UserDashboard: React.FC = () => {
             </Link>
           </div>
           <div className="space-y-3">
-            {pendingDocuments.map((doc) => (
-              <Link
-                key={doc.id}
-                to={`${basePath}/documents/${doc.id}`}
-                className="block p-4 border border-advist-border rounded-xl hover:border-advist-dark hover:shadow-sm transition-all group"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <span
-                    className={`
-                    px-2 py-0.5 rounded text-xs font-medium
-                    ${
-                      doc.priority === 'high'
-                        ? 'bg-advist-warning-light text-advist-warning'
-                        : 'bg-advist-gold-light/20 text-advist-gray900'
-                    }
-                  `}
-                  >
-                    {doc.priority === 'high' ? 'Urgent' : doc.type}
-                  </span>
-                  <div className="flex items-center gap-1 text-xs text-advist-blue-light">
-                    <Calendar size={12} />
-                    {doc.deadline}
+            {loading ? (
+              <div className="flex items-center justify-center py-8 text-advist-gray900/40">
+                <Loader2 size={18} className="animate-spin" />
+              </div>
+            ) : pendingDocuments.length === 0 ? (
+              <p className="py-8 text-center text-sm text-advist-gray900/50">
+                Aucun document en attente
+              </p>
+            ) : (
+              pendingDocuments.map((doc) => (
+                <Link
+                  key={doc.id}
+                  to={`${basePath}/documents/${doc.id}`}
+                  className="block p-4 border border-advist-border rounded-xl hover:border-advist-dark hover:shadow-sm transition-all group"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-[#b8a47e]/14 text-[#9a8561]">
+                      En cours
+                    </span>
+                    <div className="flex items-center gap-1 text-xs text-advist-gray900/50">
+                      <Calendar size={12} />
+                      {formatDueDate(doc.dueDate)}
+                    </div>
                   </div>
-                </div>
-                <h3 className="font-medium text-advist-gray900 group-hover:text-advist-gray900 mb-1">
-                  {doc.title}
-                </h3>
-                <p className="text-xs text-advist-gray900/70">Assigné par {doc.assignedBy}</p>
-              </Link>
-            ))}
+                  <h3 className="font-medium text-advist-gray900 mb-1">{doc.title}</h3>
+                </Link>
+              ))
+            )}
           </div>
           <button
             onClick={() => navigate(`${basePath}/signatures`)}
