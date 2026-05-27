@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useTenantStore, getPlanInfo } from '../../stores/tenantStore';
 import { Button } from '../ui';
+import { ATLAS_STUDIO_URLS } from '../../pages/AtlasStudioRedirect';
 
 interface UpgradePromptProps {
   variant?: 'banner' | 'modal' | 'inline';
@@ -220,12 +221,17 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
           <div className="space-y-3">
             {recommendedPlan === 'enterprise' ? (
               <>
-                <Link to="/activate-license" className="block">
+                <a
+                  href={ATLAS_STUDIO_URLS.portal}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
                   <Button className="w-full" size="lg">
                     <Key size={18} className="mr-2" />
-                    Activer une licence Enterprise
+                    Gérer sur Atlas Studio
                   </Button>
-                </Link>
+                </a>
                 <Button variant="outline" className="w-full" size="lg">
                   Contacter les ventes
                 </Button>

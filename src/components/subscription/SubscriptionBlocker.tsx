@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useTenantStore, getPlanInfo, PlanType } from '../../stores/tenantStore';
 import { Button } from '../ui';
+import { ATLAS_STUDIO_URLS } from '../../pages/AtlasStudioRedirect';
 
 interface SubscriptionBlockerProps {
   reason:
@@ -198,12 +199,12 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {selectedPlan === 'enterprise' ? (
                 <>
-                  <Link to="/activate-license">
+                  <a href={ATLAS_STUDIO_URLS.portal} target="_blank" rel="noopener noreferrer">
                     <Button size="lg" className="w-full sm:w-auto">
                       <Key size={18} className="mr-2" />
-                      Activer une licence
+                      Gérer sur Atlas Studio
                     </Button>
-                  </Link>
+                  </a>
                   <Button variant="outline" size="lg">
                     <Phone size={18} className="mr-2" />
                     Contacter les ventes
@@ -252,17 +253,17 @@ export const SubscriptionBlocker: React.FC<SubscriptionBlockerProps> = ({ reason
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             <h2 className="text-xl font-semibold text-primary-900 mb-4">Activer votre licence</h2>
             <p className="text-primary-600 mb-6">
-              Si vous disposez d'une clé d'activation, saisissez-la ci-dessous. Sinon, demandez à
-              l'administrateur de votre organisation de vous ajouter à une licence Advist depuis
-              Atlas Studio.
+              Les licences Advist sont gérées depuis le portail Atlas Studio. Demandez à
+              l'administrateur de votre organisation de vous attribuer un siège, ou ouvrez le
+              portail pour gérer votre abonnement.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/activate-license">
+              <a href={ATLAS_STUDIO_URLS.portal} target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="w-full sm:w-auto">
                   <Key size={18} className="mr-2" />
-                  Activer une clé de licence
+                  Ouvrir le portail Atlas Studio
                 </Button>
-              </Link>
+              </a>
               <Button variant="outline" size="lg">
                 <Mail size={18} className="mr-2" />
                 support@advist.com

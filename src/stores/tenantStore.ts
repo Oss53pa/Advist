@@ -474,7 +474,14 @@ export const useTenantStore = create<TenantState>()(
         const access = canAccessApp();
         if (!access.allowed) return false;
 
-        return currentTenant.features[feature] ?? false;
+        // Feature access is derived from the plan TIER, not from
+        // currentTenant.features. Atlas Studio doesn't populate per-feature
+        // flags for Advist (plans.features is empty), so resolving features
+        // from the empty object would wrongly lock everything — even for a
+        // paying Entreprise customer. PLAN_FEATURES is the canonical tier map.
+        return (
+          PLAN_FEATURES[currentTenant.plan]?.[feature] ?? currentTenant.features[feature] ?? false
+        );
       },
 
       checkQuota: (quota: keyof TenantQuotas) => {
