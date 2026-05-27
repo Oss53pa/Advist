@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -34,6 +34,7 @@ import { TrialBadge } from '../subscription';
 import { usePlanTheme } from '../../hooks/usePlanTheme';
 import { useHasFeature } from '../../hooks/useTenantPlan';
 import { ATLAS_STUDIO_URLS } from '../../pages/AtlasStudioRedirect';
+import { getDashboardStats } from '../../services/dashboardOverview';
 
 interface TopNavBarProps {
   variant: 'user' | 'admin';
@@ -46,12 +47,6 @@ interface NavItem {
   path: string;
   badgeKey?: 'pendingWorkflows' | 'pendingSignatures';
 }
-
-// Mock counts - à remplacer par les vraies données du store
-const pendingCounts = {
-  pendingWorkflows: 3,
-  pendingSignatures: 5,
-};
 
 // Navigation items with translation keys
 const getUserNavItems = (t: (key: string) => string): NavItem[] => [
@@ -103,6 +98,29 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+
+  // Real pending counts for the nav badges (workflows / signatures),
+  // scoped to the user's org. Falls back to 0 on error.
+  const [pendingCounts, setPendingCounts] = useState({
+    pendingWorkflows: 0,
+    pendingSignatures: 0,
+  });
+  const orgId = user?.organization?.id;
+  const userId = user?.id;
+  useEffect(() => {
+    if (!orgId || !userId) return;
+    let cancelled = false;
+    getDashboardStats(orgId, userId).then((s) => {
+      if (cancelled) return;
+      setPendingCounts({
+        pendingWorkflows: s.activeWorkflows,
+        pendingSignatures: s.pendingSignatures,
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId, userId]);
 
   const navItems = variant === 'user' ? getUserNavItems(t) : getAdminNavItems(t);
   const basePath = variant === 'user' ? '/user' : '/admin';

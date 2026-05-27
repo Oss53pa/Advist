@@ -1,6 +1,16 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '../../store';
+import {
+  getMyTasks,
+  getActiveInstances,
+  getTemplates,
+  getWorkflowTabCounts,
+  type WorkflowTask,
+  type WorkflowInstanceRow,
+  type WorkflowTemplateRow,
+} from '../../services/workflowsOverview';
 import {
   GitBranch,
   Plus,
@@ -47,6 +57,21 @@ export const WorkflowsPage: React.FC = () => {
   const location = useLocation();
   const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/user';
 
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
+  const userId = user?.id;
+  const [tabCounts, setTabCounts] = useState({ myTasks: 0, activeInstances: 0 });
+  useEffect(() => {
+    if (!orgId || !userId) return;
+    let cancelled = false;
+    getWorkflowTabCounts(orgId, userId).then((c) => {
+      if (!cancelled) setTabCounts(c);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId, userId]);
+
   const handleNewTemplate = () => {
     setEditingTemplate(null);
     setShowNewTemplateModal(true);
@@ -68,7 +93,9 @@ export const WorkflowsPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <PrintButton config={{ title: 'Circuits de validation', appName: 'Advist' }}>
             <div>
-              <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>{t('workflows.title')}</h2>
+              <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>
+                {t('workflows.title')}
+              </h2>
               <p>{t('workflows.subtitle')}</p>
             </div>
           </PrintButton>
@@ -82,8 +109,12 @@ export const WorkflowsPage: React.FC = () => {
       <div className="border-b border-advist-border">
         <nav className="flex gap-4">
           {[
-            { key: 'tasks', label: t('workflows.myTasks'), count: 5 },
-            { key: 'instances', label: t('workflows.activeWorkflows'), count: 12 },
+            { key: 'tasks', label: t('workflows.myTasks'), count: tabCounts.myTasks },
+            {
+              key: 'instances',
+              label: t('workflows.activeWorkflows'),
+              count: tabCounts.activeInstances,
+            },
             { key: 'templates', label: t('workflows.templates') },
           ].map((tab) => (
             <button
@@ -138,49 +169,28 @@ const MyTasksSection: React.FC<{ basePath: string }> = ({ basePath }) => {
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [showRefuseModal, setShowRefuseModal] = useState(false);
 
-  // Mock data for demo with v2 features
-  const mockTasks = [
-    {
-      id: 1,
-      document: { title: 'Contrat de prestation Q4 2024', id: 1, amount: 50000 },
-      step: { name: 'Approbation Direction', type: 'approval' },
-      workflow: {
-        id: 1,
-        is_fast_track: true,
-        fast_track_reason: 'Urgence client',
-        signature_mode: 'sequential',
-      },
-      deadline: '2024-11-29T18:00:00',
-      assignedBy: { name: 'Marie Dupont' },
-      canDelegate: true,
-      isParallelSignature: false,
-    },
-    {
-      id: 2,
-      document: { title: 'Budget previsionnel 2025', id: 2, amount: 500000 },
-      step: { name: 'Signature', type: 'signature', requires_paraph: true },
-      workflow: { id: 2, is_fast_track: false, signature_mode: 'parallel' },
-      deadline: '2024-11-30T18:00:00',
-      assignedBy: { name: 'Pierre Martin' },
-      canDelegate: false,
-      isParallelSignature: true,
-      parallelSigners: [
-        { name: 'Jean Dupont', signed: true },
-        { name: 'Vous', signed: false },
-        { name: 'Sophie Bernard', signed: false },
-      ],
-    },
-    {
-      id: 3,
-      document: { title: 'Procedure qualite v2', id: 3 },
-      step: { name: 'Revue technique', type: 'review' },
-      workflow: { id: 3, is_fast_track: false, signature_mode: 'sequential' },
-      deadline: '2024-12-01T18:00:00',
-      assignedBy: { name: 'Sophie Bernard' },
-      canDelegate: true,
-      isParallelSignature: false,
-    },
-  ];
+  const { user } = useAuthStore();
+  const userId = user?.id;
+  const [mockTasks, setMockTasks] = useState<WorkflowTask[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    getMyTasks(userId)
+      .then((tasks) => {
+        if (!cancelled) setMockTasks(tasks);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   const handleDelegate = (task: any) => {
     setSelectedTask(task);
@@ -191,6 +201,14 @@ const MyTasksSection: React.FC<{ basePath: string }> = ({ basePath }) => {
     setSelectedTask(task);
     setShowRefuseModal(true);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-advist-gray900/40">
+        <RefreshCw size={20} className="animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -349,91 +367,46 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
   const [selectedInstance, setSelectedInstance] = useState<any>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
-  // v2: Mock data with enhanced features
-  const instances = [
-    {
-      id: 1,
-      template: { name: 'Validation contrat', version: 3 },
-      document: { title: 'Contrat de prestation Q4 2024', id: 1 },
-      status: 'in_progress',
-      current_step: 2,
-      total_steps: 4,
-      started_at: '2024-11-25T10:00:00',
-      is_fast_track: true,
-      fast_track_reason: 'Urgence client',
-      signature_mode: 'sequential',
-      template_version: 3,
-      can_recall: true,
-      assignees: [
-        { name: 'Marie Dupont', status: 'approved' },
-        { name: 'Pierre Martin', status: 'pending' },
-        { name: 'Sophie Bernard', status: 'pending' },
-      ],
-    },
-    {
-      id: 2,
-      template: { name: 'Approbation budget', version: 2 },
-      document: { title: 'Budget previsionnel 2025', id: 2 },
-      status: 'pending',
-      current_step: 1,
-      total_steps: 3,
-      started_at: '2024-11-26T14:00:00',
-      is_fast_track: false,
-      signature_mode: 'parallel',
-      template_version: 2,
-      can_recall: true,
-      assignees: [
-        { name: 'Jean Durand', status: 'pending' },
-        { name: 'Alice Martin', status: 'pending' },
-      ],
-    },
-    {
-      id: 3,
-      template: { name: 'Validation procedure', version: 1 },
-      document: { title: 'Procedure qualite v2', id: 3 },
-      status: 'completed',
-      current_step: 3,
-      total_steps: 3,
-      started_at: '2024-11-20T09:00:00',
-      completed_at: '2024-11-22T16:30:00',
-      is_fast_track: false,
-      signature_mode: 'sequential',
-      template_version: 1,
-      can_recall: false,
-      assignees: [{ name: 'Sophie Bernard', status: 'approved' }],
-    },
-    {
-      id: 4,
-      template: { name: 'Validation contrat', version: 2 },
-      document: { title: 'Contrat fournisseur ABC', id: 4 },
-      status: 'recalled',
-      current_step: 2,
-      total_steps: 4,
-      started_at: '2024-11-18T10:00:00',
-      recalled_at: '2024-11-19T14:00:00',
-      recall_reason: 'Erreur dans les montants',
-      is_fast_track: false,
-      signature_mode: 'sequential',
-      template_version: 2,
-      can_recall: false,
-      assignees: [{ name: 'Marie Dupont', status: 'approved' }],
-    },
-    {
-      id: 5,
-      template: { name: 'Signature contrat', version: 1 },
-      document: { title: 'NDA Client XYZ', id: 5 },
-      status: 'signature_refused',
-      current_step: 3,
-      total_steps: 3,
-      started_at: '2024-11-15T10:00:00',
-      is_fast_track: false,
-      signature_mode: 'sequential',
-      template_version: 1,
-      can_recall: false,
-      refusal_reason: 'Desaccord sur les clauses de confidentialite',
-      assignees: [{ name: 'Client XYZ', status: 'refused' }],
-    },
-  ];
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
+  const [instances, setInstances] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!orgId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    getActiveInstances(orgId)
+      .then((rows: WorkflowInstanceRow[]) => {
+        if (cancelled) return;
+        // Map real rows into the shape this section's cards expect, with
+        // safe defaults for fields Atlas Studio doesn't track per-instance.
+        setInstances(
+          rows.map((r) => ({
+            id: r.id,
+            template: { name: r.name, version: 1 },
+            document: { title: r.documentTitle || r.name, id: undefined },
+            status: r.status,
+            current_step: r.currentStep ?? 1,
+            total_steps: r.currentStep ?? 1,
+            started_at: r.createdAt,
+            is_fast_track: false,
+            signature_mode: 'sequential',
+            template_version: 1,
+            can_recall: r.status === 'active',
+            assignees: [],
+          }))
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
 
   const filteredInstances =
     filterStatus === 'all' ? instances : instances.filter((i) => i.status === filterStatus);
@@ -543,6 +516,18 @@ const WorkflowInstancesSection: React.FC<{ basePath: string }> = ({ basePath }) 
           </div>
         </div>
       </Card>
+
+      {loading && (
+        <div className="flex items-center justify-center py-16 text-advist-gray900/40">
+          <RefreshCw size={20} className="animate-spin" />
+        </div>
+      )}
+
+      {!loading && filteredInstances.length === 0 && (
+        <Card className="p-10 text-center text-sm text-advist-gray900/50">
+          Aucun workflow actif
+        </Card>
+      )}
 
       {filteredInstances.map((instance) => (
         <Card key={instance.id}>
@@ -750,65 +735,45 @@ const WorkflowTemplatesSection: React.FC<{
   const [showRulesModal, setShowRulesModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
 
-  // v2: Templates with version and conditional rules
-  const templates = [
-    {
-      id: 1,
-      name: 'Validation contrat',
-      description: 'Workflow standard pour la validation des contrats',
-      steps: 4,
-      usageCount: 45,
-      isActive: true,
-      version: 3,
-      versionHistory: [
-        {
-          version: 3,
-          date: '2024-11-20',
-          by: 'Jean Dupont',
-          changes: 'Ajout etape validation juridique',
-        },
-        { version: 2, date: '2024-10-15', by: 'Marie Martin', changes: 'Modification delais' },
-        { version: 1, date: '2024-09-01', by: 'Jean Dupont', changes: 'Creation initiale' },
-      ],
-      conditionalRules: [
-        { condition: 'Montant > 100 000 €', action: 'Ajout Directeur Financier' },
-        { condition: 'Confidentiel', action: 'Double approbation requise' },
-      ],
-      fastTrackEnabled: true,
-      parallelSignatureEnabled: true,
-    },
-    {
-      id: 2,
-      name: 'Approbation budget',
-      description: "Circuit d'approbation pour les budgets",
-      steps: 3,
-      usageCount: 23,
-      isActive: true,
-      version: 2,
-      versionHistory: [
-        { version: 2, date: '2024-11-01', by: 'Pierre Bernard', changes: 'Ajout seuils' },
-        { version: 1, date: '2024-08-15', by: 'Jean Dupont', changes: 'Creation initiale' },
-      ],
-      conditionalRules: [{ condition: 'Budget > 500 000 €', action: 'Escalade DG' }],
-      fastTrackEnabled: false,
-      parallelSignatureEnabled: false,
-    },
-    {
-      id: 3,
-      name: 'Validation procedure',
-      description: 'Validation des procedures qualite',
-      steps: 3,
-      usageCount: 12,
-      isActive: false,
-      version: 1,
-      versionHistory: [
-        { version: 1, date: '2024-07-01', by: 'Sophie Petit', changes: 'Creation initiale' },
-      ],
-      conditionalRules: [],
-      fastTrackEnabled: false,
-      parallelSignatureEnabled: false,
-    },
-  ];
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!orgId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    getTemplates(orgId)
+      .then((rows: WorkflowTemplateRow[]) => {
+        if (cancelled) return;
+        // Map real templates into the shape the cards expect, defaulting
+        // fields Atlas Studio doesn't track (version history, rules).
+        setTemplates(
+          rows.map((r) => ({
+            id: r.id,
+            name: r.name,
+            description: r.description || '',
+            steps: r.stepsCount,
+            usageCount: 0,
+            isActive: r.isActive,
+            version: 1,
+            versionHistory: [],
+            conditionalRules: [],
+            fastTrackEnabled: false,
+            parallelSignatureEnabled: false,
+          }))
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
 
   const handleShowVersions = (template: any) => {
     setSelectedTemplate(template);
@@ -822,6 +787,16 @@ const WorkflowTemplatesSection: React.FC<{
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {loading && (
+        <div className="col-span-full flex items-center justify-center py-16 text-advist-gray900/40">
+          <RefreshCw size={20} className="animate-spin" />
+        </div>
+      )}
+      {!loading && templates.length === 0 && (
+        <Card className="col-span-full p-10 text-center text-sm text-advist-gray900/50">
+          Aucun modèle de workflow
+        </Card>
+      )}
       {templates.map((template) => (
         <Card key={template.id} hoverable>
           <div className="flex items-start justify-between mb-3">
