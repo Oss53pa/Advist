@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Building2,
@@ -27,6 +27,8 @@ import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { FeatureGate, UpgradeBanner } from '../../components/gating';
+import { supabase } from '../../lib/supabase';
+import { useAuthStore } from '../../store';
 
 interface OrganizationSettings {
   name: string;
@@ -131,19 +133,23 @@ export const OrganizationPage: React.FC = () => {
 // General Settings Tab
 const GeneralSettings: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
+  // Empty defaults until the real org row loads. No more "ADVIST Demo".
   const [formData, setFormData] = useState<OrganizationSettings>({
-    name: 'ADVIST Demo',
-    slug: 'advist-demo',
-    description: 'Entreprise de demonstration pour la plateforme ADVIST',
-    email: 'contact@advist-demo.com',
-    phone: '+33 1 23 45 67 89',
-    address: '123 Avenue des Champs-Elysees',
-    city: 'Paris',
-    country: 'France',
+    name: '',
+    slug: '',
+    description: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    country: '',
     timezone: 'Europe/Paris',
     language: 'fr',
-    website: 'https://advist-demo.com',
+    website: '',
   });
+  const [loading, setLoading] = useState(true);
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
@@ -151,20 +157,117 @@ const GeneralSettings: React.FC = () => {
     text: string;
   } | null>(null);
 
+  // Fetch the real organization on mount.
+  useEffect(() => {
+    if (!orgId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('organizations')
+          .select('name, slug, email, phone, address, country, website, settings')
+          .eq('id', orgId)
+          .single();
+        if (cancelled) return;
+        if (error || !data) return;
+        const row = data as {
+          name?: string;
+          slug?: string;
+          email?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          country?: string | null;
+          website?: string | null;
+          settings?: Record<string, string | undefined> | null;
+        };
+        const s = (row.settings || {}) as Record<string, string | undefined>;
+        setFormData({
+          name: row.name || '',
+          slug: row.slug || '',
+          description: s.description || '',
+          email: row.email || '',
+          phone: row.phone || '',
+          address: row.address || '',
+          city: s.city || '',
+          country: row.country || '',
+          timezone: s.timezone || 'Europe/Paris',
+          language: s.language || 'fr',
+          website: row.website || '',
+          ...(s.currency ? { currency: s.currency } : {}),
+        } as OrganizationSettings);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
+
   const handleSave = async () => {
+    if (!orgId) {
+      setSaveMessage({ type: 'error', text: 'Organisation introuvable.' });
+      return;
+    }
     setIsSaving(true);
     setSaveMessage(null);
     try {
-      // Simulate API call - replace with actual API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Fields not present as columns on `organizations` live in the
+      // settings JSONB blob (description, city, timezone, language,
+      // currency). Columns are written directly.
+      const f = formData as OrganizationSettings & { currency?: string };
+      const settingsPatch = {
+        description: f.description,
+        city: f.city,
+        timezone: f.timezone,
+        language: f.language,
+        ...(f.currency ? { currency: f.currency } : {}),
+      };
+      const { data: currentRaw } = await supabase
+        .from('organizations')
+        .select('settings')
+        .eq('id', orgId)
+        .single();
+      const currentSettings =
+        (currentRaw as { settings?: Record<string, unknown> } | null)?.settings || {};
+      const mergedSettings = { ...currentSettings, ...settingsPatch };
+      const updatePayload: Record<string, unknown> = {
+        name: f.name,
+        email: f.email || null,
+        phone: f.phone || null,
+        address: f.address || null,
+        country: f.country || null,
+        website: f.website || null,
+        settings: mergedSettings,
+      };
+      const { error } = await supabase
+        .from('organizations')
+        .update(updatePayload as never)
+        .eq('id', orgId);
+      if (error) {
+        setSaveMessage({ type: 'error', text: t('common.saveError') });
+        return;
+      }
       setSaveMessage({ type: 'success', text: t('common.saveSuccess') });
       setTimeout(() => setSaveMessage(null), 3000);
-    } catch (_error) {
+    } catch {
       setSaveMessage({ type: 'error', text: t('common.saveError') });
     } finally {
       setIsSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-sm text-advist-blue-light">
+        <Loader2 className="animate-spin mr-2" size={16} />
+        Chargement de l’organisation…
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

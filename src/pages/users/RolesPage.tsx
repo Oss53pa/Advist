@@ -1,4 +1,6 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
+import { supabase } from '../../lib/supabase';
+import { useAuthStore } from '../../store';
 import { useTranslation } from 'react-i18next';
 import {
   Shield,
@@ -217,15 +219,19 @@ const PERMISSION_CATEGORIES = {
   },
 };
 
-// Default roles
-const DEFAULT_ROLES = [
+/**
+ * System roles — aligned with the Atlas Studio access model
+ * (org_members.role ∈ admin | editor | viewer). usersCount is filled
+ * live from org_members at mount; the hardcoded fake counts that were
+ * here previously have been removed.
+ */
+const SYSTEM_ROLES: Omit<Role, 'usersCount'>[] = [
   {
     id: 1,
     name: 'Administrateur',
     description: 'Accès complet à toutes les fonctionnalités',
     color: '#F59E0B',
     isSystem: true,
-    usersCount: 2,
     permissions: Object.values(PERMISSION_CATEGORIES).flatMap((cat) =>
       cat.permissions.map((p) => p.key)
     ),
@@ -236,7 +242,6 @@ const DEFAULT_ROLES = [
     description: 'Gestion des équipes et validation des documents',
     color: '#7C3AED',
     isSystem: true,
-    usersCount: 5,
     permissions: [
       'documents.view',
       'documents.create',
@@ -257,29 +262,11 @@ const DEFAULT_ROLES = [
     ],
   },
   {
-    id: 3,
-    name: 'Validateur',
-    description: 'Validation et signature des documents',
-    color: '#2563EB',
-    isSystem: true,
-    usersCount: 8,
-    permissions: [
-      'documents.view',
-      'documents.annotate',
-      'documents.export',
-      'workflows.view',
-      'signatures.view',
-      'signatures.sign',
-      'archives.view',
-    ],
-  },
-  {
     id: 4,
     name: 'Utilisateur',
     description: 'Accès de base pour consulter et soumettre des documents',
     color: '#6B7280',
     isSystem: true,
-    usersCount: 25,
     permissions: [
       'documents.view',
       'documents.create',
@@ -288,31 +275,37 @@ const DEFAULT_ROLES = [
       'workflows.launch',
       'signatures.view',
       'signatures.sign',
-    ],
-  },
-  {
-    id: 5,
-    name: 'Comptabilité',
-    description: 'Rôle personnalisé pour le département comptabilité',
-    color: '#059669',
-    isSystem: false,
-    usersCount: 4,
-    permissions: [
-      'documents.view',
-      'documents.create',
-      'documents.edit',
-      'documents.export',
-      'documents.annotate',
-      'workflows.view',
-      'workflows.launch',
-      'signatures.view',
-      'signatures.sign',
-      'signatures.request',
-      'archives.view',
-      'archives.archive',
     ],
   },
 ];
+
+// Map system role id → org_members.role values that count toward it.
+const ROLE_ID_TO_MEMBER_ROLES: Record<number, string[]> = {
+  1: ['admin'],
+  2: ['editor', 'manager'],
+  4: ['viewer', 'user'],
+};
+
+async function fetchRoleCounts(orgId: string): Promise<Record<number, number>> {
+  try {
+    const { data, error } = await supabase
+      .from('org_members')
+      .select('role')
+      .eq('org_id', orgId)
+      .eq('active', true);
+    if (error || !data) return { 1: 0, 2: 0, 4: 0 };
+    const counts: Record<number, number> = { 1: 0, 2: 0, 4: 0 };
+    for (const row of data) {
+      const r = ((row as { role?: string }).role || '').toLowerCase();
+      for (const [id, members] of Object.entries(ROLE_ID_TO_MEMBER_ROLES)) {
+        if (members.includes(r)) counts[Number(id)] = (counts[Number(id)] || 0) + 1;
+      }
+    }
+    return counts;
+  } catch {
+    return { 1: 0, 2: 0, 4: 0 };
+  }
+}
 
 interface Role {
   id: number;
@@ -326,7 +319,21 @@ interface Role {
 
 export const RolesPage: React.FC = () => {
   const { t } = useTranslation();
-  const [roles, setRoles] = useState<Role[]>(DEFAULT_ROLES);
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
+  const [roles, setRoles] = useState<Role[]>(SYSTEM_ROLES.map((r) => ({ ...r, usersCount: 0 })));
+
+  useEffect(() => {
+    if (!orgId) return;
+    let cancelled = false;
+    fetchRoleCounts(orgId).then((counts) => {
+      if (cancelled) return;
+      setRoles((prev) => prev.map((r) => ({ ...r, usersCount: counts[r.id] ?? r.usersCount })));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
