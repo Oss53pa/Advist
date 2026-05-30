@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,16 +16,17 @@ import {
   Stamp,
   Award,
   Ban,
+  Loader2,
 } from 'lucide-react';
-import {
-  Card,
-  Button,
-  Badge,
-  Modal,
-  Input,
-} from '../../components/ui';
+import { Card, Button, Badge, Modal, Input } from '../../components/ui';
 import { PrintButton } from '../../shared/PrintEngine';
 import { DocumentViewer } from '../../components/documents';
+import { useAuthStore } from '../../store';
+import {
+  getMyPendingSignatures,
+  getMySignedDocuments,
+  getSignatureCounts,
+} from '../../services/signaturesOverview';
 
 // Pending signature with paraph requirements
 interface PendingSignatureRequest {
@@ -66,12 +67,28 @@ export const SignaturesPage: React.FC = () => {
   const [selectedRequest, setSelectedRequest] = useState<PendingSignatureRequest | null>(null);
   const [showRefusalModal, setShowRefusalModal] = useState(false);
 
+  const { user } = useAuthStore();
+  const userId = user?.id;
+  const [tabCounts, setTabCounts] = useState({ pending: 0, signed: 0 });
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    getSignatureCounts(userId).then((c) => {
+      if (!cancelled) setTabCounts(c);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-advist-gray900/70">{t('signatures.title', 'Signatures')}</h1>
+          <h1 className="text-2xl font-bold text-advist-gray900/70">
+            {t('signatures.title', 'Signatures')}
+          </h1>
           <p className="text-advist-gray900/80 mt-1">
             {t('signatures.subtitle', 'Signez vos documents en attente')}
           </p>
@@ -79,8 +96,12 @@ export const SignaturesPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <PrintButton config={{ title: 'Signatures électroniques', appName: 'Advist' }}>
             <div>
-              <p className="text-sm mb-2">Liste des signatures - {t('signatures.title', 'Signatures')}</p>
-              <p className="text-sm text-gray-500">{t('signatures.subtitle', 'Signez vos documents en attente')}</p>
+              <p className="text-sm mb-2">
+                Liste des signatures - {t('signatures.title', 'Signatures')}
+              </p>
+              <p className="text-sm text-gray-500">
+                {t('signatures.subtitle', 'Signez vos documents en attente')}
+              </p>
             </div>
           </PrintButton>
         </div>
@@ -97,7 +118,10 @@ export const SignaturesPage: React.FC = () => {
               {t('signatures.secureSignature', 'Signature électronique sécurisée')}
             </h3>
             <p className="text-sm text-advist-gray900/80 mt-1">
-              {t('signatures.securityInfo', 'Vos signatures sont protégées par chiffrement AES-256 et conformes aux exigences légales eIDAS et OHADA. Chaque signature est horodatée et certifiée pour garantir sa valeur légale.')}
+              {t(
+                'signatures.securityInfo',
+                'Vos signatures sont protégées par chiffrement AES-256 et conformes aux exigences légales eIDAS et OHADA. Chaque signature est horodatée et certifiée pour garantir sa valeur légale.'
+              )}
             </p>
           </div>
           <Badge variant="success" size="sm" className="flex items-center gap-1">
@@ -111,8 +135,12 @@ export const SignaturesPage: React.FC = () => {
       <div className="border-b border-advist-border">
         <nav className="flex gap-4">
           {[
-            { key: 'pending', label: t('signatures.toSign', 'À signer'), count: 4 },
-            { key: 'signed-documents', label: t('signatures.signedDocs', 'Documents signés'), count: 15 },
+            { key: 'pending', label: t('signatures.toSign', 'À signer'), count: tabCounts.pending },
+            {
+              key: 'signed-documents',
+              label: t('signatures.signedDocs', 'Documents signés'),
+              count: tabCounts.signed,
+            },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -174,98 +202,87 @@ const PendingSignaturesSection: React.FC<{
 }> = ({ onSign, onRefuse }) => {
   const { t } = useTranslation();
 
-  const pendingDocuments: PendingSignatureRequest[] = [
-    {
-      id: 1,
-      document: {
-        id: 101,
-        title: 'Contrat de prestation Q4 2024',
-        total_pages: 12,
-      },
-      requestedBy: 'Marie Dupont',
-      deadline: '2024-11-29T18:00:00Z',
-      status: 'pending',
-      signature_mode: 'sequential',
-      order_in_group: 2,
-      total_in_group: 3,
-      requires_paraph: true,
-      paraph_all_pages: true,
-      pages_to_sign: [12],
-      pages_to_paraph: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-      paraphs_completed: [],
-      ohada_compliant: true,
-      legal_value: true,
-    },
-    {
-      id: 2,
-      document: {
-        id: 102,
-        title: 'Accord de confidentialité',
-        total_pages: 4,
-      },
-      requestedBy: 'Pierre Martin',
-      deadline: '2024-11-30T18:00:00Z',
-      status: 'pending',
-      signature_mode: 'parallel',
-      requires_paraph: false,
-      paraph_all_pages: false,
-      pages_to_sign: [4],
-      pages_to_paraph: [],
-      paraphs_completed: [],
-      ohada_compliant: true,
-      legal_value: true,
-    },
-    {
-      id: 3,
-      document: {
-        id: 103,
-        title: 'Procès-verbal AG extraordinaire',
-        total_pages: 8,
-      },
-      requestedBy: 'Sophie Laurent',
-      deadline: '2024-12-01T18:00:00Z',
-      status: 'pending',
-      signature_mode: 'sequential',
-      order_in_group: 1,
-      total_in_group: 5,
-      requires_paraph: true,
-      paraph_all_pages: false,
-      pages_to_sign: [8],
-      pages_to_paraph: [1, 8],
-      paraphs_completed: [1],
-      ohada_compliant: true,
-      legal_value: true,
-    },
-    {
-      id: 4,
-      document: {
-        id: 104,
-        title: 'Avenant contrat maintenance',
-        total_pages: 3,
-      },
-      requestedBy: 'Marc Dubois',
-      deadline: '2024-12-02T18:00:00Z',
-      status: 'pending',
-      signature_mode: 'parallel',
-      requires_paraph: false,
-      paraph_all_pages: false,
-      pages_to_sign: [3],
-      pages_to_paraph: [],
-      paraphs_completed: [],
-      ohada_compliant: false,
-      legal_value: false,
-    },
-  ];
+  const { user } = useAuthStore();
+  const userId = user?.id;
+  const [pendingDocuments, setPendingDocuments] = useState<PendingSignatureRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    getMyPendingSignatures(userId)
+      .then((rows) => {
+        if (cancelled) return;
+        // Map real signature rows into the existing rich shape with safe
+        // defaults for fields Atlas Studio doesn't track (paraphs, mode…).
+        setPendingDocuments(
+          rows.map((r, idx) => ({
+            id: (idx + 1) as number,
+            document: {
+              id: idx + 1,
+              title: r.documentTitle,
+              total_pages: r.pageNumber ?? 1,
+            },
+            requestedBy: '',
+            deadline: r.expiresAt || r.createdAt || new Date().toISOString(),
+            status: 'pending',
+            signature_mode: 'sequential',
+            requires_paraph: false,
+            paraph_all_pages: false,
+            pages_to_sign: r.pageNumber ? [r.pageNumber] : [],
+            pages_to_paraph: [],
+            paraphs_completed: [],
+            ohada_compliant: false,
+            legal_value: false,
+          }))
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   const getDeadlineStatus = (deadline: string) => {
     const now = new Date();
     const deadlineDate = new Date(deadline);
     const diffHours = (deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-    if (diffHours < 0) return { status: 'overdue', label: 'En retard', color: 'text-advist-gray900/70 bg-advist-bg' };
-    if (diffHours < 24) return { status: 'urgent', label: 'Urgent', color: 'text-advist-warning bg-advist-warning-light' };
+    if (diffHours < 0)
+      return {
+        status: 'overdue',
+        label: 'En retard',
+        color: 'text-advist-gray900/70 bg-advist-bg',
+      };
+    if (diffHours < 24)
+      return {
+        status: 'urgent',
+        label: 'Urgent',
+        color: 'text-advist-warning bg-advist-warning-light',
+      };
     return { status: 'normal', label: '', color: '' };
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-advist-gray900/40">
+        <Loader2 size={20} className="animate-spin" />
+      </div>
+    );
+  }
+
+  if (pendingDocuments.length === 0) {
+    return (
+      <Card className="p-10 text-center text-sm text-advist-gray900/50">
+        Aucune signature en attente
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -276,23 +293,40 @@ const PendingSignaturesSection: React.FC<{
           : 100;
 
         return (
-          <Card key={doc.id} className={deadlineInfo.status === 'overdue' ? 'border-advist-blue-light' : ''}>
+          <Card
+            key={doc.id}
+            className={deadlineInfo.status === 'overdue' ? 'border-advist-blue-light' : ''}
+          >
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-xl ${
-                  deadlineInfo.status === 'overdue' ? 'bg-advist-bg' :
-                  deadlineInfo.status === 'urgent' ? 'bg-advist-warning-light' : 'bg-advist-gold-light/20'
-                }`}>
-                  <PenTool size={24} className={
-                    deadlineInfo.status === 'overdue' ? 'text-advist-gray900/70' :
-                    deadlineInfo.status === 'urgent' ? 'text-advist-gray900' : 'text-advist-gray900/80'
-                  } />
+                <div
+                  className={`p-3 rounded-xl ${
+                    deadlineInfo.status === 'overdue'
+                      ? 'bg-advist-bg'
+                      : deadlineInfo.status === 'urgent'
+                        ? 'bg-advist-warning-light'
+                        : 'bg-advist-gold-light/20'
+                  }`}
+                >
+                  <PenTool
+                    size={24}
+                    className={
+                      deadlineInfo.status === 'overdue'
+                        ? 'text-advist-gray900/70'
+                        : deadlineInfo.status === 'urgent'
+                          ? 'text-advist-gray900'
+                          : 'text-advist-gray900/80'
+                    }
+                  />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-semibold text-advist-gray900">{doc.document.title}</h3>
                     {/* v2: Signature mode badge */}
-                    <Badge variant={doc.signature_mode === 'parallel' ? 'info' : 'secondary'} size="sm">
+                    <Badge
+                      variant={doc.signature_mode === 'parallel' ? 'info' : 'secondary'}
+                      size="sm"
+                    >
                       {doc.signature_mode === 'parallel' ? (
                         <>
                           <Users size={12} className="mr-1" />
@@ -301,7 +335,8 @@ const PendingSignaturesSection: React.FC<{
                       ) : (
                         <>
                           <ArrowRight size={12} className="mr-1" />
-                          {t('signatures.sequential', 'Séquentiel')} ({doc.order_in_group}/{doc.total_in_group})
+                          {t('signatures.sequential', 'Séquentiel')} ({doc.order_in_group}/
+                          {doc.total_in_group})
                         </>
                       )}
                     </Badge>
@@ -313,13 +348,17 @@ const PendingSignaturesSection: React.FC<{
                       </Badge>
                     )}
                     {deadlineInfo.status !== 'normal' && (
-                      <Badge variant={deadlineInfo.status === 'overdue' ? 'danger' : 'warning'} size="sm">
+                      <Badge
+                        variant={deadlineInfo.status === 'overdue' ? 'danger' : 'warning'}
+                        size="sm"
+                      >
                         {deadlineInfo.label}
                       </Badge>
                     )}
                   </div>
                   <p className="text-sm text-advist-gray900/80 mt-1">
-                    {t('signatures.requestedBy', 'Demandé par')} {doc.requestedBy} • {doc.document.total_pages} pages
+                    {t('signatures.requestedBy', 'Demandé par')} {doc.requestedBy} •{' '}
+                    {doc.document.total_pages} pages
                   </p>
 
                   {/* v2: Paraph requirements info */}
@@ -330,15 +369,22 @@ const PendingSignaturesSection: React.FC<{
                         <span className="font-medium">
                           {doc.paraph_all_pages
                             ? t('signatures.paraphAllPages', 'Paraphe requis sur toutes les pages')
-                            : t('signatures.paraphRequired', 'Paraphe requis sur {{count}} page(s)', { count: doc.pages_to_paraph.length })
-                          }
+                            : t(
+                                'signatures.paraphRequired',
+                                'Paraphe requis sur {{count}} page(s)',
+                                { count: doc.pages_to_paraph.length }
+                              )}
                         </span>
                       </div>
                       {doc.pages_to_paraph.length > 0 && (
                         <div className="mt-2">
                           <div className="flex items-center justify-between text-xs text-advist-gray900 mb-1">
-                            <span>{t('signatures.paraphProgress', 'Progression des paraphes')}</span>
-                            <span>{doc.paraphs_completed.length}/{doc.pages_to_paraph.length}</span>
+                            <span>
+                              {t('signatures.paraphProgress', 'Progression des paraphes')}
+                            </span>
+                            <span>
+                              {doc.paraphs_completed.length}/{doc.pages_to_paraph.length}
+                            </span>
                           </div>
                           <div className="h-2 bg-primary-200 rounded-full overflow-hidden">
                             <div
@@ -354,16 +400,32 @@ const PendingSignaturesSection: React.FC<{
                   <div className="flex items-center gap-4 mt-2 text-sm">
                     <div className="flex items-center gap-1 text-advist-gray900/80">
                       <FileSignature size={14} />
-                      <span>{t('signatures.signPage', 'Signature page')} {doc.pages_to_sign.join(', ')}</span>
+                      <span>
+                        {t('signatures.signPage', 'Signature page')} {doc.pages_to_sign.join(', ')}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Clock size={14} className={deadlineInfo.color.includes('red') ? 'text-advist-gray900/70' : 'text-advist-gray900'} />
-                      <span className={deadlineInfo.color.includes('red') ? 'text-advist-gray900/70' : 'text-advist-gray900/80'}>
-                        {t('signatures.deadline', 'Date limite')}: {new Date(doc.deadline).toLocaleDateString('fr-FR', {
+                      <Clock
+                        size={14}
+                        className={
+                          deadlineInfo.color.includes('red')
+                            ? 'text-advist-gray900/70'
+                            : 'text-advist-gray900'
+                        }
+                      />
+                      <span
+                        className={
+                          deadlineInfo.color.includes('red')
+                            ? 'text-advist-gray900/70'
+                            : 'text-advist-gray900/80'
+                        }
+                      >
+                        {t('signatures.deadline', 'Date limite')}:{' '}
+                        {new Date(doc.deadline).toLocaleDateString('fr-FR', {
                           day: '2-digit',
                           month: 'short',
                           hour: '2-digit',
-                          minute: '2-digit'
+                          minute: '2-digit',
                         })}
                       </span>
                     </div>
@@ -381,10 +443,7 @@ const PendingSignaturesSection: React.FC<{
                 >
                   {t('signatures.refuse', 'Refuser')}
                 </Button>
-                <Button
-                  leftIcon={<PenTool size={18} />}
-                  onClick={() => onSign(doc)}
-                >
+                <Button leftIcon={<PenTool size={18} />} onClick={() => onSign(doc)}>
                   {t('signatures.signNow', 'Signer')}
                 </Button>
               </div>
@@ -397,7 +456,9 @@ const PendingSignaturesSection: React.FC<{
         <Card>
           <div className="text-center py-12">
             <Check size={48} className="mx-auto text-advist-gray900 mb-4" />
-            <h3 className="text-lg font-medium text-advist-gray900">{t('signatures.allSigned', 'Tout est signé !')}</h3>
+            <h3 className="text-lg font-medium text-advist-gray900">
+              {t('signatures.allSigned', 'Tout est signé !')}
+            </h3>
             <p className="text-advist-gray900/80 mt-1">
               {t('signatures.noPending', "Vous n'avez aucun document en attente de signature")}
             </p>
@@ -422,42 +483,58 @@ interface SignedDocument {
 const SignedDocumentsSection: React.FC = () => {
   const { t } = useTranslation();
 
-  const signedDocuments: SignedDocument[] = [
-    {
-      id: 1,
-      title: 'Contrat de partenariat 2024',
-      signed_at: '2024-11-25T14:30:00Z',
-      pages_signed: 3,
-      pages_paraphed: 8,
-      certificate_id: 'CERT-2024-001234',
-      ohada_compliant: true,
-      legal_value: true,
-    },
-    {
-      id: 2,
-      title: 'Avenant contrat maintenance',
-      signed_at: '2024-11-20T10:15:00Z',
-      pages_signed: 1,
-      pages_paraphed: 0,
-      certificate_id: 'CERT-2024-001198',
-      ohada_compliant: true,
-      legal_value: true,
-    },
-    {
-      id: 3,
-      title: 'Procédure qualité v2',
-      signed_at: '2024-11-15T16:45:00Z',
-      pages_signed: 2,
-      pages_paraphed: 5,
-      certificate_id: 'CERT-2024-001156',
-      ohada_compliant: false,
-      legal_value: false,
-    },
-  ];
+  const { user } = useAuthStore();
+  const userId = user?.id;
+  const [signedDocuments, setSignedDocuments] = useState<SignedDocument[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    getMySignedDocuments(userId)
+      .then((rows) => {
+        if (cancelled) return;
+        setSignedDocuments(
+          rows.map((r, idx) => ({
+            id: idx + 1,
+            title: r.documentTitle,
+            signed_at: r.signedAt || r.documentTitle || new Date().toISOString(),
+            pages_signed: r.pageNumber ?? 1,
+            pages_paraphed: 0,
+            certificate_id: r.signatureHash ? r.signatureHash.slice(0, 16) : r.id.slice(0, 8),
+            ohada_compliant: false,
+            legal_value: false,
+          }))
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   const [selectedDocument, setSelectedDocument] = useState<SignedDocument | null>(null);
   const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [showCertificateModal, setShowCertificateModal] = useState(false);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-advist-gray900/40">
+        <Loader2 size={20} className="animate-spin" />
+      </div>
+    );
+  }
+
+  if (signedDocuments.length === 0) {
+    return (
+      <Card className="p-10 text-center text-sm text-advist-gray900/50">Aucun document signé</Card>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -486,11 +563,14 @@ const SignedDocumentsSection: React.FC = () => {
                 </div>
                 <p className="text-sm text-advist-gray900/80">
                   {doc.pages_signed} {t('signatures.pagesSigned', 'page(s) signée(s)')}
-                  {doc.pages_paraphed > 0 && ` • ${doc.pages_paraphed} ${t('signatures.pagesParaphed', 'page(s) paraphée(s)')}`}
-                  {' • '}{t('signatures.id', 'ID')}: {doc.certificate_id}
+                  {doc.pages_paraphed > 0 &&
+                    ` • ${doc.pages_paraphed} ${t('signatures.pagesParaphed', 'page(s) paraphée(s)')}`}
+                  {' • '}
+                  {t('signatures.id', 'ID')}: {doc.certificate_id}
                 </p>
                 <p className="text-xs text-advist-blue-light mt-1">
-                  {t('signatures.signedOn', 'Signé le')} {new Date(doc.signed_at).toLocaleDateString('fr-FR', {
+                  {t('signatures.signedOn', 'Signé le')}{' '}
+                  {new Date(doc.signed_at).toLocaleDateString('fr-FR', {
                     day: '2-digit',
                     month: 'long',
                     year: 'numeric',
@@ -546,9 +626,12 @@ const SignedDocumentsSection: React.FC = () => {
                   <Check size={20} className="text-advist-gray900" />
                 </div>
                 <div>
-                  <p className="font-medium text-advist-gray900">{t('signatures.signedDocument', 'Document signé')}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {t('signatures.signedDocument', 'Document signé')}
+                  </p>
                   <p className="text-sm text-advist-gray900/80">
-                    {t('signatures.signedOn', 'Signé le')} {new Date(selectedDocument.signed_at).toLocaleDateString('fr-FR', {
+                    {t('signatures.signedOn', 'Signé le')}{' '}
+                    {new Date(selectedDocument.signed_at).toLocaleDateString('fr-FR', {
                       day: '2-digit',
                       month: 'long',
                       year: 'numeric',
@@ -638,7 +721,10 @@ const SignedDocumentsSection: React.FC = () => {
                 {t('signatures.certificateTitle', 'Certificat de signature électronique')}
               </h3>
               <p className="text-sm text-advist-gray900/80 mt-2">
-                {t('signatures.certificateSubtitle', 'Document signé électroniquement avec valeur légale')}
+                {t(
+                  'signatures.certificateSubtitle',
+                  'Document signé électroniquement avec valeur légale'
+                )}
               </p>
             </div>
 
@@ -646,11 +732,17 @@ const SignedDocumentsSection: React.FC = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-                  <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">{t('signatures.certificateId', 'ID Certificat')}</p>
-                  <p className="font-mono font-medium text-advist-gray900 mt-1">{selectedDocument.certificate_id}</p>
+                  <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">
+                    {t('signatures.certificateId', 'ID Certificat')}
+                  </p>
+                  <p className="font-mono font-medium text-advist-gray900 mt-1">
+                    {selectedDocument.certificate_id}
+                  </p>
                 </div>
                 <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-                  <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">{t('signatures.signatureDate', 'Date de signature')}</p>
+                  <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">
+                    {t('signatures.signatureDate', 'Date de signature')}
+                  </p>
                   <p className="font-medium text-advist-gray900 mt-1">
                     {new Date(selectedDocument.signed_at).toLocaleDateString('fr-FR', {
                       day: '2-digit',
@@ -662,18 +754,28 @@ const SignedDocumentsSection: React.FC = () => {
               </div>
 
               <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-                <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">{t('signatures.documentTitle', 'Document')}</p>
+                <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">
+                  {t('signatures.documentTitle', 'Document')}
+                </p>
                 <p className="font-medium text-advist-gray900 mt-1">{selectedDocument.title}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-                  <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">{t('signatures.pagesSigned', 'Pages signées')}</p>
-                  <p className="font-medium text-advist-gray900 mt-1">{selectedDocument.pages_signed}</p>
+                  <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">
+                    {t('signatures.pagesSigned', 'Pages signées')}
+                  </p>
+                  <p className="font-medium text-advist-gray900 mt-1">
+                    {selectedDocument.pages_signed}
+                  </p>
                 </div>
                 <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-                  <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">{t('signatures.pagesParaphed', 'Pages paraphées')}</p>
-                  <p className="font-medium text-advist-gray900 mt-1">{selectedDocument.pages_paraphed || 0}</p>
+                  <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">
+                    {t('signatures.pagesParaphed', 'Pages paraphées')}
+                  </p>
+                  <p className="font-medium text-advist-gray900 mt-1">
+                    {selectedDocument.pages_paraphed || 0}
+                  </p>
                 </div>
               </div>
 
@@ -681,7 +783,9 @@ const SignedDocumentsSection: React.FC = () => {
               <div className="flex items-center gap-3 p-4 bg-advist-warning-light rounded-xl border border-advist-warning/30">
                 <Shield size={24} className="text-advist-gray900" />
                 <div className="flex-1">
-                  <p className="font-medium text-advist-gray900">{t('signatures.legalCompliance', 'Conformité légale')}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {t('signatures.legalCompliance', 'Conformité légale')}
+                  </p>
                   <div className="flex gap-2 mt-2">
                     {selectedDocument.ohada_compliant && (
                       <Badge variant="success" size="sm">
@@ -703,7 +807,9 @@ const SignedDocumentsSection: React.FC = () => {
 
               {/* Signature hash */}
               <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-                <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">{t('signatures.signatureHash', 'Empreinte numérique')}</p>
+                <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">
+                  {t('signatures.signatureHash', 'Empreinte numérique')}
+                </p>
                 <p className="font-mono text-xs text-advist-gray900/80 mt-1 break-all">
                   SHA256: a7f8d9e2c4b6a1f3e5d7c9b2a4f6e8d1c3b5a7f9e2d4c6b8a1f3e5d7c9b2a4f6
                 </p>
@@ -711,7 +817,9 @@ const SignedDocumentsSection: React.FC = () => {
 
               {/* Timestamp */}
               <div className="p-3 bg-advist-surface-dark/50 rounded-xl">
-                <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">{t('signatures.timestamp', 'Horodatage qualifié')}</p>
+                <p className="text-xs text-advist-gray900/60 uppercase tracking-wide">
+                  {t('signatures.timestamp', 'Horodatage qualifié')}
+                </p>
                 <p className="font-mono text-sm text-advist-gray900 mt-1">
                   {new Date(selectedDocument.signed_at).toISOString()}
                 </p>
@@ -768,7 +876,7 @@ const SigningModal: React.FC<{
   const isCurrentPageParaphed = paraphedPages.includes(currentPage);
   const needsSignatureOnCurrentPage = request.pages_to_sign.includes(currentPage);
 
-  const allParaphsComplete = request.pages_to_paraph.every(p => paraphedPages.includes(p));
+  const allParaphsComplete = request.pages_to_paraph.every((p) => paraphedPages.includes(p));
   const canSign = !request.requires_paraph || allParaphsComplete;
 
   const handleParaphPage = () => {
@@ -790,14 +898,20 @@ const SigningModal: React.FC<{
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('signatures.signDocument', 'Signer le document')} size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('signatures.signDocument', 'Signer le document')}
+      size="xl"
+    >
       <div className="space-y-4">
         {/* Document info header */}
         <div className="flex items-center justify-between p-3 bg-advist-surface-dark/50 rounded-xl">
           <div>
             <h3 className="font-semibold text-advist-gray900">{request.document.title}</h3>
             <p className="text-sm text-advist-gray900/80">
-              {request.document.total_pages} pages • {t('signatures.requestedBy', 'Demandé par')} {request.requestedBy}
+              {request.document.total_pages} pages • {t('signatures.requestedBy', 'Demandé par')}{' '}
+              {request.requestedBy}
             </p>
           </div>
           {request.ohada_compliant && (
@@ -814,18 +928,19 @@ const SigningModal: React.FC<{
             <Stamp size={20} className="text-advist-gray900" />
             <div className="flex-1">
               <p className="text-sm font-medium text-advist-gray900">
-                {t('signatures.paraphProgress', 'Progression des paraphes')}: {paraphedPages.length}/{request.pages_to_paraph.length}
+                {t('signatures.paraphProgress', 'Progression des paraphes')}: {paraphedPages.length}
+                /{request.pages_to_paraph.length}
               </p>
               <div className="h-2 bg-primary-200 rounded-full overflow-hidden mt-1">
                 <div
                   className="h-full bg-primary-900 rounded-full transition-all"
-                  style={{ width: `${(paraphedPages.length / request.pages_to_paraph.length) * 100}%` }}
+                  style={{
+                    width: `${(paraphedPages.length / request.pages_to_paraph.length) * 100}%`,
+                  }}
                 />
               </div>
             </div>
-            {allParaphsComplete && (
-              <CheckCircle size={20} className="text-advist-gray900" />
-            )}
+            {allParaphsComplete && <CheckCircle size={20} className="text-advist-gray900" />}
           </div>
         )}
 
@@ -852,9 +967,13 @@ const SigningModal: React.FC<{
             <div className="absolute top-16 right-4 space-y-2 z-10">
               {/* Paraph indicator */}
               {needsParaphOnCurrentPage && (
-                <div className={`px-3 py-1 rounded-full text-sm font-medium shadow-lg ${
-                  isCurrentPageParaphed ? 'bg-primary-900 text-white' : 'bg-white border border-primary-300 text-advist-gray900'
-                }`}>
+                <div
+                  className={`px-3 py-1 rounded-full text-sm font-medium shadow-lg ${
+                    isCurrentPageParaphed
+                      ? 'bg-primary-900 text-white'
+                      : 'bg-white border border-primary-300 text-advist-gray900'
+                  }`}
+                >
                   {isCurrentPageParaphed ? (
                     <span className="flex items-center gap-1">
                       <Check size={14} /> {t('signatures.paraphed', 'Paraphé')}
@@ -869,9 +988,13 @@ const SigningModal: React.FC<{
 
               {/* Signature indicator */}
               {needsSignatureOnCurrentPage && (
-                <div className={`px-3 py-1 rounded-full text-sm font-medium shadow-lg ${
-                  signatureApplied ? 'bg-primary-900 text-white' : 'bg-white border border-primary-300 text-advist-gray900/80'
-                }`}>
+                <div
+                  className={`px-3 py-1 rounded-full text-sm font-medium shadow-lg ${
+                    signatureApplied
+                      ? 'bg-primary-900 text-white'
+                      : 'bg-white border border-primary-300 text-advist-gray900/80'
+                  }`}
+                >
                   {signatureApplied ? (
                     <span className="flex items-center gap-1">
                       <Check size={14} /> {t('signatures.signed', 'Signé')}
@@ -888,7 +1011,7 @@ const SigningModal: React.FC<{
 
           {/* Page indicators with paraph/sign status */}
           <div className="flex items-center justify-center gap-1 p-3 bg-advist-surface-dark/30 border-t border-advist-border">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
               const needsParaph = request.pages_to_paraph.includes(page);
               const isParaphed = paraphedPages.includes(page);
               const needsSign = request.pages_to_sign.includes(page);
@@ -898,14 +1021,25 @@ const SigningModal: React.FC<{
                   key={page}
                   className={`
                     w-8 h-8 rounded-full text-sm font-medium flex items-center justify-center
-                    ${needsSign ? 'bg-advist-gold-light/20 text-advist-gray900/80' :
-                      needsParaph ? (isParaphed ? 'bg-primary-900 text-white' : 'bg-primary-200 text-primary-900') :
-                      'bg-advist-surface-dark text-advist-gray900/80'
+                    ${
+                      needsSign
+                        ? 'bg-advist-gold-light/20 text-advist-gray900/80'
+                        : needsParaph
+                          ? isParaphed
+                            ? 'bg-primary-900 text-white'
+                            : 'bg-primary-200 text-primary-900'
+                          : 'bg-advist-surface-dark text-advist-gray900/80'
                     }
                   `}
-                  title={needsSign ? t('signatures.signatureRequired', 'Signature requise') :
-                         needsParaph ? (isParaphed ? t('signatures.paraphed', 'Paraphé') : t('signatures.paraphRequired', 'Paraphe requis')) :
-                         `Page ${page}`}
+                  title={
+                    needsSign
+                      ? t('signatures.signatureRequired', 'Signature requise')
+                      : needsParaph
+                        ? isParaphed
+                          ? t('signatures.paraphed', 'Paraphé')
+                          : t('signatures.paraphRequired', 'Paraphe requis')
+                        : `Page ${page}`
+                  }
                 >
                   {page}
                 </div>
@@ -922,30 +1056,19 @@ const SigningModal: React.FC<{
 
           <div className="flex gap-2">
             {needsParaphOnCurrentPage && !isCurrentPageParaphed && (
-              <Button
-                variant="outline"
-                onClick={handleParaphPage}
-                leftIcon={<Stamp size={18} />}
-              >
+              <Button variant="outline" onClick={handleParaphPage} leftIcon={<Stamp size={18} />}>
                 {t('signatures.paraphThisPage', 'Parapher cette page')}
               </Button>
             )}
 
             {canSign && !signatureApplied && (
-              <Button
-                onClick={handleSign}
-                leftIcon={<PenTool size={18} />}
-              >
+              <Button onClick={handleSign} leftIcon={<PenTool size={18} />}>
                 {t('signatures.applySignature', 'Apposer ma signature')}
               </Button>
             )}
 
             {signatureApplied && (
-              <Button
-                variant="success"
-                leftIcon={<Check size={18} />}
-                onClick={onClose}
-              >
+              <Button variant="success" leftIcon={<Check size={18} />} onClick={onClose}>
                 {t('signatures.done', 'Terminé')}
               </Button>
             )}
@@ -1038,7 +1161,10 @@ const RefusalModal: React.FC<{
                 {t('signatures.refusalConsequences', 'Conséquences du refus')}
               </p>
               <p className="text-sm text-advist-gray900 mt-1">
-                {t('signatures.refusalInfo', 'Le refus de signature sera notifié au demandeur et enregistré dans l\'historique du document.')}
+                {t(
+                  'signatures.refusalInfo',
+                  "Le refus de signature sera notifié au demandeur et enregistré dans l'historique du document."
+                )}
               </p>
             </div>
           </div>
@@ -1054,14 +1180,19 @@ const RefusalModal: React.FC<{
             onChange={(e) => setReason(e.target.value)}
             className="w-full p-3 border border-advist-border rounded-xl focus:outline-none focus:ring-2 focus:ring-advist-gold resize-none"
             rows={3}
-            placeholder={t('signatures.refusalReasonPlaceholder', 'Expliquez pourquoi vous refusez de signer ce document...')}
+            placeholder={t(
+              'signatures.refusalReasonPlaceholder',
+              'Expliquez pourquoi vous refusez de signer ce document...'
+            )}
           />
         </div>
 
         {/* v2: Definitive refusal option */}
-        <div className={`p-4 rounded-xl border-2 transition-all duration-240 ${
-          isDefinitive ? 'border-advist-blue-light bg-advist-bg' : 'border-advist-border'
-        }`}>
+        <div
+          className={`p-4 rounded-xl border-2 transition-all duration-240 ${
+            isDefinitive ? 'border-advist-blue-light bg-advist-bg' : 'border-advist-border'
+          }`}
+        >
           <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -1080,7 +1211,10 @@ const RefusalModal: React.FC<{
                 </span>
               </div>
               <p className="text-sm text-advist-gray900/80 mt-1">
-                {t('signatures.definitiveRefusalInfo', 'Un refus définitif annule le circuit de validation. Le document ne pourra plus être signé par les autres signataires et devra être renvoyé en validation.')}
+                {t(
+                  'signatures.definitiveRefusalInfo',
+                  'Un refus définitif annule le circuit de validation. Le document ne pourra plus être signé par les autres signataires et devra être renvoyé en validation.'
+                )}
               </p>
             </div>
           </label>
@@ -1096,7 +1230,10 @@ const RefusalModal: React.FC<{
                   {t('signatures.confirmDefinitive', 'Confirmer le refus définitif ?')}
                 </p>
                 <p className="text-sm text-advist-gray900/70 mt-1">
-                  {t('signatures.definitiveWarning', 'Cette action est irréversible. Le circuit de validation sera annulé et tous les autres signataires seront notifiés.')}
+                  {t(
+                    'signatures.definitiveWarning',
+                    'Cette action est irréversible. Le circuit de validation sera annulé et tous les autres signataires seront notifiés.'
+                  )}
                 </p>
               </div>
             </div>
@@ -1115,11 +1252,10 @@ const RefusalModal: React.FC<{
             leftIcon={isDefinitive ? <Ban size={18} /> : <XCircle size={18} />}
           >
             {isDefinitive
-              ? (showDefinitiveWarning
-                  ? t('signatures.confirmDefinitiveRefusal', 'Confirmer le refus définitif')
-                  : t('signatures.refuseDefinitively', 'Refuser définitivement'))
-              : t('signatures.refuseSignature', 'Refuser la signature')
-            }
+              ? showDefinitiveWarning
+                ? t('signatures.confirmDefinitiveRefusal', 'Confirmer le refus définitif')
+                : t('signatures.refuseDefinitively', 'Refuser définitivement')
+              : t('signatures.refuseSignature', 'Refuser la signature')}
           </Button>
         </div>
       </div>
