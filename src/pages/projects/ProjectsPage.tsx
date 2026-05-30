@@ -47,92 +47,11 @@ export const ProjectsPage: React.FC = () => {
           statusFilter !== 'all' ? { status: statusFilter } : undefined
         );
         setProjects(data);
-      } catch (_error) {
-        // Mock data for demo
-        setProjects([
-          {
-            id: '1',
-            name: 'Projet de transformation digitale',
-            description: 'Mise en place du système de gestion documentaire',
-            reference: 'PRJ-2024-001',
-            color: '#3A4654',
-            icon: 'folder',
-            status: 'active',
-            priority: 'high',
-            startDate: '2024-01-15',
-            dueDate: '2024-12-31',
-            owner: { id: '1', name: 'Marie Dupont' },
-            membersCount: 8,
-            documentsCount: 45,
-            completedDocumentsCount: 32,
-            progress: 71,
-            tags: ['digital', 'transformation'],
-            organizationId: '1',
-            createdAt: '2024-01-15T10:00:00Z',
-            updatedAt: '2024-11-28T15:30:00Z',
-          },
-          {
-            id: '2',
-            name: 'Dossier client ABC Corp',
-            description: 'Documents contractuels et suivi commercial',
-            reference: 'CLI-ABC-001',
-            color: '#7EAED9',
-            icon: 'folder',
-            status: 'active',
-            priority: 'medium',
-            startDate: '2024-06-01',
-            dueDate: '2024-12-15',
-            owner: { id: '2', name: 'Pierre Martin' },
-            membersCount: 4,
-            documentsCount: 12,
-            completedDocumentsCount: 8,
-            progress: 67,
-            tags: ['client', 'commercial'],
-            organizationId: '1',
-            createdAt: '2024-06-01T09:00:00Z',
-            updatedAt: '2024-11-25T11:00:00Z',
-          },
-          {
-            id: '3',
-            name: 'Audit financier 2024',
-            description: "Préparation des documents pour l'audit annuel",
-            reference: 'AUD-2024',
-            color: '#F59E0B',
-            icon: 'folder',
-            status: 'on_hold',
-            priority: 'urgent',
-            startDate: '2024-09-01',
-            dueDate: '2024-12-20',
-            owner: { id: '3', name: 'Sophie Bernard' },
-            membersCount: 3,
-            documentsCount: 28,
-            completedDocumentsCount: 10,
-            progress: 36,
-            tags: ['audit', 'finance'],
-            organizationId: '1',
-            createdAt: '2024-09-01T08:00:00Z',
-            updatedAt: '2024-11-20T16:45:00Z',
-          },
-          {
-            id: '4',
-            name: 'Procédures RH 2025',
-            description: 'Mise à jour des procédures internes RH',
-            reference: 'RH-PROC-2025',
-            color: '#8C3A27',
-            icon: 'folder',
-            status: 'draft',
-            priority: 'low',
-            owner: { id: '4', name: 'Jean Koné' },
-            membersCount: 2,
-            documentsCount: 6,
-            completedDocumentsCount: 0,
-            progress: 0,
-            tags: ['RH', 'procédures'],
-            organizationId: '1',
-            createdAt: '2024-11-01T14:00:00Z',
-            updatedAt: '2024-11-01T14:00:00Z',
-          },
-        ]);
+      } catch (error) {
+        // No fake fallback — show empty state on failure. The list rendering
+        // already handles `projects.length === 0` with the empty-state UI.
+        console.warn('[ProjectsPage] failed to load projects:', error);
+        setProjects([]);
       } finally {
         setLoading(false);
       }
