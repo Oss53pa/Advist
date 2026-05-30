@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Settings,
@@ -51,6 +51,9 @@ import { Badge } from '../../components/ui/Badge';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
 import { useAuthStore } from '../../store';
+import { useTenantStore } from '../../stores/tenantStore';
+import { getOrgUsage } from '../../services/dashboardOverview';
+import { supabase } from '../../lib/supabase';
 import { OfflineManager } from '../../components/offline';
 import { ThemeCustomizer } from '../../components/theme';
 import { NotificationPreferences } from '../../components/notifications';
@@ -571,19 +574,49 @@ const OrganizationSettings: React.FC = () => {
   const { t } = useTranslation();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-  // Mock quotas data
+  // Real org plan + quotas: plan comes from the tenant store (resolved
+  // from Atlas Studio licence_seats); the `max_*` come from the plan's
+  // PLAN_QUOTAS map; the `current_*` are fetched live from the org's
+  // actual rows (profiles count, documents count, etc.).
+  const { user } = useAuthStore();
+  const { currentTenant } = useTenantStore();
+  const orgId = user?.organization?.id;
+  const tenantPlan = currentTenant?.plan ?? 'business';
+  const tenantQuotas = currentTenant?.quotas;
+
+  const [usage, setUsage] = useState({
+    currentUsers: 0,
+    currentDocuments: 0,
+    currentActiveWorkflows: 0,
+    currentStorageGb: 0,
+  });
+  useEffect(() => {
+    if (!orgId) return;
+    let cancelled = false;
+    getOrgUsage(orgId).then((u) => {
+      if (!cancelled) setUsage(u);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
+
+  const safeMax = (v: number | undefined, fallback: number) =>
+    v === undefined || v === -1 ? fallback : v;
+
   const quotas: OrganizationQuotas = {
-    max_users: 25,
-    current_users: 18,
-    max_storage_gb: 100,
-    current_storage_gb: 67.5,
-    max_documents: 5000,
-    current_documents: 3247,
-    max_active_workflows: 50,
-    current_active_workflows: 12,
+    max_users: safeMax(tenantQuotas?.maxUsers, 999),
+    current_users: usage.currentUsers,
+    max_storage_gb: safeMax(tenantQuotas?.maxStorage, 999),
+    current_storage_gb: usage.currentStorageGb,
+    max_documents: safeMax(tenantQuotas?.maxDocuments, 9999),
+    current_documents: usage.currentDocuments,
+    max_active_workflows: safeMax(tenantQuotas?.maxWorkflows, 999),
+    current_active_workflows: usage.currentActiveWorkflows,
   };
 
-  const subscriptionPlan = 'business';
+  const subscriptionPlan: 'starter' | 'business' | 'enterprise' =
+    tenantPlan === 'enterprise' ? 'enterprise' : 'business';
   const planLabels = {
     starter: { label: 'Starter', color: 'bg-advist-surface-dark text-advist-gray900' },
     business: { label: 'Business', color: 'bg-advist-gold-light text-advist-gray900' },
@@ -978,55 +1011,63 @@ const AccountsManagement: React.FC = () => {
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
-  // Mock users
-  const users = [
-    {
-      id: 1,
-      first_name: 'Jean',
-      last_name: 'Dupont',
-      email: 'jean@example.com',
-      role: 'admin',
-      is_active: true,
-      last_login: '2024-11-28T10:00:00Z',
-    },
-    {
-      id: 2,
-      first_name: 'Marie',
-      last_name: 'Martin',
-      email: 'marie@example.com',
-      role: 'manager',
-      is_active: true,
-      last_login: '2024-11-27T15:30:00Z',
-    },
-    {
-      id: 3,
-      first_name: 'Pierre',
-      last_name: 'Durand',
-      email: 'pierre@example.com',
-      role: 'user',
-      is_active: true,
-      last_login: '2024-11-25T09:00:00Z',
-    },
-    {
-      id: 4,
-      first_name: 'Sophie',
-      last_name: 'Laurent',
-      email: 'sophie@example.com',
-      role: 'user',
-      is_active: false,
-      last_login: '2024-10-15T11:00:00Z',
-    },
-  ];
-
-  const pendingInvites = [
-    {
-      id: 1,
-      email: 'nouveau@example.com',
-      role: 'user',
-      invited_at: '2024-11-26T10:00:00Z',
-      expires_at: '2024-12-03T10:00:00Z',
-    },
-  ];
+  // Real users + pending invites from the org_members roster (which is
+  // backfilled from active licence_seats — see PR #16). The org_members
+  // role is admin|editor|viewer; we map editor→manager and viewer→user
+  // to keep the existing UI labels.
+  const { user: authUser } = useAuthStore();
+  const orgId = authUser?.organization?.id;
+  const [users, setUsers] = useState<any[]>([]);
+  const [pendingInvites, setPendingInvites] = useState<any[]>([]);
+  useEffect(() => {
+    if (!orgId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('org_members')
+          .select('id, email, name, role, active, invited_at, last_login_at')
+          .eq('org_id', orgId)
+          .order('invited_at', { ascending: false });
+        if (cancelled || error || !data) return;
+        const mapRole = (r: string) =>
+          r === 'admin' ? 'admin' : r === 'editor' ? 'manager' : 'user';
+        const rows = data.map((m: any) => {
+          const [first_name = '', ...rest] = (m.name || m.email || '').split(' ');
+          return {
+            id: m.id,
+            first_name,
+            last_name: rest.join(' '),
+            email: m.email,
+            role: mapRole(m.role),
+            is_active: !!m.active,
+            last_login: m.last_login_at,
+            invited_at: m.invited_at,
+          };
+        });
+        setUsers(rows.filter((r: any) => r.last_login));
+        setPendingInvites(
+          rows
+            .filter((r: any) => !r.last_login && r.is_active)
+            .map((r: any) => ({
+              id: r.id,
+              email: r.email,
+              role: r.role,
+              invited_at: r.invited_at,
+              expires_at: null,
+            }))
+        );
+      } catch {
+        if (!cancelled) {
+          setUsers([]);
+          setPendingInvites([]);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
 
   const roleLabels: Record<string, { label: string; color: string }> = {
     admin: {
