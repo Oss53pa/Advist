@@ -57,6 +57,26 @@ export async function getMyPendingSignatures(userId: string): Promise<PendingSig
   }
 }
 
+/** Lightweight counts for the SignaturesPage tab badges. */
+export async function getSignatureCounts(
+  userId: string
+): Promise<{ pending: number; signed: number }> {
+  const safe = async (status: 'pending' | 'signed'): Promise<number> => {
+    try {
+      const { count, error } = await supabase
+        .from('document_signatures')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('status', status);
+      return error ? 0 : (count ?? 0);
+    } catch {
+      return 0;
+    }
+  };
+  const [pending, signed] = await Promise.all([safe('pending'), safe('signed')]);
+  return { pending, signed };
+}
+
 /** Documents the user has already signed. */
 export async function getMySignedDocuments(userId: string): Promise<SignedDocumentRow[]> {
   try {

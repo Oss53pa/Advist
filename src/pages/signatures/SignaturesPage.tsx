@@ -22,7 +22,11 @@ import { Card, Button, Badge, Modal, Input } from '../../components/ui';
 import { PrintButton } from '../../shared/PrintEngine';
 import { DocumentViewer } from '../../components/documents';
 import { useAuthStore } from '../../store';
-import { getMyPendingSignatures, getMySignedDocuments } from '../../services/signaturesOverview';
+import {
+  getMyPendingSignatures,
+  getMySignedDocuments,
+  getSignatureCounts,
+} from '../../services/signaturesOverview';
 
 // Pending signature with paraph requirements
 interface PendingSignatureRequest {
@@ -62,6 +66,20 @@ export const SignaturesPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'pending' | 'signed-documents'>('pending');
   const [selectedRequest, setSelectedRequest] = useState<PendingSignatureRequest | null>(null);
   const [showRefusalModal, setShowRefusalModal] = useState(false);
+
+  const { user } = useAuthStore();
+  const userId = user?.id;
+  const [tabCounts, setTabCounts] = useState({ pending: 0, signed: 0 });
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    getSignatureCounts(userId).then((c) => {
+      if (!cancelled) setTabCounts(c);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   return (
     <div className="space-y-6">
@@ -117,11 +135,11 @@ export const SignaturesPage: React.FC = () => {
       <div className="border-b border-advist-border">
         <nav className="flex gap-4">
           {[
-            { key: 'pending', label: t('signatures.toSign', 'À signer'), count: 4 },
+            { key: 'pending', label: t('signatures.toSign', 'À signer'), count: tabCounts.pending },
             {
               key: 'signed-documents',
               label: t('signatures.signedDocs', 'Documents signés'),
-              count: 15,
+              count: tabCounts.signed,
             },
           ].map((tab) => (
             <button
