@@ -120,6 +120,61 @@ export async function getRecentActivity(orgId: string, limit = 4): Promise<Recen
   }
 }
 
+export interface OrgUsage {
+  currentUsers: number;
+  currentDocuments: number;
+  currentActiveWorkflows: number;
+  currentStorageGb: number;
+}
+
+/**
+ * Real per-org usage counts for the Organization Settings screen.
+ * Storage is summed from documents.file_size (bytes → GB, 1 decimal).
+ */
+export async function getOrgUsage(orgId: string): Promise<OrgUsage> {
+  const [users, docsCount, activeWorkflows, storageBytes] = await Promise.all([
+    safeCount(() =>
+      supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', orgId)
+    ),
+    safeCount(() =>
+      supabase
+        .from('documents')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', orgId)
+        .is('deleted_at', null)
+    ),
+    safeCount(() =>
+      supabase
+        .from('workflow_instances')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', orgId)
+        .in('status', ['active', 'paused'])
+    ),
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('documents')
+          .select('file_size')
+          .eq('organization_id', orgId)
+          .is('deleted_at', null);
+        if (error || !data) return 0;
+        return data.reduce((acc, r) => acc + ((r as { file_size?: number }).file_size ?? 0), 0);
+      } catch {
+        return 0;
+      }
+    })(),
+  ]);
+  return {
+    currentUsers: users,
+    currentDocuments: docsCount,
+    currentActiveWorkflows: activeWorkflows,
+    currentStorageGb: Math.round((storageBytes / (1024 * 1024 * 1024)) * 10) / 10,
+  };
+}
+
 /**
  * Documents currently awaiting action (active workflows for the org),
  * with the linked document title and due date.
