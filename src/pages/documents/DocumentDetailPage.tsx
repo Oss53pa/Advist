@@ -71,10 +71,16 @@ import { ValidationReport } from '../../components/workflows';
 import type { ValidationReportData } from '../../components/workflows';
 import { AnomalyAlert } from '../../components/anomalies';
 import { anomalyDetectionService, type Anomaly } from '../../services/anomalyDetection';
-// DocumentChat widget is currently hidden — see comment near the bottom
-// of the component. Types kept for the no-op stubs.
+import { DocumentChat } from '../../components/collaboration/DocumentChat';
 import type { ChatMessage, TypingUser } from '../../hooks/useDocumentCollaboration';
 import { documentsService } from '../../services';
+import {
+  ensureChatSession,
+  getChatMessages,
+  sendChatMessage,
+  subscribeChatMessages,
+  type ChatMessageItem,
+} from '../../services/documentChat';
 import {
   getDocumentComments,
   getDocumentVersions,
@@ -215,16 +221,15 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
   const [_showSignModal, setShowSignModal] = useState(false);
   const [showValidationReport, setShowValidationReport] = useState(false);
   const [showVersionComparison, setShowVersionComparison] = useState(false);
-  // Chat: no persistent chat backend wired yet. The collaboration_chat_messages
-  // table exists in migrations but no client code reads or writes to it; the
-  // existing useRealtimeCollaboration hook only broadcasts ephemerally via
-  // Supabase Realtime (no persistence). Hiding the floating widget until a
-  // proper persistence layer lands rather than showing fake messages.
-  const [isChatOpen] = useState(false);
-  const chatMessages: ChatMessage[] = [];
-  const setChatMessages = (_u: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])): void => {
-    /* no-op while chat is hidden */
-  };
+  // Chat: persisted in `collaboration_chat_messages`, live via Realtime
+  // postgres_changes subscription on that table (filtered by session).
+  // The floating DocumentChat widget below is fed from this state.
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatSessionId, setChatSessionId] = useState<string | null>(null);
+  const [chatMessagesState, setChatMessagesState] = useState<ChatMessageItem[]>([]);
+  // Typing indicators are not persisted — they would need an ephemeral
+  // broadcast layer. Leaving as an empty array for now; the chat widget
+  // still renders fine without typing dots.
   const typingUsers: TypingUser[] = [];
 
   // Anomaly detection state
@@ -544,6 +549,41 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showValidationReport]);
 
+  // Chat: ensure a collaboration session exists for this document, then
+  // load history and subscribe to live INSERTs. Cancellation is async-
+  // safe: we keep the unsubscribe handle even if the doc id changes
+  // mid-flight.
+  useEffect(() => {
+    if (!documentId) {
+      setChatSessionId(null);
+      setChatMessagesState([]);
+      return;
+    }
+    let cancelled = false;
+    let unsubscribe: (() => void) | null = null;
+    (async () => {
+      const sessionId = await ensureChatSession(documentId);
+      if (cancelled || !sessionId) return;
+      setChatSessionId(sessionId);
+      const history = await getChatMessages(sessionId, docOrgId);
+      if (cancelled) return;
+      setChatMessagesState(history);
+      unsubscribe = subscribeChatMessages(sessionId, docOrgId, (m) => {
+        // Dedupe: the sender's INSERT also fires the subscription, but
+        // sendChatMessage already pushes the optimistic copy. Replace
+        // by id if it already exists.
+        setChatMessagesState((prev) => {
+          const exists = prev.some((x) => x.id === m.id);
+          return exists ? prev.map((x) => (x.id === m.id ? m : x)) : [...prev, m];
+        });
+      });
+    })();
+    return () => {
+      cancelled = true;
+      if (unsubscribe) unsubscribe();
+    };
+  }, [documentId, docOrgId]);
+
   // Empty fallback workflow shape so the rich JSX below (which doesn't
   // null-check) keeps rendering an empty steps list instead of crashing
   // when the document has no workflow instance attached.
@@ -573,13 +613,31 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   };
 
-  // Chat handlers placeholder — see comment near the bottom of the file
-  // about why the chat widget is hidden. The unused vars touch keeps
-  // TS/ESLint happy without disable comments.
-  void chatMessages;
-  void setChatMessages;
+  // Chat handlers — wired to the real `collaboration_chat_messages`
+  // table via documentChat service. Optimistic update on send: push the
+  // returned row immediately, the subscription dedup will reconcile.
+  const handleSendMessage = async (content: string, replyTo?: string, pageReference?: number) => {
+    if (!chatSessionId || !currentUserId || !content.trim()) return;
+    const sent = await sendChatMessage(chatSessionId, currentUserId, content, {
+      pageReference,
+      replyTo,
+    });
+    if (sent) {
+      setChatMessagesState((prev) => {
+        const exists = prev.some((x) => x.id === sent.id);
+        return exists ? prev : [...prev, sent];
+      });
+    }
+  };
+  // Typing indicators stay no-op until we add a broadcast layer for
+  // ephemeral signals. Stubbed so the widget prop stays stable.
+  const handleStartTyping = () => {
+    /* noop */
+  };
+  const handleStopTyping = () => {
+    /* noop */
+  };
   void typingUsers;
-  void isChatOpen;
 
   // Annotation tools configuration
   const annotationTools = [
@@ -2289,15 +2347,36 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
         documentTitle={document.title}
       />
 
-      {/*
-        Real-time Chat — temporarily hidden.
-        The `collaboration_chat_messages` table exists (migration 00010)
-        but no client code reads/writes it; ephemeral broadcast via
-        `useRealtimeCollaboration` doesn't persist either. Showing the
-        widget would suggest a chat history that doesn't actually exist.
-        Re-enable once a real chat service (SELECT + INSERT + Realtime
-        subscription on collaboration_chat_messages) is wired in.
-      */}
+      {/* Real-time Chat — persisted in collaboration_chat_messages with
+          live Realtime subscription. Mapped from our richer
+          ChatMessageItem to the widget's narrower ChatMessage shape. */}
+      <div className="print:hidden">
+        <DocumentChat
+          messages={chatMessagesState.map<ChatMessage>((m) => ({
+            id: m.id,
+            author: {
+              id: m.author.id,
+              name: m.authorExternal?.isExternal
+                ? m.authorExternal.organizationName
+                  ? `${m.author.name} · Externe (${m.authorExternal.organizationName})`
+                  : `${m.author.name} · Externe`
+                : m.author.name,
+              avatar: m.author.avatar,
+            },
+            content: m.content,
+            replyTo: m.replyTo,
+            pageReference: m.pageReference,
+            createdAt: m.createdAt,
+          }))}
+          typingUsers={typingUsers}
+          onSendMessage={handleSendMessage}
+          onStartTyping={handleStartTyping}
+          onStopTyping={handleStopTyping}
+          currentPage={currentPage}
+          isOpen={isChatOpen}
+          onToggle={() => setIsChatOpen((v) => !v)}
+        />
+      </div>
     </div>
   );
 };
