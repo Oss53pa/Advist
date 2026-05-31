@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { UserLayout, AdminLayout } from './components/layout';
-import { SuperAdminLayout } from './components/layout/SuperAdminLayout';
 import { ThemeProvider } from './components/theme';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useAuthStore } from './store';
@@ -45,54 +44,12 @@ const ArchivesPage = lazy(() => import('./pages/archives/ArchivesPage'));
 const AuditPage = lazy(() => import('./pages/archives/AuditPage'));
 const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
 
-// Lazy loading des pages super admin
-const SuperAdminDashboard = lazy(() => import('./pages/superadmin/SuperAdminDashboard'));
-const TenantsPage = lazy(() => import('./pages/superadmin/TenantsPage'));
-const SuperAdminUsersPage = lazy(() => import('./pages/superadmin/SuperAdminUsersPage'));
-const SuperAdminAnalyticsPage = lazy(() => import('./pages/superadmin/SuperAdminAnalyticsPage'));
-const SuperAdminSystemPage = lazy(() => import('./pages/superadmin/SuperAdminSystemPage'));
-const SuperAdminSecurityPage = lazy(() => import('./pages/superadmin/SuperAdminSecurityPage'));
-const SuperAdminLogsPage = lazy(() => import('./pages/superadmin/SuperAdminLogsPage'));
-const SuperAdminAlertsPage = lazy(() => import('./pages/superadmin/SuperAdminAlertsPage'));
-const SuperAdminSettingsPage = lazy(() => import('./pages/superadmin/SuperAdminSettingsPage'));
-const LandingPageEditorPage = lazy(() => import('./pages/superadmin/LandingPageEditorPage'));
-const PricingEditorPage = lazy(() => import('./pages/superadmin/PricingEditorPage'));
-const AddonEditorPage = lazy(() => import('./pages/superadmin/AddonEditorPage'));
-
-// Lazy loading des pages billing SuperAdmin
-const BillingDashboard = lazy(() => import('./pages/superadmin/billing/BillingDashboard'));
-const SubscriptionsPage = lazy(() => import('./pages/superadmin/billing/SubscriptionsPage'));
-const InvoicesPage = lazy(() => import('./pages/superadmin/billing/InvoicesPage'));
-const PaymentSettingsPage = lazy(() => import('./pages/superadmin/billing/PaymentSettingsPage'));
-
-// Lazy loading des pages support
-const SuperAdminSupportPage = lazy(() => import('./pages/superadmin/SupportPage'));
+// Super admin pages removed — Atlas Studio is the platform console.
+// Super-admin users authenticating into Advist are redirected to /user
+// (see route catch-all and Login redirect logic) and should use Atlas
+// Studio for tenant management, billing, marketing, system monitoring,
+// support, etc.
 const UserSupportPage = lazy(() => import('./pages/user/SupportPage'));
-
-// Lazy loading des pages marketing
-const MarketingPage = lazy(() => import('./pages/superadmin/marketing/MarketingPage'));
-const MarketingPublicationsPage = lazy(
-  () => import('./pages/superadmin/marketing/MarketingPublicationsPage')
-);
-const MarketingCalendarPage = lazy(
-  () => import('./pages/superadmin/marketing/MarketingCalendarPage')
-);
-const MarketingTemplatesPage = lazy(
-  () => import('./pages/superadmin/marketing/MarketingTemplatesPage')
-);
-const MarketingAccountsPage = lazy(
-  () => import('./pages/superadmin/marketing/MarketingAccountsPage')
-);
-const MarketingAnalyticsPage = lazy(
-  () => import('./pages/superadmin/marketing/MarketingAnalyticsPage')
-);
-const MarketingBlogPage = lazy(() => import('./pages/superadmin/marketing/MarketingBlogPage'));
-const MarketingSubscribersPage = lazy(
-  () => import('./pages/superadmin/marketing/MarketingSubscribersPage')
-);
-const MarketingNewslettersPage = lazy(
-  () => import('./pages/superadmin/marketing/MarketingNewslettersPage')
-);
 
 // Lazy loading des pages billing Client
 // ClientBillingPage removed — billing handled by Atlas Studio portal
@@ -190,21 +147,6 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     user?.is_org_admin ||
     user?.is_super_admin;
   if (!isAdmin) {
-    return <Navigate to="/user" replace />;
-  }
-
-  return <>{children}</>;
-};
-
-// Super Admin Route wrapper - checks auth + super_admin role
-const SuperAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!user?.is_super_admin) {
     return <Navigate to="/user" replace />;
   }
 
@@ -362,53 +304,12 @@ function App() {
                   <Route path="support" element={<UserSupportPage />} />
                 </Route>
 
-                {/* Super Admin Interface Routes */}
-                <Route
-                  path="/superadmin"
-                  element={
-                    <SuperAdminRoute>
-                      <ErrorBoundary>
-                        <SuperAdminLayout />
-                      </ErrorBoundary>
-                    </SuperAdminRoute>
-                  }
-                >
-                  <Route index element={<SuperAdminDashboard />} />
-                  <Route path="tenants" element={<TenantsPage />} />
-                  <Route path="tenants/new" element={<TenantsPage />} />
-                  <Route path="users" element={<SuperAdminUsersPage />} />
-                  <Route path="analytics" element={<SuperAdminAnalyticsPage />} />
-                  <Route path="system" element={<SuperAdminSystemPage />} />
-                  <Route path="security" element={<SuperAdminSecurityPage />} />
-                  <Route path="logs" element={<SuperAdminLogsPage />} />
-                  <Route path="alerts" element={<SuperAdminAlertsPage />} />
-                  <Route path="landing-page" element={<LandingPageEditorPage />} />
-                  <Route path="pricing" element={<PricingEditorPage />} />
-                  <Route path="addons" element={<AddonEditorPage />} />
-                  <Route path="settings" element={<SuperAdminSettingsPage />} />
-                  {/* Billing Routes */}
-                  <Route path="billing" element={<BillingDashboard />} />
-                  <Route path="billing/subscriptions" element={<SubscriptionsPage />} />
-                  <Route path="billing/invoices" element={<InvoicesPage />} />
-                  <Route path="billing/payments" element={<InvoicesPage />} />
-                  <Route path="billing/plans" element={<SubscriptionsPage />} />
-                  <Route path="billing/settings" element={<PaymentSettingsPage />} />
-                  {/* Support */}
-                  <Route path="support" element={<SuperAdminSupportPage />} />
-                  {/* Marketing */}
-                  <Route path="marketing" element={<MarketingPage />} />
-                  <Route path="marketing/posts" element={<MarketingPublicationsPage />} />
-                  <Route path="marketing/posts/new" element={<MarketingPublicationsPage />} />
-                  <Route path="marketing/calendar" element={<MarketingCalendarPage />} />
-                  <Route path="marketing/templates" element={<MarketingTemplatesPage />} />
-                  <Route path="marketing/accounts" element={<MarketingAccountsPage />} />
-                  <Route path="marketing/analytics" element={<MarketingAnalyticsPage />} />
-                  <Route path="marketing/blog" element={<MarketingBlogPage />} />
-                  <Route path="marketing/subscribers" element={<MarketingSubscribersPage />} />
-                  <Route path="marketing/newsletters" element={<MarketingNewslettersPage />} />
-                </Route>
-
-                {/* Legacy /app routes - redirect to /user */}
+                {/* Legacy /superadmin/* and /app/* routes — Atlas Studio
+                    now owns platform-admin (tenants, billing, marketing,
+                    system, support). Anyone landing on these old URLs
+                    bounces to the user app. */}
+                <Route path="/superadmin" element={<Navigate to="/user" replace />} />
+                <Route path="/superadmin/*" element={<Navigate to="/user" replace />} />
                 <Route path="/app" element={<Navigate to="/user" replace />} />
                 <Route path="/app/*" element={<Navigate to="/user" replace />} />
 
