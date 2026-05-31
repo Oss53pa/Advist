@@ -83,6 +83,8 @@ import {
   getValidationSummary,
   getValidationHistory,
   getFullWorkflowInstanceForDocument,
+  getDocumentPreviewUrl,
+  type DocumentPreview,
   type DocCommentItem,
   type DocVersionItem,
   type DocSignatureItem,
@@ -447,6 +449,35 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
       // Map AnnotationItem → UI Annotation (compatible shape).
       setAnnotations(rows as Annotation[]);
     });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentId]);
+
+  // PDF / file preview: signed URL from Supabase Storage. The actual
+  // file bytes are served by Storage via a TTL-limited URL so RLS
+  // continues to apply at the bucket level.
+  const [preview, setPreview] = useState<DocumentPreview>({
+    url: null,
+    mimeType: null,
+    fileName: null,
+  });
+  const [previewLoading, setPreviewLoading] = useState(true);
+  useEffect(() => {
+    if (!documentId) {
+      setPreviewLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setPreviewLoading(true);
+    getDocumentPreviewUrl(documentId)
+      .then((p) => {
+        if (cancelled) return;
+        setPreview(p);
+      })
+      .finally(() => {
+        if (!cancelled) setPreviewLoading(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -1981,46 +2012,72 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
                   >
-                    {/* Page header */}
-                    <div className="text-center mb-8">
-                      <h2 className="text-xl font-bold text-advist-gray900">
-                        CONTRAT DE PRESTATION DE SERVICES
-                      </h2>
-                      <p className="text-advist-text-secondary mt-1">
-                        Année 2024 - Quatrième Trimestre
-                      </p>
-                    </div>
-
-                    {/* Document content simulation */}
-                    <div className="space-y-4 text-sm text-advist-gray900">
-                      <p className="font-semibold">ENTRE LES SOUSSIGNÉS :</p>
-                      <p>
-                        <strong>ADVIST SARL</strong>, société à responsabilité limitée au capital de
-                        100 000 €, immatriculée au RCS sous le numéro 123 456 789, dont le siège
-                        social est situé à Abidjan, Côte d'Ivoire,
-                      </p>
-                      <p className="mt-2">
-                        Représentée par Mme Marie DUPONT, en sa qualité de Directrice Générale,
-                      </p>
-                      <p className="mt-4 font-semibold">ET</p>
-                      <p>
-                        <strong>TECHCORP SA</strong>, société anonyme au capital de 500 000 €...
-                      </p>
-
-                      <div className="mt-8">
-                        <p className="font-semibold">ARTICLE 1 - OBJET</p>
-                        <p className="mt-2">
-                          Le présent contrat a pour objet de définir les conditions...
+                    {/* Real file preview from Supabase Storage.
+                        PDFs render in an iframe (browser-native viewer).
+                        Images render via <img>. Office formats fall back
+                        to a download CTA — the dedicated WordEditor /
+                        ExcelEditor view modes handle those when the user
+                        switches modes from the top toolbar. */}
+                    {previewLoading ? (
+                      <div className="flex items-center justify-center h-full text-sm text-advist-blue-light">
+                        Chargement du document…
+                      </div>
+                    ) : preview.url ? (
+                      (() => {
+                        const mime = preview.mimeType || '';
+                        const ext = (preview.fileName || '').split('.').pop()?.toLowerCase() || '';
+                        const isPdf = mime === 'application/pdf' || ext === 'pdf';
+                        const isImage = mime.startsWith('image/');
+                        if (isPdf) {
+                          return (
+                            <iframe
+                              title={preview.fileName || document.title}
+                              src={preview.url}
+                              className="w-full h-full border-0 print:hidden"
+                            />
+                          );
+                        }
+                        if (isImage) {
+                          return (
+                            <img
+                              src={preview.url}
+                              alt={preview.fileName || document.title}
+                              className="max-w-full max-h-full object-contain mx-auto"
+                            />
+                          );
+                        }
+                        return (
+                          <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-6">
+                            <FileText size={40} className="text-advist-gray900/30" />
+                            <p className="text-sm font-medium text-advist-gray900">
+                              {preview.fileName || document.title}
+                            </p>
+                            <p className="text-xs text-advist-blue-light max-w-xs">
+                              Aperçu intégré non disponible pour ce format. Utilisez les modes Word
+                              / Excel ci-dessus ou téléchargez le fichier.
+                            </p>
+                            <a
+                              href={preview.url}
+                              download={preview.fileName || undefined}
+                              className="inline-flex items-center gap-2 px-3 py-1.5 bg-advist-dark text-white rounded-xl text-sm hover:bg-advist-dark/90"
+                            >
+                              <Download size={14} />
+                              Télécharger
+                            </a>
+                          </div>
+                        );
+                      })()
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full gap-2 text-center px-6">
+                        <FileText size={40} className="text-advist-gray900/30" />
+                        <p className="text-sm font-medium text-advist-gray900">
+                          Aucun fichier rattaché
+                        </p>
+                        <p className="text-xs text-advist-blue-light max-w-xs">
+                          Ce document n'a pas (encore) de fichier associé dans le stockage.
                         </p>
                       </div>
-
-                      <div className="mt-6">
-                        <p className="font-semibold">ARTICLE 2 - DURÉE</p>
-                        <p className="mt-2">
-                          Le présent contrat est conclu pour une durée de 3 mois...
-                        </p>
-                      </div>
-                    </div>
+                    )}
 
                     {/* Render annotations */}
                     {renderAnnotations()}
