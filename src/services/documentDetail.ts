@@ -187,6 +187,343 @@ export async function getDocumentSignatures(documentId: string): Promise<DocSign
   }
 }
 
+/* -------------------------------------------------------------------- */
+/* Validation panel data (inline ValidationWorkflowPanel)                 */
+/* -------------------------------------------------------------------- */
+
+export type ValidationStatusValue =
+  | 'draft'
+  | 'submitted'
+  | 'under_review'
+  | 'changes_requested'
+  | 'validated'
+  | 'rejected';
+
+export interface ValidationSummaryShape {
+  status: ValidationStatusValue;
+  status_display: string;
+  submitted_at: string | null;
+  submitted_by: { id: string; name: string } | null;
+  completed_at: string | null;
+  completed_by: { id: string; name: string } | null;
+  notes: string;
+  comments: {
+    total: number;
+    resolved: number;
+    pending: number;
+  };
+  can_submit: boolean;
+  can_validate: boolean;
+}
+
+export interface ValidationHistoryItem {
+  type: 'comment' | 'workflow_action';
+  timestamp: string;
+  user: { id: string; name: string } | null;
+  content?: string;
+  action?: string;
+  comment?: string;
+  step?: string;
+  resolved?: boolean;
+}
+
+const VALIDATION_STATUS_LABELS: Record<ValidationStatusValue, string> = {
+  draft: 'Brouillon',
+  submitted: 'Soumis',
+  under_review: 'En révision',
+  changes_requested: 'Modifications demandées',
+  validated: 'Validé',
+  rejected: 'Rejeté',
+};
+
+function documentStatusToValidation(status: string | null | undefined): ValidationStatusValue {
+  switch ((status || '').toLowerCase()) {
+    case 'approved':
+    case 'validated':
+      return 'validated';
+    case 'rejected':
+      return 'rejected';
+    case 'pending_review':
+    case 'submitted':
+    case 'under_review':
+      return 'under_review';
+    case 'changes_requested':
+      return 'changes_requested';
+    case 'draft':
+    default:
+      return 'draft';
+  }
+}
+
+/**
+ * Build the inline-panel summary for a document. Pulls:
+ *  - document status / submitted-by from `documents`
+ *  - completion data from latest workflow_instances when status is final
+ *  - comment counts (total / resolved / pending) from document_annotations
+ */
+export async function getValidationSummary(
+  documentId: string,
+  opts: { currentUserId?: string; isOwner?: boolean } = {}
+): Promise<ValidationSummaryShape> {
+  const empty: ValidationSummaryShape = {
+    status: 'draft',
+    status_display: VALIDATION_STATUS_LABELS.draft,
+    submitted_at: null,
+    submitted_by: null,
+    completed_at: null,
+    completed_by: null,
+    notes: '',
+    comments: { total: 0, resolved: 0, pending: 0 },
+    can_submit: !!opts.isOwner,
+    can_validate: false,
+  };
+  try {
+    const [docRes, wfRes, annTotalRes, annResolvedRes] = await Promise.all([
+      supabase
+        .from('documents')
+        .select('status, description, created_at, profiles:created_by(id, first_name, last_name)')
+        .eq('id', documentId)
+        .maybeSingle(),
+      supabase
+        .from('workflow_instances')
+        .select(
+          'status, completed_at, cancelled_at, profiles:cancelled_by(id, first_name, last_name)'
+        )
+        .eq('document_id', documentId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from('document_annotations')
+        .select('id', { count: 'exact', head: true })
+        .eq('document_id', documentId),
+      supabase
+        .from('document_annotations')
+        .select('id', { count: 'exact', head: true })
+        .eq('document_id', documentId)
+        .eq('is_resolved', true),
+    ]);
+
+    const doc = docRes.data as {
+      status?: string | null;
+      description?: string | null;
+      created_at?: string | null;
+      profiles?: { id?: string; first_name?: string; last_name?: string } | null;
+    } | null;
+    const wf = wfRes.data as {
+      status?: string | null;
+      completed_at?: string | null;
+      cancelled_at?: string | null;
+      profiles?: { id?: string; first_name?: string; last_name?: string } | null;
+    } | null;
+    const status = documentStatusToValidation(doc?.status);
+    const total = annTotalRes.count ?? 0;
+    const resolved = annResolvedRes.count ?? 0;
+    return {
+      status,
+      status_display: VALIDATION_STATUS_LABELS[status],
+      submitted_at: doc?.created_at ?? null,
+      submitted_by: doc?.profiles?.id
+        ? { id: doc.profiles.id, name: fullName(doc.profiles) }
+        : null,
+      completed_at: wf?.completed_at ?? wf?.cancelled_at ?? null,
+      completed_by: wf?.profiles?.id ? { id: wf.profiles.id, name: fullName(wf.profiles) } : null,
+      notes: doc?.description ?? '',
+      comments: { total, resolved, pending: Math.max(0, total - resolved) },
+      can_submit: !!opts.isOwner && status === 'draft',
+      can_validate:
+        status === 'submitted' || status === 'under_review' || status === 'changes_requested',
+    };
+  } catch {
+    return empty;
+  }
+}
+
+/** Build the inline-panel history (workflow_history + document_comments). */
+export async function getValidationHistory(
+  documentId: string,
+  limit = 50
+): Promise<ValidationHistoryItem[]> {
+  const items: ValidationHistoryItem[] = [];
+  try {
+    const { data: wfRows } = await supabase
+      .from('workflow_history')
+      .select(
+        'action, comment, created_at, workflow_steps:step_id(name), profiles:user_id(id, first_name, last_name), workflow_instances!inner(document_id)'
+      )
+      .eq('workflow_instances.document_id', documentId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    for (const r of wfRows ?? []) {
+      const row = r as {
+        action: string;
+        comment: string | null;
+        created_at: string;
+        workflow_steps?: { name?: string } | { name?: string }[] | null;
+        profiles?: { id?: string; first_name?: string; last_name?: string } | null;
+      };
+      const step = Array.isArray(row.workflow_steps)
+        ? row.workflow_steps[0]?.name
+        : row.workflow_steps?.name;
+      items.push({
+        type: 'workflow_action',
+        timestamp: row.created_at,
+        user: row.profiles?.id ? { id: row.profiles.id, name: fullName(row.profiles) } : null,
+        action: row.action,
+        comment: row.comment ?? undefined,
+        step,
+      });
+    }
+  } catch {
+    /* tolerate */
+  }
+  try {
+    const { data: commentRows } = await supabase
+      .from('document_comments')
+      .select('content, created_at, profiles:user_id(id, first_name, last_name)')
+      .eq('document_id', documentId)
+      .eq('is_deleted', false)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    for (const r of commentRows ?? []) {
+      const row = r as {
+        content: string;
+        created_at: string;
+        profiles?: { id?: string; first_name?: string; last_name?: string } | null;
+      };
+      items.push({
+        type: 'comment',
+        timestamp: row.created_at,
+        user: row.profiles?.id ? { id: row.profiles.id, name: fullName(row.profiles) } : null,
+        content: row.content,
+      });
+    }
+  } catch {
+    /* tolerate */
+  }
+  items.sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+  return items.slice(0, limit);
+}
+
+/* -------------------------------------------------------------------- */
+/* Full workflow instance (for validationReportService.generateReport)    */
+/* -------------------------------------------------------------------- */
+
+export async function getFullWorkflowInstanceForDocument(
+  documentId: string
+): Promise<unknown | null> {
+  try {
+    const { data } = await supabase
+      .from('workflow_instances')
+      .select(
+        `id, name, status, current_step, created_at, completed_at,
+         template:template_id(id, name, steps_config),
+         initiated_by:started_by(id, first_name, last_name, email, role),
+         workflow_steps(
+           id, step_number, name, step_type, status, due_date, completed_at,
+           workflow_assignees(
+             id, status, comment, acted_at,
+             user:user_id(id, first_name, last_name, email, role)
+           )
+         )`
+      )
+      .eq('document_id', documentId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!data) return null;
+    const row = data as Record<string, unknown>;
+    const template =
+      (row.template as
+        | { id?: string; name?: string; steps_config?: unknown[] }
+        | { id?: string; name?: string; steps_config?: unknown[] }[]
+        | null) || null;
+    const tpl = Array.isArray(template) ? template[0] : template;
+    const initBy =
+      (row.initiated_by as
+        | { id?: string; first_name?: string; last_name?: string; email?: string; role?: string }
+        | { id?: string; first_name?: string; last_name?: string; email?: string; role?: string }[]
+        | null) || null;
+    const initiator = Array.isArray(initBy) ? initBy[0] : initBy;
+    const steps = (row.workflow_steps as Array<Record<string, unknown>>) ?? [];
+    return {
+      id: row.id,
+      template: {
+        id: tpl?.id || '',
+        name: tpl?.name || 'Workflow',
+        steps_config: tpl?.steps_config || [],
+      },
+      template_snapshot: {
+        id: tpl?.id || '',
+        name: tpl?.name || 'Workflow',
+        steps_config: tpl?.steps_config || [],
+      },
+      status: row.status || 'in_progress',
+      current_step: row.current_step ?? 0,
+      initiated_by: {
+        id: initiator?.id || '',
+        first_name: initiator?.first_name || '',
+        last_name: initiator?.last_name || '',
+        email: initiator?.email || '',
+        role: initiator?.role,
+      },
+      started_at: row.created_at || new Date().toISOString(),
+      completed_at: row.completed_at,
+      steps: steps
+        .slice()
+        .sort((a, b) => ((a.step_number as number) ?? 0) - ((b.step_number as number) ?? 0))
+        .map((s) => {
+          const assignees = ((s.workflow_assignees as Array<Record<string, unknown>>) ?? []).map(
+            (a) => {
+              const user =
+                (a.user as
+                  | {
+                      id?: string;
+                      first_name?: string;
+                      last_name?: string;
+                      email?: string;
+                      role?: string;
+                    }
+                  | {
+                      id?: string;
+                      first_name?: string;
+                      last_name?: string;
+                      email?: string;
+                      role?: string;
+                    }[]
+                  | null) || null;
+              const u = Array.isArray(user) ? user[0] : user;
+              return {
+                id: a.id,
+                status: a.status,
+                comment: a.comment,
+                acted_at: a.acted_at,
+                user: {
+                  id: u?.id || '',
+                  first_name: u?.first_name || '',
+                  last_name: u?.last_name || '',
+                  email: u?.email || '',
+                  role: u?.role,
+                },
+              };
+            }
+          );
+          return {
+            id: s.id,
+            step_number: s.step_number,
+            name: s.name,
+            type: s.step_type || 'validation',
+            status: s.status,
+            deadline: s.due_date,
+            assignees,
+          };
+        }),
+    };
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Returns the most recent workflow instance attached to this document
  * (with its steps and per-step assignee), or null if none exists.
