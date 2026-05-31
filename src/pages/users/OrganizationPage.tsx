@@ -29,6 +29,48 @@ import { Badge } from '../../components/ui/Badge';
 import { FeatureGate, UpgradeBanner } from '../../components/gating';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store';
+import { useTenantStore } from '../../stores/tenantStore';
+import { ATLAS_STUDIO_URLS } from '../AtlasStudioRedirect';
+
+/**
+ * Helpers: read and merge a sub-object inside `organizations.settings`
+ * JSONB (used by Security and Notifications tabs which don't have
+ * dedicated columns).
+ */
+async function readSettingsKey<T extends Record<string, unknown>>(
+  orgId: string,
+  key: string
+): Promise<T | null> {
+  const { data, error } = await supabase
+    .from('organizations')
+    .select('settings')
+    .eq('id', orgId)
+    .single();
+  if (error || !data) return null;
+  const settings = (data as { settings?: Record<string, unknown> }).settings || {};
+  return (settings[key] as T) || null;
+}
+
+async function writeSettingsKey<T extends Record<string, unknown>>(
+  orgId: string,
+  key: string,
+  value: T
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { data: current, error: readErr } = await supabase
+    .from('organizations')
+    .select('settings')
+    .eq('id', orgId)
+    .single();
+  if (readErr) return { ok: false, error: readErr.message };
+  const settings = (current as { settings?: Record<string, unknown> } | null)?.settings || {};
+  const merged = { ...settings, [key]: value };
+  const { error } = await supabase
+    .from('organizations')
+    .update({ settings: merged } as never)
+    .eq('id', orgId);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
 
 interface OrganizationSettings {
   name: string;
@@ -595,33 +637,70 @@ const GeneralSettings: React.FC = () => {
 // Security Settings Tab
 const SecuritySettingsTab: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
   const [settings, setSettings] = useState<SecuritySettings>({
-    two_factor_enabled: true,
+    two_factor_enabled: false,
     password_min_length: 12,
     password_require_special: true,
     session_timeout: 30,
     ip_whitelist: [],
   });
+  const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
 
+  useEffect(() => {
+    if (!orgId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    readSettingsKey<Partial<SecuritySettings>>(orgId, 'security')
+      .then((stored) => {
+        if (cancelled || !stored) return;
+        setSettings((prev) => ({ ...prev, ...stored }));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
+
   const handleSave = async () => {
+    if (!orgId) {
+      setSaveMessage({ type: 'error', text: 'Organisation introuvable.' });
+      return;
+    }
     setIsSaving(true);
     setSaveMessage(null);
-    try {
-      // Simulate API call - replace with actual API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    const result = await writeSettingsKey(
+      orgId,
+      'security',
+      settings as unknown as Record<string, unknown>
+    );
+    if (result.ok) {
       setSaveMessage({ type: 'success', text: t('organization.securitySaved') });
       setTimeout(() => setSaveMessage(null), 3000);
-    } catch (_error) {
+    } else {
       setSaveMessage({ type: 'error', text: t('common.saveError') });
-    } finally {
-      setIsSaving(false);
     }
+    setIsSaving(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-sm text-advist-blue-light">
+        <Loader2 className="animate-spin mr-2" size={16} />
+        Chargement…
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -777,6 +856,8 @@ const SecuritySettingsTab: React.FC = () => {
 // Notification Settings Tab
 const NotificationSettingsTab: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const orgId = user?.organization?.id;
   const [settings, setSettings] = useState<NotificationSettings>({
     email_notifications: true,
     workflow_updates: true,
@@ -784,26 +865,61 @@ const NotificationSettingsTab: React.FC = () => {
     signature_requests: true,
     weekly_summary: false,
   });
+  const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
 
+  useEffect(() => {
+    if (!orgId) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    readSettingsKey<Partial<NotificationSettings>>(orgId, 'notifications')
+      .then((stored) => {
+        if (cancelled || !stored) return;
+        setSettings((prev) => ({ ...prev, ...stored }));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
+
   const handleSave = async () => {
+    if (!orgId) {
+      setSaveMessage({ type: 'error', text: 'Organisation introuvable.' });
+      return;
+    }
     setIsSaving(true);
     setSaveMessage(null);
-    try {
-      // Simulate API call - replace with actual API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    const result = await writeSettingsKey(
+      orgId,
+      'notifications',
+      settings as unknown as Record<string, unknown>
+    );
+    if (result.ok) {
       setSaveMessage({ type: 'success', text: t('organization.notificationsSaved') });
       setTimeout(() => setSaveMessage(null), 3000);
-    } catch (_error) {
+    } else {
       setSaveMessage({ type: 'error', text: t('common.saveError') });
-    } finally {
-      setIsSaving(false);
     }
+    setIsSaving(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-sm text-advist-blue-light">
+        <Loader2 className="animate-spin mr-2" size={16} />
+        Chargement…
+      </div>
+    );
+  }
 
   const notificationOptions = [
     {
@@ -905,117 +1021,48 @@ const NotificationSettingsTab: React.FC = () => {
   );
 };
 
-// Billing Settings Tab
+// Billing Settings Tab — billing lives in Atlas Studio, not in-app.
 const BillingSettings: React.FC = () => {
-  const { t } = useTranslation();
-  const currentPlan = {
-    name: 'Business',
-    price: 49,
-    period: t('organization.perMonth'),
-    features: [
-      t('organization.features.unlimitedUsers'),
-      t('organization.features.storage100gb'),
-      t('organization.features.advancedWorkflows'),
-      t('organization.features.eSignatures'),
-      t('organization.features.prioritySupport'),
-      t('organization.features.apiAccess'),
-    ],
-  };
-
-  const invoices = [
-    { id: 'INV-2024-011', date: '2024-11-01', amount: 49, status: 'paid' },
-    { id: 'INV-2024-010', date: '2024-10-01', amount: 49, status: 'paid' },
-    { id: 'INV-2024-009', date: '2024-09-01', amount: 49, status: 'paid' },
-  ];
+  const { currentTenant } = useTenantStore();
+  const planLabel = currentTenant?.plan
+    ? currentTenant.plan.charAt(0).toUpperCase() + currentTenant.plan.slice(1)
+    : '—';
 
   return (
     <div className="space-y-6">
-      {/* Current Plan */}
       <Card className="p-6">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-advist-gray900">
-              {t('settings.plan.current')}
-            </h2>
-            <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-3xl font-bold text-advist-gray900">{currentPlan.price}€</span>
-              <span className="text-advist-gray900">/ {currentPlan.period}</span>
-            </div>
+            <h2 className="text-lg font-semibold text-advist-gray900">Plan actuel</h2>
             <Badge variant="green" className="mt-2">
-              {currentPlan.name}
+              {planLabel}
             </Badge>
+            <p className="text-sm text-advist-gray900/70 mt-3">
+              L'abonnement, le moyen de paiement et l'historique de facturation sont gérés dans le
+              portail client Atlas Studio.
+            </p>
           </div>
-          <Button variant="outline">{t('organization.changePlan')}</Button>
-        </div>
-
-        <div className="mt-6">
-          <h3 className="text-sm font-medium text-advist-gray900 mb-3">
-            {t('organization.includedFeatures')}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {currentPlan.features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-2 text-sm text-advist-gray900">
-                <CheckCircle size={16} className="text-advist-success" />
-                {feature}
-              </div>
-            ))}
-          </div>
+          <a
+            href={ATLAS_STUDIO_URLS.billing}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-advist-dark text-white rounded-xl hover:bg-advist-dark/90 transition-all duration-240 font-medium whitespace-nowrap"
+          >
+            <CreditCard size={16} />
+            Ouvrir le portail facturation
+          </a>
         </div>
       </Card>
 
-      {/* Payment Method */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-advist-gray900 mb-4">
-          {t('organization.paymentMethod')}
+        <h2 className="text-lg font-semibold text-advist-gray900 mb-2">
+          Pourquoi sur Atlas Studio ?
         </h2>
-        <div className="flex items-center justify-between p-4 bg-advist-bg/30 rounded-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-8 bg-gradient-to-r from-primary-900 to-primary-800 rounded flex items-center justify-center">
-              <span className="text-white text-xs font-bold">VISA</span>
-            </div>
-            <div>
-              <p className="font-medium text-advist-gray900">**** **** **** 4242</p>
-              <p className="text-sm text-advist-gray900">{t('organization.expires')} 12/2025</p>
-            </div>
-          </div>
-          <Button variant="outline" size="sm">
-            {t('common.edit')}
-          </Button>
-        </div>
-      </Card>
-
-      {/* Invoices */}
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold text-advist-gray900 mb-4">
-          {t('organization.invoiceHistory')}
-        </h2>
-        <div className="space-y-2">
-          {invoices.map((invoice) => (
-            <div
-              key={invoice.id}
-              className="flex items-center justify-between p-3 hover:bg-advist-bg/30 rounded-xl transition-all duration-240"
-            >
-              <div className="flex items-center gap-4">
-                <FileText size={20} className="text-advist-gray900" />
-                <div>
-                  <p className="font-medium text-advist-gray900">{invoice.id}</p>
-                  <p className="text-sm text-advist-gray900">
-                    {new Date(invoice.date).toLocaleDateString('fr-FR')}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="font-medium text-advist-gray900">{invoice.amount}€</span>
-                <Badge variant="green" size="sm">
-                  {t('organization.paid')}
-                </Badge>
-                <Button variant="ghost" size="sm">
-                  {t('common.download')}
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <p className="text-sm text-advist-gray900/70">
+          Atlas Studio héberge la facturation pour toutes les applications de la suite (Advist,
+          Atlas F&A, etc.). Un seul portail pour gérer votre abonnement, vos factures et votre moyen
+          de paiement à travers tous les produits.
+        </p>
       </Card>
     </div>
   );
