@@ -42,6 +42,7 @@ export const ExecutiveReportPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<DateRange>('30d');
   const [generating, setGenerating] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     loadReport();
@@ -49,6 +50,7 @@ export const ExecutiveReportPage: React.FC = () => {
 
   const loadReport = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       // Try to get latest report or generate new one
       const reports = await analyticsService.listReports(1);
@@ -57,9 +59,16 @@ export const ExecutiveReportPage: React.FC = () => {
       } else {
         await generateReport();
       }
-    } catch (_err) {
-      // Mock data for demo
-      setReport(getMockReport());
+    } catch (err) {
+      // No silent mock fallback. Surface the real state of the analytics
+      // backend (often: edge function not deployed for this tenant) so
+      // the user doesn't see fabricated ROI / benchmark numbers.
+      setReport(null);
+      setLoadError(
+        err instanceof Error
+          ? err.message
+          : "Le service d'analytique n'est pas disponible pour votre organisation."
+      );
     } finally {
       setLoading(false);
     }
@@ -67,6 +76,7 @@ export const ExecutiveReportPage: React.FC = () => {
 
   const generateReport = async () => {
     setGenerating(true);
+    setLoadError(null);
     try {
       const reportType =
         dateRange === '7d'
@@ -81,8 +91,12 @@ export const ExecutiveReportPage: React.FC = () => {
         reportType: reportType as ExecutiveReportType,
       });
       setReport(newReport);
-    } catch (_err) {
-      setReport(getMockReport());
+    } catch (err) {
+      // Same posture as loadReport: no fabricated demo data.
+      setReport(null);
+      setLoadError(
+        err instanceof Error ? err.message : 'Impossible de générer le rapport pour le moment.'
+      );
     } finally {
       setGenerating(false);
     }
@@ -124,7 +138,9 @@ export const ExecutiveReportPage: React.FC = () => {
       <div className="text-center py-16">
         <BarChart3 size={48} className="mx-auto mb-4 text-advist-gray900/30" />
         <h2 className="text-lg font-medium text-advist-gray900">Aucun rapport disponible</h2>
-        <p className="text-advist-gray900/70 mt-1">Générez votre premier rapport exécutif</p>
+        <p className="text-advist-gray900/70 mt-1">
+          {loadError || 'Générez votre premier rapport exécutif'}
+        </p>
         <button
           onClick={generateReport}
           disabled={generating}
@@ -565,141 +581,5 @@ export const ExecutiveReportPage: React.FC = () => {
     </div>
   );
 };
-
-// Mock data function
-function getMockReport(): ExecutiveReport {
-  return {
-    id: '1',
-    organizationId: '1',
-    reportType: 'monthly',
-    title: 'Rapport Mensuel - Novembre 2024',
-    periodStart: '2024-11-01',
-    periodEnd: '2024-11-30',
-    executiveSummary: {
-      keyMetrics: {
-        documentsProcessed: 156,
-        hoursSaved: 234,
-        costSaved: 1400000,
-        efficiencyGain: 68,
-        industryRanking: 78,
-      },
-      highlights: [
-        {
-          title: "Gain d'efficacité significatif",
-          description: "Amélioration de 68% de l'efficacité sur la période",
-          icon: 'trending-up',
-          color: 'green',
-        },
-        {
-          title: 'Performance supérieure',
-          description: 'Vous êtes dans le top 25% de votre secteur',
-          icon: 'award',
-          color: 'gold',
-        },
-      ],
-      concerns: [
-        {
-          title: 'Taux de rejet en hausse',
-          description: 'Le taux de rejet a augmenté de 2% ce mois-ci',
-          severity: 'warning',
-        },
-      ],
-      recommendations: [
-        {
-          title: 'Validation parallèle',
-          description: 'Activer la validation simultanée pour réduire les délais',
-          expectedImpact: '+35% efficacité',
-          priority: 'high',
-        },
-      ],
-      headline:
-        'Depuis ADVIST : -68% temps validation = 234h économisées/mois = 1,4M FCFA économisés',
-    },
-    kpiDashboard: {
-      documents_processed: {
-        value: 156,
-        label: 'Documents traités',
-        trend: 12,
-        status: 'good',
-        icon: 'file-text',
-      },
-      avg_validation_time: {
-        value: '5.2 jours',
-        label: 'Temps moyen de validation',
-        trend: -18,
-        status: 'excellent',
-        icon: 'clock',
-      },
-    },
-    benchmarkComparison: {
-      available: true,
-      overallPercentile: 78,
-      overallStatus: 'above',
-      statusMessage: 'Performance au-dessus de la moyenne (78e percentile)',
-      comparisons: [
-        {
-          metric: 'Temps de validation',
-          yourValue: '5.2 jours',
-          industryAvg: '7.8 jours',
-          percentile: 85,
-          isTopPerformer: true,
-          message: 'Top 15%',
-        },
-        {
-          metric: 'Temps de signature',
-          yourValue: '18.5h',
-          industryAvg: '24h',
-          percentile: 72,
-        },
-        {
-          metric: 'Taux de rejet',
-          yourValue: '7.1%',
-          industryAvg: '12.5%',
-        },
-      ],
-      sectorInfo: {
-        name: 'Services Financiers',
-        sampleSize: 48,
-      },
-    },
-    roiSummary: {
-      available: true,
-      headline:
-        'Depuis ADVIST : -68% temps validation = 234h économisées/mois = 1,4M FCFA économisés',
-      totalHoursSaved: 234,
-      totalCostSaved: 1400000,
-      currency: 'XOF',
-      efficiencyGainPct: 68,
-    },
-    trendAnalysis: {
-      period: { start: '2024-11-01', end: '2024-11-30' },
-      charts: {
-        documentsOverTime: { labels: [], data: [], title: 'Documents traités' },
-        validationTimeTrend: { labels: [], data: [], title: 'Temps de validation' },
-        efficiencyTrend: { labels: [], data: [], title: 'Efficacité' },
-      },
-    },
-    actionItems: [
-      {
-        priority: 'high',
-        category: 'workflow',
-        title: 'Activer la validation parallèle',
-        description:
-          'Permettre la validation simultanée par plusieurs approbateurs pour réduire les délais',
-        impact: '+35% efficacité attendue',
-        adoptionRate: '78% des top performers utilisent cette fonctionnalité',
-      },
-      {
-        priority: 'medium',
-        category: 'quality',
-        title: 'Analyser les causes de rejet',
-        description:
-          'Le taux de rejet a augmenté ce mois-ci, une analyse des causes est recommandée',
-        impact: 'Réduction potentielle des délais et coûts',
-      },
-    ],
-    createdAt: new Date().toISOString(),
-  };
-}
 
 export default ExecutiveReportPage;
