@@ -74,6 +74,17 @@ import { AnomalyAlert } from '../../components/anomalies';
 import { anomalyDetectionService, type Anomaly } from '../../services/anomalyDetection';
 import { DocumentChat } from '../../components/collaboration/DocumentChat';
 import type { ChatMessage, TypingUser } from '../../hooks/useDocumentCollaboration';
+import { documentsService } from '../../services';
+import {
+  getDocumentComments,
+  getDocumentVersions,
+  getDocumentSignatures,
+  getDocumentWorkflow,
+  type DocCommentItem,
+  type DocVersionItem,
+  type DocSignatureItem,
+  type DocWorkflowSummary,
+} from '../../services/documentDetail';
 
 // Document view modes
 type ViewMode = 'pdf' | 'word' | 'excel';
@@ -238,91 +249,108 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
   const [viewMode, setViewMode] = useState<ViewMode>('pdf');
   const [_isEditMode, setIsEditMode] = useState(false);
 
-  // Mock document data - with file extension to determine document type
-  const documentId = parseInt(id || '1');
+  // Real document fetched from Supabase (was: getDocumentByType mock).
+  // The id from the route is a UUID; do NOT parseInt it.
+  const documentId = id || '';
+  const [documentLoading, setDocumentLoading] = useState(true);
+  const [documentError, setDocumentError] = useState<string | null>(null);
+  const [realDocument, setRealDocument] = useState<Awaited<
+    ReturnType<typeof documentsService.get>
+  > | null>(null);
 
-  // Simulate different document types based on ID
-  const getDocumentByType = (docId: number) => {
-    const baseDoc = {
-      id: docId,
-      description: 'Document de démonstration.',
-      owner: {
-        id: 1,
-        first_name: 'Marie',
-        last_name: 'Dupont',
-        email: 'marie.dupont@advist.com',
-      },
-      current_version: 3,
-      is_locked: false,
-      tags: [
-        { id: 1, name: 'Contrat', color: '#3B82F6' },
-        { id: 2, name: 'Q4-2024', color: '#10B981' },
-      ],
-      metadata: {
-        client: 'TechCorp SA',
-        montant: '45 000 €',
-        date_debut: '2024-10-01',
-        date_fin: '2024-12-31',
-      },
-      status: 'pending' as const,
-      created_at: '2024-11-20T10:30:00Z',
-      updated_at: '2024-11-27T14:45:00Z',
-      file_hash: 'SHA256:a7b9c3d4e5f6...',
-      ohada_compliant: true,
-      ohada_certificate_id: 'OHADA-2024-0012547',
-      requires_paraph: true,
-      paraph_pages: [1, 5, 8, 12],
-      signature_status: {
-        required_signatures: 2,
-        completed_signatures: 1,
-        pending_signatures: 1,
-      },
-    };
-
-    // Return different document types based on ID for demo
-    if (docId === 2) {
-      return {
-        ...baseDoc,
-        title: 'Rapport financier Q4 2024',
-        filename: 'rapport_financier_q4_2024.docx',
-        file_extension: 'docx',
-        file_size: 1458000,
-        total_pages: 8,
-        document_type: { id: 2, name: 'Rapport', requires_signature: false },
-      };
-    } else if (docId === 3) {
-      return {
-        ...baseDoc,
-        title: 'Budget prévisionnel 2025',
-        filename: 'budget_previsionnel_2025.xlsx',
-        file_extension: 'xlsx',
-        file_size: 856000,
-        total_pages: 1,
-        document_type: { id: 3, name: 'Tableur', requires_signature: false },
-      };
-    } else {
-      return {
-        ...baseDoc,
-        title: 'Contrat de prestation Q4 2024',
-        filename: 'contrat_prestation_q4_2024.pdf',
-        file_extension: 'pdf',
-        file_size: 2458000,
-        total_pages: 12,
-        document_type: { id: 1, name: 'Contrat', requires_signature: true },
-      };
+  useEffect(() => {
+    if (!documentId) {
+      setDocumentLoading(false);
+      setDocumentError('Document introuvable.');
+      return;
     }
-  };
+    let cancelled = false;
+    setDocumentLoading(true);
+    setDocumentError(null);
+    documentsService
+      .get(documentId)
+      .then((d) => {
+        if (cancelled) return;
+        setRealDocument(d);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setDocumentError(err instanceof Error ? err.message : 'Document introuvable.');
+      })
+      .finally(() => {
+        if (!cancelled) setDocumentLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentId]);
 
-  const document = getDocumentByType(documentId);
+  // Adapt the real Document to the rich shape the existing JSX consumes.
+  // Fields without DB columns (ohada_*, signature_status counts, total_pages,
+  // file_extension) are derived from metadata or sensible defaults.
+  const fileExtension =
+    ((realDocument?.metadata as Record<string, string> | undefined)?.file_extension as string) ||
+    (realDocument?.metadata as Record<string, string> | undefined)?.['extension'] ||
+    (realDocument as { file_name?: string } | null)?.file_name?.split('.').pop() ||
+    'pdf';
+  const document = {
+    id: realDocument?.id || documentId || '1',
+    title: realDocument?.title || 'Document',
+    description: realDocument?.description || '',
+    filename:
+      (realDocument as { file_name?: string } | null)?.file_name ||
+      (realDocument?.title ? `${realDocument.title}.${fileExtension}` : 'document'),
+    file_extension: fileExtension,
+    file_size: realDocument?.file_size || 0,
+    total_pages:
+      ((realDocument?.metadata as Record<string, number> | undefined)?.total_pages as number) || 1,
+    owner: realDocument?.owner || { id: '', first_name: '', last_name: '', email: '' },
+    current_version: realDocument?.current_version || 1,
+    is_locked: realDocument?.is_locked || false,
+    tags: realDocument?.tags || [],
+    metadata: realDocument?.metadata || {},
+    status: realDocument?.status || ('draft' as const),
+    created_at: realDocument?.created_at || new Date().toISOString(),
+    updated_at: realDocument?.updated_at || new Date().toISOString(),
+    file_hash: realDocument?.file_hash || '',
+    document_type: realDocument?.document_type
+      ? {
+          id: realDocument.document_type.id,
+          name: realDocument.document_type.name,
+          requires_signature: realDocument.document_type.requires_signature,
+        }
+      : { id: '', name: 'Document', requires_signature: false },
+    // Derive optional UI flags from metadata, defaulting to false/empty
+    ohada_compliant:
+      ((realDocument?.metadata as Record<string, boolean> | undefined)
+        ?.ohada_compliant as boolean) || false,
+    ohada_certificate_id:
+      ((realDocument?.metadata as Record<string, string> | undefined)
+        ?.ohada_certificate_id as string) || '',
+    requires_paraph:
+      ((realDocument?.metadata as Record<string, boolean> | undefined)
+        ?.requires_paraph as boolean) || false,
+    paraph_pages:
+      ((realDocument?.metadata as Record<string, number[]> | undefined)
+        ?.paraph_pages as number[]) || [],
+    signature_status: {
+      required_signatures: 0,
+      completed_signatures: 0,
+      pending_signatures: 0,
+    },
+  };
 
   // Detect anomalies when document loads
   useEffect(() => {
     const documentData = {
       id: document?.id,
       document_date: document?.created_at,
-      amount: document?.metadata?.montant
-        ? parseFloat(document.metadata.montant.replace(/[^\d]/g, ''))
-        : undefined,
+      amount: (() => {
+        const m = (document?.metadata as Record<string, unknown> | undefined)?.montant;
+        if (typeof m === 'string') return parseFloat(m.replace(/[^\d]/g, ''));
+        if (typeof m === 'number') return m;
+        return undefined;
+      })(),
       title: document?.title,
       document_type: document?.document_type?.name,
     };
@@ -352,48 +380,50 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
   const availableViewModes = getAvailableViewModes();
   const canEdit = availableViewModes.length > 1;
 
-  const linkedDocuments = [
-    { id: 2, title: 'Annexe technique', relationship: 'annexe', status: 'approved' as const },
-    { id: 3, title: 'Contrat Q3 2024', relationship: 'parent', status: 'signed' as const },
-  ];
+  // Real per-document side data fetched from Supabase. Linked documents
+  // doesn't have a backing table yet → empty list. The rest come from
+  // document_comments / document_versions / document_signatures /
+  // workflow_instances via the documentDetail service.
+  const linkedDocuments: Array<{
+    id: string;
+    title: string;
+    relationship: string;
+    status: 'approved' | 'signed' | 'draft' | 'pending';
+  }> = [];
 
-  const signatureDetails = [
-    {
-      id: 1,
-      signer: { first_name: 'Marie', last_name: 'Dupont' },
-      status: 'completed' as const,
-      signed_at: '2024-11-26T10:30:00Z',
-      certificate_id: 'SIG-2024-001234',
-    },
-    {
-      id: 2,
-      signer: { first_name: 'Jean', last_name: 'Dupont' },
-      status: 'pending' as const,
-      deadline: '2024-11-30T18:00:00Z',
-    },
-  ];
+  const [signatureDetails, setSignatureDetails] = useState<DocSignatureItem[]>([]);
+  const [versions, setVersions] = useState<DocVersionItem[]>([]);
+  const [comments, setComments] = useState<DocCommentItem[]>([]);
+  const [workflowRaw, setWorkflowRaw] = useState<DocWorkflowSummary | null>(null);
 
-  const versions = [
-    { id: 3, version: 3, by: 'Marie Dupont', comment: 'Version finale', date: '27 Nov 2024' },
-    { id: 2, version: 2, by: 'Pierre Martin', comment: 'Corrections', date: '25 Nov 2024' },
-    { id: 1, version: 1, by: 'Marie Dupont', comment: 'Version initiale', date: '20 Nov 2024' },
-  ];
+  useEffect(() => {
+    if (!documentId) return;
+    let cancelled = false;
+    Promise.all([
+      getDocumentComments(documentId),
+      getDocumentVersions(documentId),
+      getDocumentSignatures(documentId),
+      getDocumentWorkflow(documentId),
+    ]).then(([c, v, s, w]) => {
+      if (cancelled) return;
+      setComments(c);
+      setVersions(v);
+      setSignatureDetails(s);
+      setWorkflowRaw(w);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentId]);
 
-  const comments = [
-    { id: 1, author: 'Sophie Bernard', content: 'Vérifier la clause 5.2', date: '26 Nov 09:15' },
-    { id: 2, author: 'Pierre Martin', content: 'Clause 5.2 corrigée.', date: '26 Nov 14:30' },
-  ];
-
-  const workflow = {
-    template: 'Validation contrat standard',
-    status: 'in_progress',
-    current_step: 3,
-    steps: [
-      { name: 'Consultation', status: 'completed', assignee: 'Sophie B.', date: '24 Nov' },
-      { name: 'Validation', status: 'completed', assignee: 'Pierre M.', date: '25 Nov' },
-      { name: 'Approbation', status: 'in_progress', assignee: 'Jean D.', deadline: '29 Nov' },
-      { name: 'Signature', status: 'pending', assignee: 'Marie D.' },
-    ],
+  // Empty fallback workflow shape so the rich JSX below (which doesn't
+  // null-check) keeps rendering an empty steps list instead of crashing
+  // when the document has no workflow instance attached.
+  const workflow: DocWorkflowSummary = workflowRaw ?? {
+    template: '—',
+    status: 'pending',
+    current_step: 0,
+    steps: [],
   };
 
   // Validation Report Data
@@ -401,14 +431,19 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     id: 'vr-2024-001',
     referenceNumber: 'ADVIST-2024-DOC-00145-VAL',
     document: {
-      id: document.id?.toString() || '1',
+      id: String(document.id),
       title: document.title,
-      type: document.type,
-      version: document.version,
-      createdAt: '2024-11-20T10:00:00Z',
-      createdBy: document.owner.name,
-      fileHash: 'a3f8b2c1d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1',
-      pageCount: 15,
+      type: document.document_type?.name || 'Document',
+      version: String(document.current_version),
+      createdAt: document.created_at,
+      createdBy: [
+        (document.owner as { first_name?: string }).first_name,
+        (document.owner as { last_name?: string }).last_name,
+      ]
+        .filter(Boolean)
+        .join(' '),
+      fileHash: document.file_hash || '',
+      pageCount: document.total_pages || 0,
     },
     workflow: {
       id: 'wf-001',
@@ -872,7 +907,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
         return (
           <div className="p-4">
             <ValidationWorkflowPanel
-              documentId={document.id.toString()}
+              documentId={String(document.id)}
               validationSummary={{
                 status: 'under_review' as ValidationStatus,
                 status_display: 'En révision',
@@ -1531,6 +1566,32 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
       });
   };
 
+  if (documentLoading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-120px)] text-sm text-advist-blue-light">
+        Chargement du document…
+      </div>
+    );
+  }
+  if (documentError || !realDocument) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] gap-3 text-center">
+        <FileText size={40} className="text-advist-gray900/30" />
+        <h2 className="text-lg font-medium text-advist-gray900">Document introuvable</h2>
+        <p className="text-sm text-advist-blue-light max-w-md">
+          {documentError ||
+            'Ce document n’existe pas ou vous n’avez pas les droits pour le consulter.'}
+        </p>
+        <button
+          onClick={() => navigate(-1)}
+          className="mt-2 px-4 py-2 bg-advist-dark text-white rounded-xl hover:bg-advist-dark/90"
+        >
+          Retour
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="h-[calc(100vh-120px)] flex flex-col print:h-auto print:block">
       {/* Top Bar */}
@@ -1634,7 +1695,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                   {formatFileSize(document.file_size)}
                 </p>
                 <p>Statut : {document.status}</p>
-                <p>Type : {document.document_type}</p>
+                <p>Type : {document.document_type?.name}</p>
                 {document.ohada_compliant && (
                   <p>Conforme OHADA — Certificat : {document.ohada_certificate_id}</p>
                 )}
@@ -2180,8 +2241,24 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
       <VersionComparison
         isOpen={showVersionComparison}
         onClose={() => setShowVersionComparison(false)}
-        documentId={document.id}
-        versions={versions}
+        documentId={String(document.id) as unknown as number}
+        versions={versions.map((v) => ({
+          id: v.id,
+          document: String(document.id),
+          version_number: v.version,
+          file: '',
+          original_filename: '',
+          file_size: v.fileSize,
+          file_hash: v.fileHash || '',
+          uploaded_by: {
+            id: '',
+            email: '',
+            first_name: v.by.split(' ')[0] || '',
+            last_name: v.by.split(' ').slice(1).join(' '),
+          } as never,
+          comment: v.comment,
+          created_at: v.date,
+        }))}
         documentTitle={document.title}
       />
 
