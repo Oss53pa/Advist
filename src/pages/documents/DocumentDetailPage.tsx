@@ -67,12 +67,12 @@ import {
   DocumentTranslator,
   ValidationWorkflowPanel,
 } from '../../components/documents';
-import type { ValidationStatus } from '../../components/documents';
 import { ValidationReport } from '../../components/workflows';
 import type { ValidationReportData } from '../../components/workflows';
 import { AnomalyAlert } from '../../components/anomalies';
 import { anomalyDetectionService, type Anomaly } from '../../services/anomalyDetection';
-import { DocumentChat } from '../../components/collaboration/DocumentChat';
+// DocumentChat widget is currently hidden — see comment near the bottom
+// of the component. Types kept for the no-op stubs.
 import type { ChatMessage, TypingUser } from '../../hooks/useDocumentCollaboration';
 import { documentsService } from '../../services';
 import {
@@ -80,11 +80,20 @@ import {
   getDocumentVersions,
   getDocumentSignatures,
   getDocumentWorkflow,
+  getValidationSummary,
+  getValidationHistory,
+  getFullWorkflowInstanceForDocument,
   type DocCommentItem,
   type DocVersionItem,
   type DocSignatureItem,
   type DocWorkflowSummary,
+  type ValidationSummaryShape,
+  type ValidationHistoryItem,
 } from '../../services/documentDetail';
+import { getDocumentAnnotations, type AnnotationItem } from '../../services/documentAnnotations';
+import { validationReportService } from '../../services/validationReport';
+import type { Document as DocumentType, WorkflowInstance } from '../../types';
+import { useAuthStore } from '../../store';
 
 // Document view modes
 type ViewMode = 'pdf' | 'word' | 'excel';
@@ -170,36 +179,25 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
   const location = useLocation();
   const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/user';
 
+  const { user: authUser } = useAuthStore();
+  const currentUserId = authUser?.id || '';
+
   const [showShareModal, setShowShareModal] = useState(false);
   const [showWorkflowModal, setShowWorkflowModal] = useState(false);
   const [_showSignModal, setShowSignModal] = useState(false);
   const [showValidationReport, setShowValidationReport] = useState(false);
   const [showVersionComparison, setShowVersionComparison] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-
-  // Chat state (mock data - would be from real-time service)
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      content: "J'ai termine la revision de l'article 3.",
-      author: { id: '1', name: 'Marie Dupont', avatar: undefined },
-      createdAt: new Date(Date.now() - 3600000).toISOString(),
-    },
-    {
-      id: '2',
-      content: 'Parfait, je vais verifier les modifications.',
-      author: { id: '2', name: 'Pierre Martin', avatar: undefined },
-      createdAt: new Date(Date.now() - 1800000).toISOString(),
-    },
-    {
-      id: '3',
-      content: 'Il faudrait ajouter une clause sur la confidentialite.',
-      author: { id: '1', name: 'Marie Dupont', avatar: undefined },
-      createdAt: new Date(Date.now() - 900000).toISOString(),
-      pageReference: 5,
-    },
-  ]);
-  const [typingUsers, _setTypingUsers] = useState<TypingUser[]>([]);
+  // Chat: no persistent chat backend wired yet. The collaboration_chat_messages
+  // table exists in migrations but no client code reads or writes to it; the
+  // existing useRealtimeCollaboration hook only broadcasts ephemerally via
+  // Supabase Realtime (no persistence). Hiding the floating widget until a
+  // proper persistence layer lands rather than showing fake messages.
+  const [isChatOpen] = useState(false);
+  const chatMessages: ChatMessage[] = [];
+  const setChatMessages = (_u: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])): void => {
+    /* no-op while chat is hidden */
+  };
+  const typingUsers: TypingUser[] = [];
 
   // Anomaly detection state
   const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
@@ -211,31 +209,11 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activePanel, setActivePanel] = useState<PanelId>('ai');
 
-  // Annotation states
+  // Annotation states — real fetch from `document_annotations` happens
+  // in a useEffect lower in the file. Starts empty so no fake highlight
+  // flashes before the real data arrives.
   const [activeTool, setActiveTool] = useState<AnnotationTool>('select');
-  const [annotations, setAnnotations] = useState<Annotation[]>([
-    // Sample annotations
-    {
-      id: '1',
-      type: 'highlight',
-      page: 1,
-      x: 48,
-      y: 180,
-      width: 400,
-      height: 20,
-      color: '#FEF08A',
-    },
-    {
-      id: '2',
-      type: 'note',
-      page: 1,
-      x: 450,
-      y: 280,
-      color: '#FEF08A',
-      content: 'Vérifier ce montant',
-    },
-    { id: '3', type: 'stamp', page: 1, x: 400, y: 50, color: '#10B981', content: 'APPROUVÉ' },
-  ]);
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [selectedColor, setSelectedColor] = useState('#FEF08A');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showStampPicker, setShowStampPicker] = useState(false);
@@ -395,6 +373,16 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
   const [versions, setVersions] = useState<DocVersionItem[]>([]);
   const [comments, setComments] = useState<DocCommentItem[]>([]);
   const [workflowRaw, setWorkflowRaw] = useState<DocWorkflowSummary | null>(null);
+  const [validationSummaryData, setValidationSummaryData] = useState<ValidationSummaryShape | null>(
+    null
+  );
+  const [validationHistoryData, setValidationHistoryData] = useState<ValidationHistoryItem[]>([]);
+  // Lazy: fetched only when the user opens the report modal, so we don't
+  // pay the cost on every detail-page mount.
+  const [validationReportData, setValidationReportData] = useState<ValidationReportData | null>(
+    null
+  );
+  const [validationReportLoading, setValidationReportLoading] = useState(false);
 
   useEffect(() => {
     if (!documentId) return;
@@ -416,6 +404,81 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     };
   }, [documentId]);
 
+  // Annotations: real fetch from document_annotations.
+  useEffect(() => {
+    if (!documentId) return;
+    let cancelled = false;
+    getDocumentAnnotations(documentId).then((rows: AnnotationItem[]) => {
+      if (cancelled) return;
+      // Map AnnotationItem → UI Annotation (compatible shape).
+      setAnnotations(rows as Annotation[]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentId]);
+
+  // Inline validation panel: status / submitted-by / completion / counts
+  // + history (workflow_history + comments). Re-fetches when document
+  // changes or the current user identity is known (used to decide
+  // can_submit).
+  useEffect(() => {
+    if (!documentId) return;
+    let cancelled = false;
+    const isOwner = !!(realDocument && currentUserId && realDocument.owner?.id === currentUserId);
+    Promise.all([
+      getValidationSummary(documentId, { currentUserId, isOwner }),
+      getValidationHistory(documentId, 50),
+    ]).then(([summary, history]) => {
+      if (cancelled) return;
+      setValidationSummaryData(summary);
+      setValidationHistoryData(history);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentId, currentUserId, realDocument]);
+
+  /**
+   * Build the full ValidationReportData on demand by combining:
+   *  - the real Document (`realDocument`)
+   *  - a fully-hydrated WorkflowInstance fetched from Supabase
+   * Routed through `validationReportService.generateReport()` so the
+   * output shape matches what the ValidationReport component expects.
+   */
+  const ensureValidationReport = async () => {
+    if (!documentId || !realDocument || validationReportLoading) return;
+    if (validationReportData) return;
+    setValidationReportLoading(true);
+    try {
+      const fullInstance = (await getFullWorkflowInstanceForDocument(
+        documentId
+      )) as WorkflowInstance | null;
+      if (!fullInstance) {
+        setValidationReportData(null);
+        return;
+      }
+      const report = await validationReportService.generateReport({
+        workflowInstance: fullInstance,
+        document: realDocument as DocumentType,
+      });
+      setValidationReportData(report);
+    } catch (err) {
+      console.warn('[DocumentDetail] validation report generation failed:', err);
+      setValidationReportData(null);
+    } finally {
+      setValidationReportLoading(false);
+    }
+  };
+
+  // Trigger the lazy fetch when the modal opens.
+  useEffect(() => {
+    if (showValidationReport && !validationReportData && !validationReportLoading) {
+      ensureValidationReport();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showValidationReport]);
+
   // Empty fallback workflow shape so the rich JSX below (which doesn't
   // null-check) keeps rendering an empty steps list instead of crashing
   // when the document has no workflow instance attached.
@@ -424,153 +487,6 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     status: 'pending',
     current_step: 0,
     steps: [],
-  };
-
-  // Validation Report Data
-  const validationReportData: ValidationReportData = {
-    id: 'vr-2024-001',
-    referenceNumber: 'ADVIST-2024-DOC-00145-VAL',
-    document: {
-      id: String(document.id),
-      title: document.title,
-      type: document.document_type?.name || 'Document',
-      version: String(document.current_version),
-      createdAt: document.created_at,
-      createdBy: [
-        (document.owner as { first_name?: string }).first_name,
-        (document.owner as { last_name?: string }).last_name,
-      ]
-        .filter(Boolean)
-        .join(' '),
-      fileHash: document.file_hash || '',
-      pageCount: document.total_pages || 0,
-    },
-    workflow: {
-      id: 'wf-001',
-      name: workflow.template,
-      templateName: 'Contrat Standard',
-      startedAt: '2024-11-22T09:00:00Z',
-      completedAt: workflow.status === 'completed' ? '2024-11-27T16:30:00Z' : undefined,
-      status: workflow.status as 'in_progress' | 'completed' | 'rejected' | 'cancelled',
-      initiatedBy: {
-        id: 1,
-        name: 'Marie Dupont',
-        email: 'marie.dupont@example.com',
-        department: 'Direction Juridique',
-      },
-    },
-    steps: [
-      {
-        id: 'step-1',
-        order: 1,
-        name: 'Consultation',
-        type: 'consultation',
-        status: 'approved',
-        assignee: {
-          id: 2,
-          name: 'Sophie Bernard',
-          email: 'sophie.bernard@example.com',
-          role: 'Juriste',
-          department: 'Direction Juridique',
-        },
-        completedAt: '2024-11-24T11:30:00Z',
-        completedBy: {
-          id: 2,
-          name: 'Sophie Bernard',
-          email: 'sophie.bernard@example.com',
-        },
-        comment: 'Document conforme aux exigences légales. Clause 5.2 vérifiée.',
-        signature: {
-          type: 'draw',
-          data: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAoCAYAAAAIeF9DAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFfSURBVGiB7doxSsRAGMXx/y4WYmFhYSFYWAgWFoKFhWBhIVhYCBYWgoWFYGEhWFgIFhaChaAHeACP4REUEVFEt3ABtxCLycYxJMvu6sw37sL/K2YmM8y8ZAbOIKIoiqIoiqLoXfLu+HQ6LSIyIyJHIrIqIsfq+qK+/hGR9yJypfvvqOu7ur5VLpfr9fr5arW6p3u+ISLn6nmAqiqqqi9E5Eq9/bWInIjIM9X+IiLfRORJvf2DiDwTkRt1fUVdt9X1Y/X2IvKirp+q60t1fayuT9T1gbq+oN7+VL39kXr7Y3V9ot7+RF0fq+tD9fZ76u2P1dsfq7c/VG+/ra5P1NtfqOsr6u2P1fWhevtt9fan6u2v1NsfqetD9fbb6vpMXZ+ot79R13fU29+q6wt1faWuj9T1ubq+VNe36u3v1fWBuj5W13fq+kxdH6nrU3V9ot7+Ul1fq+t7dX2tro/V9am6PlHXF+r6Ql1fqus7dX2nrq/U9aG6PlbXp+r6RkT+AB3zj4+Oj48fHx8fHx8/Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pv9/Aab8hbxQ4YPXAAAA',
-          timestamp: '2024-11-24T11:30:00Z',
-          ipAddress: '192.168.1.100',
-        },
-      },
-      {
-        id: 'step-2',
-        order: 2,
-        name: 'Validation',
-        type: 'validation',
-        status: 'approved',
-        assignee: {
-          id: 3,
-          name: 'Pierre Martin',
-          email: 'pierre.martin@example.com',
-          role: 'Responsable Achats',
-          department: 'Direction des Achats',
-        },
-        completedAt: '2024-11-25T14:45:00Z',
-        completedBy: {
-          id: 3,
-          name: 'Pierre Martin',
-          email: 'pierre.martin@example.com',
-        },
-        comment: 'Conditions commerciales validées. Montants conformes au budget.',
-        signature: {
-          type: 'draw',
-          data: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAoCAYAAAAIeF9DAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFfSURBVGiB7doxSsRAGMXx/y4WYmFhYSFYWAgWFoKFhWBhIVhYCBYWgoWFYGEhWFgIFhaChaAHeACP4REUEVFEt3ABtxCLycYxJMvu6sw37sL/K2YmM8y8ZAbOIKIoiqIoiqLoXfLu+HQ6LSIyIyJHIrIqIsfq+qK+/hGR9yJypfvvqOu7ur5VLpfr9fr5arW6p3u+ISLn6nmAqiqqqi9E5Eq9/bWInIjIM9X+IiLfRORJvf2DiDwTkRt1fUVdt9X1Y/X2IvKirp+q60t1fayuT9T1gbq+oN7+VL39kXr7Y3V9ot7+RF0fq+tD9fZ76u2P1dsfq7c/VG+/ra5P1NtfqOsr6u2P1fWhevtt9fan6u2v1NsfqetD9fbb6vpMXZ+ot79R13fU29+q6wt1faWuj9T1ubq+VNe36u3v1fWBuj5W13fq+kxdH6nrU3V9ot7+Ul1fq+t7dX2tro/V9am6PlHXF+r6Ql1fqus7dX2nrq/U9aG6PlbXp+r6RkT+AB3zj4+Oj48fHx8fHx8/Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pv9/Aab8hbxQ4YPXAAAA',
-          timestamp: '2024-11-25T14:45:00Z',
-          ipAddress: '192.168.1.105',
-        },
-      },
-      {
-        id: 'step-3',
-        order: 3,
-        name: 'Approbation',
-        type: 'approval',
-        status: workflow.current_step === 3 ? 'in_progress' : 'approved',
-        assignee: {
-          id: 4,
-          name: 'Jean Dupont',
-          email: 'jean.dupont@example.com',
-          role: 'Directeur',
-          department: 'Direction Générale',
-        },
-        completedAt: workflow.current_step > 3 ? '2024-11-26T10:00:00Z' : undefined,
-        completedBy:
-          workflow.current_step > 3
-            ? {
-                id: 4,
-                name: 'Jean Dupont',
-                email: 'jean.dupont@example.com',
-              }
-            : undefined,
-        comment: workflow.current_step > 3 ? 'Approuvé pour signature.' : undefined,
-      },
-      {
-        id: 'step-4',
-        order: 4,
-        name: 'Signature',
-        type: 'signature',
-        status: 'pending',
-        assignee: {
-          id: 5,
-          name: 'Marie Leblanc',
-          email: 'marie.leblanc@example.com',
-          role: 'Directrice Générale',
-          department: 'Direction Générale',
-        },
-      },
-    ],
-    finalSignature:
-      workflow.status === 'completed'
-        ? {
-            signedBy: {
-              id: 5,
-              name: 'Marie Leblanc',
-              email: 'marie.leblanc@example.com',
-              title: 'Directrice Générale',
-            },
-            signedAt: '2024-11-27T16:30:00Z',
-            signatureData:
-              'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAoCAYAAAAIeF9DAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFfSURBVGiB7doxSsRAGMXx/y4WYmFhYSFYWAgWFoKFhWBhIVhYCBYWgoWFYGEhWFgIFhaChaAHeACP4REUEVFEt3ABtxCLycYxJMvu6sw37sL/K2YmM8y8ZAbOIKIoiqIoiqLoXfLu+HQ6LSIyIyJHIrIqIsfq+qK+/hGR9yJypfvvqOu7ur5VLpfr9fr5arW6p3u+ISLn6nmAqiqqqi9E5Eq9/bWInIjIM9X+IiLfRORJvf2DiDwTkRt1fUVdt9X1Y/X2IvKirp+q60t1fayuT9T1gbq+oN7+VL39kXr7Y3V9ot7+RF0fq+tD9fZ76u2P1dsfq7c/VG+/ra5P1NtfqOsr6u2P1fWhevtt9fan6u2v1NsfqetD9fbb6vpMXZ+ot79R13fU29+q6wt1faWuj9T1ubq+VNe36u3v1fWBuj5W13fq+kxdH6nrU3V9ot7+Ul1fq+t7dX2tro/V9am6PlHXF+r6Ql1fqus7dX2nrq/U9aG6PlbXp+r6RkT+AB3zj4+Oj48fHx8fHx8/Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pv9/Aab8hbxQ4YPXAAAA',
-            certificateId: 'CERT-2024-00892',
-            reason: 'Signature du contrat pour approbation finale',
-          }
-        : undefined,
-    verificationCode: 'ADVIST-VRF-8A3B-C7D2-E9F4',
-    generatedAt: new Date().toISOString(),
   };
 
   const activities = [
@@ -592,26 +508,13 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   };
 
-  // Chat handlers
-  const handleSendMessage = (content: string, replyTo?: string, pageReference?: number) => {
-    const newMessage: ChatMessage = {
-      id: Date.now().toString(),
-      content,
-      author: { id: 'current', name: 'Vous', avatar: undefined },
-      createdAt: new Date().toISOString(),
-      replyTo,
-      pageReference,
-    };
-    setChatMessages((prev) => [...prev, newMessage]);
-  };
-
-  const handleStartTyping = () => {
-    // In real app, would emit to websocket
-  };
-
-  const handleStopTyping = () => {
-    // In real app, would emit to websocket
-  };
+  // Chat handlers placeholder — see comment near the bottom of the file
+  // about why the chat widget is hidden. The unused vars touch keeps
+  // TS/ESLint happy without disable comments.
+  void chatMessages;
+  void setChatMessages;
+  void typingUsers;
+  void isChatOpen;
 
   // Annotation tools configuration
   const annotationTools = [
@@ -867,7 +770,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                   <span className="text-sm text-advist-blue-light capitalize">
                     {key.replace('_', ' ')}
                   </span>
-                  <span className="text-sm font-medium text-advist-gray900">{value}</span>
+                  <span className="text-sm font-medium text-advist-gray900">{String(value)}</span>
                 </div>
               ))}
             </div>
@@ -903,74 +806,51 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
           </div>
         );
 
-      case 'validation':
+      case 'validation': {
+        // Real summary + history come from getValidationSummary /
+        // getValidationHistory (state set by useEffect on documentId).
+        // Until the first fetch resolves we render a tiny loading state
+        // rather than show fake "Sophie Bernard / Pierre Martin" rows.
+        const isOwnerDoc = !!(
+          realDocument &&
+          currentUserId &&
+          realDocument.owner?.id === currentUserId
+        );
+        if (!validationSummaryData) {
+          return (
+            <div className="p-4 text-sm text-advist-blue-light">Chargement de la validation…</div>
+          );
+        }
         return (
           <div className="p-4">
             <ValidationWorkflowPanel
               documentId={String(document.id)}
-              validationSummary={{
-                status: 'under_review' as ValidationStatus,
-                status_display: 'En révision',
-                submitted_at: '2024-11-25T10:00:00Z',
-                submitted_by: { id: '1', name: 'Marie Dupont' },
-                completed_at: null,
-                completed_by: null,
-                notes: 'Document soumis pour validation du contrat Q4.',
-                comments: {
-                  total: 3,
-                  resolved: 1,
-                  pending: 2,
-                },
-                can_submit: false,
-                can_validate: true,
-              }}
-              validationHistory={[
-                {
-                  type: 'workflow_action',
-                  timestamp: '2024-11-25T10:00:00Z',
-                  user: { id: '1', name: 'Marie Dupont' },
-                  action: 'Document soumis pour révision',
-                },
-                {
-                  type: 'workflow_action',
-                  timestamp: '2024-11-25T14:30:00Z',
-                  user: { id: '2', name: 'Pierre Martin' },
-                  action: 'Révision commencée',
-                },
-                {
-                  type: 'comment',
-                  timestamp: '2024-11-25T15:00:00Z',
-                  user: { id: '2', name: 'Pierre Martin' },
-                  content: 'Vérifier la clause 5.2 sur les conditions de paiement.',
-                  context: {
-                    type: 'section',
-                    section_id: 'article-5',
-                    page: 3,
-                  },
-                  resolved: false,
-                },
-              ]}
-              currentUserId="current"
-              isOwner={true}
-              canReview={true}
+              validationSummary={validationSummaryData as never}
+              validationHistory={validationHistoryData as never}
+              currentUserId={currentUserId}
+              isOwner={isOwnerDoc}
+              canReview={validationSummaryData.can_validate}
               onSubmitForReview={async (notes) => {
-                console.info('Submitting for review:', notes);
+                // TODO: wire to a workflow-launching RPC. For now, just
+                // surface the intent so users see something happens.
+                console.info('[validation] submit for review:', notes);
               }}
               onStartReview={async () => {
-                console.info('Starting review');
+                console.info('[validation] start review');
               }}
-              onRequestChanges={async (comments) => {
-                console.info('Requesting changes:', comments);
+              onRequestChanges={async (commentsText) => {
+                console.info('[validation] request changes:', commentsText);
               }}
-              onValidate={async (comments) => {
-                console.info('Validating:', comments);
+              onValidate={async (commentsText) => {
+                console.info('[validation] validate:', commentsText);
               }}
               onReject={async (reason) => {
-                console.info('Rejecting:', reason);
+                console.info('[validation] reject:', reason);
               }}
             />
           </div>
         );
+      }
 
       case 'workflow':
         return (
@@ -1065,8 +945,11 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                 Voir le rapport de validation
               </Button>
               <p className="text-xs text-advist-blue-light text-center mt-2">
-                {validationReportData.steps.filter((s) => s.status === 'approved').length} /{' '}
-                {validationReportData.steps.length} étapes validées
+                {validationReportData
+                  ? `${validationReportData.steps.filter((s) => s.status === 'approved').length} / ${validationReportData.steps.length} étapes validées`
+                  : workflowRaw
+                    ? '—'
+                    : 'Aucun workflow attaché'}
               </p>
             </div>
           </div>
@@ -2228,14 +2111,19 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
         </div>
       </Modal>
 
-      {/* Validation Report Modal */}
-      <ValidationReport
-        data={validationReportData}
-        isOpen={showValidationReport}
-        onClose={() => setShowValidationReport(false)}
-        onDownload={() => console.info('PDF downloaded')}
-        onPrint={() => window.print()}
-      />
+      {/* Validation Report Modal — only rendered once the real data is
+          loaded from Supabase (lazy, on first open). If the document has
+          no workflow attached, validationReportData stays null and the
+          modal simply doesn't open. */}
+      {validationReportData && (
+        <ValidationReport
+          data={validationReportData}
+          isOpen={showValidationReport}
+          onClose={() => setShowValidationReport(false)}
+          onDownload={() => console.info('PDF downloaded')}
+          onPrint={() => window.print()}
+        />
+      )}
 
       {/* Version Comparison Modal */}
       <VersionComparison
@@ -2262,19 +2150,15 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
         documentTitle={document.title}
       />
 
-      {/* Real-time Chat */}
-      <div className="print:hidden">
-        <DocumentChat
-          messages={chatMessages}
-          typingUsers={typingUsers}
-          onSendMessage={handleSendMessage}
-          onStartTyping={handleStartTyping}
-          onStopTyping={handleStopTyping}
-          currentPage={currentPage}
-          isOpen={isChatOpen}
-          onToggle={() => setIsChatOpen(!isChatOpen)}
-        />
-      </div>
+      {/*
+        Real-time Chat — temporarily hidden.
+        The `collaboration_chat_messages` table exists (migration 00010)
+        but no client code reads/writes it; ephemeral broadcast via
+        `useRealtimeCollaboration` doesn't persist either. Showing the
+        widget would suggest a chat history that doesn't actually exist.
+        Re-enable once a real chat service (SELECT + INSERT + Realtime
+        subscription on collaboration_chat_messages) is wired in.
+      */}
     </div>
   );
 };
