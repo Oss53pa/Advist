@@ -11,6 +11,54 @@
 import { supabase } from '../lib/supabase';
 
 /**
+ * Build a time-limited signed URL for the document's stored file so the
+ * browser can render it directly (PDF via <iframe>, images via <img>,
+ * etc.). Returns mime + filename too so callers know which renderer to
+ * pick. Resolves to null when the document has no file_path or the
+ * storage call fails.
+ */
+export interface DocumentPreview {
+  url: string | null;
+  mimeType: string | null;
+  fileName: string | null;
+}
+
+const DOCUMENTS_STORAGE_BUCKET = 'documents';
+
+export async function getDocumentPreviewUrl(documentId: string): Promise<DocumentPreview> {
+  const empty: DocumentPreview = { url: null, mimeType: null, fileName: null };
+  try {
+    const { data, error } = await supabase
+      .from('documents')
+      .select('file_path, mime_type, file_name')
+      .eq('id', documentId)
+      .maybeSingle();
+    if (error || !data) return empty;
+    const row = data as {
+      file_path?: string | null;
+      mime_type?: string | null;
+      file_name?: string | null;
+    };
+    if (!row.file_path) {
+      return { url: null, mimeType: row.mime_type ?? null, fileName: row.file_name ?? null };
+    }
+    const { data: signed, error: signErr } = await supabase.storage
+      .from(DOCUMENTS_STORAGE_BUCKET)
+      .createSignedUrl(row.file_path, 3600);
+    if (signErr || !signed?.signedUrl) {
+      return { url: null, mimeType: row.mime_type ?? null, fileName: row.file_name ?? null };
+    }
+    return {
+      url: signed.signedUrl,
+      mimeType: row.mime_type ?? null,
+      fileName: row.file_name ?? null,
+    };
+  } catch {
+    return empty;
+  }
+}
+
+/**
  * Marker for "this person is not a member of the current organisation".
  * An external is any profile whose `organization_id` differs from the
  * document's org (a B2B partner) OR is NULL (a guest signatory invited
