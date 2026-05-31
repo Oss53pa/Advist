@@ -20,7 +20,7 @@ import {
   Settings,
   Shield,
   Link2,
-  _ExternalLink,
+  ExternalLink,
   ChevronRight,
   Bookmark,
   BookmarkCheck,
@@ -163,6 +163,32 @@ const STAMP_OPTIONS = [
   { label: 'URGENT', color: '#F59E0B', bgColor: '#FEF3C7' },
   { label: 'COPIE', color: '#3B82F6', bgColor: '#DBEAFE' },
 ];
+
+/**
+ * Discreet "Externe" pill displayed next to people who are not members
+ * of the document's owning organisation (B2B partners on a co-signed
+ * contract, or guest signatories invited by email). The org name is
+ * shown when available so the reader knows where the person is from.
+ */
+const ExternalBadge: React.FC<{
+  external?: { isExternal: boolean; organizationName?: string };
+  size?: 'xs' | 'sm';
+}> = ({ external, size = 'xs' }) => {
+  if (!external?.isExternal) return null;
+  const textSize = size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-[10px] px-1.5 py-0.5';
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full bg-[#b8a47e]/12 text-[#9a8561] ring-1 ring-[#b8a47e]/30 font-medium ${textSize}`}
+      title={external.organizationName ? `Externe — ${external.organizationName}` : 'Externe'}
+    >
+      <ExternalLink size={size === 'sm' ? 12 : 10} />
+      Externe
+      {external.organizationName && (
+        <span className="opacity-70">· {external.organizationName}</span>
+      )}
+    </span>
+  );
+};
 
 interface DocumentDetailPageProps {
   embedded?: boolean;
@@ -384,14 +410,22 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
   );
   const [validationReportLoading, setValidationReportLoading] = useState(false);
 
+  // The document's owning organization is the anchor for "is this person
+  // external?". An external is anyone whose profile.organization_id
+  // doesn't match this — a B2B partner OR a guest signatory.
+  const docOrgId =
+    (realDocument?.organization as { id?: string } | undefined)?.id ||
+    (realDocument as { organization_id?: string } | undefined)?.organization_id ||
+    null;
+
   useEffect(() => {
     if (!documentId) return;
     let cancelled = false;
     Promise.all([
-      getDocumentComments(documentId),
-      getDocumentVersions(documentId),
-      getDocumentSignatures(documentId),
-      getDocumentWorkflow(documentId),
+      getDocumentComments(documentId, docOrgId),
+      getDocumentVersions(documentId, docOrgId),
+      getDocumentSignatures(documentId, docOrgId),
+      getDocumentWorkflow(documentId, docOrgId),
     ]).then(([c, v, s, w]) => {
       if (cancelled) return;
       setComments(c);
@@ -402,7 +436,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [documentId]);
+  }, [documentId, docOrgId]);
 
   // Annotations: real fetch from document_annotations.
   useEffect(() => {
@@ -427,8 +461,8 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     let cancelled = false;
     const isOwner = !!(realDocument && currentUserId && realDocument.owner?.id === currentUserId);
     Promise.all([
-      getValidationSummary(documentId, { currentUserId, isOwner }),
-      getValidationHistory(documentId, 50),
+      getValidationSummary(documentId, { currentUserId, isOwner, currentOrgId: docOrgId }),
+      getValidationHistory(documentId, 50, docOrgId),
     ]).then(([summary, history]) => {
       if (cancelled) return;
       setValidationSummaryData(summary);
@@ -437,7 +471,7 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [documentId, currentUserId, realDocument]);
+  }, [documentId, currentUserId, realDocument, docOrgId]);
 
   /**
    * Build the full ValidationReportData on demand by combining:
@@ -821,12 +855,50 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
             <div className="p-4 text-sm text-advist-blue-light">Chargement de la validation…</div>
           );
         }
+        // The presentational panel doesn't know about external users —
+        // append a textual "· Externe (Org)" suffix to people names so
+        // the information surfaces inside the existing UI without
+        // forking the component.
+        const decorateName = (
+          name: string,
+          ext?: { isExternal?: boolean; organizationName?: string }
+        ) => {
+          if (!ext?.isExternal) return name;
+          return ext.organizationName
+            ? `${name} · Externe (${ext.organizationName})`
+            : `${name} · Externe`;
+        };
+        const decoratedSummary = {
+          ...validationSummaryData,
+          submitted_by: validationSummaryData.submitted_by
+            ? {
+                ...validationSummaryData.submitted_by,
+                name: decorateName(
+                  validationSummaryData.submitted_by.name,
+                  validationSummaryData.submitted_by_external
+                ),
+              }
+            : null,
+          completed_by: validationSummaryData.completed_by
+            ? {
+                ...validationSummaryData.completed_by,
+                name: decorateName(
+                  validationSummaryData.completed_by.name,
+                  validationSummaryData.completed_by_external
+                ),
+              }
+            : null,
+        };
+        const decoratedHistory = validationHistoryData.map((h) => ({
+          ...h,
+          user: h.user ? { ...h.user, name: decorateName(h.user.name, h.userExternal) } : null,
+        }));
         return (
           <div className="p-4">
             <ValidationWorkflowPanel
               documentId={String(document.id)}
-              validationSummary={validationSummaryData as never}
-              validationHistory={validationHistoryData as never}
+              validationSummary={decoratedSummary as never}
+              validationHistory={decoratedHistory as never}
               currentUserId={currentUserId}
               isOwner={isOwnerDoc}
               canReview={validationSummaryData.can_validate}
@@ -927,7 +999,10 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                         <span className="text-xs text-advist-success">{step.date}</span>
                       )}
                     </div>
-                    <p className="text-sm text-advist-blue-light mt-0.5">{step.assignee}</p>
+                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                      <p className="text-sm text-advist-blue-light">{step.assignee}</p>
+                      <ExternalBadge external={step.assigneeExternal} />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -999,10 +1074,14 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                   <div className="flex items-center gap-3">
                     <Avatar name={`${sig.signer.first_name} ${sig.signer.last_name}`} size="md" />
                     <div className="flex-1">
-                      <p className="font-medium text-advist-gray900">
-                        {sig.signer.first_name} {sig.signer.last_name}
-                      </p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium text-advist-gray900">
+                          {sig.signer.first_name} {sig.signer.last_name}
+                        </p>
+                        <ExternalBadge external={sig.signerExternal} />
+                      </div>
                       <p className="text-xs text-advist-blue-light">
+                        {sig.signerExternal?.jobTitle && `${sig.signerExternal.jobTitle} · `}
                         {sig.status === 'completed'
                           ? `Signé le ${sig.signed_at?.split('T')[0]}`
                           : `Échéance: ${sig.deadline?.split('T')[0]}`}
@@ -1150,12 +1229,15 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
             <div className="flex-1 space-y-3 overflow-y-auto">
               {comments.map((c) => (
                 <div key={c.id} className="p-4 bg-[#F9F9F7] rounded-xl">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mb-2 gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Avatar name={c.author} size="sm" />
                       <span className="text-sm font-medium text-advist-gray900">{c.author}</span>
+                      <ExternalBadge external={c.authorExternal} />
                     </div>
-                    <span className="text-xs text-advist-blue-light">{c.date}</span>
+                    <span className="text-xs text-advist-blue-light whitespace-nowrap">
+                      {c.date}
+                    </span>
                   </div>
                   <p className="text-sm text-[#585858] pl-8">{c.content}</p>
                 </div>
