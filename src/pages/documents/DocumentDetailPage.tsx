@@ -82,6 +82,16 @@ import {
   type ChatMessageItem,
 } from '../../services/documentChat';
 import {
+  getLinkedDocuments,
+  createDocumentLink,
+  deleteDocumentLink,
+  searchOrgDocuments,
+  DOCUMENT_LINK_RELATIONSHIPS,
+  type LinkedDocumentItem,
+  type DocumentSearchHit,
+  type DocumentLinkRelationship,
+} from '../../services/documentLinks';
+import {
   getDocumentComments,
   getDocumentVersions,
   getDocumentSignatures,
@@ -392,15 +402,14 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
   const canEdit = availableViewModes.length > 1;
 
   // Real per-document side data fetched from Supabase. Linked documents
-  // doesn't have a backing table yet → empty list. The rest come from
-  // document_comments / document_versions / document_signatures /
-  // workflow_instances via the documentDetail service.
-  const linkedDocuments: Array<{
-    id: string;
-    title: string;
-    relationship: string;
-    status: 'approved' | 'signed' | 'draft' | 'pending';
-  }> = [];
+  // Linked documents: real fetch via `document_links` (migration 00035),
+  // both directions merged. Loading + create/delete state for the
+  // small "add a link" picker.
+  const [linkedDocuments, setLinkedDocuments] = useState<LinkedDocumentItem[]>([]);
+  const [showAddLink, setShowAddLink] = useState(false);
+  const [linkSearchQuery, setLinkSearchQuery] = useState('');
+  const [linkSearchResults, setLinkSearchResults] = useState<DocumentSearchHit[]>([]);
+  const [linkRelationship, setLinkRelationship] = useState<DocumentLinkRelationship>('related');
 
   const [signatureDetails, setSignatureDetails] = useState<DocSignatureItem[]>([]);
   const [versions, setVersions] = useState<DocVersionItem[]>([]);
@@ -458,6 +467,68 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
       cancelled = true;
     };
   }, [documentId]);
+
+  // Linked documents: fetch both directions from `document_links`.
+  const refreshLinkedDocuments = async () => {
+    if (!documentId) return;
+    const links = await getLinkedDocuments(documentId);
+    setLinkedDocuments(links);
+  };
+  useEffect(() => {
+    if (!documentId) return;
+    let cancelled = false;
+    getLinkedDocuments(documentId).then((links) => {
+      if (cancelled) return;
+      setLinkedDocuments(links);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentId]);
+
+  // Search debouncing for the "Add link" picker.
+  useEffect(() => {
+    if (!showAddLink) return;
+    const q = linkSearchQuery.trim();
+    if (q.length < 2) {
+      setLinkSearchResults([]);
+      return;
+    }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      const hits = await searchOrgDocuments(q, documentId, 10);
+      if (!cancelled) setLinkSearchResults(hits);
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [linkSearchQuery, showAddLink, documentId]);
+
+  const handleAddLink = async (targetId: string) => {
+    if (!documentId || !currentUserId) return;
+    const result = await createDocumentLink(
+      {
+        sourceDocumentId: documentId,
+        targetDocumentId: targetId,
+        relationship: linkRelationship,
+      },
+      currentUserId
+    );
+    if (result.ok) {
+      setShowAddLink(false);
+      setLinkSearchQuery('');
+      setLinkSearchResults([]);
+      await refreshLinkedDocuments();
+    } else {
+      console.warn('[documentLinks] create failed:', result.error);
+    }
+  };
+
+  const handleRemoveLink = async (linkId: string) => {
+    const ok = await deleteDocumentLink(linkId);
+    if (ok) await refreshLinkedDocuments();
+  };
 
   // PDF / file preview: signed URL from Supabase Storage. The actual
   // file bytes are served by Storage via a TTL-limited URL so RLS
@@ -1282,27 +1353,126 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                 {linkedDocuments.length}
               </Badge>
             </div>
+
             <div className="space-y-2">
+              {linkedDocuments.length === 0 && !showAddLink && (
+                <p className="text-sm text-advist-blue-light text-center py-6">
+                  Aucun document lié pour l'instant.
+                </p>
+              )}
               {linkedDocuments.map((doc) => (
-                <Link
-                  key={doc.id}
-                  to={`${basePath}/documents/${doc.id}`}
-                  className="flex items-center gap-3 p-4 rounded-xl border border-[#E0E0D8] hover:border-advist-blue-light hover:shadow-md transition-all"
+                <div
+                  key={doc.linkId}
+                  className="group flex items-center gap-3 p-4 rounded-xl border border-[#E0E0D8] hover:border-advist-blue-light transition-all"
                 >
-                  <div className="w-10 h-10 bg-advist-bg rounded-xl flex items-center justify-center">
-                    <FileText size={20} className="text-advist-blue-light" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-advist-gray900">{doc.title}</p>
-                    <p className="text-xs text-advist-blue-light capitalize">{doc.relationship}</p>
-                  </div>
-                  <StatusBadge status={doc.status} />
-                </Link>
+                  <Link
+                    to={`${basePath}/documents/${doc.documentId}`}
+                    className="flex items-center gap-3 flex-1 min-w-0"
+                  >
+                    <div className="w-10 h-10 bg-advist-bg rounded-xl flex items-center justify-center flex-shrink-0">
+                      <FileText size={20} className="text-advist-blue-light" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-advist-gray900 truncate">{doc.title}</p>
+                      <p className="text-xs text-advist-blue-light capitalize">
+                        {doc.direction === 'incoming' ? '← ' : '→ '}
+                        {DOCUMENT_LINK_RELATIONSHIPS.find((r) => r.value === doc.relationship)
+                          ?.label || doc.relationship}
+                      </p>
+                    </div>
+                    <StatusBadge status={doc.status as never} />
+                  </Link>
+                  {doc.direction === 'outgoing' && (
+                    <button
+                      onClick={() => handleRemoveLink(doc.linkId)}
+                      className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-advist-error/10 rounded-lg transition-all"
+                      title="Supprimer le lien"
+                    >
+                      <X size={14} className="text-advist-error" />
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
-            <Button variant="outline" size="sm" className="w-full" leftIcon={<Link2 size={14} />}>
-              Ajouter un lien
-            </Button>
+
+            {showAddLink ? (
+              <div className="space-y-3 p-3 border border-advist-gold rounded-xl bg-advist-gold-light/30">
+                <div>
+                  <label className="block text-xs font-medium text-advist-gray900 mb-1">
+                    Relation
+                  </label>
+                  <select
+                    value={linkRelationship}
+                    onChange={(e) =>
+                      setLinkRelationship(e.target.value as DocumentLinkRelationship)
+                    }
+                    className="w-full px-3 py-2 text-sm border border-[#E0E0D8] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-advist-gold"
+                  >
+                    {DOCUMENT_LINK_RELATIONSHIPS.map((r) => (
+                      <option key={r.value} value={r.value}>
+                        {r.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-advist-gray900 mb-1">
+                    Rechercher un document
+                  </label>
+                  <input
+                    type="text"
+                    autoFocus
+                    value={linkSearchQuery}
+                    onChange={(e) => setLinkSearchQuery(e.target.value)}
+                    placeholder="Titre du document…"
+                    className="w-full px-3 py-2 text-sm border border-[#E0E0D8] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-advist-gold"
+                  />
+                </div>
+                {linkSearchResults.length > 0 && (
+                  <div className="max-h-48 overflow-y-auto space-y-1">
+                    {linkSearchResults.map((hit) => (
+                      <button
+                        key={hit.id}
+                        onClick={() => handleAddLink(hit.id)}
+                        className="w-full flex items-center gap-2 p-2 text-left rounded-lg hover:bg-white transition-colors"
+                      >
+                        <FileText size={14} className="text-advist-blue-light flex-shrink-0" />
+                        <span className="text-sm text-advist-gray900 truncate flex-1">
+                          {hit.title}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {linkSearchQuery.length >= 2 && linkSearchResults.length === 0 && (
+                  <p className="text-xs text-advist-blue-light">Aucun résultat.</p>
+                )}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      setShowAddLink(false);
+                      setLinkSearchQuery('');
+                      setLinkSearchResults([]);
+                    }}
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                leftIcon={<Link2 size={14} />}
+                onClick={() => setShowAddLink(true)}
+              >
+                Ajouter un lien
+              </Button>
+            )}
           </div>
         );
 
