@@ -265,8 +265,19 @@ describe('useSubscriptionGuard', () => {
     expect(result.current.blockReason).toBe('subscription_expired');
   });
 
-  // 5. No active licence in Atlas Studio => block with no_licence
-  it('blocks with reason "no_licence" when Atlas Studio has no active seat', async () => {
+  // 5. Absence de siege actif chez Atlas Studio => acces accorde (fail-open).
+  //
+  // Ces deux tests attendaient l'inverse (blocage 'no_licence'), conformement au
+  // commit 0cec517 « read access from Atlas Studio licence_seats, not local
+  // fallback ». Le commit fc91a9b « fail-open subscription guard » a ensuite
+  // inverse volontairement ce comportement, sans mettre les tests a jour.
+  // Ils decrivent desormais le comportement reel.
+  //
+  // ⚠️ Consequence metier : un utilisateur dont la verification de licence
+  // echoue (y compris en bloquant simplement l'appel reseau vers Atlas Studio)
+  // obtient un acces de repli 'enterprise' aux quotas illimites. A revoir si le
+  // fail-open n'etait qu'une mesure transitoire de migration.
+  it('grants fallback access when Atlas Studio has no active seat (fail-open)', async () => {
     authStoreState = {
       user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
       isAuthenticated: true,
@@ -274,18 +285,23 @@ describe('useSubscriptionGuard', () => {
 
     mockGetSubscriptionInfo.mockRejectedValue(new NoActiveLicenceError());
 
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
     const { result } = renderHook(() => useSubscriptionGuard());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.canAccess).toBe(false);
-    expect(result.current.blockReason).toBe('no_licence');
+    expect(result.current.canAccess).toBe(true);
+    expect(result.current.blockReason).toBeUndefined();
+    expect(consoleWarnSpy).toHaveBeenCalled();
+
+    consoleWarnSpy.mockRestore();
   });
 
-  // 5b. Network / transient errors also block (no local fallback)
-  it('blocks with reason "no_licence" on network errors (no local fallback)', async () => {
+  // 5b. Erreurs reseau / transitoires : meme repli.
+  it('grants fallback access on network errors (fail-open)', async () => {
     authStoreState = {
       user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
       isAuthenticated: true,
@@ -301,8 +317,8 @@ describe('useSubscriptionGuard', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.canAccess).toBe(false);
-    expect(result.current.blockReason).toBe('no_licence');
+    expect(result.current.canAccess).toBe(true);
+    expect(result.current.blockReason).toBeUndefined();
     expect(consoleWarnSpy).toHaveBeenCalled();
 
     consoleWarnSpy.mockRestore();

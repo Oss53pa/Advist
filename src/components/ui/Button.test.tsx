@@ -41,22 +41,25 @@ describe('Button', () => {
     expect(button).toHaveClass('bg-advist-error');
   });
 
+  // Echelle typographique resserree, voulue par le design premium
+  // (cf. sizeStyles dans Button.tsx). Les tests suivaient une echelle plus
+  // large, anterieure a cette refonte.
   it('applies small size styles', () => {
     render(<Button size="sm">Small</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('px-4', 'py-1.5', 'text-sm');
+    expect(button).toHaveClass('px-3.5', 'py-1.5', 'text-[13px]');
   });
 
   it('applies medium size by default', () => {
     render(<Button>Medium</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('px-5', 'py-2.5', 'text-base');
+    expect(button).toHaveClass('px-5', 'py-2.5', 'text-sm');
   });
 
   it('applies large size styles', () => {
     render(<Button size="lg">Large</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('px-6', 'py-3', 'text-lg');
+    expect(button).toHaveClass('px-6', 'py-3', 'text-base');
   });
 
   it('handles click events', () => {
@@ -105,7 +108,7 @@ describe('Button', () => {
   it('applies rounded styles when rounded prop is true', () => {
     render(<Button rounded>Rounded</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('rounded-[50px]');
+    expect(button).toHaveClass('rounded-full');
   });
 
   it('applies default border radius when rounded is false', () => {
@@ -130,7 +133,11 @@ describe('Button', () => {
   });
 
   it('passes through additional props', () => {
-    render(<Button data-testid="test-button" aria-label="Test">Test</Button>);
+    render(
+      <Button data-testid="test-button" aria-label="Test">
+        Test
+      </Button>
+    );
     expect(screen.getByTestId('test-button')).toHaveAttribute('aria-label', 'Test');
   });
 });

@@ -1,8 +1,19 @@
 /**
  * useSubscriptionGuard - Hook pour protéger les routes selon le statut de l'abonnement
  * Source de vérité : Atlas Studio (licence_seats + licences + subscriptions).
- * Aucun fallback local : si Atlas Studio ne reconnaît pas de licence active,
- * l'utilisateur est bloqué avec blockReason='no_licence'.
+ *
+ * Comportement en cas d'échec : **fail-open** (cf. commit fc91a9b). Si Atlas
+ * Studio ne renvoie pas de licence active — ou si l'appel échoue (réseau, 5xx) —
+ * un tenant de repli `enterprise` / quotas illimités est appliqué et l'accès est
+ * accordé, avec un `console.warn`.
+ *
+ * ⚠️ Ce choix est un compromis disponibilité / monétisation : bloquer l'appel
+ * réseau vers Atlas Studio suffit à obtenir un accès `enterprise`. À réévaluer
+ * si le fail-open n'était qu'une mesure transitoire de migration vers la
+ * facturation Atlas Studio.
+ *
+ * (Le docblock précédent décrivait un fail-closed `blockReason='no_licence'`,
+ * comportement remplacé depuis — il ne correspondait plus au code.)
  */
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';

@@ -12,14 +12,22 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   rounded?: boolean;
 }
 
+// Classes issues des tokens (src/styles/theme.ts) plutot que d'hex codes en dur :
+// la palette reste pilotee depuis un point unique.
+// Equivalences : gray900 #131C2E · gray800 #1B2740 · gray200 #E8E2D6
+//                gray300 #D8CFBF · gray50 #FAF7F1 · error #ef4444
+// Seul changement visuel volontaire : les fonds `secondary` et le survol `ghost`
+// passent de gray50 a gray100 (#F1ECE1). gray50 est la couleur de fond de page,
+// ces boutons y etaient donc invisibles.
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#131C2E] text-white hover:bg-[#1B2740] focus:ring-[#131C2E]/20 shadow-sm hover:shadow-md',
-  secondary: 'bg-[#FAF7F1] text-[#131C2E] hover:bg-[#E8E2D6] focus:ring-[#E8E2D6]',
+    'bg-advist-gray900 text-white hover:bg-advist-gray800 focus:ring-advist-gray900/20 shadow-sm hover:shadow-md',
+  secondary:
+    'bg-advist-gray100 text-advist-gray900 hover:bg-advist-gray200 focus:ring-advist-gray200',
   outline:
-    'border border-[#E8E2D6] text-[#131C2E] hover:bg-[#FAF7F1] hover:border-[#D8CFBF] focus:ring-[#E8E2D6]',
-  ghost: 'text-[#131C2E] hover:bg-[#FAF7F1] focus:ring-[#E8E2D6]',
-  danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500/20 shadow-sm',
+    'border border-advist-gray200 text-advist-gray900 hover:bg-advist-gray50 hover:border-advist-gray300 focus:ring-advist-gray200',
+  ghost: 'text-advist-gray900 hover:bg-advist-gray100 focus:ring-advist-gray200',
+  danger: 'bg-advist-error text-white hover:bg-red-600 focus:ring-advist-error/20 shadow-sm',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -109,10 +117,10 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
       className={`
         ${floatingSizeStyles[size]}
         rounded-full flex items-center justify-center
-        ${variant === 'danger' ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-[#131C2E] text-white hover:bg-[#1B2740]'}
+        ${variant === 'danger' ? 'bg-advist-error text-white hover:bg-red-600' : 'bg-advist-gray900 text-white hover:bg-advist-gray800'}
         shadow-lg transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-offset-2
-        ${variant === 'danger' ? 'focus:ring-red-500/20' : 'focus:ring-[#131C2E]/20'}
+        ${variant === 'danger' ? 'focus:ring-advist-error/20' : 'focus:ring-advist-gray900/20'}
         ${className}
       `}
       {...props}
