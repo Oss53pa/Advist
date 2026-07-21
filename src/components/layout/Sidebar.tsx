@@ -152,7 +152,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
     <aside
       className={`
         fixed left-0 top-0 z-40 h-screen
-        bg-[#0f172a] text-white
+        bg-[#131C2E] text-white
         flex flex-col
         transition-all duration-300 ease-in-out
         ${isCollapsed ? 'w-[72px]' : 'w-[260px]'}
@@ -164,9 +164,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       >
         <div className="flex items-center gap-3">
           {isCollapsed ? (
-            <span className="font-decorative text-xl text-[#b8a47e]">A</span>
+            <span className="font-decorative text-xl text-[#B9975B]">A</span>
           ) : (
-            <span className="font-decorative text-xl text-[#b8a47e]">Advist</span>
+            <span className="font-decorative text-xl text-[#B9975B]">Advist</span>
           )}
         </div>
         {!isCollapsed && (
@@ -263,19 +263,19 @@ const NavMenuItem: React.FC<{
             w-full flex items-center justify-center p-3 rounded-xl transition-all duration-200
             ${
               isActive
-                ? 'bg-[#b8a47e] text-[#0f172a] shadow-lg shadow-[#b8a47e]/20'
+                ? 'bg-[#B9975B] text-[#131C2E] shadow-lg shadow-[#B9975B]/20'
                 : 'text-white/40 hover:bg-white/[0.06] hover:text-white/70'
             }
           `}
         >
           <Icon size={20} />
           {item.badge && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#b8a47e] text-[#0f172a] text-[10px] font-bold rounded-full flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#B9975B] text-[#131C2E] text-[10px] font-bold rounded-full flex items-center justify-center">
               {item.badge > 9 ? '9+' : item.badge}
             </span>
           )}
         </NavLink>
-        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[#1e293b] text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-xl border border-white/[0.06]">
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[#1B2740] text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-xl border border-white/[0.06]">
           {item.label}
         </div>
       </div>
@@ -291,7 +291,7 @@ const NavMenuItem: React.FC<{
             w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200
             ${
               isActive
-                ? 'bg-[#b8a47e] text-[#0f172a] shadow-lg shadow-[#b8a47e]/20'
+                ? 'bg-[#B9975B] text-[#131C2E] shadow-lg shadow-[#B9975B]/20'
                 : 'text-white/50 hover:bg-white/[0.06] hover:text-white/80'
             }
           `}
@@ -300,7 +300,7 @@ const NavMenuItem: React.FC<{
           <span className="flex-1 font-medium text-sm">{item.label}</span>
           {item.badge && (
             <span
-              className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${isActive ? 'bg-[#0f172a]/20 text-[#0f172a]' : 'bg-[#b8a47e]/15 text-[#b8a47e]'}`}
+              className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${isActive ? 'bg-[#131C2E]/20 text-[#131C2E]' : 'bg-[#B9975B]/15 text-[#B9975B]'}`}
             >
               {item.badge}
             </span>
@@ -308,7 +308,7 @@ const NavMenuItem: React.FC<{
           {item.hasAdd && (
             <button
               onClick={(e) => e.stopPropagation()}
-              className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-[#0f172a]/10' : 'hover:bg-white/[0.06]'}`}
+              className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-[#131C2E]/10' : 'hover:bg-white/[0.06]'}`}
             >
               <Plus size={14} />
             </button>
@@ -320,7 +320,7 @@ const NavMenuItem: React.FC<{
         </button>
 
         {expanded && (
-          <div className="ml-4 mt-1 pl-4 border-l border-[#b8a47e]/20 space-y-0.5">
+          <div className="ml-4 mt-1 pl-4 border-l border-[#B9975B]/20 space-y-0.5">
             {item.children?.map((child) => {
               const ChildIcon = child.icon;
               const childActive =
@@ -341,7 +341,7 @@ const NavMenuItem: React.FC<{
                   <ChildIcon size={15} />
                   <span className="flex-1 text-[13px]">{child.label}</span>
                   {child.badge && (
-                    <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-[#b8a47e]/15 text-[#b8a47e]">
+                    <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-[#B9975B]/15 text-[#B9975B]">
                       {child.badge}
                     </span>
                   )}
@@ -361,7 +361,7 @@ const NavMenuItem: React.FC<{
         flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
         ${
           isActive
-            ? 'bg-[#b8a47e] text-[#0f172a] shadow-lg shadow-[#b8a47e]/20'
+            ? 'bg-[#B9975B] text-[#131C2E] shadow-lg shadow-[#B9975B]/20'
             : 'text-white/50 hover:bg-white/[0.06] hover:text-white/80'
         }
       `}
@@ -370,7 +370,7 @@ const NavMenuItem: React.FC<{
       <span className="flex-1 font-medium text-sm">{item.label}</span>
       {item.badge && (
         <span
-          className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${isActive ? 'bg-[#0f172a]/20 text-[#0f172a]' : 'bg-[#b8a47e]/15 text-[#b8a47e]'}`}
+          className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${isActive ? 'bg-[#131C2E]/20 text-[#131C2E]' : 'bg-[#B9975B]/15 text-[#B9975B]'}`}
         >
           {item.badge}
         </span>
@@ -378,7 +378,7 @@ const NavMenuItem: React.FC<{
       {item.hasAdd && (
         <button
           onClick={(e) => e.stopPropagation()}
-          className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-[#0f172a]/10' : 'hover:bg-white/[0.06]'}`}
+          className={`p-1 rounded-lg transition-colors ${isActive ? 'hover:bg-[#131C2E]/10' : 'hover:bg-white/[0.06]'}`}
         >
           <Plus size={14} />
         </button>

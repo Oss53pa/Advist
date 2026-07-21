@@ -21,16 +21,16 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: 'bg-[#f7f8fa] text-[#5e6b7d]',
-  secondary: 'bg-[#f0f2f5] text-[#5e6b7d]',
+  default: 'bg-[#FAF7F1] text-[#78716A]',
+  secondary: 'bg-[#F1ECE1] text-[#78716A]',
   success: 'bg-emerald-50 text-emerald-700',
   warning: 'bg-amber-50 text-amber-700',
   error: 'bg-red-50 text-red-600',
   info: 'bg-indigo-50 text-indigo-600',
-  outline: 'bg-transparent border border-[#e1e5ec] text-[#5e6b7d]',
-  primary: 'bg-[#0f172a] text-white',
+  outline: 'bg-transparent border border-[#E8E2D6] text-[#78716A]',
+  primary: 'bg-[#131C2E] text-white',
   danger: 'bg-red-500 text-white',
-  critical: 'bg-[#b8a47e] text-[#0f172a]',
+  critical: 'bg-[#B9975B] text-[#131C2E]',
 };
 
 const sizeStyles: Record<BadgeSize, string> = {

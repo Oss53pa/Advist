@@ -31,7 +31,7 @@ export const TrustedBySection: React.FC = () => {
   }, []);
 
   return (
-    <section id="trusted" className="py-20 bg-[#0f172a] border-b border-white/5 overflow-hidden">
+    <section id="trusted" className="py-20 bg-[#131C2E] border-b border-white/5 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <p className="text-center text-sm text-white/40 font-medium mb-10 tracking-wider uppercase">
           +2,500 entreprises nous font confiance
@@ -40,8 +40,8 @@ export const TrustedBySection: React.FC = () => {
         {/* Infinite scroll logos */}
         <div className="relative">
           {/* Gradient masks */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0f172a] to-transparent z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0f172a] to-transparent z-10" />
+          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#131C2E] to-transparent z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#131C2E] to-transparent z-10" />
 
           {/* Scrolling container */}
           <div className="flex animate-scroll-infinite gap-12">
@@ -59,7 +59,7 @@ export const TrustedBySection: React.FC = () => {
                     />
                   </div>
                 ) : (
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#b8a47e]/10 text-[#b8a47e] font-bold text-lg group-hover:bg-[#b8a47e]/20 transition-colors">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#B9975B]/10 text-[#B9975B] font-bold text-lg group-hover:bg-[#B9975B]/20 transition-colors">
                     {company.name.charAt(0)}
                   </div>
                 )}
@@ -78,7 +78,7 @@ export const TrustedBySection: React.FC = () => {
             { value: '99.9%', label: 'DISPONIBILITÉ' },
           ].map((stat, i) => (
             <div key={i} className="text-center">
-              <p className="text-3xl md:text-4xl font-medium text-[#b8a47e] tracking-tight">
+              <p className="text-3xl md:text-4xl font-medium text-[#B9975B] tracking-tight">
                 {stat.value}
               </p>
               <p className="text-[11px] text-white/40 mt-2 tracking-[0.2em] font-normal uppercase">

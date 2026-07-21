@@ -103,7 +103,7 @@ export const Header: React.FC = () => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20'
+            ? 'bg-[#131C2E]/90 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20'
             : 'bg-transparent'
         }`}
       >
@@ -118,11 +118,7 @@ export const Header: React.FC = () => {
               </Link>
               <a
                 href="https://atlas-studio.org"
-                className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
-                  isScrolled
-                    ? 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700'
-                    : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
-                }`}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 bg-white/10 text-white/60 hover:bg-[#B9975B]/20 hover:text-[#D4B87E]"
               >
                 <svg
                   width="12"
@@ -159,21 +155,21 @@ export const Header: React.FC = () => {
                       href={item.href}
                       className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                         isActive
-                          ? 'bg-[#b8a47e]/20 text-[#b8a47e]'
+                          ? 'bg-[#B9975B]/20 text-[#B9975B]'
                           : 'text-white/70 hover:text-white hover:bg-white/10'
                       }`}
                     >
                       <span className="flex items-center gap-1.5">
                         {isProph3t ? (
                           <>
-                            <Sparkles className="w-3.5 h-3.5 text-[#b8a47e]" />
-                            <span className="text-[#b8a47e] font-semibold">{item.label}</span>
+                            <Sparkles className="w-3.5 h-3.5 text-[#B9975B]" />
+                            <span className="text-[#B9975B] font-semibold">{item.label}</span>
                           </>
                         ) : (
                           item.label
                         )}
                         {item.isNew && !isProph3t && (
-                          <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#b8a47e] text-[#0f172a] rounded-full">
+                          <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#B9975B] text-[#131C2E] rounded-full">
                             NEW
                           </span>
                         )}
@@ -188,7 +184,7 @@ export const Header: React.FC = () => {
                     onClick={() => setIsMoreOpen(!isMoreOpen)}
                     className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                       MORE_ITEMS.some((item) => activeSection === item.href.replace('#', ''))
-                        ? 'bg-[#b8a47e]/20 text-[#b8a47e]'
+                        ? 'bg-[#B9975B]/20 text-[#B9975B]'
                         : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -200,7 +196,7 @@ export const Header: React.FC = () => {
 
                   {/* Dropdown menu */}
                   <div
-                    className={`absolute top-full right-0 mt-2 w-64 py-2 bg-[#1e293b] rounded-2xl shadow-xl border border-white/10 transition-all duration-200 ${
+                    className={`absolute top-full right-0 mt-2 w-64 py-2 bg-[#1B2740] rounded-2xl shadow-xl border border-white/10 transition-all duration-200 ${
                       isMoreOpen
                         ? 'opacity-100 translate-y-0 pointer-events-auto'
                         : 'opacity-0 -translate-y-2 pointer-events-none'
@@ -221,14 +217,14 @@ export const Header: React.FC = () => {
                         >
                           <div
                             className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                              isActive ? 'bg-[#b8a47e] text-[#0f172a]' : 'bg-white/10 text-white/60'
+                              isActive ? 'bg-[#B9975B] text-[#131C2E]' : 'bg-white/10 text-white/60'
                             }`}
                           >
                             <Icon className="w-5 h-5" />
                           </div>
                           <div>
                             <p
-                              className={`text-sm font-medium ${isActive ? 'text-[#b8a47e]' : 'text-white/80'}`}
+                              className={`text-sm font-medium ${isActive ? 'text-[#B9975B]' : 'text-white/80'}`}
                             >
                               {item.label}
                             </p>
@@ -253,7 +249,7 @@ export const Header: React.FC = () => {
               </Link>
 
               <a href="https://atlas-studio.org/portal?app=advist">
-                <button className="group relative px-5 py-2.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 bg-[#b8a47e] text-[#0f172a] hover:bg-[#d4c6a5]">
+                <button className="group relative px-5 py-2.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300 bg-[#B9975B] text-[#131C2E] hover:bg-[#D4B87E]">
                   <span className="relative z-10 flex items-center gap-2">
                     {t('landingNav.subscribe', 'Souscrire')}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -288,7 +284,7 @@ export const Header: React.FC = () => {
 
         {/* Menu panel */}
         <div
-          className={`absolute top-0 right-0 w-full max-w-sm h-full bg-[#0f172a] shadow-2xl transition-transform duration-300 overflow-y-auto ${
+          className={`absolute top-0 right-0 w-full max-w-sm h-full bg-[#131C2E] shadow-2xl transition-transform duration-300 overflow-y-auto ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
@@ -306,19 +302,19 @@ export const Header: React.FC = () => {
             {/* Back to Atlas Studio */}
             <a
               href="https://atlas-studio.org"
-              className="flex items-center gap-3 p-3 mb-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all border border-gray-200"
+              className="flex items-center gap-3 p-3 mb-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-[#B9975B]/20"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#0f172a] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-[#B9975B]/15 flex items-center justify-center">
                 <span className="font-decorative text-sm" style={{ color: '#EF9F27' }}>
                   A
                 </span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">Atlas Studio</p>
-                <p className="text-xs text-gray-500">Retour au portail</p>
+                <p className="text-sm font-semibold text-white/90">Atlas Studio</p>
+                <p className="text-xs text-white/50">Retour au portail</p>
               </div>
               <svg
-                className="w-4 h-4 text-gray-400 ml-auto"
+                className="w-4 h-4 text-[#B9975B]/60 ml-auto"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -332,7 +328,7 @@ export const Header: React.FC = () => {
 
             {/* Main navigation links */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-[#b8a47e]/60 uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#B9975B]/60 uppercase tracking-wider mb-3">
                 Navigation
               </p>
               <nav className="space-y-1">
@@ -347,35 +343,35 @@ export const Header: React.FC = () => {
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
                       className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                        isActive ? 'bg-[#b8a47e]/10' : 'hover:bg-white/5'
+                        isActive ? 'bg-[#B9975B]/10' : 'hover:bg-white/5'
                       }`}
                     >
                       <div
                         className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                           isProph3t
-                            ? 'bg-[#b8a47e]'
+                            ? 'bg-[#B9975B]'
                             : isActive
-                              ? 'bg-[#b8a47e] text-[#0f172a]'
+                              ? 'bg-[#B9975B] text-[#131C2E]'
                               : 'bg-white/10'
                         }`}
                       >
                         <Icon
-                          className={`w-5 h-5 ${isProph3t || isActive ? 'text-[#0f172a]' : 'text-white/60'}`}
+                          className={`w-5 h-5 ${isProph3t || isActive ? 'text-[#131C2E]' : 'text-white/60'}`}
                         />
                       </div>
                       <span
                         className={`font-medium ${
                           isProph3t
-                            ? 'text-[#b8a47e]'
+                            ? 'text-[#B9975B]'
                             : isActive
-                              ? 'text-[#b8a47e]'
+                              ? 'text-[#B9975B]'
                               : 'text-white/80'
                         }`}
                       >
                         {item.label}
                       </span>
                       {item.isNew && (
-                        <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-[#b8a47e] text-[#0f172a] rounded-full">
+                        <span className="ml-auto px-2 py-0.5 text-[10px] font-bold bg-[#B9975B] text-[#131C2E] rounded-full">
                           NEW
                         </span>
                       )}
@@ -387,7 +383,7 @@ export const Header: React.FC = () => {
 
             {/* More sections */}
             <div className="mb-6">
-              <p className="text-xs font-semibold text-[#b8a47e]/60 uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#B9975B]/60 uppercase tracking-wider mb-3">
                 Découvrir
               </p>
               <nav className="space-y-1">
@@ -401,21 +397,21 @@ export const Header: React.FC = () => {
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
                       className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                        isActive ? 'bg-[#b8a47e]/10' : 'hover:bg-white/5'
+                        isActive ? 'bg-[#B9975B]/10' : 'hover:bg-white/5'
                       }`}
                     >
                       <div
                         className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          isActive ? 'bg-[#b8a47e] text-[#0f172a]' : 'bg-white/10'
+                          isActive ? 'bg-[#B9975B] text-[#131C2E]' : 'bg-white/10'
                         }`}
                       >
                         <Icon
-                          className={`w-5 h-5 ${isActive ? 'text-[#0f172a]' : 'text-white/60'}`}
+                          className={`w-5 h-5 ${isActive ? 'text-[#131C2E]' : 'text-white/60'}`}
                         />
                       </div>
                       <div>
                         <p
-                          className={`font-medium ${isActive ? 'text-[#b8a47e]' : 'text-white/80'}`}
+                          className={`font-medium ${isActive ? 'text-[#B9975B]' : 'text-white/80'}`}
                         >
                           {item.label}
                         </p>
@@ -439,7 +435,7 @@ export const Header: React.FC = () => {
                 className="block"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <button className="w-full py-3.5 bg-[#b8a47e] text-[#0f172a] font-semibold rounded-xl hover:bg-[#d4c6a5] transition-colors flex items-center justify-center gap-2">
+                <button className="w-full py-3.5 bg-[#B9975B] text-[#131C2E] font-semibold rounded-xl hover:bg-[#D4B87E] transition-colors flex items-center justify-center gap-2">
                   {t('landingNav.subscribe', 'Souscrire')}
                   <ArrowRight className="w-4 h-4" />
                 </button>

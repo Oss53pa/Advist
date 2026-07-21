@@ -139,11 +139,11 @@ export const InteractiveDocumentDemo: React.FC = () => {
       case 'pdf':
         return <FileText className={`${sizeClass} text-red-500`} />;
       case 'excel':
-        return <FileSpreadsheet className={`${sizeClass} text-gray-900`} />;
+        return <FileSpreadsheet className={`${sizeClass} text-[#131C2E]`} />;
       case 'image':
-        return <FileImage className={`${sizeClass} text-gray-900`} />;
+        return <FileImage className={`${sizeClass} text-[#131C2E]`} />;
       default:
-        return <File className={`${sizeClass} text-gray-500`} />;
+        return <File className={`${sizeClass} text-[#78716A]`} />;
     }
   };
 
@@ -157,13 +157,13 @@ export const InteractiveDocumentDemo: React.FC = () => {
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-700 bg-gray-50 px-2 py-1 rounded-full">
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-[#44403A] bg-[#FAF7F1] px-2 py-1 rounded-full">
             <Clock className="w-3 h-3" /> En attente
           </span>
         );
       case 'draft':
         return (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-[#57534E] bg-[#F1ECE1] px-2 py-1 rounded-full">
             <AlertCircle className="w-3 h-3" /> Brouillon
           </span>
         );
@@ -228,22 +228,22 @@ export const InteractiveDocumentDemo: React.FC = () => {
       <div className="max-w-2xl mx-auto py-4">
         <div className="text-center mb-8">
           <div className="relative inline-block mb-4">
-            <div className="w-20 h-20 bg-gray-900 rounded-2xl flex items-center justify-center shadow-xl shadow-gray-200">
+            <div className="w-20 h-20 bg-[#131C2E] rounded-2xl flex items-center justify-center shadow-xl shadow-[#E8E2D6]">
               <Folder className="w-10 h-10 text-white" />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#131C2E] rounded-lg flex items-center justify-center shadow-lg">
               <Star className="w-4 h-4 text-white" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">Gestion documentaire</h2>
-          <p className="text-gray-500 max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-[#131C2E] mb-3">Gestion documentaire</h2>
+          <p className="text-[#78716A] max-w-md mx-auto">
             Explorez une interface intuitive pour gérer, organiser et retrouver vos documents.
           </p>
         </div>
 
         {/* Features Preview */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-          <h4 className="text-sm font-semibold text-gray-900 mb-4">Fonctionnalités clés</h4>
+        <div className="bg-white border border-[#E8E2D6] rounded-2xl p-6 mb-6">
+          <h4 className="text-sm font-semibold text-[#131C2E] mb-4">Fonctionnalités clés</h4>
           <div className="grid grid-cols-2 gap-4">
             {[
               { icon: Upload, label: 'Import facile', desc: 'Glisser-déposer' },
@@ -251,13 +251,13 @@ export const InteractiveDocumentDemo: React.FC = () => {
               { icon: Tag, label: 'Tags & dossiers', desc: 'Organisation flexible' },
               { icon: Eye, label: 'Prévisualisation', desc: 'Aperçu instantané' },
             ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
-                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <item.icon className="w-5 h-5 text-gray-900" />
+              <div key={i} className="flex items-start gap-3 p-3 bg-[#FAF7F1] rounded-xl">
+                <div className="w-10 h-10 bg-[#F1ECE1] rounded-lg flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-5 h-5 text-[#131C2E]" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 text-sm">{item.label}</p>
-                  <p className="text-xs text-gray-500">{item.desc}</p>
+                  <p className="font-medium text-[#131C2E] text-sm">{item.label}</p>
+                  <p className="text-xs text-[#78716A]">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -266,23 +266,23 @@ export const InteractiveDocumentDemo: React.FC = () => {
 
         {/* Stats Preview */}
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-gray-900 rounded-xl p-4 text-white text-center">
+          <div className="bg-[#131C2E] rounded-xl p-4 text-white text-center">
             <p className="text-2xl font-bold">{stats.total}</p>
-            <p className="text-xs text-gray-100">Documents</p>
+            <p className="text-xs text-[#F1ECE1]">Documents</p>
           </div>
-          <div className="bg-gray-900 rounded-xl p-4 text-white text-center">
+          <div className="bg-[#131C2E] rounded-xl p-4 text-white text-center">
             <p className="text-2xl font-bold">{stats.approved}</p>
             <p className="text-xs text-green-100">Approuvés</p>
           </div>
-          <div className="bg-gray-900 rounded-xl p-4 text-white text-center">
+          <div className="bg-[#131C2E] rounded-xl p-4 text-white text-center">
             <p className="text-2xl font-bold">{stats.pending}</p>
-            <p className="text-xs text-gray-100">En attente</p>
+            <p className="text-xs text-[#F1ECE1]">En attente</p>
           </div>
         </div>
 
         <button
           onClick={() => setStep('browse')}
-          className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all shadow-xl shadow-gray-200"
+          className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-[#131C2E] text-white rounded-xl font-semibold hover:bg-[#1B2740] transition-all shadow-xl shadow-[#E8E2D6]"
         >
           <Play className="w-5 h-5" />
           Explorer l'interface
@@ -297,22 +297,22 @@ export const InteractiveDocumentDemo: React.FC = () => {
       <div className="max-w-2xl mx-auto py-4">
         <button
           onClick={() => setStep('browse')}
-          className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-4 transition-colors"
+          className="flex items-center gap-2 text-[#78716A] hover:text-[#131C2E] mb-4 transition-colors"
         >
           <ChevronRight className="w-4 h-4 rotate-180" />
           Retour à la liste
         </button>
 
-        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+        <div className="bg-white border border-[#E8E2D6] rounded-2xl overflow-hidden">
           {/* Document Header */}
-          <div className="bg-gray-50 p-6 border-b">
+          <div className="bg-[#FAF7F1] p-6 border-b">
             <div className="flex items-start gap-4">
-              <div className="w-16 h-20 bg-white border border-gray-200 rounded-lg flex items-center justify-center shadow-sm">
+              <div className="w-16 h-20 bg-white border border-[#E8E2D6] rounded-lg flex items-center justify-center shadow-sm">
                 {getFileIcon(previewDoc.type, 'lg')}
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 text-lg mb-1">{previewDoc.name}</h3>
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                <h3 className="font-semibold text-[#131C2E] text-lg mb-1">{previewDoc.name}</h3>
+                <div className="flex items-center gap-4 text-sm text-[#78716A] mb-3">
                   <span className="flex items-center gap-1">
                     <User className="w-4 h-4" />
                     {previewDoc.owner}
@@ -329,19 +329,19 @@ export const InteractiveDocumentDemo: React.FC = () => {
 
           {/* Preview Area */}
           <div className="p-6">
-            <div className="bg-gray-100 rounded-xl p-8 mb-6">
+            <div className="bg-[#F1ECE1] rounded-xl p-8 mb-6">
               <div className="bg-white rounded-lg shadow-sm p-6 max-h-48 overflow-hidden relative">
                 <div className="space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-full"></div>
-                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                  <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                  <div className="h-4 bg-[#E8E2D6] rounded w-3/4"></div>
+                  <div className="h-4 bg-[#E8E2D6] rounded w-full"></div>
+                  <div className="h-4 bg-[#E8E2D6] rounded w-5/6"></div>
+                  <div className="h-4 bg-[#E8E2D6] rounded w-2/3"></div>
+                  <div className="h-4 bg-[#E8E2D6] rounded w-4/5"></div>
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center bg-white/80">
                   <div className="text-center">
-                    <Eye className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                    <p className="text-gray-500">Aperçu du document</p>
+                    <Eye className="w-12 h-12 text-[#D8CFBF] mx-auto mb-2" />
+                    <p className="text-[#78716A]">Aperçu du document</p>
                   </div>
                 </div>
               </div>
@@ -349,24 +349,24 @@ export const InteractiveDocumentDemo: React.FC = () => {
 
             {/* Document Info */}
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="p-4 bg-gray-50 rounded-xl">
-                <p className="text-xs text-gray-500 mb-1">Taille</p>
-                <p className="font-medium text-gray-900">{previewDoc.size}</p>
+              <div className="p-4 bg-[#FAF7F1] rounded-xl">
+                <p className="text-xs text-[#78716A] mb-1">Taille</p>
+                <p className="font-medium text-[#131C2E]">{previewDoc.size}</p>
               </div>
-              <div className="p-4 bg-gray-50 rounded-xl">
-                <p className="text-xs text-gray-500 mb-1">Type</p>
-                <p className="font-medium text-gray-900 uppercase">{previewDoc.type}</p>
+              <div className="p-4 bg-[#FAF7F1] rounded-xl">
+                <p className="text-xs text-[#78716A] mb-1">Type</p>
+                <p className="font-medium text-[#131C2E] uppercase">{previewDoc.type}</p>
               </div>
             </div>
 
             {previewDoc.tags && previewDoc.tags.length > 0 && (
               <div className="mb-6">
-                <p className="text-sm font-medium text-gray-700 mb-2">Tags</p>
+                <p className="text-sm font-medium text-[#44403A] mb-2">Tags</p>
                 <div className="flex flex-wrap gap-2">
                   {previewDoc.tags.map((tag, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1 bg-gray-50 text-gray-800 text-xs font-medium rounded-full"
+                      className="px-3 py-1 bg-[#FAF7F1] text-[#1B2740] text-xs font-medium rounded-full"
                     >
                       {tag}
                     </span>
@@ -377,15 +377,15 @@ export const InteractiveDocumentDemo: React.FC = () => {
 
             {/* Actions */}
             <div className="flex gap-3">
-              <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+              <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-[#E8E2D6] rounded-xl hover:bg-[#FAF7F1] transition-colors">
                 <Download className="w-4 h-4" />
                 Télécharger
               </button>
-              <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+              <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-[#E8E2D6] rounded-xl hover:bg-[#FAF7F1] transition-colors">
                 <Share2 className="w-4 h-4" />
                 Partager
               </button>
-              <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors">
+              <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#131C2E] text-white rounded-xl hover:bg-[#1B2740] transition-colors">
                 <ArrowUpRight className="w-4 h-4" />
                 Ouvrir
               </button>
@@ -402,49 +402,49 @@ export const InteractiveDocumentDemo: React.FC = () => {
       <div className="max-w-2xl mx-auto py-4">
         <button
           onClick={() => setStep('browse')}
-          className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-4 transition-colors"
+          className="flex items-center gap-2 text-[#78716A] hover:text-[#131C2E] mb-4 transition-colors"
         >
           <ChevronRight className="w-4 h-4 rotate-180" />
           Annuler
         </button>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+        <div className="bg-white border border-[#E8E2D6] rounded-2xl p-6">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Upload className="w-8 h-8 text-gray-900" />
+            <div className="w-16 h-16 bg-[#F1ECE1] rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Upload className="w-8 h-8 text-[#131C2E]" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Ajouter un document</h3>
-            <p className="text-gray-500">Importez vos fichiers en quelques secondes</p>
+            <h3 className="text-xl font-bold text-[#131C2E] mb-2">Ajouter un document</h3>
+            <p className="text-[#78716A]">Importez vos fichiers en quelques secondes</p>
           </div>
 
           {isUploading ? (
             <div className="text-center py-8">
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-10 h-10 text-gray-900 animate-pulse" />
+              <div className="w-20 h-20 bg-[#F1ECE1] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-10 h-10 text-[#131C2E] animate-pulse" />
               </div>
-              <p className="text-gray-900 font-medium mb-4">Téléversement en cours...</p>
+              <p className="text-[#131C2E] font-medium mb-4">Téléversement en cours...</p>
               <div className="max-w-xs mx-auto">
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2">
+                <div className="h-3 bg-[#F1ECE1] rounded-full overflow-hidden mb-2">
                   <div
-                    className="h-full bg-gray-900 rounded-full transition-all duration-300"
+                    className="h-full bg-[#131C2E] rounded-full transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
-                <p className="text-sm text-gray-500">{uploadProgress}%</p>
+                <p className="text-sm text-[#78716A]">{uploadProgress}%</p>
               </div>
             </div>
           ) : (
             <>
               <div
-                className="border-2 border-dashed border-gray-200 rounded-2xl p-10 text-center hover:border-gray-400 hover:bg-gray-50/50 transition-all cursor-pointer group"
+                className="border-2 border-dashed border-[#E8E2D6] rounded-2xl p-10 text-center hover:border-[#A39B8F] hover:bg-[#FAF7F1]/50 transition-all cursor-pointer group"
                 onClick={handleUpload}
               >
-                <div className="w-16 h-16 bg-gray-100 group-hover:bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-colors">
-                  <Upload className="w-8 h-8 text-gray-400 group-hover:text-gray-900 transition-colors" />
+                <div className="w-16 h-16 bg-[#F1ECE1] group-hover:bg-[#F1ECE1] rounded-2xl flex items-center justify-center mx-auto mb-4 transition-colors">
+                  <Upload className="w-8 h-8 text-[#A39B8F] group-hover:text-[#131C2E] transition-colors" />
                 </div>
-                <p className="text-gray-900 font-medium mb-1">Glissez-déposez vos fichiers ici</p>
-                <p className="text-sm text-gray-500 mb-4">ou cliquez pour parcourir</p>
-                <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+                <p className="text-[#131C2E] font-medium mb-1">Glissez-déposez vos fichiers ici</p>
+                <p className="text-sm text-[#78716A] mb-4">ou cliquez pour parcourir</p>
+                <div className="flex items-center justify-center gap-4 text-xs text-[#A39B8F]">
                   <span>PDF</span>
                   <span>•</span>
                   <span>Word</span>
@@ -453,12 +453,12 @@ export const InteractiveDocumentDemo: React.FC = () => {
                   <span>•</span>
                   <span>Images</span>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">Taille max: 50 MB</p>
+                <p className="text-xs text-[#A39B8F] mt-2">Taille max: 50 MB</p>
               </div>
 
               <button
                 onClick={handleUpload}
-                className="w-full mt-6 flex items-center justify-center gap-2 px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all"
+                className="w-full mt-6 flex items-center justify-center gap-2 px-6 py-4 bg-[#131C2E] text-white rounded-xl font-semibold hover:bg-[#1B2740] transition-all"
               >
                 <Upload className="w-5 h-5" />
                 Simuler un import
@@ -474,7 +474,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto py-4">
       {/* Header */}
-      <div className="bg-gray-900 rounded-2xl p-5 mb-4">
+      <div className="bg-[#131C2E] rounded-2xl p-5 mb-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
@@ -489,7 +489,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
           </div>
           <button
             onClick={() => setStep('upload')}
-            className="flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-colors text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-white text-[#131C2E] rounded-xl hover:bg-[#F1ECE1] transition-colors text-sm font-medium"
           >
             <Plus className="w-4 h-4" />
             Ajouter
@@ -507,7 +507,7 @@ export const InteractiveDocumentDemo: React.FC = () => {
             <p className="text-white/60 text-xs">Approuvés</p>
           </div>
           <div className="bg-white/10 rounded-lg p-3 text-center">
-            <p className="text-gray-400 font-bold text-lg">{stats.pending}</p>
+            <p className="text-[#A39B8F] font-bold text-lg">{stats.pending}</p>
             <p className="text-white/60 text-xs">En attente</p>
           </div>
         </div>
@@ -516,27 +516,27 @@ export const InteractiveDocumentDemo: React.FC = () => {
       {/* Toolbar */}
       <div className="flex items-center gap-3 mb-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A39B8F]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Rechercher un document..."
-            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2.5 border border-[#E8E2D6] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#78716A] focus:border-transparent"
           />
         </div>
-        <div className="flex gap-1 p-1 bg-gray-100 rounded-lg">
+        <div className="flex gap-1 p-1 bg-[#F1ECE1] rounded-lg">
           <button
             onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'}`}
+            className={`p-2 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-white shadow-sm' : 'hover:bg-[#E8E2D6]'}`}
           >
-            <Grid className="w-4 h-4 text-gray-600" />
+            <Grid className="w-4 h-4 text-[#57534E]" />
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md transition-colors ${viewMode === 'list' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'}`}
+            className={`p-2 rounded-md transition-colors ${viewMode === 'list' ? 'bg-white shadow-sm' : 'hover:bg-[#E8E2D6]'}`}
           >
-            <List className="w-4 h-4 text-gray-600" />
+            <List className="w-4 h-4 text-[#57534E]" />
           </button>
         </div>
       </div>
@@ -558,14 +558,14 @@ export const InteractiveDocumentDemo: React.FC = () => {
             onClick={() => setActiveFilter(filter.id)}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
               activeFilter === filter.id
-                ? 'bg-gray-900 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-[#131C2E] text-white'
+                : 'bg-[#F1ECE1] text-[#57534E] hover:bg-[#E8E2D6]'
             }`}
           >
             {filter.label}
             <span
               className={`px-1.5 py-0.5 rounded text-xs ${
-                activeFilter === filter.id ? 'bg-white/20' : 'bg-gray-200'
+                activeFilter === filter.id ? 'bg-white/20' : 'bg-[#E8E2D6]'
               }`}
             >
               {filter.count}
@@ -576,29 +576,32 @@ export const InteractiveDocumentDemo: React.FC = () => {
 
       {/* Selected Actions */}
       {selectedDocs.length > 0 && (
-        <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 border border-gray-100 rounded-xl">
-          <span className="text-sm font-medium text-gray-800">
+        <div className="flex items-center justify-between mb-4 p-3 bg-[#FAF7F1] border border-[#F1ECE1] rounded-xl">
+          <span className="text-sm font-medium text-[#1B2740]">
             {selectedDocs.length} sélectionné(s)
           </span>
           <div className="flex gap-2">
             <button
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-[#F1ECE1] rounded-lg transition-colors"
               title="Télécharger"
             >
-              <Download className="w-4 h-4 text-gray-900" />
+              <Download className="w-4 h-4 text-[#131C2E]" />
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Partager">
-              <Share2 className="w-4 h-4 text-gray-900" />
+            <button
+              className="p-2 hover:bg-[#F1ECE1] rounded-lg transition-colors"
+              title="Partager"
+            >
+              <Share2 className="w-4 h-4 text-[#131C2E]" />
             </button>
             <button className="p-2 hover:bg-red-100 rounded-lg transition-colors" title="Supprimer">
               <Trash2 className="w-4 h-4 text-red-600" />
             </button>
             <button
               onClick={() => setSelectedDocs([])}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-[#F1ECE1] rounded-lg transition-colors"
               title="Désélectionner"
             >
-              <X className="w-4 h-4 text-gray-600" />
+              <X className="w-4 h-4 text-[#57534E]" />
             </button>
           </div>
         </div>
@@ -611,8 +614,8 @@ export const InteractiveDocumentDemo: React.FC = () => {
             <div
               key={doc.id}
               onClick={() => handlePreview(doc)}
-              className={`relative p-4 bg-white border rounded-xl cursor-pointer transition-all hover:shadow-md hover:border-gray-300 ${
-                selectedDocs.includes(doc.id) ? 'border-gray-900 bg-gray-50' : 'border-gray-200'
+              className={`relative p-4 bg-white border rounded-xl cursor-pointer transition-all hover:shadow-md hover:border-[#D8CFBF] ${
+                selectedDocs.includes(doc.id) ? 'border-[#131C2E] bg-[#FAF7F1]' : 'border-[#E8E2D6]'
               }`}
             >
               {/* Checkbox */}
@@ -620,8 +623,8 @@ export const InteractiveDocumentDemo: React.FC = () => {
                 onClick={(e) => toggleSelect(doc.id, e)}
                 className={`absolute top-3 left-3 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                   selectedDocs.includes(doc.id)
-                    ? 'bg-gray-900 border-gray-900'
-                    : 'border-gray-300 hover:border-gray-400'
+                    ? 'bg-[#131C2E] border-[#131C2E]'
+                    : 'border-[#D8CFBF] hover:border-[#A39B8F]'
                 }`}
               >
                 {selectedDocs.includes(doc.id) && <Check className="w-3 h-3 text-white" />}
@@ -630,16 +633,16 @@ export const InteractiveDocumentDemo: React.FC = () => {
               {/* Star */}
               {doc.starred && (
                 <div className="absolute top-3 right-3">
-                  <Star className="w-4 h-4 text-gray-400 fill-gray-400" />
+                  <Star className="w-4 h-4 text-[#A39B8F] fill-[#A39B8F]" />
                 </div>
               )}
 
               <div className="pt-4">
-                <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-3">
+                <div className="w-12 h-12 bg-[#FAF7F1] rounded-xl flex items-center justify-center mb-3">
                   {getFileIcon(doc.type, 'lg')}
                 </div>
-                <h4 className="font-medium text-gray-900 text-sm truncate mb-1">{doc.name}</h4>
-                <p className="text-xs text-gray-500 mb-2">
+                <h4 className="font-medium text-[#131C2E] text-sm truncate mb-1">{doc.name}</h4>
+                <p className="text-xs text-[#78716A] mb-2">
                   {doc.size} • {doc.date}
                 </p>
                 {getStatusBadge(doc.status)}
@@ -653,8 +656,8 @@ export const InteractiveDocumentDemo: React.FC = () => {
             <div
               key={doc.id}
               onClick={() => handlePreview(doc)}
-              className={`flex items-center gap-4 p-4 bg-white border rounded-xl cursor-pointer transition-all hover:shadow-md hover:border-gray-300 ${
-                selectedDocs.includes(doc.id) ? 'border-gray-900 bg-gray-50' : 'border-gray-200'
+              className={`flex items-center gap-4 p-4 bg-white border rounded-xl cursor-pointer transition-all hover:shadow-md hover:border-[#D8CFBF] ${
+                selectedDocs.includes(doc.id) ? 'border-[#131C2E] bg-[#FAF7F1]' : 'border-[#E8E2D6]'
               }`}
             >
               {/* Checkbox */}
@@ -662,32 +665,32 @@ export const InteractiveDocumentDemo: React.FC = () => {
                 onClick={(e) => toggleSelect(doc.id, e)}
                 className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
                   selectedDocs.includes(doc.id)
-                    ? 'bg-gray-900 border-gray-900'
-                    : 'border-gray-300 hover:border-gray-400'
+                    ? 'bg-[#131C2E] border-[#131C2E]'
+                    : 'border-[#D8CFBF] hover:border-[#A39B8F]'
                 }`}
               >
                 {selectedDocs.includes(doc.id) && <Check className="w-3 h-3 text-white" />}
               </div>
 
-              <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-[#FAF7F1] rounded-lg flex items-center justify-center flex-shrink-0">
                 {getFileIcon(doc.type)}
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium text-gray-900 text-sm truncate">{doc.name}</h4>
+                  <h4 className="font-medium text-[#131C2E] text-sm truncate">{doc.name}</h4>
                   {doc.starred && (
-                    <Star className="w-3 h-3 text-gray-400 fill-gray-400 flex-shrink-0" />
+                    <Star className="w-3 h-3 text-[#A39B8F] fill-[#A39B8F] flex-shrink-0" />
                   )}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[#78716A]">
                   {doc.owner} • {doc.date}
                 </p>
               </div>
 
               <div className="flex items-center gap-3 flex-shrink-0">
                 {getStatusBadge(doc.status)}
-                <span className="text-xs text-gray-400">{doc.size}</span>
+                <span className="text-xs text-[#A39B8F]">{doc.size}</span>
               </div>
             </div>
           ))}
@@ -696,9 +699,9 @@ export const InteractiveDocumentDemo: React.FC = () => {
 
       {filteredDocs.length === 0 && (
         <div className="text-center py-12">
-          <Search className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">Aucun document trouvé</p>
-          <p className="text-sm text-gray-400">Modifiez vos filtres ou votre recherche</p>
+          <Search className="w-12 h-12 text-[#D8CFBF] mx-auto mb-3" />
+          <p className="text-[#78716A] font-medium">Aucun document trouvé</p>
+          <p className="text-sm text-[#A39B8F]">Modifiez vos filtres ou votre recherche</p>
         </div>
       )}
 
@@ -706,12 +709,12 @@ export const InteractiveDocumentDemo: React.FC = () => {
       <div className="flex items-center justify-between mt-6 pt-4 border-t">
         <button
           onClick={resetDemo}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          className="flex items-center gap-2 text-sm text-[#78716A] hover:text-[#44403A] transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
           Recommencer
         </button>
-        <p className="text-xs text-gray-400 flex items-center gap-1">
+        <p className="text-xs text-[#A39B8F] flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
           Simulation interactive
         </p>

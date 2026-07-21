@@ -43,10 +43,10 @@ export const HeroBrandHeader: React.FC<HeroBrandHeaderProps> = ({
                 inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider
                 ${
                   chip.variant === 'accent'
-                    ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400'
+                    ? 'bg-[#F5EDDD] text-[#8A6C34] dark:bg-[#8A6C34]/25 dark:text-[#D4B87E]'
                     : chip.variant === 'muted'
-                      ? 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                      : 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                      ? 'bg-[#F1ECE1] text-[#78716A] dark:bg-slate-800 dark:text-slate-400'
+                      : 'bg-[#131C2E] text-white dark:bg-white dark:text-[#131C2E]'
                 }
               `}
             >
@@ -55,6 +55,15 @@ export const HeroBrandHeader: React.FC<HeroBrandHeaderProps> = ({
           ))}
         </div>
       )}
+
+      {/* Filet doré — signature Ivoire & Laiton */}
+      <div
+        className="mt-6 h-px w-full opacity-70"
+        style={{
+          background:
+            'linear-gradient(90deg, transparent, #C9A96B 18%, #B9975B 50%, #C9A96B 82%, transparent)',
+        }}
+      />
     </motion.header>
   );
 };

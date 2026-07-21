@@ -146,21 +146,21 @@ export const InteractiveWorkflowDemo: React.FC = () => {
         {/* Hero */}
         <div className="text-center mb-8">
           <div className="relative inline-block mb-4">
-            <div className="w-20 h-20 bg-gray-900 rounded-2xl flex items-center justify-center shadow-xl shadow-gray-200">
+            <div className="w-20 h-20 bg-[#131C2E] rounded-2xl flex items-center justify-center shadow-xl shadow-[#E8E2D6]">
               <Sparkles className="w-10 h-10 text-white" />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#131C2E] rounded-lg flex items-center justify-center shadow-lg">
               <Check className="w-5 h-5 text-white" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">Workflow de validation</h2>
-          <p className="text-gray-500 max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-[#131C2E] mb-3">Workflow de validation</h2>
+          <p className="text-[#78716A] max-w-md mx-auto">
             Simulez un circuit d'approbation multi-niveaux. Vous incarnerez chaque approbateur.
           </p>
         </div>
 
         {/* Document Card */}
-        <div className="bg-gray-900 rounded-2xl p-6 mb-6 text-white">
+        <div className="bg-[#131C2E] rounded-2xl p-6 mb-6 text-white">
           <div className="flex items-start gap-4">
             <div className="w-16 h-20 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
               <FileText className="w-8 h-8 text-red-500" />
@@ -193,26 +193,26 @@ export const InteractiveWorkflowDemo: React.FC = () => {
         </div>
 
         {/* Workflow Preview */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-          <h4 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-gray-900" />
+        <div className="bg-white border border-[#E8E2D6] rounded-2xl p-6 mb-6">
+          <h4 className="text-sm font-semibold text-[#131C2E] mb-4 flex items-center gap-2">
+            <Shield className="w-4 h-4 text-[#131C2E]" />
             Circuit de validation (3 étapes)
           </h4>
           <div className="relative">
             {/* Connection Line */}
-            <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gray-200" />
+            <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-[#E8E2D6]" />
 
             <div className="space-y-4">
               {initialApprovers.map((approver, index) => (
                 <div key={approver.id} className="relative flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-100 border-2 border-gray-200 rounded-full flex items-center justify-center text-sm font-bold text-gray-600 z-10">
+                  <div className="w-12 h-12 bg-[#F1ECE1] border-2 border-[#E8E2D6] rounded-full flex items-center justify-center text-sm font-bold text-[#57534E] z-10">
                     {index + 1}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">{approver.name}</p>
-                    <p className="text-sm text-gray-500">{approver.role}</p>
+                    <p className="font-medium text-[#131C2E]">{approver.name}</p>
+                    <p className="text-sm text-[#78716A]">{approver.role}</p>
                   </div>
-                  <div className="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500">
+                  <div className="px-3 py-1 bg-[#F1ECE1] rounded-full text-xs text-[#78716A]">
                     En attente
                   </div>
                 </div>
@@ -224,13 +224,13 @@ export const InteractiveWorkflowDemo: React.FC = () => {
         {/* CTA */}
         <button
           onClick={() => setShowIntro(false)}
-          className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 hover:shadow-2xl hover:shadow-gray-300 hover:-translate-y-0.5"
+          className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-[#131C2E] text-white rounded-xl font-semibold hover:bg-[#1B2740] transition-all shadow-xl shadow-[#E8E2D6] hover:shadow-2xl hover:shadow-[#D8CFBF] hover:-translate-y-0.5"
         >
           <Play className="w-5 h-5" />
           Démarrer la simulation
         </button>
 
-        <p className="text-center text-xs text-gray-400 mt-4">Durée estimée : 1 minute</p>
+        <p className="text-center text-xs text-[#A39B8F] mt-4">Durée estimée : 1 minute</p>
       </div>
     );
   }
@@ -240,37 +240,40 @@ export const InteractiveWorkflowDemo: React.FC = () => {
     return (
       <div className="max-w-2xl mx-auto py-4 text-center">
         <div
-          className={`w-24 h-24 ${wasRejected ? 'bg-red-100' : 'bg-gray-100'} rounded-full flex items-center justify-center mx-auto mb-6`}
+          className={`w-24 h-24 ${wasRejected ? 'bg-red-100' : 'bg-[#F1ECE1]'} rounded-full flex items-center justify-center mx-auto mb-6`}
         >
           {wasRejected ? (
             <XCircle className="w-12 h-12 text-red-600" />
           ) : (
-            <CheckCircle2 className="w-12 h-12 text-gray-900" />
+            <CheckCircle2 className="w-12 h-12 text-[#131C2E]" />
           )}
         </div>
 
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+        <h3 className="text-2xl font-bold text-[#131C2E] mb-2">
           {wasRejected ? 'Document refusé' : 'Validation terminée !'}
         </h3>
-        <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+        <p className="text-[#78716A] mb-8 max-w-sm mx-auto">
           {wasRejected
             ? 'Le document a été renvoyé pour modifications au demandeur.'
             : 'Toutes les approbations ont été obtenues. Le document peut être signé.'}
         </p>
 
         {/* Summary Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 text-left">
-          <h4 className="text-sm font-semibold text-gray-900 mb-4">Récapitulatif</h4>
+        <div className="bg-white border border-[#E8E2D6] rounded-2xl p-6 mb-6 text-left">
+          <h4 className="text-sm font-semibold text-[#131C2E] mb-4">Récapitulatif</h4>
           <div className="space-y-3">
             {approvers.map((approver) => (
-              <div key={approver.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div
+                key={approver.id}
+                className="flex items-center gap-3 p-3 bg-[#FAF7F1] rounded-xl"
+              >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
                     approver.status === 'approved'
-                      ? 'bg-gray-100 text-green-600'
+                      ? 'bg-[#F1ECE1] text-green-600'
                       : approver.status === 'rejected'
                         ? 'bg-red-100 text-red-700'
-                        : 'bg-gray-100 text-gray-400'
+                        : 'bg-[#F1ECE1] text-[#A39B8F]'
                   }`}
                 >
                   {approver.status === 'approved' ? (
@@ -282,10 +285,10 @@ export const InteractiveWorkflowDemo: React.FC = () => {
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">{approver.name}</p>
-                  <p className="text-xs text-gray-500">{approver.comment || 'En attente'}</p>
+                  <p className="font-medium text-[#131C2E]">{approver.name}</p>
+                  <p className="text-xs text-[#78716A]">{approver.comment || 'En attente'}</p>
                 </div>
-                {approver.date && <span className="text-xs text-gray-400">{approver.date}</span>}
+                {approver.date && <span className="text-xs text-[#A39B8F]">{approver.date}</span>}
               </div>
             ))}
           </div>
@@ -293,11 +296,11 @@ export const InteractiveWorkflowDemo: React.FC = () => {
 
         {!wasRejected && (
           <div className="flex gap-3 mb-6">
-            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors">
+            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#F1ECE1] text-[#44403A] rounded-xl hover:bg-[#E8E2D6] transition-colors">
               <Download className="w-4 h-4" />
               Télécharger
             </button>
-            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-900 transition-colors">
+            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#131C2E] text-white rounded-xl hover:bg-[#131C2E] transition-colors">
               <FileText className="w-4 h-4" />
               Signer
             </button>
@@ -306,7 +309,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
 
         <button
           onClick={handleRestart}
-          className="inline-flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 border border-[#E8E2D6] rounded-xl hover:bg-[#FAF7F1] transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
           Recommencer
@@ -322,20 +325,20 @@ export const InteractiveWorkflowDemo: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-[#131C2E]">
               Étape {currentStep + 1} sur {approvers.length}
             </p>
-            <p className="text-xs text-gray-500">Validation en cours</p>
+            <p className="text-xs text-[#78716A]">Validation en cours</p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-2xl font-bold text-[#131C2E]">
               {Math.round((currentStep / approvers.length) * 100)}%
             </p>
           </div>
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-[#F1ECE1] rounded-full overflow-hidden">
           <div
-            className="h-full bg-gray-900 rounded-full transition-all duration-700 ease-out"
+            className="h-full bg-[#B9975B] rounded-full transition-all duration-700 ease-out"
             style={{ width: `${(currentStep / approvers.length) * 100}%` }}
           />
         </div>
@@ -349,12 +352,12 @@ export const InteractiveWorkflowDemo: React.FC = () => {
               <div
                 className={`relative w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
                   approver.status === 'approved'
-                    ? 'bg-gray-900 text-white shadow-lg shadow-gray-200 scale-100'
+                    ? 'bg-[#131C2E] text-white shadow-lg shadow-[#E8E2D6] scale-100'
                     : approver.status === 'rejected'
                       ? 'bg-red-500 text-white shadow-lg shadow-red-200'
                       : approver.status === 'current'
-                        ? 'bg-gray-900 text-white shadow-lg shadow-gray-200 scale-110 ring-4 ring-gray-100'
-                        : 'bg-gray-100 text-gray-400'
+                        ? 'bg-[#B9975B] text-white shadow-lg shadow-[#E8E2D6] scale-110 ring-4 ring-[#F5EDDD]'
+                        : 'bg-[#F1ECE1] text-[#A39B8F]'
                 }`}
               >
                 {approver.status === 'approved' ? (
@@ -369,7 +372,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
               </div>
               <span
                 className={`text-xs mt-2 font-medium truncate max-w-[60px] ${
-                  approver.status === 'current' ? 'text-gray-900' : 'text-gray-500'
+                  approver.status === 'current' ? 'text-[#131C2E]' : 'text-[#78716A]'
                 }`}
               >
                 {approver.name.split(' ')[0]}
@@ -378,7 +381,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
             {index < approvers.length - 1 && (
               <div
                 className={`w-12 h-1 rounded-full transition-all duration-500 ${
-                  approver.status === 'approved' ? 'bg-green-400' : 'bg-gray-200'
+                  approver.status === 'approved' ? 'bg-green-400' : 'bg-[#E8E2D6]'
                 }`}
               />
             )}
@@ -387,33 +390,33 @@ export const InteractiveWorkflowDemo: React.FC = () => {
       </div>
 
       {/* Current Approver Card */}
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#E8E2D6] rounded-2xl overflow-hidden shadow-sm">
         {/* Header */}
-        <div className="bg-gray-900 px-6 py-4">
+        <div className="bg-[#131C2E] px-6 py-4">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center text-white font-bold text-lg">
               {currentApprover?.avatar}
             </div>
             <div className="flex-1">
-              <p className="text-gray-100 text-xs uppercase tracking-wider">Vous êtes</p>
+              <p className="text-[#F1ECE1] text-xs uppercase tracking-wider">Vous êtes</p>
               <p className="text-white font-semibold text-lg">{currentApprover?.name}</p>
-              <p className="text-gray-400 text-sm">{currentApprover?.role}</p>
+              <p className="text-[#A39B8F] text-sm">{currentApprover?.role}</p>
             </div>
           </div>
         </div>
 
         <div className="p-6">
           {/* Document Preview */}
-          <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl mb-6">
-            <div className="w-12 h-16 bg-white border border-gray-200 rounded-lg flex items-center justify-center shadow-sm">
+          <div className="flex items-start gap-4 p-4 bg-[#FAF7F1] rounded-xl mb-6">
+            <div className="w-12 h-16 bg-white border border-[#E8E2D6] rounded-lg flex items-center justify-center shadow-sm">
               <FileText className="w-6 h-6 text-red-500" />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="font-medium text-gray-900 truncate">{documentInfo.name}</h4>
-              <p className="text-sm text-gray-500 mt-1">
+              <h4 className="font-medium text-[#131C2E] truncate">{documentInfo.name}</h4>
+              <p className="text-sm text-[#78716A] mt-1">
                 {documentInfo.vendor} • {documentInfo.amount}
               </p>
-              <button className="inline-flex items-center gap-1 text-xs text-gray-900 hover:text-gray-800 mt-2">
+              <button className="inline-flex items-center gap-1 text-xs text-[#131C2E] hover:text-[#1B2740] mt-2">
                 <Eye className="w-3 h-3" />
                 Prévisualiser
               </button>
@@ -423,14 +426,14 @@ export const InteractiveWorkflowDemo: React.FC = () => {
           {/* Comment Box */}
           {showCommentBox ? (
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#44403A] mb-2">
                 Votre commentaire
               </label>
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Ex: Document conforme aux conditions négociées..."
-                className="w-full p-4 border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
+                className="w-full p-4 border border-[#E8E2D6] rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#78716A] focus:border-transparent transition-all"
                 rows={3}
                 autoFocus
               />
@@ -438,7 +441,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
           ) : (
             <button
               onClick={() => setShowCommentBox(true)}
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-6 transition-colors"
+              className="flex items-center gap-2 text-sm text-[#78716A] hover:text-[#131C2E] mb-6 transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
               Ajouter un commentaire (optionnel)
@@ -464,7 +467,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
             <button
               onClick={handleApprove}
               disabled={isProcessing}
-              className="flex-[2] flex items-center justify-center gap-2 px-5 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 shadow-lg shadow-gray-200"
+              className="flex-[2] flex items-center justify-center gap-2 px-5 py-4 bg-[#131C2E] text-white rounded-xl font-semibold hover:bg-[#1B2740] transition-all disabled:opacity-50 shadow-lg shadow-[#E8E2D6]"
             >
               {isProcessing ? (
                 <div className="w-5 h-5 border-2 border-green-300 border-t-white rounded-full animate-spin" />
@@ -480,7 +483,7 @@ export const InteractiveWorkflowDemo: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
+      <p className="text-center text-xs text-[#A39B8F] mt-4 flex items-center justify-center gap-1">
         <AlertCircle className="w-3 h-3" />
         Simulation interactive • Aucun document réel
       </p>

@@ -14,31 +14,31 @@
 
 @layer base {
   :root {
-    /* Midnight Banking — fond institutionnel */
-    --color-background: #f7f8fa;
-    --color-background-rgb: 247 248 250;
+    /* Ivoire & Laiton — fond institutionnel chaud */
+    --color-background: #faf7f1;
+    --color-background-rgb: 250 247 241;
     --color-surface: #ffffff;
     --color-surface-rgb: 255 255 255;
-    --color-surface-alt: #f0f2f5;
+    --color-surface-alt: #f1ece1;
 
-    /* Navy primaire */
-    --color-primary: #0f172a;
-    --color-primary-rgb: 15 23 42;
+    /* Navy chaud primaire */
+    --color-primary: #131c2e;
+    --color-primary-rgb: 19 28 46;
 
-    /* Gold accent institutionnel */
-    --color-gold: #b8a47e;
-    --color-gold-light: #d4c6a5;
-    --color-gold-dark: #9a8561;
+    /* Laiton (brass) accent institutionnel */
+    --color-gold: #b9975b;
+    --color-gold-light: #d4b87e;
+    --color-gold-dark: #8a6c34;
 
     /* Texte */
-    --color-text-primary: #0f172a;
-    --color-text-secondary: #5e6b7d;
-    --color-text-muted: #8b95a5;
-    --color-text-label: #3d4a5c;
+    --color-text-primary: #131c2e;
+    --color-text-secondary: #78716a;
+    --color-text-muted: #a39b8f;
+    --color-text-label: #57534e;
 
     /* Bordures */
-    --color-border: #e1e5ec;
-    --color-border-dark: #c8cfd9;
+    --color-border: #e8e2d6;
+    --color-border-dark: #d8cfbf;
 
     /* Etats */
     --color-success: #10b981;
@@ -140,7 +140,7 @@
      ===================================================== */
   .advist-card {
     @apply bg-white rounded-2xl p-6;
-    border: 1px solid #e5e5e5;
+    border: 1px solid #e8e2d6;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     transition:
       transform 200ms ease,
@@ -148,8 +148,8 @@
   }
 
   .dark .advist-card {
-    background: #262626;
-    border-color: #404040;
+    background: #1b2740;
+    border-color: #26314a;
   }
 
   .advist-card:hover {
@@ -163,7 +163,7 @@
   /* Card sombre */
   .advist-card-dark {
     @apply rounded-2xl p-6 text-white;
-    background: #171717;
+    background: #131c2e;
   }
 
   /* =====================================================
@@ -171,51 +171,51 @@
      ===================================================== */
   .advist-btn-primary {
     @apply px-6 py-3 rounded-xl font-medium;
-    background: #171717;
+    background: #131c2e;
     color: white;
     transition: all 200ms ease;
   }
 
   .advist-btn-primary:hover {
-    background: #262626;
+    background: #1b2740;
   }
 
   .advist-btn-primary:active {
-    background: #0a0a0a;
+    background: #0d1424;
   }
 
   .advist-btn-secondary {
     @apply px-6 py-3 rounded-xl font-medium bg-transparent;
-    border: 1px solid #e5e5e5;
-    color: #171717;
+    border: 1px solid #e8e2d6;
+    color: #131c2e;
     transition: all 200ms ease;
   }
 
   .advist-btn-secondary:hover {
-    background: #f5f5f5;
-    border-color: #d4d4d4;
+    background: #f1ece1;
+    border-color: #d8cfbf;
   }
 
   .advist-btn-ghost {
     @apply px-6 py-3 rounded-xl font-medium bg-transparent;
-    color: #404040;
+    color: #26314a;
     transition: all 200ms ease;
   }
 
   .advist-btn-ghost:hover {
-    background: #f5f5f5;
-    color: #171717;
+    background: #f1ece1;
+    color: #131c2e;
   }
 
   .advist-btn-float {
     @apply w-10 h-10 rounded-xl flex items-center justify-center;
-    background: #171717;
+    background: #131c2e;
     color: white;
     transition: all 200ms ease;
   }
 
   .advist-btn-float:hover {
-    background: #262626;
+    background: #1b2740;
   }
 
   .advist-btn-float-danger {
@@ -234,7 +234,7 @@
      ===================================================== */
   .advist-progress {
     @apply h-2 rounded-full overflow-hidden;
-    background: #f5f5f5;
+    background: #f1ece1;
   }
 
   .advist-progress-validated {
@@ -254,7 +254,7 @@
 
   .advist-progress-pending {
     @apply h-full rounded-full;
-    background: #e5e5e5;
+    background: #e8e2d6;
   }
 
   /* =====================================================
@@ -262,8 +262,8 @@
      ===================================================== */
   .advist-badge {
     @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
-    background: #f5f5f5;
-    color: #171717;
+    background: #f1ece1;
+    color: #131c2e;
   }
 
   .advist-badge-success {
@@ -292,7 +292,7 @@
 
   .advist-badge-dark {
     @apply px-3 py-1.5 rounded-xl text-xs font-semibold text-white;
-    background: #171717;
+    background: #131c2e;
   }
 
   /* Badges de severite */
@@ -329,7 +329,7 @@
   }
 
   .advist-list-item:hover {
-    background: #fafafa;
+    background: #faf7f1;
   }
 
   /* =====================================================
@@ -337,7 +337,7 @@
      ===================================================== */
   .advist-nav {
     @apply text-white;
-    background: #171717;
+    background: #131c2e;
   }
 
   .advist-nav-item {
@@ -358,12 +358,12 @@
      ===================================================== */
   .advist-kpi {
     @apply relative p-4 rounded-2xl;
-    background: #fafafa;
+    background: #faf7f1;
   }
 
   .advist-kpi-dark {
     @apply relative p-4 rounded-2xl text-white;
-    background: #171717;
+    background: #131c2e;
   }
 
   /* =====================================================
@@ -383,20 +383,20 @@
      ===================================================== */
   .advist-input {
     @apply w-full px-4 py-3 rounded-xl border bg-white;
-    border-color: #e5e5e5;
+    border-color: #e8e2d6;
     transition:
       border-color 240ms ease,
       box-shadow 240ms ease;
   }
 
   .advist-input:focus {
-    border-color: #171717;
+    border-color: #131c2e;
     outline: none;
     box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.1);
   }
 
   .advist-input::placeholder {
-    color: #a3a3a3;
+    color: #a39b8f;
   }
 }
 
@@ -407,17 +407,17 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f5f5f5;
+  background: #f1ece1;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d4;
+  background: #d8cfbf;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a3a3a3;
+  background: #a39b8f;
 }
 
 /* =====================================================
@@ -686,7 +686,7 @@ html[lang='ar'] {
 /* =====================================================
    ACCESSIBILITY - IMPROVED CONTRAST (WCAG AA)
    ===================================================== */
-/* Improved muted text contrast - from #a3a3a3 to #6b7280 */
+/* Improved muted text contrast - from #A39B8F to #6b7280 */
 .text-muted-accessible {
   color: #6b7280;
 }
@@ -720,7 +720,7 @@ html.dark textarea::placeholder {
 
 /* Focus indicators for better accessibility */
 :focus-visible {
-  outline: 2px solid #171717;
+  outline: 2px solid #131c2e;
   outline-offset: 2px;
 }
 
@@ -733,7 +733,7 @@ html.dark :focus-visible {
   position: absolute;
   top: -40px;
   left: 0;
-  background: #171717;
+  background: #131c2e;
   color: white;
   padding: 8px 16px;
   z-index: 100;
@@ -753,72 +753,72 @@ html.dark {
 }
 
 html.dark .advist-card {
-  background: #262626;
-  border-color: #404040;
+  background: #1b2740;
+  border-color: #26314a;
 }
 
 html.dark .advist-btn-secondary {
-  border-color: #404040;
-  color: #f5f5f5;
+  border-color: #26314a;
+  color: #f1ece1;
 }
 
 html.dark .advist-btn-secondary:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: #525252;
+  border-color: #57534e;
 }
 
 html.dark .advist-progress {
-  background: #404040;
+  background: #26314a;
 }
 
 html.dark .advist-badge {
-  background: #404040;
-  color: #f5f5f5;
+  background: #26314a;
+  color: #f1ece1;
 }
 
 html.dark .advist-list-item:hover {
-  background: #262626;
+  background: #1b2740;
 }
 
 html.dark ::-webkit-scrollbar-track {
-  background: #262626;
+  background: #1b2740;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-  background: #525252;
+  background: #57534e;
 }
 
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #737373;
+  background: #78716a;
 }
 
 html.dark input,
 html.dark textarea,
 html.dark select {
-  background-color: #262626;
-  border-color: #404040;
+  background-color: #1b2740;
+  border-color: #26314a;
   color: #ffffff;
 }
 
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-  color: #737373;
+  color: #78716a;
 }
 
 html.dark input:focus,
 html.dark textarea:focus,
 html.dark select:focus {
-  border-color: #525252;
+  border-color: #57534e;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
 html.dark .bg-white {
-  background-color: #262626 !important;
+  background-color: #1b2740 !important;
 }
 
 html.dark .bg-primary-50,
 html.dark .bg-primary-100 {
-  background-color: #171717 !important;
+  background-color: #131c2e !important;
 }
 
 html.dark .text-primary-900 {
@@ -827,15 +827,15 @@ html.dark .text-primary-900 {
 
 html.dark .text-primary-700,
 html.dark .text-primary-600 {
-  color: #a3a3a3 !important;
+  color: #a39b8f !important;
 }
 
 html.dark .text-primary-500 {
-  color: #737373 !important;
+  color: #78716a !important;
 }
 
 html.dark .border-primary-100,
 html.dark .border-primary-200,
 html.dark .border-primary-300 {
-  border-color: #404040 !important;
+  border-color: #26314a !important;
 }

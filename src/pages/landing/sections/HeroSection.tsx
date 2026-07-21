@@ -46,7 +46,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
   }, [ANIMATED_WORDS.length]);
 
   return (
-    <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0f172a]">
+    <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#131C2E]">
       {/* Subtle background */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/[0.02] rounded-full blur-[150px]" />
@@ -66,16 +66,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
           {/* Left content */}
           <div className="space-y-8 z-10">
             {/* Announcement badge */}
-            <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full animate-fade-in-up group hover:bg-white/10 transition-all cursor-pointer">
+            <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 backdrop-blur-xl border border-[#B9975B]/25 rounded-full animate-fade-in-up group hover:bg-white/10 transition-all cursor-pointer">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/60 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white/80"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#B9975B] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D4B87E]"></span>
                 </span>
-                <span className="text-sm font-medium text-white/80">Nouveau</span>
+                <span className="text-sm font-medium text-[#D4B87E]">Nouveau</span>
               </div>
               <span className="text-sm text-white/50">Proph3t IA maintenant disponible</span>
-              <ArrowRight className="w-4 h-4 text-white/30 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-[#B9975B]/60 group-hover:translate-x-1 transition-transform" />
             </div>
 
             {/* Main headline */}
@@ -83,7 +83,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
                 <span className="text-white">
                   <span className="inline-block overflow-hidden h-[1.2em] align-bottom">
-                    <span key={currentWord} className="inline-block animate-slide-up text-white">
+                    <span
+                      key={currentWord}
+                      className="inline-block animate-slide-up bg-gradient-to-r from-[#D4B87E] to-[#B9975B] bg-clip-text text-transparent"
+                    >
                       {ANIMATED_WORDS[currentWord].text}
                     </span>
                   </span>
@@ -106,7 +109,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-400">
               <a href="https://atlas-studio.org/portal?app=advist">
-                <button className="group relative flex items-center justify-center gap-3 px-8 py-4 bg-white text-black font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_8px_rgba(255,255,255,0.08)] hover:scale-[1.02]">
+                <button className="group relative flex items-center justify-center gap-3 px-8 py-4 bg-[#B9975B] text-[#131C2E] font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:bg-[#C9A96B] hover:shadow-[0_0_40px_8px_rgba(185,151,91,0.25)] hover:scale-[1.02]">
                   <span className="relative z-10">
                     {t('landing.hero.cta', 'Souscrire maintenant')}
                   </span>
@@ -131,7 +134,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
                   {[...Array(4)].map((_, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full bg-white/10 border-2 border-[#0f172a] flex items-center justify-center text-xs font-bold text-white/70"
+                      className="w-8 h-8 rounded-full bg-white/10 border-2 border-[#131C2E] flex items-center justify-center text-xs font-bold text-white/70"
                     >
                       {['JD', 'AM', 'SK', 'LM'][i]}
                     </div>
@@ -140,7 +143,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
                 <div>
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-white/60 text-white/60" />
+                      <Star key={i} className="w-4 h-4 fill-[#B9975B] text-[#B9975B]" />
                     ))}
                   </div>
                   <p className="text-sm text-white/40">
@@ -240,7 +243,9 @@ const ProductPreview: React.FC = () => {
               <button
                 key={i}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                  i === activeTab ? 'bg-white/10 text-white' : 'text-white/20 hover:text-white/40'
+                  i === activeTab
+                    ? 'bg-[#B9975B]/15 text-[#D4B87E]'
+                    : 'text-white/20 hover:text-white/40'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -265,7 +270,7 @@ const ProductPreview: React.FC = () => {
               onClick={() => setActiveTab(i)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === i
-                  ? 'bg-white text-black'
+                  ? 'bg-[#B9975B] text-[#131C2E]'
                   : 'text-white/40 hover:text-white/60 hover:bg-white/5'
               }`}
             >
@@ -277,8 +282,8 @@ const ProductPreview: React.FC = () => {
 
       {/* Floating notifications */}
       <div className="absolute -top-4 -right-4 animate-float">
-        <div className="flex items-center gap-3 px-4 py-3 bg-white/10 backdrop-blur-xl rounded-xl border border-white/10">
-          <Check className="w-5 h-5 text-white/70" />
+        <div className="flex items-center gap-3 px-4 py-3 bg-white/10 backdrop-blur-xl rounded-xl border border-[#B9975B]/20">
+          <Check className="w-5 h-5 text-[#B9975B]" />
           <div>
             <p className="text-sm font-semibold text-white/90">Document signé</p>
             <p className="text-xs text-white/40">À l'instant</p>
@@ -287,9 +292,9 @@ const ProductPreview: React.FC = () => {
       </div>
 
       <div className="absolute -bottom-4 -left-4 animate-float animation-delay-1000">
-        <div className="flex items-center gap-3 px-4 py-3 bg-white/10 backdrop-blur-xl rounded-xl border border-white/10">
-          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-            <Zap className="w-5 h-5 text-white/70" />
+        <div className="flex items-center gap-3 px-4 py-3 bg-white/10 backdrop-blur-xl rounded-xl border border-[#B9975B]/20">
+          <div className="w-10 h-10 bg-[#B9975B]/15 rounded-lg flex items-center justify-center">
+            <Zap className="w-5 h-5 text-[#B9975B]" />
           </div>
           <div>
             <p className="text-sm font-semibold text-white/90">Workflow terminé</p>
@@ -332,7 +337,7 @@ const DashboardPreview: React.FC = () => (
           {['7j', '30j', '90j'].map((p, i) => (
             <span
               key={i}
-              className={`text-xs px-2 py-1 rounded ${i === 1 ? 'bg-white text-black' : 'text-white/40'}`}
+              className={`text-xs px-2 py-1 rounded ${i === 1 ? 'bg-[#B9975B] text-[#131C2E]' : 'text-white/40'}`}
             >
               {p}
             </span>
@@ -381,7 +386,7 @@ const DocumentsPreview: React.FC = () => (
         <div className="w-4 h-4 rounded-full bg-white/20" />
         <span className="text-sm text-white/30">Rechercher...</span>
       </div>
-      <button className="h-9 px-4 bg-white text-black rounded-lg text-sm font-medium">
+      <button className="h-9 px-4 bg-[#B9975B] text-[#131C2E] rounded-lg text-sm font-medium">
         + Nouveau
       </button>
     </div>
@@ -428,7 +433,7 @@ const DocumentsPreview: React.FC = () => (
 const SignaturesPreview: React.FC = () => (
   <div className="space-y-4 animate-fade-in">
     <div className="flex gap-2">
-      <button className="px-3 py-1.5 bg-white text-black rounded-lg text-xs font-medium">
+      <button className="px-3 py-1.5 bg-[#B9975B] text-[#131C2E] rounded-lg text-xs font-medium">
         À signer (3)
       </button>
       <button className="px-3 py-1.5 bg-white/5 text-white/60 rounded-lg text-xs border border-white/10">
@@ -459,7 +464,7 @@ const SignaturesPreview: React.FC = () => (
             </div>
             <p className="text-xs text-white/40">Demandé par {doc.from}</p>
           </div>
-          <button className="h-8 px-3 bg-white text-black rounded-lg text-xs font-medium">
+          <button className="h-8 px-3 bg-[#B9975B] text-[#131C2E] rounded-lg text-xs font-medium">
             Signer
           </button>
         </div>
@@ -489,7 +494,7 @@ const WorkflowsPreview: React.FC = () => (
   <div className="space-y-4 animate-fade-in">
     <div className="flex justify-between items-center">
       <span className="text-sm font-medium text-white/80">Workflows actifs</span>
-      <button className="h-8 px-3 bg-white text-black rounded-lg text-xs font-medium">
+      <button className="h-8 px-3 bg-[#B9975B] text-[#131C2E] rounded-lg text-xs font-medium">
         + Nouveau
       </button>
     </div>
@@ -516,7 +521,7 @@ const WorkflowsPreview: React.FC = () => (
             <div className="flex flex-col items-center">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  i < 2 ? 'bg-white text-black' : 'bg-white/10'
+                  i < 2 ? 'bg-[#B9975B] text-[#131C2E]' : 'bg-white/10'
                 }`}
               >
                 {i < 2 ? (

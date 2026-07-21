@@ -36,21 +36,21 @@ export const AiInsightCard: React.FC<AiInsightCardProps> = ({
       transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
       className={`
         relative overflow-hidden rounded-2xl p-5
-        bg-gradient-to-br from-white via-white to-[#f5f0e8]/40
-        dark:from-slate-900 dark:via-slate-900 dark:to-[#b8a47e]/5
+        bg-gradient-to-br from-white via-white to-[#F5EDDD]/40
+        dark:from-slate-900 dark:via-slate-900 dark:to-[#B9975B]/5
         border border-slate-200/60 dark:border-slate-700/40
         shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.03)]
         ${className}
       `}
     >
       {/* Gold gradient accent */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#b8a47e]/8 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#B9975B]/8 to-transparent rounded-bl-full" />
 
       <div className="relative">
         {/* Header */}
         <div className="flex items-start gap-3 mb-3">
           {icon && (
-            <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-[#0f172a] to-[#1e293b] flex items-center justify-center text-[#b8a47e] shadow-sm">
+            <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-[#131C2E] to-[#1B2740] flex items-center justify-center text-[#B9975B] shadow-sm">
               {icon}
             </div>
           )}
