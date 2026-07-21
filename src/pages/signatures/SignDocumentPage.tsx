@@ -268,28 +268,34 @@ export const SignDocumentPage: React.FC = () => {
           <div className="flex items-center gap-1 bg-advist-surface-dark rounded-xl px-2 py-1">
             <button
               onClick={handleZoomOut}
+              aria-label="Réduire le zoom"
               className="p-1.5 hover:bg-advist-gold/30 rounded text-advist-gray900"
             >
-              <ZoomOut size={16} />
+              <ZoomOut size={16} aria-hidden="true" />
             </button>
             <span className="text-sm text-advist-gray900 min-w-[50px] text-center">{zoom}%</span>
             <button
               onClick={handleZoomIn}
+              aria-label="Augmenter le zoom"
               className="p-1.5 hover:bg-advist-gold/30 rounded text-advist-gray900"
             >
-              <ZoomIn size={16} />
+              <ZoomIn size={16} aria-hidden="true" />
             </button>
           </div>
 
           <button
             onClick={handleRotate}
+            aria-label="Pivoter le document"
             className="p-2 hover:bg-advist-surface-dark rounded-xl text-advist-gray900"
           >
-            <RotateCw size={18} />
+            <RotateCw size={18} aria-hidden="true" />
           </button>
 
-          <button className="p-2 hover:bg-advist-surface-dark rounded-xl text-advist-gray900">
-            <Download size={18} />
+          <button
+            aria-label="Télécharger le document"
+            className="p-2 hover:bg-advist-surface-dark rounded-xl text-advist-gray900"
+          >
+            <Download size={18} aria-hidden="true" />
           </button>
 
           <button

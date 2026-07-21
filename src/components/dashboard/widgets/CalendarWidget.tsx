@@ -65,14 +65,22 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ _config }) => {
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <button onClick={prevMonth} className="p-1 hover:bg-advist-surface-dark rounded">
-          <ChevronLeft size={16} className="text-advist-gray900" />
+        <button
+          onClick={prevMonth}
+          aria-label="Mois précédent"
+          className="p-1 hover:bg-advist-surface-dark rounded"
+        >
+          <ChevronLeft size={16} aria-hidden="true" className="text-advist-gray900" />
         </button>
         <span className="font-medium text-advist-gray900">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </span>
-        <button onClick={nextMonth} className="p-1 hover:bg-advist-surface-dark rounded">
-          <ChevronRight size={16} className="text-advist-gray900" />
+        <button
+          onClick={nextMonth}
+          aria-label="Mois suivant"
+          className="p-1 hover:bg-advist-surface-dark rounded"
+        >
+          <ChevronRight size={16} aria-hidden="true" className="text-advist-gray900" />
         </button>
       </div>
 

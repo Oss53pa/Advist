@@ -34,7 +34,7 @@ export const TrustedBySection: React.FC = () => {
     <section id="trusted" className="py-20 bg-[#131C2E] border-b border-white/5 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <p className="text-center text-sm text-white/40 font-medium mb-10 tracking-wider uppercase">
-          +2,500 entreprises nous font confiance
+          +500 entreprises nous font confiance
         </p>
 
         {/* Infinite scroll logos */}

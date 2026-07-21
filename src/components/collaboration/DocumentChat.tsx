@@ -344,9 +344,10 @@ export const DocumentChat: React.FC<DocumentChatProps> = ({
           <button
             onClick={handleSend}
             disabled={!inputValue.trim()}
+            aria-label="Envoyer le message"
             className="p-2 bg-advist-dark text-white rounded-lg hover:bg-advist-dark/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            <Send size={18} />
+            <Send size={18} aria-hidden="true" />
           </button>
         </div>
       </div>

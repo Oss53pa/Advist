@@ -220,8 +220,12 @@ export const VersionCompare: React.FC<VersionCompareProps> = ({
           </button>
 
           {onClose && (
-            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg">
-              <X size={18} />
+            <button
+              onClick={onClose}
+              aria-label="Fermer"
+              className="p-2 hover:bg-white/10 rounded-lg"
+            >
+              <X size={18} aria-hidden="true" />
             </button>
           )}
         </div>

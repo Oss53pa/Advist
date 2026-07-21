@@ -463,15 +463,17 @@ export const SmartCalendar: React.FC<SmartCalendarProps> = ({
             <div className="flex items-center gap-1">
               <button
                 onClick={navigatePrev}
+                aria-label="Période précédente"
                 className="p-2 hover:bg-advist-surface-dark rounded-lg transition-colors"
               >
-                <ChevronLeft size={18} className="text-advist-gray900" />
+                <ChevronLeft size={18} aria-hidden="true" className="text-advist-gray900" />
               </button>
               <button
                 onClick={navigateNext}
+                aria-label="Période suivante"
                 className="p-2 hover:bg-advist-surface-dark rounded-lg transition-colors"
               >
-                <ChevronRight size={18} className="text-advist-gray900" />
+                <ChevronRight size={18} aria-hidden="true" className="text-advist-gray900" />
               </button>
             </div>
           </div>

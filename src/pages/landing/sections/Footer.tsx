@@ -185,7 +185,7 @@ export const Footer: React.FC = () => {
               </p>
               {/* Certifications */}
               <div className="flex items-center gap-3">
-                {['ISO 27001', 'eIDAS', 'RGPD', 'OHADA'].map((cert, i) => (
+                {['OHADA', 'Loi CI 2013-546', 'RGPD', 'Audit SHA-256'].map((cert, i) => (
                   <div
                     key={i}
                     className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md"

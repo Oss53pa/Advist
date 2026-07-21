@@ -147,8 +147,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
                     ))}
                   </div>
                   <p className="text-sm text-white/40">
-                    <span className="text-white/70 font-medium">2,500+</span> entreprises
-                    satisfaites
+                    <span className="text-white/70 font-medium">500+</span> entreprises satisfaites
                   </p>
                 </div>
               </div>
@@ -156,11 +155,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onDemoClick }) => {
               <div className="h-8 w-px bg-white/10 hidden sm:block" />
 
               <div className="flex items-center gap-3">
-                {(remoteHero?.badges ?? ['eIDAS', 'ISO 27001', 'OHADA'])
+                {(remoteHero?.badges ?? ['OHADA', 'Loi CI 2013-546', 'RGPD'])
                   .map((badge: string) => {
                     const iconMap: Record<string, typeof ShieldCheck> = {
-                      eIDAS: ShieldCheck,
-                      'ISO 27001': Award,
+                      RGPD: ShieldCheck,
+                      'Loi CI 2013-546': Award,
                       OHADA: Globe,
                     };
                     const IconComp = iconMap[badge] ?? ShieldCheck;
@@ -217,7 +216,9 @@ const ProductPreview: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative">
+    // Maquette purement illustrative : retiree de l'arbre d'accessibilite et du
+    // parcours clavier (ses controles ne pilotent rien de reel).
+    <div className="relative" aria-hidden="true">
       {/* Main container */}
       <div className="relative bg-white/[0.06] backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
         {/* Browser chrome */}
@@ -242,6 +243,7 @@ const ProductPreview: React.FC = () => {
             {[BarChart3, FileText, GitBranch, PenTool, Users].map((Icon, i) => (
               <button
                 key={i}
+                tabIndex={-1}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                   i === activeTab
                     ? 'bg-[#B9975B]/15 text-[#D4B87E]'
@@ -268,6 +270,7 @@ const ProductPreview: React.FC = () => {
             <button
               key={i}
               onClick={() => setActiveTab(i)}
+              tabIndex={-1}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === i
                   ? 'bg-[#B9975B] text-[#131C2E]'
@@ -474,7 +477,7 @@ const SignaturesPreview: React.FC = () => (
     <div className="p-4 bg-white/5 rounded-xl border border-white/10">
       <div className="flex items-center gap-2 mb-2">
         <ShieldCheck className="w-4 h-4 text-white/50" />
-        <span className="text-xs font-medium text-white/70">Signature certifiée eIDAS</span>
+        <span className="text-xs font-medium text-white/70">Signature électronique avancée</span>
       </div>
       <svg className="w-full h-8" viewBox="0 0 200 30">
         <path

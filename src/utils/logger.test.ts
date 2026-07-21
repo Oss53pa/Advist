@@ -12,20 +12,15 @@ vi.mock('@sentry/react', () => ({
 }));
 
 describe('Logger', () => {
-  let _consoleSpy: {
-    debug: ReturnType<typeof vi.spyOn>;
-    info: ReturnType<typeof vi.spyOn>;
-    warn: ReturnType<typeof vi.spyOn>;
-    error: ReturnType<typeof vi.spyOn>;
-  };
-
+  // Les espions neutralisent la sortie console pendant les tests ; chaque test
+  // recupere l'espion dont il a besoin via vi.mocked(console.x). Pas de binding
+  // partage : il n'etait jamais lu, et sa suppression par --fix avait casse le
+  // fichier (declaration renommee en _consoleSpy, affectation restee consoleSpy).
   beforeEach(() => {
-    consoleSpy = {
-      debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
-      info: vi.spyOn(console, 'info').mockImplementation(() => {}),
-      warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-      error: vi.spyOn(console, 'error').mockImplementation(() => {}),
-    };
+    vi.spyOn(console, 'debug').mockImplementation(() => {});
+    vi.spyOn(console, 'info').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {

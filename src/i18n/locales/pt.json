@@ -1,4 +1,4 @@
-{
+﻿{
   "landingNav": {
     "features": "Funcionalidades",
     "howItWorks": "Como funciona",
@@ -346,13 +346,13 @@
       "word2": "Assine",
       "word3": "Acelere",
       "yourDocuments": "seus documentos.",
-      "certified": "Certificado ISO 27001 e eIDAS",
+      "certified": "Conforme OHADA e RGPD",
       "clients": "clientes",
       "discover": "Descobrir"
     },
     "carousel": {
       "documentApproved": "Documento aprovado",
-      "eidasCertified": "Certificado eIDAS",
+      "eidasCertified": "Assinatura avançada",
       "legalSignature": "Assinatura legal",
       "documents": "Documentos",
       "inProgress": "Em andamento",
@@ -376,7 +376,7 @@
       "urgent": "Urgente",
       "requestedBy": "Solicitado por",
       "sign": "Assinar",
-      "certifiedSignature": "Assinatura certificada eIDAS",
+      "certifiedSignature": "Assinatura eletrónica avançada",
       "activeWorkflows": "Fluxos ativos",
       "contractValidation": "Validacao de contrato",
       "steps": "etapas",
@@ -1598,7 +1598,7 @@
     "legalValue": "Valor legal garantido",
     "endToEndEncryption": "Criptografia de ponta a ponta",
     "certifiedTimestamp": "Carimbo de data/hora certificado",
-    "eidasCompliant": "Conforme eIDAS e OHADA",
+    "eidasCompliant": "Conforme OHADA e lei CI 2013-546",
     "signDocument": "Assinar documento",
     "draw": "Desenhar",
     "type": "Digitar",

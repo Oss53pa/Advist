@@ -435,7 +435,7 @@
   .user-sidebar,
   .admin-sidebar,
   .modal-backdrop,
-  .print\\:hidden,
+  .print\:hidden,
   .no-print,
   [class*='Sidebar'],
   [class*='Navbar'],
@@ -575,17 +575,17 @@
   }
 
   /* Le document doit prendre toute la page */
-  .w-\\[595px\\],
-  .h-\\[842px\\] {
+  .w-\[595px\],
+  .h-\[842px\] {
     width: 100% !important;
     height: auto !important;
     min-height: auto !important;
   }
 
   /* Supprimer le fond gris du viewer */
-  .bg-\\[\\#525659\\],
-  .bg-\\[\\#3A3D40\\],
-  .bg-\\[\\#2D2D2D\\] {
+  .bg-\[\#525659\],
+  .bg-\[\#3A3D40\],
+  .bg-\[\#2D2D2D\] {
     background: white !important;
   }
 

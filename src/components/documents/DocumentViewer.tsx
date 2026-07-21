@@ -511,12 +511,20 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
         <div className="flex items-center gap-2">
           {/* Zoom controls */}
           <div className="flex items-center gap-1 bg-advist-dark/70 rounded px-2 py-1">
-            <button onClick={handleZoomOut} className="p-1 hover:bg-advist-gold-light/30 rounded">
-              <ZoomOut size={16} />
+            <button
+              onClick={handleZoomOut}
+              aria-label="Réduire le zoom"
+              className="p-1 hover:bg-advist-gold-light/30 rounded"
+            >
+              <ZoomOut size={16} aria-hidden="true" />
             </button>
             <span className="text-sm min-w-[50px] text-center">{zoom}%</span>
-            <button onClick={handleZoomIn} className="p-1 hover:bg-advist-gold-light/30 rounded">
-              <ZoomIn size={16} />
+            <button
+              onClick={handleZoomIn}
+              aria-label="Augmenter le zoom"
+              className="p-1 hover:bg-advist-gold-light/30 rounded"
+            >
+              <ZoomIn size={16} aria-hidden="true" />
             </button>
           </div>
 
@@ -709,9 +717,10 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
+            aria-label="Page précédente"
             className="p-1 hover:bg-advist-dark/70 rounded disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={20} aria-hidden="true" />
           </button>
           <span className="text-sm">
             {t('viewer.page', 'Page')} {currentPage} / {totalPages}
@@ -719,9 +728,10 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
+            aria-label="Page suivante"
             className="p-1 hover:bg-advist-dark/70 rounded disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={20} aria-hidden="true" />
           </button>
         </div>
       )}

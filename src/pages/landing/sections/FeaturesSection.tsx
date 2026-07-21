@@ -174,7 +174,8 @@ export const FeaturesSection: React.FC = () => {
               </div>
               <h3 className="text-lg font-medium text-white mb-2">Signature electronique</h3>
               <p className="text-sm text-white/40 mb-auto">
-                Signez legalement avec valeur juridique, horodatage qualifie et certificat eIDAS.
+                Signature electronique avancee : valeur juridique, horodatage serveur et piste
+                d'audit chainee SHA-256.
               </p>
 
               {/* Signature preview */}
@@ -191,7 +192,7 @@ export const FeaturesSection: React.FC = () => {
                 </svg>
                 <div className="flex items-center gap-2 mt-2">
                   <Lock className="w-3 h-3 text-[#B9975B]/40" />
-                  <span className="text-xs text-[#B9975B]/40">Certifie eIDAS</span>
+                  <span className="text-xs text-[#B9975B]/40">Conforme OHADA</span>
                 </div>
               </div>
             </div>

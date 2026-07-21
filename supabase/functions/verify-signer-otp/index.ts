@@ -20,16 +20,46 @@ const MAX_ATTEMPTS = 3;
 // ---------------------------------------------------------------------------
 
 function generateOTP(): string {
+  // Rejection sampling : evite le biais modulo de (uint32 % 1e6),
+  // 2^32 n'etant pas un multiple de 1e6.
   const array = new Uint32Array(1);
-  crypto.getRandomValues(array);
+  const limit = Math.floor(0xffffffff / 1000000) * 1000000;
+  do {
+    crypto.getRandomValues(array);
+  } while (array[0] >= limit);
   return String(array[0] % 1000000).padStart(6, '0');
 }
 
-async function hashSHA256(data: string): Promise<string> {
-  const encoded = new TextEncoder().encode(data);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+/**
+ * Cle de derivation du HMAC. Un OTP a 6 chiffres n'a que 10^6 valeurs
+ * possibles : un SHA-256 nu se casse hors-ligne instantanement par
+ * pre-calcul. Le HMAC rend ce pre-calcul impossible sans le secret serveur.
+ * OTP_HASH_SECRET est prioritaire ; a defaut on derive de la service-role key,
+ * toujours presente en Edge Function (donc aucune configuration requise).
+ */
+const OTP_HMAC_KEY =
+  Deno.env.get('OTP_HASH_SECRET') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+
+async function hashOTP(code: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(OTP_HMAC_KEY),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(code));
+  return Array.from(new Uint8Array(sig))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/** Comparaison a temps constant : evite la fuite par canal temporel. */
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -73,7 +103,7 @@ serve(async (req: Request) => {
 
       // Generate OTP
       const otpCode = generateOTP();
-      const otpHash = await hashSHA256(otpCode);
+      const otpHash = await hashOTP(otpCode);
       const now = new Date();
       const expiresAt = new Date(now.getTime() + OTP_TTL_MINUTES * 60 * 1000);
 
@@ -131,7 +161,10 @@ serve(async (req: Request) => {
           body: JSON.stringify({
             from: 'Advist <security@advist.app>',
             to: email,
-            subject: `Code de vérification ADVIST — ${otpCode}`,
+            // Le code ne doit jamais figurer dans l'objet : celui-ci s'affiche en
+            // notification / ecran verrouille et transite en clair dans les logs
+            // des relais SMTP.
+            subject: 'Votre code de vérification ADVIST',
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
                 <div style="text-align: center; margin-bottom: 24px;">
@@ -214,9 +247,9 @@ serve(async (req: Request) => {
       }
 
       // Hash submitted code and compare
-      const submittedHash = await hashSHA256(code);
+      const submittedHash = await hashOTP(code);
 
-      if (submittedHash === verification.otp_hash) {
+      if (timingSafeEqual(submittedHash, verification.otp_hash)) {
         // OTP valid
         await supabase
           .from('signer_verifications')

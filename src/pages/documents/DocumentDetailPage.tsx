@@ -1389,8 +1389,11 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                   deleteAnnotation(annotation.id);
                 }}
               >
-                <button className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                  <X size={10} />
+                <button
+                  aria-label="Retirer"
+                  className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center"
+                >
+                  <X size={10} aria-hidden="true" />
                 </button>
               </div>
             );
@@ -1472,8 +1475,11 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                   deleteAnnotation(annotation.id);
                 }}
               >
-                <button className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                  <X size={10} />
+                <button
+                  aria-label="Retirer"
+                  className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center"
+                >
+                  <X size={10} aria-hidden="true" />
                 </button>
               </div>
             );
@@ -1496,8 +1502,11 @@ export const DocumentDetailPage: React.FC<DocumentDetailPageProps> = ({
                   deleteAnnotation(annotation.id);
                 }}
               >
-                <button className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                  <X size={10} />
+                <button
+                  aria-label="Retirer"
+                  className="absolute -top-2 -right-2 w-4 h-4 bg-advist-error text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center"
+                >
+                  <X size={10} aria-hidden="true" />
                 </button>
               </div>
             );

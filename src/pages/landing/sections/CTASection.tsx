@@ -112,17 +112,20 @@ export const CTASection: React.FC<CTASectionProps> = ({ onDemoClick }) => {
         <div
           className={`mt-12 flex flex-wrap items-center justify-center gap-4 transition-all duration-700 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          {[{ label: 'ISO 27001' }, { label: 'eIDAS' }, { label: 'RGPD' }, { label: 'OHADA' }].map(
-            (badge, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10"
-              >
-                <Shield className="w-4 h-4 text-[#B9975B]/30" />
-                <span className="text-sm font-medium text-white/50">{badge.label}</span>
-              </div>
-            )
-          )}
+          {[
+            { label: 'OHADA' },
+            { label: 'Loi CI 2013-546' },
+            { label: 'RGPD' },
+            { label: 'Audit SHA-256' },
+          ].map((badge, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10"
+            >
+              <Shield className="w-4 h-4 text-[#B9975B]/30" />
+              <span className="text-sm font-medium text-white/50">{badge.label}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

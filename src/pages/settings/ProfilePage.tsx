@@ -145,8 +145,11 @@ export const ProfilePage: React.FC = () => {
               size="xl"
               className="w-24 h-24 text-2xl"
             />
-            <button className="absolute bottom-0 right-0 p-2 bg-advist-dark text-white rounded-full hover:bg-advist-dark transition-all duration-240">
-              <Camera size={16} />
+            <button
+              aria-label="Changer la photo de profil"
+              className="absolute bottom-0 right-0 p-2 bg-advist-dark text-white rounded-full hover:bg-advist-dark transition-all duration-240"
+            >
+              <Camera size={16} aria-hidden="true" />
             </button>
           </div>
           <div className="text-center md:text-left flex-1">
@@ -864,9 +867,10 @@ const CreateSignatureModal: React.FC<{
             />
             <button
               onClick={clearCanvas}
+              aria-label="Effacer la signature"
               className="absolute top-3 right-3 p-2 bg-white text-advist-gray900 hover:bg-advist-surface-dark rounded-xl transition-all duration-240 shadow"
             >
-              <Trash2 size={16} />
+              <Trash2 size={16} aria-hidden="true" />
             </button>
           </div>
           <p className="text-sm text-advist-text-secondary text-center">

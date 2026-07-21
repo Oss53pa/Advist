@@ -527,9 +527,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
                 <button
                   onClick={handleSend}
                   disabled={!inputValue.trim() || isLoading || !canInteract}
+                  aria-label={t('ai.chat.send', 'Envoyer le message')}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white bg-primary-900 rounded-lg hover:bg-primary-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                  {isLoading ? (
+                    <Loader2 size={16} aria-hidden="true" className="animate-spin" />
+                  ) : (
+                    <Send size={16} aria-hidden="true" />
+                  )}
                 </button>
               </div>
             </div>
