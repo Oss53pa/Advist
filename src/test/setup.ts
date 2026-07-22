@@ -11,27 +11,40 @@ afterEach(() => {
   cleanup();
 });
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-  length: 0,
-  key: vi.fn(),
-};
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+/**
+ * Storage en memoire, reellement fonctionnel.
+ *
+ * Auparavant localStorage/sessionStorage etaient de simples `vi.fn()` sans
+ * implementation : `setItem` n'ecrivait rien et `getItem` renvoyait toujours
+ * `undefined`. Tout code dependant du stockage etait donc silencieusement
+ * intestable — un test pouvait ecrire une valeur, la relire, obtenir `null`
+ * et « passer » pour la mauvaise raison.
+ *
+ * Utiliser `vi.spyOn(localStorage, 'setItem')` dans un test si un espion est
+ * necessaire ; le comportement reel reste disponible.
+ */
+function createStorageMock(): Storage {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => (key in store ? store[key] : null),
+    setItem: (key: string, value: string) => {
+      store[key] = String(value);
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
+    key: (index: number) => Object.keys(store)[index] ?? null,
+    get length() {
+      return Object.keys(store).length;
+    },
+  } as Storage;
+}
 
-// Mock sessionStorage
-const sessionStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-  length: 0,
-  key: vi.fn(),
-};
-Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
+Object.defineProperty(window, 'localStorage', { value: createStorageMock() });
+Object.defineProperty(window, 'sessionStorage', { value: createStorageMock() });
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {

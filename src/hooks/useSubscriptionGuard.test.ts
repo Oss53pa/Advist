@@ -68,14 +68,18 @@ const defaultTenantActions = () => ({
 
 let tenantStoreOverrides: Record<string, unknown> = {};
 
-vi.mock('../stores/tenantStore', () => ({
-  useTenantStore: (selector?: (state: Record<string, unknown>) => unknown) => {
-    const state = { ...defaultTenantActions(), ...tenantStoreOverrides };
+vi.mock('../stores/tenantStore', () => {
+  const buildState = () => ({ ...defaultTenantActions(), ...tenantStoreOverrides });
+  const useTenantStore = (selector?: (state: Record<string, unknown>) => unknown) => {
+    const state = buildState();
     if (selector) return selector(state);
     return state;
-  },
-  createTenant: vi.fn(),
-}));
+  };
+  // Le hook lit le tenant courant via getState() dans son catch, pour eviter
+  // une closure perimee : le mock doit donc exposer getState comme zustand.
+  useTenantStore.getState = buildState;
+  return { useTenantStore, createTenant: vi.fn() };
+});
 
 let authStoreState: Record<string, unknown> = {};
 
@@ -162,6 +166,9 @@ describe('useSubscriptionGuard', () => {
     tenantState = {};
     tenantStoreOverrides = {};
     authStoreState = {};
+    // Le point de controle de licence est persiste : sans reinitialisation,
+    // la fenetre de tolerance d'un test fuirait dans les suivants.
+    localStorage.removeItem('advist-licence-last-ok');
     mockGetSubscriptionInfo.mockResolvedValue(makeSubscriptionInfo());
     mockSubscribeToUpdates.mockReturnValue(vi.fn());
     // Restore default implementations on stable mocks after clearAllMocks.
@@ -265,23 +272,19 @@ describe('useSubscriptionGuard', () => {
     expect(result.current.blockReason).toBe('subscription_expired');
   });
 
-  // 5. Absence de siege actif chez Atlas Studio => acces accorde (fail-open).
+  // 5. Refus EXPLICITE d'Atlas Studio => blocage immediat, sans tolerance.
   //
-  // Ces deux tests attendaient l'inverse (blocage 'no_licence'), conformement au
-  // commit 0cec517 « read access from Atlas Studio licence_seats, not local
-  // fallback ». Le commit fc91a9b « fail-open subscription guard » a ensuite
-  // inverse volontairement ce comportement, sans mettre les tests a jour.
-  // Ils decrivent desormais le comportement reel.
-  //
-  // ⚠️ Consequence metier : un utilisateur dont la verification de licence
-  // echoue (y compris en bloquant simplement l'appel reseau vers Atlas Studio)
-  // obtient un acces de repli 'enterprise' aux quotas illimites. A revoir si le
-  // fail-open n'etait qu'une mesure transitoire de migration.
-  it('grants fallback access when Atlas Studio has no active seat (fail-open)', async () => {
+  // C'est la frontiere de monetisation : Atlas a repondu « aucun siege actif ».
+  // Aucune fenetre de tolerance ne doit s'appliquer, meme si une verification
+  // recente a reussi (cas d'une licence revoquee a l'instant).
+  it('blocks with reason "no_licence" when Atlas Studio has no active seat', async () => {
     authStoreState = {
       user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
       isAuthenticated: true,
     };
+    // Verification reussie il y a 1 h : ne doit PAS empecher le blocage.
+    localStorage.setItem('advist-licence-last-ok', String(Date.now() - 60 * 60 * 1000));
+    tenantState.currentTenant = makeTenant();
 
     mockGetSubscriptionInfo.mockRejectedValue(new NoActiveLicenceError());
 
@@ -293,19 +296,54 @@ describe('useSubscriptionGuard', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.canAccess).toBe(true);
-    expect(result.current.blockReason).toBeUndefined();
-    expect(consoleWarnSpy).toHaveBeenCalled();
+    expect(result.current.canAccess).toBe(false);
+    expect(result.current.blockReason).toBe('no_licence');
+    // Le tenant persiste doit etre purge : sinon des droits perimes restent
+    // lisibles par le reste de l'application.
+    expect(mockClearTenant).toHaveBeenCalled();
 
     consoleWarnSpy.mockRestore();
   });
 
-  // 5b. Erreurs reseau / transitoires : meme repli.
-  it('grants fallback access on network errors (fail-open)', async () => {
+  // 5b. Panne transitoire SANS etat connu recent => blocage.
+  // C'est le contournement corrige : auparavant, bloquer l'appel reseau
+  // suffisait a obtenir un tenant 'enterprise' aux quotas illimites.
+  it('blocks on network errors when there is no recent known-good state', async () => {
     authStoreState = {
       user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
       isAuthenticated: true,
     };
+    localStorage.removeItem('advist-licence-last-ok');
+
+    mockGetSubscriptionInfo.mockRejectedValue(new Error('Network error'));
+
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const { result } = renderHook(() => useSubscriptionGuard());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.canAccess).toBe(false);
+    expect(result.current.blockReason).toBe('no_licence');
+    // Aucun droit ne doit etre fabrique.
+    expect(mockSetTenant).not.toHaveBeenCalled();
+
+    consoleWarnSpy.mockRestore();
+  });
+
+  // 5c. Panne transitoire AVEC etat connu recent => on prolonge cet etat.
+  // Une panne d'Atlas Studio ne doit pas devenir une panne totale d'Advist.
+  it('keeps the last known-good state on network errors within the grace window', async () => {
+    authStoreState = {
+      user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
+      isAuthenticated: true,
+    };
+    // Derniere verification reussie il y a 2 h (fenetre = 72 h).
+    localStorage.setItem('advist-licence-last-ok', String(Date.now() - 2 * 60 * 60 * 1000));
+    tenantState.currentTenant = makeTenant();
+    mockCanAccessApp.mockReturnValue({ allowed: true });
 
     mockGetSubscriptionInfo.mockRejectedValue(new Error('Network error'));
 
@@ -319,7 +357,35 @@ describe('useSubscriptionGuard', () => {
 
     expect(result.current.canAccess).toBe(true);
     expect(result.current.blockReason).toBeUndefined();
-    expect(consoleWarnSpy).toHaveBeenCalled();
+    // On prolonge l'etat existant, on n'en fabrique pas un nouveau.
+    expect(mockSetTenant).not.toHaveBeenCalled();
+    expect(mockClearTenant).not.toHaveBeenCalled();
+
+    consoleWarnSpy.mockRestore();
+  });
+
+  // 5d. Etat connu trop ancien (au-dela de 72 h) => blocage.
+  it('blocks on network errors once the grace window has expired', async () => {
+    authStoreState = {
+      user: { id: '1', organization: { id: 1, name: 'Org', slug: 'org' } },
+      isAuthenticated: true,
+    };
+    // 80 h > fenetre de 72 h.
+    localStorage.setItem('advist-licence-last-ok', String(Date.now() - 80 * 60 * 60 * 1000));
+    tenantState.currentTenant = makeTenant();
+
+    mockGetSubscriptionInfo.mockRejectedValue(new Error('Network error'));
+
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const { result } = renderHook(() => useSubscriptionGuard());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.canAccess).toBe(false);
+    expect(result.current.blockReason).toBe('no_licence');
 
     consoleWarnSpy.mockRestore();
   });

@@ -2,18 +2,22 @@
  * useSubscriptionGuard - Hook pour protéger les routes selon le statut de l'abonnement
  * Source de vérité : Atlas Studio (licence_seats + licences + subscriptions).
  *
- * Comportement en cas d'échec : **fail-open** (cf. commit fc91a9b). Si Atlas
- * Studio ne renvoie pas de licence active — ou si l'appel échoue (réseau, 5xx) —
- * un tenant de repli `enterprise` / quotas illimités est appliqué et l'accès est
- * accordé, avec un `console.warn`.
+ * Comportement en cas d'échec — deux cas volontairement distincts :
  *
- * ⚠️ Ce choix est un compromis disponibilité / monétisation : bloquer l'appel
- * réseau vers Atlas Studio suffit à obtenir un accès `enterprise`. À réévaluer
- * si le fail-open n'était qu'une mesure transitoire de migration vers la
- * facturation Atlas Studio.
+ * 1. **Refus explicite** (`NoActiveLicenceError` : aucun siège / aucune licence).
+ *    Atlas Studio a répondu « non ». → accès **bloqué** immédiatement
+ *    (`blockReason='no_licence'`) et tenant purgé, sans tolérance.
  *
- * (Le docblock précédent décrivait un fail-closed `blockReason='no_licence'`,
- * comportement remplacé depuis — il ne correspondait plus au code.)
+ * 2. **Panne d'infrastructure** (réseau, 5xx, timeout). Atlas Studio n'a pas
+ *    répondu du tout. Bloquer ferait d'une panne Atlas une panne Advist totale.
+ *    → on prolonge le **dernier état connu** pendant au plus
+ *    {@link LICENCE_GRACE_MS} (72 h). Passé ce délai, ou sans état connu
+ *    récent, l'accès est **bloqué**.
+ *
+ * Aucun droit n'est jamais fabriqué. Le comportement précédent (commit fc91a9b,
+ * « fail-open ») inventait un tenant `enterprise` aux quotas illimités dès que
+ * l'appel échouait : il suffisait donc de bloquer la requête réseau vers Atlas
+ * Studio pour obtenir un accès illimité. C'est ce contournement qui est corrigé.
  */
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +32,50 @@ import {
   SubscriptionInfo,
   NoActiveLicenceError,
 } from '../services/features';
+
+/**
+ * Fenetre de tolerance appliquee UNIQUEMENT aux pannes d'infrastructure
+ * (reseau / 5xx / timeout), jamais a un refus explicite d'Atlas Studio.
+ *
+ * 72 h est volontairement large : un utilisateur dont la licence est revoquee
+ * recoit une reponse definitive (NoActiveLicenceError) et est bloque tout de
+ * suite, sans passer par cette fenetre. Celle-ci ne protege donc que la
+ * disponibilite en cas de panne, sans ouvrir de contournement.
+ */
+const LICENCE_GRACE_MS = 72 * 60 * 60 * 1000;
+const LICENCE_CHECK_KEY = 'advist-licence-last-ok';
+
+/** Horodate la derniere verification de licence reussie. */
+function markLicenceCheckedNow(): void {
+  try {
+    localStorage.setItem(LICENCE_CHECK_KEY, String(Date.now()));
+  } catch {
+    // Stockage indisponible (mode prive, quota) : sans point de reference,
+    // une panne mene au blocage plutot qu'a un acces non verifie.
+  }
+}
+
+/** Date de la derniere verification reussie, ou null si inconnue/illisible. */
+function getLastLicenceCheck(): number | null {
+  try {
+    const raw = localStorage.getItem(LICENCE_CHECK_KEY);
+    if (!raw) return null;
+    const ts = Number(raw);
+    // Une valeur corrompue ou dans le futur ne doit pas prolonger l'acces.
+    if (!Number.isFinite(ts) || ts > Date.now()) return null;
+    return ts;
+  } catch {
+    return null;
+  }
+}
+
+function clearLicenceCheckpoint(): void {
+  try {
+    localStorage.removeItem(LICENCE_CHECK_KEY);
+  } catch {
+    /* rien a faire */
+  }
+}
 
 export type BlockReason =
   | 'trial_expired'
@@ -53,8 +101,14 @@ export interface SubscriptionGuardResult {
  * Se synchronise avec le backend pour les features et quotas
  */
 export const useSubscriptionGuard = (): SubscriptionGuardResult => {
-  const { currentTenant, canAccessApp, getDaysRemaining, shouldShowUpgradePrompt, setTenant } =
-    useTenantStore();
+  const {
+    currentTenant,
+    canAccessApp,
+    getDaysRemaining,
+    shouldShowUpgradePrompt,
+    setTenant,
+    clearTenant,
+  } = useTenantStore();
 
   const { user, isAuthenticated } = useAuthStore();
 
@@ -72,58 +126,55 @@ export const useSubscriptionGuard = (): SubscriptionGuardResult => {
 
       const currentUser = userRef.current;
 
-      const ensureFallbackTenant = () => {
-        setTenant(
-          mapSubscriptionToTenant(
-            {
-              id: 'fallback',
-              tenantId: currentUser?.organization?.id?.toString() ?? 'fallback',
-              plan: 'enterprise',
-              status: 'active',
-              currentPeriodStart: '',
-              currentPeriodEnd: '',
-              autoRenew: true,
-              features: {},
-              quotas: {
-                maxUsers: -1,
-                currentUsers: 0,
-                maxStorage: -1,
-                currentStorage: 0,
-                maxDocuments: -1,
-                currentDocuments: 0,
-                maxWorkflows: -1,
-                currentWorkflows: 0,
-                maxSignaturesMonth: -1,
-                currentSignaturesMonth: 0,
-              },
-              limits: {},
-            },
-            currentUser
-          )
-        );
-      };
-
       try {
         const subscriptionInfo = await getSubscriptionInfo(forceRefresh);
         setLicenceMissing(false);
         setTenant(mapSubscriptionToTenant(subscriptionInfo, currentUser));
+        markLicenceCheckedNow();
       } catch (error) {
         if (error instanceof NoActiveLicenceError) {
-          console.warn(
-            '[subscriptionGuard] Atlas Studio has no active seat for this user — granting fallback access. Error:',
-            error
-          );
-        } else {
-          console.warn(
-            '[subscriptionGuard] Failed to fetch from Atlas Studio — granting fallback access. Error:',
-            error
-          );
+          // Reponse DEFINITIVE d'Atlas Studio : aucun siege / aucune licence
+          // active pour cet utilisateur. Ce n'est pas une panne, c'est un non.
+          // On bloque immediatement et on purge le tenant : le store etant
+          // persiste (zustand/persist, cle 'advist-tenant'), le conserver
+          // laisserait des droits perimes lisibles par le reste de l'app.
+          console.warn('[subscriptionGuard] Aucune licence active — acces bloque.', error);
+          clearLicenceCheckpoint();
+          clearTenant();
+          setLicenceMissing(true);
+          return;
         }
-        setLicenceMissing(false);
-        ensureFallbackTenant();
+
+        // Erreur TRANSITOIRE (reseau, 5xx, timeout) : Atlas Studio n'a pas
+        // repondu « non », il n'a pas repondu du tout. Bloquer tout le monde
+        // ferait d'une panne Atlas une panne Advist totale.
+        // Compromis : on prolonge le DERNIER ETAT CONNU, borne dans le temps.
+        // On ne fabrique jamais de droits (c'etait le defaut precedent : un
+        // tenant 'enterprise' aux quotas illimites etait invente de toutes
+        // pieces, si bien qu'il suffisait de bloquer l'appel reseau pour
+        // obtenir un acces illimite).
+        const lastOk = getLastLicenceCheck();
+        const withinGrace = lastOk !== null && Date.now() - lastOk < LICENCE_GRACE_MS;
+
+        if (withinGrace && useTenantStore.getState().currentTenant) {
+          const hoursLeft = Math.round((LICENCE_GRACE_MS - (Date.now() - lastOk)) / 3_600_000);
+          console.warn(
+            `[subscriptionGuard] Atlas Studio injoignable — maintien du dernier etat connu (~${hoursLeft} h restantes).`,
+            error
+          );
+          setLicenceMissing(false);
+          return;
+        }
+
+        console.warn(
+          '[subscriptionGuard] Atlas Studio injoignable et aucun etat connu recent — acces bloque.',
+          error
+        );
+        clearTenant();
+        setLicenceMissing(true);
       }
     },
-    [setTenant]
+    [setTenant, clearTenant]
   );
 
   const refreshSubscription = useCallback(async () => {
