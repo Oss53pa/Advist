@@ -212,7 +212,7 @@ export const AnalyticsPage: React.FC = () => {
           .eq('status', 'signed'),
         // Recent activity from audit logs
         supabase
-          .from('audit_logs')
+          .from('advist_audit_logs')
           .select(
             'id, action, resource_type, resource_name, user_id, created_at, profiles:user_id(first_name, last_name)'
           )

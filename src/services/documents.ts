@@ -153,9 +153,7 @@ function mapAnnotation(a: Record<string, any>): DocumentAnnotation {
     height: a.height,
     content: a.content,
     color: a.color,
-    author: a.user
-      ? `${a.user.first_name} ${a.user.last_name}`
-      : '',
+    author: a.user ? `${a.user.first_name} ${a.user.last_name}` : '',
     authorId: a.user_id,
     createdAt: a.created_at,
   };
@@ -167,7 +165,7 @@ function mapAnnotation(a: Record<string, any>): DocumentAnnotation {
 function mapContextualAnnotation(
   a: Record<string, any>,
   documentId: string,
-  versionNumber = 1,
+  versionNumber = 1
 ): ContextualAnnotation {
   return {
     id: a.id,
@@ -185,15 +183,11 @@ function mapContextualAnnotation(
     element_selector: '',
     quoted_text: '',
     author: a.user_id,
-    author_name: a.user
-      ? `${a.user.first_name} ${a.user.last_name}`
-      : '',
+    author_name: a.user ? `${a.user.first_name} ${a.user.last_name}` : '',
     is_private: false,
     is_resolved: a.is_resolved || false,
     resolved_by: a.resolver?.id || null,
-    resolved_by_name: a.resolver
-      ? `${a.resolver.first_name} ${a.resolver.last_name}`
-      : null,
+    resolved_by_name: a.resolver ? `${a.resolver.first_name} ${a.resolver.last_name}` : null,
     resolved_at: a.resolved_at || null,
     workflow_step: null,
     created_at: a.created_at,
@@ -242,9 +236,7 @@ export const documentsService = {
       .is('deleted_at', null);
 
     if (filters?.search) {
-      query = query.or(
-        `title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`,
-      );
+      query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
     }
     if (filters?.status) {
       query = query.eq('status', filters.status);
@@ -367,9 +359,7 @@ export const documentsService = {
     if (data.status !== undefined) updateData.status = data.status;
     if (data.metadata !== undefined) updateData.metadata = data.metadata;
     if (data.tags !== undefined) {
-      updateData.tags = (data.tags as any[]).map((t: any) =>
-        typeof t === 'string' ? t : t.name,
-      );
+      updateData.tags = (data.tags as any[]).map((t: any) => (typeof t === 'string' ? t : t.name));
     }
 
     const { data: doc, error } = await supabase
@@ -531,7 +521,11 @@ export const documentsService = {
       throw new Error('Ce template de circuit est desactive');
     }
 
-    const steps = (template.steps_config || []) as Array<{ name?: string; type?: string; assignees?: unknown[] }>;
+    const steps = (template.steps_config || []) as Array<{
+      name?: string;
+      type?: string;
+      assignees?: unknown[];
+    }>;
     if (steps.length === 0) {
       throw new Error('Le circuit doit contenir au moins une etape');
     }
@@ -550,15 +544,14 @@ export const documentsService = {
       .single();
 
     if (doc?.organization_id) {
-      const { data: quotaResult } = await supabase.functions.invoke(
-        'check-signature-quota',
-        { body: { organization_id: doc.organization_id, feature: 'basic_workflow' } },
-      );
+      const { data: quotaResult } = await supabase.functions.invoke('check-signature-quota', {
+        body: { organization_id: doc.organization_id, feature: 'basic_workflow' },
+      });
       if (quotaResult && !quotaResult.allowed) {
         throw new Error(
           quotaResult.reason === 'FEATURE_NOT_AVAILABLE'
-            ? 'Cette fonctionnalite n\'est pas disponible avec votre plan.'
-            : 'Quota depasse. Veuillez upgrader votre plan.',
+            ? "Cette fonctionnalite n'est pas disponible avec votre plan."
+            : 'Quota depasse. Veuillez upgrader votre plan.'
         );
       }
     }
@@ -573,10 +566,7 @@ export const documentsService = {
 
     if (error) throw new Error(parseSupabaseError(error).message);
 
-    await supabase
-      .from('documents')
-      .update({ status: 'pending' })
-      .eq('id', id);
+    await supabase.from('documents').update({ status: 'pending' }).eq('id', id);
   },
 
   // -----------------------------------------------------------------------
@@ -603,7 +593,7 @@ export const documentsService = {
           requires_signature: dt.requires_approval || false,
           requires_paraph: false,
           paraph_all_pages: false,
-        }) as unknown as DocumentType,
+        }) as unknown as DocumentType
     );
   },
 
@@ -645,15 +635,12 @@ export const documentsService = {
 
   async saveAnnotations(
     documentId: string,
-    annotations: DocumentAnnotation[],
+    annotations: DocumentAnnotation[]
   ): Promise<DocumentAnnotation[]> {
     const userId = await requireAuth();
 
     // Replace all annotations for this document
-    await supabase
-      .from('document_annotations')
-      .delete()
-      .eq('document_id', documentId);
+    await supabase.from('document_annotations').delete().eq('document_id', documentId);
 
     if (annotations.length > 0) {
       const rows = annotations.map((a) => ({
@@ -669,9 +656,7 @@ export const documentsService = {
         color: a.color,
       }));
 
-      const { error } = await supabase
-        .from('document_annotations')
-        .insert(rows);
+      const { error } = await supabase.from('document_annotations').insert(rows);
       if (error) throw new Error(parseSupabaseError(error).message);
     }
 
@@ -680,7 +665,7 @@ export const documentsService = {
 
   async addAnnotation(
     documentId: string,
-    annotation: Omit<DocumentAnnotation, 'id' | 'createdAt'>,
+    annotation: Omit<DocumentAnnotation, 'id' | 'createdAt'>
   ): Promise<DocumentAnnotation> {
     const userId = await requireAuth();
 
@@ -708,7 +693,7 @@ export const documentsService = {
   async updateAnnotation(
     documentId: string,
     annotationId: string,
-    data: Partial<DocumentAnnotation>,
+    data: Partial<DocumentAnnotation>
   ): Promise<DocumentAnnotation> {
     const updateData: Record<string, unknown> = {};
     if (data.content !== undefined) updateData.content = data.content;
@@ -745,31 +730,24 @@ export const documentsService = {
   // -----------------------------------------------------------------------
 
   async getValidationStatus(documentId: string): Promise<ValidationSummary> {
-    const [
-      { data: doc },
-      { count: totalAnnotations },
-      { count: resolvedAnnotations },
-    ] = await Promise.all([
-      supabase
-        .from('documents')
-        .select('status, created_by')
-        .eq('id', documentId)
-        .single(),
-      supabase
-        .from('document_annotations')
-        .select('*', { count: 'exact', head: true })
-        .eq('document_id', documentId),
-      supabase
-        .from('document_annotations')
-        .select('*', { count: 'exact', head: true })
-        .eq('document_id', documentId)
-        .eq('is_resolved', true),
-    ]);
+    const [{ data: doc }, { count: totalAnnotations }, { count: resolvedAnnotations }] =
+      await Promise.all([
+        supabase.from('documents').select('status, created_by').eq('id', documentId).single(),
+        supabase
+          .from('document_annotations')
+          .select('*', { count: 'exact', head: true })
+          .eq('document_id', documentId),
+        supabase
+          .from('document_annotations')
+          .select('*', { count: 'exact', head: true })
+          .eq('document_id', documentId)
+          .eq('is_resolved', true),
+      ]);
 
     const { data: instance } = await supabase
       .from('workflow_instances')
       .select(
-        '*, initiated_by_user:profiles!workflow_instances_initiated_by_fkey(id, first_name, last_name)',
+        '*, initiated_by_user:profiles!workflow_instances_initiated_by_fkey(id, first_name, last_name)'
       )
       .eq('document_id', documentId)
       .order('created_at', { ascending: false })
@@ -824,14 +802,11 @@ export const documentsService = {
   async requestChanges(
     documentId: string,
     comments: string,
-    annotations?: ContextualAnnotationInput[],
+    annotations?: ContextualAnnotationInput[]
   ): Promise<ValidationActionResponse> {
     const userId = await requireAuth();
 
-    await supabase
-      .from('documents')
-      .update({ status: 'draft' })
-      .eq('id', documentId);
+    await supabase.from('documents').update({ status: 'draft' }).eq('id', documentId);
 
     if (comments) {
       await supabase.from('document_annotations').insert({
@@ -861,7 +836,7 @@ export const documentsService = {
 
   async validateDocument(
     documentId: string,
-    _comments?: string,
+    _comments?: string
   ): Promise<ValidationActionResponse> {
     const userId = await requireAuth();
 
@@ -878,16 +853,10 @@ export const documentsService = {
     return { status: 'success', validation_status: 'validated' };
   },
 
-  async rejectDocument(
-    documentId: string,
-    reason: string,
-  ): Promise<ValidationActionResponse> {
+  async rejectDocument(documentId: string, reason: string): Promise<ValidationActionResponse> {
     const userId = await requireAuth();
 
-    await supabase
-      .from('documents')
-      .update({ status: 'rejected' })
-      .eq('id', documentId);
+    await supabase.from('documents').update({ status: 'rejected' }).eq('id', documentId);
 
     await supabase.from('document_annotations').insert({
       document_id: documentId,
@@ -907,9 +876,9 @@ export const documentsService = {
       .order('created_at');
 
     const { data: auditLogs } = await supabase
-      .from('audit_logs')
-      .select('*, user:profiles!audit_logs_user_id_fkey(id, first_name, last_name)')
-      .eq('resource_type', 'document')
+      .from('advist_audit_logs')
+      .select('*, user:profiles!advist_audit_logs_user_id_fkey(id, first_name, last_name)')
+      .eq('resource_type', 'documents')
       .eq('resource_id', documentId)
       .order('created_at');
 
@@ -919,14 +888,10 @@ export const documentsService = {
       history.push({
         type: 'comment',
         timestamp: a.created_at,
-        user: a.user
-          ? { id: a.user.id, name: `${a.user.first_name} ${a.user.last_name}` }
-          : null,
+        user: a.user ? { id: a.user.id, name: `${a.user.first_name} ${a.user.last_name}` } : null,
         content: a.content,
         resolved: a.is_resolved,
-        context: a.page_number
-          ? { type: 'page', section_id: '', page: a.page_number }
-          : undefined,
+        context: a.page_number ? { type: 'page', section_id: '', page: a.page_number } : undefined,
       });
     }
 
@@ -943,9 +908,7 @@ export const documentsService = {
       });
     }
 
-    history.sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    );
+    history.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return history;
   },
@@ -956,26 +919,24 @@ export const documentsService = {
 
   async getContextualAnnotations(
     documentId: string,
-    versionNumber?: number,
+    versionNumber?: number
   ): Promise<ContextualAnnotation[]> {
     const { data, error } = await supabase
       .from('document_annotations')
       .select(
-        '*, user:profiles!document_annotations_user_id_fkey(id, first_name, last_name), resolver:profiles!document_annotations_resolved_by_fkey(id, first_name, last_name)',
+        '*, user:profiles!document_annotations_user_id_fkey(id, first_name, last_name), resolver:profiles!document_annotations_resolved_by_fkey(id, first_name, last_name)'
       )
       .eq('document_id', documentId)
       .order('created_at');
 
     if (error) throw new Error(parseSupabaseError(error).message);
 
-    return (data || []).map((a: any) =>
-      mapContextualAnnotation(a, documentId, versionNumber),
-    );
+    return (data || []).map((a: any) => mapContextualAnnotation(a, documentId, versionNumber));
   },
 
   async createContextualAnnotation(
     documentId: string,
-    annotation: ContextualAnnotationInput,
+    annotation: ContextualAnnotationInput
   ): Promise<ContextualAnnotation> {
     const userId = await requireAuth();
 
@@ -991,19 +952,14 @@ export const documentsService = {
         annotation_type: annotation.annotation_type || 'comment',
         color: annotation.color,
       })
-      .select(
-        '*, user:profiles!document_annotations_user_id_fkey(id, first_name, last_name)',
-      )
+      .select('*, user:profiles!document_annotations_user_id_fkey(id, first_name, last_name)')
       .single();
 
     if (error) throw new Error(parseSupabaseError(error).message);
     return mapContextualAnnotation(data, documentId);
   },
 
-  async resolveAnnotation(
-    documentId: string,
-    annotationId: string,
-  ): Promise<ContextualAnnotation> {
+  async resolveAnnotation(documentId: string, annotationId: string): Promise<ContextualAnnotation> {
     const userId = await requireAuth();
 
     const { data, error } = await supabase
@@ -1016,7 +972,7 @@ export const documentsService = {
       .eq('id', annotationId)
       .eq('document_id', documentId)
       .select(
-        '*, user:profiles!document_annotations_user_id_fkey(id, first_name, last_name), resolver:profiles!document_annotations_resolved_by_fkey(id, first_name, last_name)',
+        '*, user:profiles!document_annotations_user_id_fkey(id, first_name, last_name), resolver:profiles!document_annotations_resolved_by_fkey(id, first_name, last_name)'
       )
       .single();
 
@@ -1031,12 +987,12 @@ export const documentsService = {
   async compareVersions(
     documentId: string,
     versionA: number,
-    versionB: number,
+    versionB: number
   ): Promise<VersionComparison> {
     const { data: versions, error } = await supabase
       .from('document_versions')
       .select(
-        '*, created_by_user:profiles!document_versions_created_by_fkey(id, first_name, last_name)',
+        '*, created_by_user:profiles!document_versions_created_by_fkey(id, first_name, last_name)'
       )
       .eq('document_id', documentId)
       .in('version_number', [versionA, versionB]);
