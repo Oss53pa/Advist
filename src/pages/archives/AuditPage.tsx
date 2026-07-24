@@ -26,8 +26,6 @@ import { Modal } from '../../components/ui/Modal';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store';
 import { PrintButton } from '../../shared/PrintEngine';
-import { FeatureGate } from '../../components/gating';
-import { Lock } from 'lucide-react';
 
 interface AuditLog {
   id: string;
@@ -246,32 +244,10 @@ export const AuditPage: React.FC = () => {
               </table>
             </div>
           </PrintButton>
-          <FeatureGate
-            feature="audit_trail_certifie_ohada"
-            fallback={
-              <Button
-                variant="outline"
-                size="sm"
-                disabled
-                className="opacity-60 cursor-not-allowed"
-                title="Export certifié OHADA disponible en plan Entreprise"
-              >
-                <Lock size={14} className="mr-2" />
-                Export certifié OHADA
-                <span
-                  className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
-                  style={{ backgroundColor: 'rgba(239, 159, 39, 0.12)', color: '#EF9F27' }}
-                >
-                  Entreprise
-                </span>
-              </Button>
-            }
-          >
-            <Button variant="outline" size="sm">
-              <Download size={16} className="mr-2" />
-              Export certifié OHADA
-            </Button>
-          </FeatureGate>
+          <Button variant="outline" size="sm">
+            <Download size={16} className="mr-2" />
+            Export certifié OHADA
+          </Button>
           <Button variant="outline" size="sm">
             <RefreshCw size={16} className="mr-2" />
             {t('common.loading')}

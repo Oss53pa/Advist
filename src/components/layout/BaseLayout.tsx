@@ -4,9 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { TopNavBar } from './TopNavBar';
 import { useAuthStore, useNotificationStore } from '../../store';
 import { ChatWidget } from '../ai/ChatWidget';
-import { UpgradePrompt } from '../subscription';
-import { PlanBadge } from '../dev/PlanSwitcher';
-import { usePlanTheme } from '../../hooks/usePlanTheme';
 import { OnboardingTour } from '../onboarding/OnboardingTour';
 import { HelpFab } from '../help/HelpFab';
 
@@ -18,7 +15,7 @@ interface BaseLayoutProps {
 
 /**
  * Detects if the app is running inside the /demo iframe preview.
- * When true, hides chat widget, plan badge, upgrade prompt, and collapses
+ * When true, hides chat widget and collapses
  * sidebars to maximize the visible interface area (gain ~472px).
  */
 function useDemoMode(): boolean {
@@ -53,7 +50,6 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ variant }) => {
   const { t } = useTranslation();
   const { fetchUser } = useAuthStore();
   const { fetchNotifications, fetchUnreadCount } = useNotificationStore();
-  const { classes: planClasses } = usePlanTheme();
   const isDemo = useDemoMode();
 
   // Fetch user data and notifications on mount
@@ -73,11 +69,6 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ variant }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
-      {/* Plan Color Bar - Barre colorée en haut indiquant le plan */}
-      <div
-        className={`fixed top-0 left-0 right-0 h-1 ${planClasses.bgGradient} z-[60] print:hidden`}
-      />
-
       {/* Skip Links for keyboard navigation */}
       <SkipLink href="#main-content">
         {t('accessibility.skipToContent', 'Aller au contenu principal')}
@@ -87,16 +78,9 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ variant }) => {
       </SkipLink>
 
       {/* Top Navigation Bar */}
-      <div className="print:hidden pt-1">
+      <div className="print:hidden">
         <TopNavBar variant={variant} />
       </div>
-
-      {/* Upgrade Prompt Banner — hidden in demo mode */}
-      {!isDemo && (
-        <div className="print:hidden">
-          <UpgradePrompt variant="banner" />
-        </div>
-      )}
 
       {/* Main content - reduced padding in demo to maximize space (gain ~472px) */}
       <main
@@ -108,13 +92,6 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({ variant }) => {
           <Outlet />
         </div>
       </main>
-
-      {/* Plan Badge — hidden in demo mode */}
-      {!isDemo && (
-        <div className="fixed bottom-4 right-4 z-40 print:hidden">
-          <PlanBadge className="shadow-lg" />
-        </div>
-      )}
 
       {/* AI Chat Widget — hidden in demo mode */}
       {!isDemo && <ChatWidget />}

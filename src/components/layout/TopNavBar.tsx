@@ -30,10 +30,6 @@ import {
 import { useAuthStore, useNotificationStore } from '../../store';
 import { Avatar } from '../ui/Avatar';
 import { languages, changeLanguage } from '../../i18n';
-import { TrialBadge } from '../subscription';
-import { PlanSwitcher } from '../dev/PlanSwitcher';
-import { usePlanTheme } from '../../hooks/usePlanTheme';
-import { useHasFeature } from '../../hooks/useTenantPlan';
 
 interface TopNavBarProps {
   variant: 'user' | 'admin';
@@ -97,8 +93,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
   const location = useLocation();
   const { user, logout } = useAuthStore();
   const { unreadCount } = useNotificationStore();
-  const { classes: planClasses, _plan } = usePlanTheme();
-  const hasDedicatedSupport = useHasFeature('support_dedie');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -157,7 +151,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
             </span>
             {variant === 'admin' && (
               <span
-                className={`hidden sm:inline px-2 py-1 ${planClasses.bg} ${planClasses.textOnBg} text-[10px] font-bold rounded-lg uppercase shadow-lg`}
+                className={`hidden sm:inline px-2 py-1 bg-advist-gold text-white text-[10px] font-bold rounded-lg uppercase shadow-lg`}
               >
                 Admin
               </span>
@@ -181,8 +175,8 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                     relative flex items-center gap-2 px-3 xl:px-4 py-2 rounded-xl text-sm xl:text-base font-medium transition-all
                     ${
                       active
-                        ? `${planClasses.bg} ${planClasses.textOnBg} shadow-lg`
-                        : `text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover}`
+                        ? `bg-advist-gold text-white shadow-lg`
+                        : `text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-gold/10`
                     }
                   `}
                 >
@@ -192,11 +186,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                     <span
                       className={`
                       min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full flex items-center justify-center
-                      ${
-                        active
-                          ? 'bg-white/30 text-white'
-                          : `${planClasses.bg} ${planClasses.textOnBg}`
-                      }
+                      ${active ? 'bg-white/30 text-white' : `bg-advist-gold text-white`}
                     `}
                     >
                       {badgeCount > 9 ? '9+' : badgeCount}
@@ -209,12 +199,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
 
           {/* Right Section */}
           <div className="flex items-center gap-1 sm:gap-2 ml-auto">
-            {/* Plan Switcher (Dev only) */}
-            <PlanSwitcher />
-
-            {/* Trial Badge - Shows remaining trial days */}
-            <TrialBadge />
-
             {/* Search - Hidden on mobile */}
             <button
               className="hidden sm:flex p-2 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-surface-dark rounded-lg transition-colors"
@@ -273,35 +257,20 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
               <span className="hidden lg:inline">{t('common.switch')}</span>
             </button>
 
-            {/* Help / Support button — dedicated support for Enterprise, email link otherwise */}
-            {hasDedicatedSupport ? (
-              <button
-                onClick={() => navigate('/help')}
-                className={`hidden sm:flex p-2 text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover} rounded-xl transition-colors`}
-                aria-label={t('nav.dedicatedSupport', 'Support dédié')}
-                title={t('nav.dedicatedSupport', 'Support dédié (Entreprise)')}
-              >
-                <HelpCircle size={18} aria-hidden="true" />
-              </button>
-            ) : (
-              <a
-                href="mailto:support@advist.io"
-                className={`hidden sm:flex p-2 text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover} rounded-xl transition-colors`}
-                aria-label={t('nav.help', 'Support email')}
-                title={t(
-                  'nav.help',
-                  'Support email — Pour un support dédié, passez en plan Entreprise'
-                )}
-              >
-                <HelpCircle size={18} aria-hidden="true" />
-              </a>
-            )}
+            {/* Help / Support */}
+            <button
+              onClick={() => navigate(`${basePath}/support`)}
+              className="hidden sm:flex p-2 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-gold/10 rounded-xl transition-colors"
+              aria-label={t('nav.help', 'Support')}
+            >
+              <HelpCircle size={18} aria-hidden="true" />
+            </button>
 
             {/* Notifications - avec couleur du plan */}
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className={`relative p-2 text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover} rounded-xl transition-colors`}
+                className={`relative p-2 text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-gold/10 rounded-xl transition-colors`}
                 aria-expanded={showNotifications}
                 aria-haspopup="true"
                 aria-label={
@@ -314,7 +283,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                 <Bell size={18} aria-hidden="true" />
                 {unreadCount > 0 && (
                   <span
-                    className={`absolute top-1 right-1 w-4 h-4 ${planClasses.bg} ${planClasses.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
+                    className={`absolute top-1 right-1 w-4 h-4 bg-advist-gold text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
                     aria-hidden="true"
                   >
                     {unreadCount > 9 ? '9+' : unreadCount}
@@ -385,8 +354,8 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                       flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all
                       ${
                         active
-                          ? `${planClasses.bg} ${planClasses.textOnBg} shadow-lg`
-                          : `text-advist-text-secondary hover:text-advist-gray900 ${planClasses.navHover}`
+                          ? `bg-advist-gold text-white shadow-lg`
+                          : `text-advist-text-secondary hover:text-advist-gray900 hover:bg-advist-gold/10`
                       }
                     `}
                   >
@@ -398,11 +367,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ variant }) => {
                       <span
                         className={`
                         min-w-[22px] h-[22px] px-1.5 text-xs font-bold rounded-full flex items-center justify-center
-                        ${
-                          active
-                            ? 'bg-white/30 text-white'
-                            : `${planClasses.bg} ${planClasses.textOnBg}`
-                        }
+                        ${active ? 'bg-white/30 text-white' : `bg-advist-gold text-white`}
                       `}
                       >
                         {badgeCount > 9 ? '9+' : badgeCount}

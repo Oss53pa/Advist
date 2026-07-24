@@ -1,11 +1,9 @@
 /**
  * Document Quota Service - Enforcement des limites documents/mois
- *
- * Business : 50 documents/mois
- * Entreprise : illimité
+ * Quotas sourced from Atlas Studio via tenant store.
  */
 import { supabase } from '../lib/supabase';
-import { PLANS } from '../config/plans';
+import { useTenantStore } from '../stores/tenantStore';
 
 export const documentQuotaService = {
   /**
@@ -13,14 +11,18 @@ export const documentQuotaService = {
    */
   async checkCanCreateDocument(
     organizationId: string,
-    plan: string
+    _plan?: string
   ): Promise<{
     allowed: boolean;
     current: number;
     limit: number;
     remaining: number;
   }> {
-    if (plan === 'enterprise') {
+    const tenant = useTenantStore.getState().currentTenant;
+    const maxDocs = tenant?.quotas?.maxDocuments ?? -1;
+
+    // Unlimited
+    if (maxDocs === -1) {
       return { allowed: true, current: 0, limit: -1, remaining: -1 };
     }
 
@@ -36,23 +38,16 @@ export const documentQuotaService = {
 
     if (error) {
       console.error('Error checking document quota:', error);
-      // En cas d'erreur, on autorise par défaut pour ne pas bloquer l'utilisateur
-      return {
-        allowed: true,
-        current: 0,
-        limit: PLANS.BUSINESS.limits.documentsPerMonth,
-        remaining: PLANS.BUSINESS.limits.documentsPerMonth,
-      };
+      return { allowed: true, current: 0, limit: maxDocs, remaining: maxDocs };
     }
 
     const current = count || 0;
-    const limit = PLANS.BUSINESS.limits.documentsPerMonth;
-    const remaining = Math.max(0, limit - current);
+    const remaining = Math.max(0, maxDocs - current);
 
     return {
-      allowed: current < limit,
+      allowed: current < maxDocs,
       current,
-      limit,
+      limit: maxDocs,
       remaining,
     };
   },
@@ -62,39 +57,36 @@ export const documentQuotaService = {
    */
   async getMonthlyUsage(
     organizationId: string,
-    plan: string
+    _plan?: string
   ): Promise<{
     documentsThisMonth: number;
     limit: number;
     percentage: number;
     isUnlimited: boolean;
   }> {
-    if (plan === 'enterprise') {
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
+    const tenant = useTenantStore.getState().currentTenant;
+    const maxDocs = tenant?.quotas?.maxDocuments ?? -1;
 
-      const { count } = await supabase
-        .from('documents')
-        .select('*', { count: 'exact', head: true })
-        .eq('organization_id', organizationId)
-        .gte('created_at', startOfMonth.toISOString());
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
 
-      return {
-        documentsThisMonth: count || 0,
-        limit: -1,
-        percentage: 0,
-        isUnlimited: true,
-      };
+    const { count } = await supabase
+      .from('documents')
+      .select('*', { count: 'exact', head: true })
+      .eq('organization_id', organizationId)
+      .gte('created_at', startOfMonth.toISOString());
+
+    const documentsThisMonth = count || 0;
+
+    if (maxDocs === -1) {
+      return { documentsThisMonth, limit: -1, percentage: 0, isUnlimited: true };
     }
 
-    const quota = await documentQuotaService.checkCanCreateDocument(organizationId, plan);
-    const limit = PLANS.BUSINESS.limits.documentsPerMonth;
-
     return {
-      documentsThisMonth: quota.current,
-      limit,
-      percentage: Math.round((quota.current / limit) * 100),
+      documentsThisMonth,
+      limit: maxDocs,
+      percentage: Math.round((documentsThisMonth / maxDocs) * 100),
       isUnlimited: false,
     };
   },

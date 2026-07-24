@@ -19,8 +19,7 @@ import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import SignaturePad, { SignatureData } from './SignaturePad';
 import { ConsentScreen } from './ConsentScreen';
-import { UpgradeBanner } from '../gating';
-import { useHasFeature } from '../../hooks/useTenantPlan';
+import { useTenantStore } from '../../stores/tenantStore';
 
 export interface SignatureRequest {
   id: string;
@@ -65,8 +64,9 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
   requirePin = true,
 }) => {
   const { t } = useTranslation();
-  const hasAdvancedSignature = useHasFeature('signature_electronique_avancee');
-  const hasBiometricSignature = useHasFeature('signature_biometrique');
+  const checkFeature = useTenantStore((s) => s.checkFeature);
+  const hasAdvancedSignature = checkFeature('advancedSignature');
+  const hasBiometricSignature = checkFeature('qualifiedSignature');
   const isLockedSignatureType =
     (request.signatureType === 'advanced' && !hasAdvancedSignature) ||
     (request.signatureType === 'qualified' && !hasBiometricSignature);
@@ -233,15 +233,11 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
 
             {/* Upgrade banner if signature type is locked */}
             {isLockedSignatureType && (
-              <UpgradeBanner
-                feature={
-                  request.signatureType === 'qualified'
-                    ? 'signature_biometrique'
-                    : 'signature_electronique_avancee'
-                }
-                requiredPlan="Entreprise"
-                size="sm"
-              />
+              <div className="p-4 bg-advist-surface-dark rounded-lg border border-advist-border">
+                <p className="text-sm text-advist-text-secondary">
+                  Ce type de signature nécessite un plan supérieur.
+                </p>
+              </div>
             )}
 
             {/* Deadline warning */}

@@ -25,8 +25,7 @@ import { Button } from '../ui/Button';
 import { notificationsService } from '../../services/notifications';
 import type { NotificationPreferences, NotificationChannel } from '../../types';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../../services/translation';
-import { LockedToggle } from '../gating';
-import { useHasFeature } from '../../hooks/useTenantPlan';
+import { useTenantStore } from '../../stores/tenantStore';
 
 interface NotificationPreferencesProps {
   onSave?: () => void;
@@ -64,7 +63,8 @@ const DEFAULT_PREFERENCES: NotificationPreferences = {
 
 export const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ onSave }) => {
   const { _t } = useTranslation();
-  const hasWhatsAppSms = useHasFeature('notifications_whatsapp_sms');
+  const checkFeature = useTenantStore((s) => s.checkFeature);
+  const hasWhatsAppSms = checkFeature('offlineMode');
   const [preferences, setPreferences] = useState<NotificationPreferences>(DEFAULT_PREFERENCES);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -281,11 +281,20 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
 
           {/* WhatsApp */}
           {!hasWhatsAppSms ? (
-            <LockedToggle
-              feature="notifications_whatsapp_sms"
-              label="WhatsApp"
-              description="Recevoir des notifications via WhatsApp"
-            />
+            <div className="flex items-center justify-between p-4 bg-advist-bg rounded-xl opacity-60">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-advist-success rounded-lg">
+                  <MessageCircle size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="font-medium text-advist-gray900">WhatsApp</p>
+                  <p className="text-sm text-advist-blue-light">
+                    Recevoir des notifications via WhatsApp
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs text-advist-text-muted">Non disponible</span>
+            </div>
           ) : (
             <div className="p-4 bg-advist-bg rounded-xl">
               <div className="flex items-center justify-between mb-3">
@@ -382,11 +391,20 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
 
           {/* SMS */}
           {!hasWhatsAppSms ? (
-            <LockedToggle
-              feature="notifications_whatsapp_sms"
-              label="SMS"
-              description="Recevoir des notifications par SMS"
-            />
+            <div className="flex items-center justify-between p-4 bg-advist-bg rounded-xl opacity-60">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white rounded-lg">
+                  <Smartphone size={20} className="text-advist-gray900" />
+                </div>
+                <div>
+                  <p className="font-medium text-advist-gray900">SMS</p>
+                  <p className="text-sm text-advist-blue-light">
+                    Recevoir des notifications par SMS
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs text-advist-text-muted">Non disponible</span>
+            </div>
           ) : (
             <div className="flex items-center justify-between p-4 bg-advist-bg rounded-xl">
               <div className="flex items-center gap-3">

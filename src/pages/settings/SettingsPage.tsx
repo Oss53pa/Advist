@@ -56,7 +56,6 @@ import { ThemeCustomizer } from '../../components/theme';
 import { NotificationPreferences } from '../../components/notifications';
 import { AISettings } from '../../components/settings/AISettings';
 import { IntegrationSettings } from '../../components/integrations';
-import { FeatureGate, UpgradeBanner } from '../../components/gating';
 
 interface AppSettings {
   theme: 'light' | 'dark' | 'system';
@@ -275,23 +274,18 @@ export const SettingsPage: React.FC = () => {
             <GeneralSettings settings={settings} setSettings={setSettings} />
           )}
           {activeTab === 'appearance' && (
-            <FeatureGate
-              feature="branding_personnalise"
-              fallback={<UpgradeBanner feature="branding_personnalise" requiredPlan="Entreprise" />}
-            >
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold text-advist-gray900 mb-2">
-                  {t('settings.appearance', 'Apparence')}
-                </h2>
-                <p className="text-advist-gray900/60 mb-6">
-                  {t(
-                    'settings.appearanceDesc',
-                    'Personnalisez les couleurs, polices et la mise en page de votre interface'
-                  )}
-                </p>
-                <ThemeCustomizer />
-              </Card>
-            </FeatureGate>
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold text-advist-gray900 mb-2">
+                {t('settings.appearance', 'Apparence')}
+              </h2>
+              <p className="text-advist-gray900/60 mb-6">
+                {t(
+                  'settings.appearanceDesc',
+                  'Personnalisez les couleurs, polices et la mise en page de votre interface'
+                )}
+              </p>
+              <ThemeCustomizer />
+            </Card>
           )}
           {activeTab === 'notifications' && (
             <div className="space-y-6">

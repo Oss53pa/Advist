@@ -3,12 +3,10 @@
  *
  * Un émetteur est un utilisateur interne qui peut créer et initier des workflows.
  * Les externes (signataires, validateurs) ne comptent pas dans ce quota.
- *
- * Business : 1 à 5 émetteurs max
- * Entreprise : illimité
+ * Quotas sourced from Atlas Studio via tenant store.
  */
 import { supabase } from '../lib/supabase';
-import { PLANS } from '../config/plans';
+import { useTenantStore } from '../stores/tenantStore';
 
 export const emitterService = {
   /**
@@ -30,27 +28,30 @@ export const emitterService = {
   },
 
   /**
-   * Vérifie si on peut ajouter un émetteur selon le plan
+   * Vérifie si on peut ajouter un émetteur selon le quota du tenant
    */
   async canAddEmitter(
     organizationId: string,
-    plan: string
+    _plan?: string
   ): Promise<{
     allowed: boolean;
     current: number;
     max: number;
   }> {
-    if (plan === 'enterprise') {
+    const tenant = useTenantStore.getState().currentTenant;
+    const maxUsers = tenant?.quotas?.maxUsers ?? -1;
+
+    // Unlimited
+    if (maxUsers === -1) {
       return { allowed: true, current: 0, max: -1 };
     }
 
     const current = await emitterService.countEmitters(organizationId);
-    const max = PLANS.BUSINESS.limits.emitters;
 
     return {
-      allowed: current < max,
+      allowed: current < maxUsers,
       current,
-      max,
+      max: maxUsers,
     };
   },
 

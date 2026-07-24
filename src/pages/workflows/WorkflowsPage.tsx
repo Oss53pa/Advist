@@ -37,7 +37,6 @@ import {
   type ConditionalRule,
 } from '../../components/workflows/ConditionalRules';
 import { AddValidatorModal } from '../../components/workflows/AddValidatorModal';
-import { UpgradeGate } from '../../components/subscription/UpgradeGate';
 
 export const WorkflowsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -68,7 +67,9 @@ export const WorkflowsPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <PrintButton config={{ title: 'Circuits de validation', appName: 'Advist' }}>
             <div>
-              <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>{t('workflows.title')}</h2>
+              <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>
+                {t('workflows.title')}
+              </h2>
               <p>{t('workflows.subtitle')}</p>
             </div>
           </PrintButton>
@@ -1656,15 +1657,12 @@ const NewWorkflowTemplateModal: React.FC<{
 
           {/* Rules Tab */}
           {activeTab === 'rules' && (
-            <UpgradeGate feature="conditionalRules">
-              <div className="space-y-4">
-                <div className="p-3 bg-advist-surface-dark rounded-xl text-sm text-advist-gray900">
-                  <strong>{t('workflows.conditionalRules')}</strong>{' '}
-                  {t('workflows.adaptWorkflowTip')}
-                </div>
-                <ConditionalRules rules={rules} onChange={setRules} />
+            <div className="space-y-4">
+              <div className="p-3 bg-advist-surface-dark rounded-xl text-sm text-advist-gray900">
+                <strong>{t('workflows.conditionalRules')}</strong> {t('workflows.adaptWorkflowTip')}
               </div>
-            </UpgradeGate>
+              <ConditionalRules rules={rules} onChange={setRules} />
+            </div>
           )}
 
           {/* Metadata Tab */}

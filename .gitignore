@@ -92,3 +92,6 @@ supabase/.branches/
 # Windows artifacts
 nul
 test-results/
+
+.vercel
+.env*

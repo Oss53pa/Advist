@@ -27,11 +27,8 @@ import {
   SearchInput,
   FilterSelect,
   ViewModeToggle,
-  Tooltip,
 } from '../../components/ui';
 import { PrintButton } from '../../shared/PrintEngine';
-import { useUserQuota, useTenantPlan } from '../../hooks/useTenantPlan';
-import { Lock } from 'lucide-react';
 
 interface TeamMember {
   id: number;
@@ -70,9 +67,6 @@ export const UsersPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<TeamMember | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [users, setUsers] = useState<TeamMember[]>([]);
-  const userQuota = useUserQuota();
-  const plan = useTenantPlan();
-
   useEffect(() => {
     const loadUsers = async () => {
       const {
@@ -180,38 +174,10 @@ export const UsersPage: React.FC = () => {
               <Download size={16} className="mr-2" />
               {t('common.export')}
             </Button>
-            <Tooltip
-              content={
-                userQuota.limitReached
-                  ? `Limite de ${userQuota.max} utilisateurs atteinte en plan ${plan.displayName}. Passez en Entreprise pour un nombre illimite.`
-                  : t('users.newUser', 'Inviter un utilisateur')
-              }
-              disabled={!userQuota.limitReached}
-            >
-              <Button
-                onClick={() => {
-                  if (userQuota.limitReached) {
-                    window.open('https://atlas-studio.org/applications/advist', '_blank');
-                    return;
-                  }
-                  setShowCreateModal(true);
-                }}
-                disabled={userQuota.limitReached}
-                className={userQuota.limitReached ? 'opacity-60 cursor-not-allowed' : ''}
-              >
-                {userQuota.limitReached ? (
-                  <Lock size={16} className="mr-2" />
-                ) : (
-                  <Plus size={16} className="mr-2" />
-                )}
-                {t('users.newUser')}
-                {!userQuota.isUnlimited && (
-                  <span className="ml-2 px-1.5 py-0.5 bg-white/20 rounded-full text-[10px] font-bold">
-                    {userQuota.current}/{userQuota.max}
-                  </span>
-                )}
-              </Button>
-            </Tooltip>
+            <Button onClick={() => setShowCreateModal(true)}>
+              <Plus size={16} className="mr-2" />
+              {t('users.newUser')}
+            </Button>
           </>
         }
       />

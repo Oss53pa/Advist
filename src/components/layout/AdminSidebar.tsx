@@ -20,7 +20,6 @@ import {
   Target,
   FileText,
 } from 'lucide-react';
-import { usePlanTheme } from '../../hooks/usePlanTheme';
 
 interface AdminSidebarProps {
   isCollapsed: boolean;
@@ -118,7 +117,6 @@ const bottomNavItems: NavItem[] = [
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggle }) => {
   const location = useLocation();
-  const { theme: planTheme } = usePlanTheme();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleExpand = (id: string) => {
@@ -160,9 +158,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggl
           ) : (
             <div>
               <span className="font-decorative text-xl text-advist-gray900 block">Advist</span>
-              <span className={`text-[10px] ${planTheme.text} uppercase tracking-wider`}>
-                Admin
-              </span>
+              <span className="text-[10px] text-advist-gold uppercase tracking-wider">Admin</span>
             </div>
           )}
         </div>
@@ -197,7 +193,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggl
               expanded={expandedItems.includes(item.id)}
               onToggle={() => toggleExpand(item.id)}
               isActive={isItemActive(item)}
-              planTheme={planTheme}
             />
           ))}
         </div>
@@ -213,7 +208,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggl
             expanded={false}
             onToggle={() => {}}
             isActive={isItemActive(item)}
-            planTheme={planTheme}
           />
         ))}
       </div>
@@ -228,8 +222,7 @@ const AdminNavMenuItem: React.FC<{
   expanded: boolean;
   onToggle: () => void;
   isActive: boolean;
-  planTheme: ReturnType<typeof usePlanTheme>['theme'];
-}> = ({ item, isCollapsed, expanded, onToggle, isActive, planTheme }) => {
+}> = ({ item, isCollapsed, expanded, onToggle, isActive }) => {
   const location = useLocation();
   const Icon = item.icon;
   const hasChildren = item.children && item.children.length > 0;
@@ -249,7 +242,7 @@ const AdminNavMenuItem: React.FC<{
             w-full flex items-center justify-center p-3 rounded-xl transition-all duration-300
             ${
               isActive
-                ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+                ? `bg-gradient-to-r from-advist-gold to-primary-500 text-white shadow-lg`
                 : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
             }
           `}
@@ -257,7 +250,7 @@ const AdminNavMenuItem: React.FC<{
           <Icon size={20} />
           {item.badge && (
             <span
-              className={`absolute -top-1 -right-1 w-5 h-5 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
+              className={`absolute -top-1 -right-1 w-5 h-5 bg-advist-gold text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
             >
               {item.badge > 9 ? '9+' : item.badge}
             </span>
@@ -268,7 +261,7 @@ const AdminNavMenuItem: React.FC<{
         <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-2 bg-advist-dark text-white text-sm rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 whitespace-nowrap z-50 shadow-lg">
           {item.label}
           {item.badge && (
-            <span className={`ml-2 px-1.5 py-0.5 ${planTheme.bgMedium} rounded text-xs`}>
+            <span className={`ml-2 px-1.5 py-0.5 bg-advist-gold/20 rounded text-xs`}>
               {item.badge}
             </span>
           )}
@@ -287,7 +280,7 @@ const AdminNavMenuItem: React.FC<{
             w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-300
             ${
               isActive
-                ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+                ? `bg-gradient-to-r from-advist-gold to-primary-500 text-white shadow-lg`
                 : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
             }
           `}
@@ -298,7 +291,7 @@ const AdminNavMenuItem: React.FC<{
             <span
               className={`
               px-1.5 py-0.5 text-[10px] font-bold rounded-full
-              ${isActive ? 'bg-white/20 text-white' : `${planTheme.bgMedium} ${planTheme.text}`}
+              ${isActive ? 'bg-white/20 text-white' : `bg-advist-gold/20 text-advist-gold`}
             `}
             >
               {item.badge}
@@ -322,7 +315,7 @@ const AdminNavMenuItem: React.FC<{
 
         {/* Children - bordure colorée */}
         {expanded && (
-          <div className={`ml-4 mt-1 pl-4 border-l-2 ${planTheme.border} space-y-1`}>
+          <div className={`ml-4 mt-1 pl-4 border-l-2 border-advist-gold/30 space-y-1`}>
             {item.children?.map((child) => {
               const ChildIcon = child.icon;
               const childActive =
@@ -336,7 +329,7 @@ const AdminNavMenuItem: React.FC<{
                     flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
                     ${
                       childActive
-                        ? `${planTheme.bgLight} text-advist-gray900 font-medium`
+                        ? `bg-advist-gold/10 text-advist-gray900 font-medium`
                         : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
                     }
                   `}
@@ -345,7 +338,7 @@ const AdminNavMenuItem: React.FC<{
                   <span className="flex-1 text-sm">{child.label}</span>
                   {child.badge && (
                     <span
-                      className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${planTheme.bgMedium} ${planTheme.text}`}
+                      className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-advist-gold/20 text-advist-gold`}
                     >
                       {child.badge}
                     </span>
@@ -367,7 +360,7 @@ const AdminNavMenuItem: React.FC<{
         flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
         ${
           isActive
-            ? `${planTheme.bgGradient} ${planTheme.textOnBg} shadow-lg`
+            ? `bg-gradient-to-r from-advist-gold to-primary-500 text-white shadow-lg`
             : 'text-advist-text-secondary hover:bg-advist-surface-dark hover:text-advist-gray900'
         }
       `}
@@ -378,7 +371,7 @@ const AdminNavMenuItem: React.FC<{
         <span
           className={`
           px-1.5 py-0.5 text-[10px] font-bold rounded-full
-          ${isActive ? 'bg-white/20 text-white' : `${planTheme.bgMedium} ${planTheme.text}`}
+          ${isActive ? 'bg-white/20 text-white' : `bg-advist-gold/20 text-advist-gold`}
         `}
         >
           {item.badge}

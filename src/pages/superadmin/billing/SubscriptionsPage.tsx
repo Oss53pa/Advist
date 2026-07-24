@@ -13,7 +13,6 @@ import {
   Lock,
   Unlock,
   RefreshCw,
-  ArrowUpRight,
   _ArrowDownRight,
   _Calendar,
   _Building2,
@@ -21,7 +20,6 @@ import {
 } from 'lucide-react';
 import { Button, Modal } from '../../../components/ui';
 import { subscriptionsService, Subscription } from '../../../services/subscriptions';
-import { ChangePlanModal } from '../../../components/superadmin/ChangePlanModal';
 
 // Mock subscriptions data
 const mockSubscriptions = [
@@ -139,7 +137,6 @@ export const SubscriptionsPage: React.FC = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
-  const [showChangePlanModal, setShowChangePlanModal] = useState(false);
   const [actionType, setActionType] = useState<'suspend' | 'reactivate' | 'cancel' | null>(null);
   const [suspendReason, setSuspendReason] = useState('');
 
@@ -446,21 +443,6 @@ export const SubscriptionsPage: React.FC = () => {
                             <Eye size={16} />
                           </Button>
 
-                          {(sub.status === 'active' || sub.status === 'trial') && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-primary-900 hover:bg-primary-50"
-                              onClick={() => {
-                                setSelectedSubscription(sub);
-                                setShowChangePlanModal(true);
-                              }}
-                              title="Changer de plan"
-                            >
-                              <ArrowUpRight size={16} />
-                            </Button>
-                          )}
-
                           {sub.status === 'active' && (
                             <Button
                               variant="ghost"
@@ -561,17 +543,6 @@ export const SubscriptionsPage: React.FC = () => {
               <Button variant="outline" className="flex-1">
                 <RefreshCw size={16} className="mr-2" />
                 Renouveler
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => {
-                  setShowDetailModal(false);
-                  setShowChangePlanModal(true);
-                }}
-              >
-                <ArrowUpRight size={16} className="mr-2" />
-                Changer de plan
               </Button>
               {selectedSubscription.status === 'active' ? (
                 <Button
@@ -684,17 +655,6 @@ export const SubscriptionsPage: React.FC = () => {
           </div>
         </div>
       </Modal>
-
-      {/* Change Plan Modal */}
-      <ChangePlanModal
-        isOpen={showChangePlanModal}
-        onClose={() => setShowChangePlanModal(false)}
-        subscription={selectedSubscription}
-        onSuccess={() => {
-          fetchSubscriptions();
-          setShowChangePlanModal(false);
-        }}
-      />
     </div>
   );
 };

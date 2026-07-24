@@ -7,7 +7,7 @@ import { SuperAdminLayout } from './components/layout/SuperAdminLayout';
 import { ThemeProvider } from './components/theme';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useAuthStore } from './store';
-import { useSubscriptionGuard } from './hooks/useSubscriptionGuard';
+import { useSubscriptionGuard } from './hooks';
 
 // Pages d'auth chargées immédiatement (small bundles)
 import { LoginPage, ProfileSelectPage } from './pages';
@@ -56,12 +56,9 @@ const SuperAdminLogsPage = lazy(() => import('./pages/superadmin/SuperAdminLogsP
 const SuperAdminAlertsPage = lazy(() => import('./pages/superadmin/SuperAdminAlertsPage'));
 const SuperAdminSettingsPage = lazy(() => import('./pages/superadmin/SuperAdminSettingsPage'));
 const LandingPageEditorPage = lazy(() => import('./pages/superadmin/LandingPageEditorPage'));
-const PricingEditorPage = lazy(() => import('./pages/superadmin/PricingEditorPage'));
-const AddonEditorPage = lazy(() => import('./pages/superadmin/AddonEditorPage'));
 
 // Lazy loading des pages billing SuperAdmin
 const BillingDashboard = lazy(() => import('./pages/superadmin/billing/BillingDashboard'));
-const SubscriptionsPage = lazy(() => import('./pages/superadmin/billing/SubscriptionsPage'));
 const InvoicesPage = lazy(() => import('./pages/superadmin/billing/InvoicesPage'));
 const PaymentSettingsPage = lazy(() => import('./pages/superadmin/billing/PaymentSettingsPage'));
 
@@ -110,9 +107,8 @@ const ResourcePage = lazy(() => import('./pages/resources/ResourcePage'));
 const BlogPage = lazy(() => import('./pages/blog/BlogPage'));
 const BlogArticlePage = lazy(() => import('./pages/blog/BlogArticlePage'));
 
-// Pages subscription/licence
+// Pages licence
 const ActivateLicensePage = lazy(() => import('./pages/auth/ActivateLicensePage'));
-const SubscriptionBlockedPage = lazy(() => import('./pages/subscription/SubscriptionBlockedPage'));
 
 // Create a client
 const queryClient = new QueryClient({
@@ -148,21 +144,36 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
-// Subscription Protected Route - vérifie l'abonnement en plus de l'auth
-const SubscriptionProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
-  const { isLoading, canAccess, blockReason } = useSubscriptionGuard();
+// Interrupteur de sécurité : `VITE_ENFORCE_LICENCE=false` désactive l'enforcement
+// de licence sans changer le code (utile si un problème survient en preview/prod).
+// Par défaut, l'enforcement est actif.
+const ENFORCE_LICENCE = import.meta.env.VITE_ENFORCE_LICENCE !== 'false';
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+// Licensed Route wrapper — à composer À L'INTÉRIEUR d'un ProtectedRoute/AdminRoute
+// (l'authentification est donc déjà garantie). Vérifie que l'utilisateur possède
+// un siège Advist actif via useSubscriptionGuard (source de vérité : Atlas Studio).
+//
+// - Superadmin : jamais bloqué (opérateur de plateforme, pas un client).
+// - Accès refusé → redirection vers /activate-license (page hors de ce wrapper,
+//   donc aucune boucle de redirection).
+// - Chargement → PageLoader, pour éviter un flash de blocage avant la réponse.
+const LicensedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuthStore();
+  // Hook appelé inconditionnellement (règle des hooks) avant tout retour anticipé.
+  const guard = useSubscriptionGuard();
+
+  if (!ENFORCE_LICENCE || user?.is_super_admin) {
+    return <>{children}</>;
   }
 
-  if (isLoading) {
+  if (guard.isLoading) {
     return <PageLoader />;
   }
 
-  if (!canAccess && blockReason) {
-    return <Navigate to={`/subscription-blocked?reason=${blockReason}`} replace />;
+  if (!guard.canAccess) {
+    return (
+      <Navigate to={`/activate-license?reason=${guard.blockReason ?? 'no_licence'}`} replace />
+    );
   }
 
   return <>{children}</>;
@@ -179,21 +190,12 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
-// Admin Route wrapper - checks auth + subscription + admin/org_admin role
+// Admin Route wrapper - checks auth + admin/org_admin role
 const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
-  const { isLoading, canAccess, blockReason } = useSubscriptionGuard();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (isLoading) {
-    return <PageLoader />;
-  }
-
-  if (!canAccess && blockReason) {
-    return <Navigate to={`/subscription-blocked?reason=${blockReason}`} replace />;
   }
 
   const isAdmin =
@@ -309,7 +311,7 @@ function App() {
                 <Route path="/integrations" element={<ResourcePage />} />
                 <Route path="/api-docs" element={<ResourcePage />} />
 
-                {/* Subscription/License Routes */}
+                {/* License Route */}
                 <Route
                   path="/activate-license"
                   element={
@@ -318,17 +320,18 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/subscription-blocked" element={<SubscriptionBlockedPage />} />
 
                 {/* User Interface Routes */}
                 <Route
                   path="/user"
                   element={
-                    <SubscriptionProtectedRoute>
-                      <ErrorBoundary>
-                        <UserLayout />
-                      </ErrorBoundary>
-                    </SubscriptionProtectedRoute>
+                    <ProtectedRoute>
+                      <LicensedRoute>
+                        <ErrorBoundary>
+                          <UserLayout />
+                        </ErrorBoundary>
+                      </LicensedRoute>
+                    </ProtectedRoute>
                   }
                 >
                   <Route index element={<UserDashboard />} />
@@ -358,9 +361,11 @@ function App() {
                   path="/admin"
                   element={
                     <AdminRoute>
-                      <ErrorBoundary>
-                        <AdminLayout />
-                      </ErrorBoundary>
+                      <LicensedRoute>
+                        <ErrorBoundary>
+                          <AdminLayout />
+                        </ErrorBoundary>
+                      </LicensedRoute>
                     </AdminRoute>
                   }
                 >
@@ -412,15 +417,11 @@ function App() {
                   <Route path="logs" element={<SuperAdminLogsPage />} />
                   <Route path="alerts" element={<SuperAdminAlertsPage />} />
                   <Route path="landing-page" element={<LandingPageEditorPage />} />
-                  <Route path="pricing" element={<PricingEditorPage />} />
-                  <Route path="addons" element={<AddonEditorPage />} />
                   <Route path="settings" element={<SuperAdminSettingsPage />} />
                   {/* Billing Routes */}
                   <Route path="billing" element={<BillingDashboard />} />
-                  <Route path="billing/subscriptions" element={<SubscriptionsPage />} />
                   <Route path="billing/invoices" element={<InvoicesPage />} />
                   <Route path="billing/payments" element={<InvoicesPage />} />
-                  <Route path="billing/plans" element={<SubscriptionsPage />} />
                   <Route path="billing/settings" element={<PaymentSettingsPage />} />
                   {/* Support */}
                   <Route path="support" element={<SuperAdminSupportPage />} />

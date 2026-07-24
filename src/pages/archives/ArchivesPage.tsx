@@ -23,7 +23,6 @@ import { Modal } from '../../components/ui/Modal';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store';
 import { PrintButton } from '../../shared/PrintEngine';
-import { FeatureGate, UpgradeBanner } from '../../components/gating';
 
 interface ArchivedDocument {
   id: string;
@@ -181,16 +180,6 @@ export const ArchivesPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Valeur probante (Archivage légal) — gating */}
-      <FeatureGate
-        feature="archivage_legale_probante"
-        fallback={
-          <UpgradeBanner feature="archivage_legale_probante" requiredPlan="Entreprise" size="sm" />
-        }
-      >
-        <></>
-      </FeatureGate>
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

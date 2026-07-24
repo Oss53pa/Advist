@@ -6,8 +6,6 @@ import { Avatar } from '../ui/Avatar';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { OfflineIndicator } from '../offline';
 import { ThemeToggle } from '../theme';
-import { PlanSwitcher } from '../dev/PlanSwitcher';
-import { usePlanTheme } from '../../hooks/usePlanTheme';
 
 interface UserNavbarProps {
   onMenuClick: () => void;
@@ -17,7 +15,6 @@ export const UserNavbar: React.FC<UserNavbarProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const { unreadCount } = useNotificationStore();
-  const { theme: planTheme } = usePlanTheme();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -60,9 +57,6 @@ export const UserNavbar: React.FC<UserNavbarProps> = ({ onMenuClick }) => {
 
         {/* Right section */}
         <div className="flex items-center gap-3">
-          {/* Plan Switcher (Dev only) */}
-          <PlanSwitcher />
-
           {/* Offline Indicator */}
           <OfflineIndicator />
 
@@ -86,18 +80,20 @@ export const UserNavbar: React.FC<UserNavbarProps> = ({ onMenuClick }) => {
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className={`relative p-2.5 rounded-xl ${planTheme.navHover} transition-all duration-300`}
+              className={`relative p-2.5 rounded-xl hover:bg-advist-gold/10 transition-all duration-300`}
             >
               <Bell size={20} className="text-advist-gray900" />
               {unreadCount > 0 && (
-                <span className={`absolute top-1.5 right-1.5 w-4 h-4 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}>
+                <span
+                  className={`absolute top-1.5 right-1.5 w-4 h-4 bg-advist-gold text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
+                >
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
             </button>
 
             {showNotifications && (
-              <UserNotificationDropdown onClose={() => setShowNotifications(false)} planTheme={planTheme} />
+              <UserNotificationDropdown onClose={() => setShowNotifications(false)} />
             )}
           </div>
 
@@ -118,7 +114,7 @@ export const UserNavbar: React.FC<UserNavbarProps> = ({ onMenuClick }) => {
             </button>
 
             {showUserMenu && (
-              <UserDropdownMenu onClose={() => setShowUserMenu(false)} onLogout={handleLogout} planTheme={planTheme} />
+              <UserDropdownMenu onClose={() => setShowUserMenu(false)} onLogout={handleLogout} />
             )}
           </div>
         </div>
@@ -129,8 +125,7 @@ export const UserNavbar: React.FC<UserNavbarProps> = ({ onMenuClick }) => {
 
 const UserNotificationDropdown: React.FC<{
   onClose: () => void;
-  planTheme: ReturnType<typeof usePlanTheme>['theme'];
-}> = ({ onClose, planTheme }) => {
+}> = ({ onClose }) => {
   const { notifications, markAsRead, markAllAsRead } = useNotificationStore();
 
   return (
@@ -148,9 +143,7 @@ const UserNotificationDropdown: React.FC<{
         </div>
         <div className="max-h-96 overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="p-4 text-center text-advist-text-muted">
-              Aucune notification
-            </div>
+            <div className="p-4 text-center text-advist-text-muted">Aucune notification</div>
           ) : (
             notifications.slice(0, 5).map((notif) => (
               <div
@@ -170,7 +163,7 @@ const UserNotificationDropdown: React.FC<{
         </div>
         <Link
           to="/user/notifications"
-          className={`block px-4 py-3 text-center text-sm ${planTheme.text} hover:bg-advist-surface-dark transition-all duration-300 font-medium`}
+          className={`block px-4 py-3 text-center text-sm text-advist-gold hover:bg-advist-surface-dark transition-all duration-300 font-medium`}
           onClick={onClose}
         >
           Voir toutes les notifications
@@ -183,12 +176,7 @@ const UserNotificationDropdown: React.FC<{
 const UserDropdownMenu: React.FC<{
   onClose: () => void;
   onLogout: () => void;
-  planTheme: ReturnType<typeof usePlanTheme>['theme'];
-}> = ({
-  onClose,
-  onLogout,
-  planTheme,
-}) => {
+}> = ({ onClose, onLogout }) => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
 
@@ -233,7 +221,7 @@ const UserDropdownMenu: React.FC<{
         <div className="border-t border-advist-border py-1">
           <button
             onClick={onLogout}
-            className={`flex items-center gap-3 w-full px-4 py-2.5 text-advist-error hover:${planTheme.bgLight} transition-all duration-300`}
+            className={`flex items-center gap-3 w-full px-4 py-2.5 text-advist-error hover:bg-advist-gold/10 transition-all duration-300`}
           >
             <LogOut size={18} />
             <span>Déconnexion</span>

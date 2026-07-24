@@ -3,16 +3,12 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
 import { useAuthStore, useNotificationStore } from '../../store';
-import { PlanBadge } from '../dev/PlanSwitcher';
-import { usePlanTheme } from '../../hooks/usePlanTheme';
 
 export const Layout: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { fetchUser } = useAuthStore();
   const { fetchNotifications, fetchUnreadCount } = useNotificationStore();
-  const { theme: planTheme } = usePlanTheme();
-
   // Fetch user data and notifications on mount
   useEffect(() => {
     fetchUser();
@@ -38,10 +34,8 @@ export const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
-      {/* Plan Color Bar */}
-      <div
-        className={`fixed top-0 left-0 right-0 h-1 ${planTheme.bgGradient} z-[60] print:hidden`}
-      />
+      {/* Brand Color Bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-advist-gold to-primary-500 z-[60] print:hidden" />
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block print:hidden">
@@ -76,11 +70,6 @@ export const Layout: React.FC = () => {
             <Outlet />
           </div>
         </main>
-
-        {/* Plan Badge - Fixed bottom right */}
-        <div className="fixed bottom-4 right-4 z-40 print:hidden">
-          <PlanBadge className="shadow-lg" />
-        </div>
       </div>
     </div>
   );
