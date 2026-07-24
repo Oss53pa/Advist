@@ -1,0 +1,39 @@
+-- ============================================================================
+-- Migration 00036 : Correctif BLOQUANT
+-- Retire le writer d'audit obsolète `auto_audit_log()` qui bloque toute
+-- écriture sur documents / document_signatures / workflow_instances.
+--
+-- DIAGNOSTIC
+-- La migration 00032 (« audit immutability / audit 360 ») a redessiné
+-- `audit_logs` : nouveau modèle immuable et chaîné par hash (colonnes NOT NULL
+-- tenant_id, action, entity_type, entity_id ; hash / previous_hash calculés par
+-- le trigger compute_audit_hash). Mais le writer générique `auto_audit_log()`,
+-- branché sur documents / document_signatures / workflow_instances, écrit
+-- toujours l'ANCIEN modèle (organization_id, resource_type, created_at). Chaque
+-- INSERT échoue donc — d'abord sur `NEW.name` (colonne absente), puis sur
+-- `audit_logs.created_at` (colonne disparue), puis sur les NOT NULL non fournis
+-- (tenant_id, entity_type, entity_id). Résultat : création de documents, de
+-- signatures et de workflows 100 % cassée en production (tables restées vides).
+--
+-- POURQUOI UN DROP ET PAS UN FIX-FORWARD
+-- `audit_logs.tenant_id` est NOT NULL et référence la table `societes`, tandis
+-- que les tables auditées portent `organization_id` (FK vers `organizations`).
+-- Alimenter correctement l'audit immuable exige le mapping organisation↔société,
+-- qui n'est pas déductible ici. Réécrire le writer sur une hypothèse
+-- corromprait la chaîne de hash d'audit. On retire donc le writer cassé pour
+-- restaurer les écritures ; l'infrastructure immuable (00032) reste en place
+-- pour un writer correct à reconstruire séparément.
+--
+-- ⚠️ CONSÉQUENCE : plus aucun événement d'audit DB n'est généré pour ces trois
+-- tables (il n'y en avait déjà aucun — le trigger échouait). À reconstruire :
+--   1. un writer alignant les tables métier sur le schéma immuable (+ mapping
+--      organisation→société pour tenant_id) ;
+--   2. le lecteur applicatif (src/services/documents.ts et cie), encore écrit
+--      pour l'ancien schéma (resource_type / created_at).
+--
+-- CASCADE supprime la fonction ET les triggers qui en dépendent
+-- (audit_documents, et les équivalents sur document_signatures /
+-- workflow_instances).
+-- ============================================================================
+
+DROP FUNCTION IF EXISTS public.auto_audit_log() CASCADE;

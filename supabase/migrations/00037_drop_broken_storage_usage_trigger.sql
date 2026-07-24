@@ -1,0 +1,21 @@
+-- ============================================================================
+-- Migration 00037 : Correctif BLOQUANT (dernier de la série)
+-- Retire le tracking d'usage de stockage obsolète `update_org_storage_usage()`
+-- qui bloque la création/suppression de documents.
+--
+-- CONTEXTE
+-- Même classe de bug que 00035 (quota documentaire) : la fonction met à jour
+-- `organizations.storage_used_mb`, colonne supprimée lors du passage des
+-- quotas/usage à Atlas Studio. Chaque INSERT/DELETE de document échoue donc
+-- avec `ERROR 42703: column "storage_used_mb" does not exist`.
+-- Branchée via update_storage_on_document_insert et update_storage_on_document_delete.
+--
+-- Scan exhaustif effectué : c'est la dernière fonction-trigger référençant une
+-- colonne de quota/usage disparue (avec check_org_document_quota [00035] et
+-- auto_audit_log [00036]).
+--
+-- CORRECTIF : suppression du tracking obsolète (l'usage est géré par Atlas
+-- Studio). CASCADE retire la fonction et ses deux triggers.
+-- ============================================================================
+
+DROP FUNCTION IF EXISTS public.update_org_storage_usage() CASCADE;
