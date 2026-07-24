@@ -166,9 +166,10 @@ describe('useSubscriptionGuard', () => {
     tenantState = {};
     tenantStoreOverrides = {};
     authStoreState = {};
-    // Le point de controle de licence est persiste : sans reinitialisation,
-    // la fenetre de tolerance d'un test fuirait dans les suivants.
-    localStorage.removeItem('advist-licence-last-ok');
+    // Etat persiste (point de controle de licence, store zustand) : on repart
+    // d'un localStorage vide a chaque test, sinon la fenetre de tolerance d'un
+    // test fuit dans les suivants.
+    localStorage.clear();
     mockGetSubscriptionInfo.mockResolvedValue(makeSubscriptionInfo());
     mockSubscribeToUpdates.mockReturnValue(vi.fn());
     // Restore default implementations on stable mocks after clearAllMocks.
