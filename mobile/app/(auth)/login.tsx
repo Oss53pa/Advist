@@ -11,6 +11,7 @@ import {
   Switch,
 } from 'react-native';
 import { Link, router } from 'expo-router';
+import * as Linking from 'expo-linking';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -225,12 +226,17 @@ export default function LoginScreen() {
                   <Text style={styles.optionText}>Se souvenir de moi</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.forgotPassword}>
-                  <Link href="/(auth)/forgot-password">
-                    <Text style={styles.forgotPasswordText}>
-                      Mot de passe oublie ?
-                    </Text>
-                  </Link>
+                <TouchableOpacity
+                  style={styles.forgotPassword}
+                  onPress={() =>
+                    Linking.openURL(
+                      'https://atlas-studio.org/portal/forgot-password'
+                    )
+                  }
+                >
+                  <Text style={styles.forgotPasswordText}>
+                    Mot de passe oublie ?
+                  </Text>
                 </TouchableOpacity>
               </View>
 
