@@ -162,9 +162,7 @@ describe('documentsService', () => {
 
       await documentsService.list({ search: 'facture' });
 
-      expect(qb.or).toHaveBeenCalledWith(
-        'title.ilike.%facture%,description.ilike.%facture%',
-      );
+      expect(qb.or).toHaveBeenCalledWith('title.ilike.%facture%,description.ilike.%facture%');
     });
 
     it('should apply status filter', async () => {
@@ -328,9 +326,7 @@ describe('documentsService', () => {
       });
       mockFrom.mockReturnValue(qb);
 
-      await expect(documentsService.get('nonexistent')).rejects.toThrow(
-        'Aucun résultat trouvé.',
-      );
+      await expect(documentsService.get('nonexistent')).rejects.toThrow('Aucun résultat trouvé.');
     });
 
     it('should map tags into structured objects', async () => {
@@ -415,7 +411,7 @@ describe('documentsService', () => {
       expect(uploadFile).toHaveBeenCalledWith(
         'documents',
         expect.stringContaining('report.pdf'),
-        file,
+        file
       );
       expect(versionQb.insert).toHaveBeenCalled();
     });
@@ -484,9 +480,9 @@ describe('documentsService', () => {
     it('should throw when user is not authenticated', async () => {
       mockUnauthenticatedUser();
 
-      await expect(
-        documentsService.update('doc-1', { title: 'Nope' } as any),
-      ).rejects.toThrow('Non authentifié');
+      await expect(documentsService.update('doc-1', { title: 'Nope' } as any)).rejects.toThrow(
+        'Non authentifié'
+      );
     });
 
     it('should throw on Supabase error', async () => {
@@ -496,9 +492,9 @@ describe('documentsService', () => {
       });
       mockFrom.mockReturnValue(qb);
 
-      await expect(
-        documentsService.update('doc-1', { title: 'Fail' } as any),
-      ).rejects.toThrow('Permission denied');
+      await expect(documentsService.update('doc-1', { title: 'Fail' } as any)).rejects.toThrow(
+        'Permission denied'
+      );
     });
   });
 
@@ -587,7 +583,12 @@ describe('documentsService', () => {
           file_hash: 'hash2',
           changes_summary: 'Updated',
           created_at: '2025-02-01T00:00:00Z',
-          uploaded_by: { id: FAKE_USER_ID, first_name: 'Jean', last_name: 'Dupont', email: 'jean@example.com' },
+          uploaded_by: {
+            id: FAKE_USER_ID,
+            first_name: 'Jean',
+            last_name: 'Dupont',
+            email: 'jean@example.com',
+          },
         },
         {
           id: 'v-1',
@@ -623,9 +624,7 @@ describe('documentsService', () => {
       });
       mockFrom.mockReturnValue(qb);
 
-      await expect(documentsService.getVersions('doc-1')).rejects.toThrow(
-        'Versions fetch failed',
-      );
+      await expect(documentsService.getVersions('doc-1')).rejects.toThrow('Versions fetch failed');
     });
   });
 

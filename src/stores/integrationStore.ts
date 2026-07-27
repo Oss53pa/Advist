@@ -50,15 +50,23 @@ interface IntegrationState {
 
   // OAuth flow
   startOAuthFlow: (id: string, redirectUri: string) => Promise<string>;
-  completeOAuthFlow: (id: string, code: string, state: string, redirectUri: string) => Promise<void>;
+  completeOAuthFlow: (
+    id: string,
+    code: string,
+    state: string,
+    redirectUri: string
+  ) => Promise<void>;
 
   // Credentials auth
-  connectWithCredentials: (id: string, credentials: {
-    api_url: string;
-    username: string;
-    password: string;
-    company_code?: string;
-  }) => Promise<boolean>;
+  connectWithCredentials: (
+    id: string,
+    credentials: {
+      api_url: string;
+      username: string;
+      password: string;
+      company_code?: string;
+    }
+  ) => Promise<boolean>;
 
   // Connection actions
   disconnect: (id: string) => Promise<void>;
@@ -146,7 +154,7 @@ export const useIntegrationStore = create<IntegrationState>()(
         set({ isLoading: true, error: null });
         try {
           const connection = await integrationService.createConnection({ provider, name });
-          set(state => ({
+          set((state) => ({
             connections: [...state.connections, connection],
             isLoading: false,
           }));
@@ -162,9 +170,10 @@ export const useIntegrationStore = create<IntegrationState>()(
         set({ isLoading: true, error: null });
         try {
           await integrationService.deleteConnection(id);
-          set(state => ({
-            connections: state.connections.filter(c => c.id !== id),
-            selectedConnection: state.selectedConnection?.id === id ? null : state.selectedConnection,
+          set((state) => ({
+            connections: state.connections.filter((c) => c.id !== id),
+            selectedConnection:
+              state.selectedConnection?.id === id ? null : state.selectedConnection,
             isLoading: false,
           }));
         } catch (error) {
@@ -176,7 +185,10 @@ export const useIntegrationStore = create<IntegrationState>()(
       startOAuthFlow: async (id: string, redirectUri: string) => {
         set({ isConnecting: true, error: null });
         try {
-          const { authorization_url } = await integrationService.getAuthorizationUrl(id, redirectUri);
+          const { authorization_url } = await integrationService.getAuthorizationUrl(
+            id,
+            redirectUri
+          );
           return authorization_url;
         } catch (error) {
           set({ error: (error as Error).message, isConnecting: false });
@@ -260,13 +272,13 @@ export const useIntegrationStore = create<IntegrationState>()(
       },
 
       navigateToFolder: (folder: CloudFolder) => {
-        set(state => ({
+        set((state) => ({
           folderBreadcrumb: [...state.folderBreadcrumb, { id: folder.id, name: folder.name }],
         }));
       },
 
       navigateUp: () => {
-        set(state => ({
+        set((state) => ({
           folderBreadcrumb: state.folderBreadcrumb.slice(0, -1),
         }));
       },
@@ -284,7 +296,7 @@ export const useIntegrationStore = create<IntegrationState>()(
       createDocumentMapping: async (mapping) => {
         try {
           const created = await integrationService.createDocumentMapping(mapping);
-          set(state => ({ documentMappings: [...state.documentMappings, created] }));
+          set((state) => ({ documentMappings: [...state.documentMappings, created] }));
         } catch (error) {
           set({ error: (error as Error).message });
           throw error;
@@ -294,7 +306,7 @@ export const useIntegrationStore = create<IntegrationState>()(
       deleteDocumentMapping: async (id: string) => {
         try {
           await integrationService.deleteDocumentMapping(id);
-          set(state => ({ documentMappings: state.documentMappings.filter(m => m.id !== id) }));
+          set((state) => ({ documentMappings: state.documentMappings.filter((m) => m.id !== id) }));
         } catch (error) {
           set({ error: (error as Error).message });
         }
@@ -313,7 +325,7 @@ export const useIntegrationStore = create<IntegrationState>()(
       createSyncMapping: async (mapping) => {
         try {
           const created = await integrationService.createSyncMapping(mapping);
-          set(state => ({ syncMappings: [...state.syncMappings, created] }));
+          set((state) => ({ syncMappings: [...state.syncMappings, created] }));
         } catch (error) {
           set({ error: (error as Error).message });
           throw error;
@@ -323,7 +335,7 @@ export const useIntegrationStore = create<IntegrationState>()(
       deleteSyncMapping: async (id: string) => {
         try {
           await integrationService.deleteSyncMapping(id);
-          set(state => ({ syncMappings: state.syncMappings.filter(m => m.id !== id) }));
+          set((state) => ({ syncMappings: state.syncMappings.filter((m) => m.id !== id) }));
         } catch (error) {
           set({ error: (error as Error).message });
         }
@@ -352,7 +364,7 @@ export const useIntegrationStore = create<IntegrationState>()(
       createWorkflowTrigger: async (trigger) => {
         try {
           const created = await integrationService.createWorkflowTrigger(trigger);
-          set(state => ({ workflowTriggers: [...state.workflowTriggers, created] }));
+          set((state) => ({ workflowTriggers: [...state.workflowTriggers, created] }));
         } catch (error) {
           set({ error: (error as Error).message });
           throw error;
@@ -362,7 +374,7 @@ export const useIntegrationStore = create<IntegrationState>()(
       deleteWorkflowTrigger: async (id: string) => {
         try {
           await integrationService.deleteWorkflowTrigger(id);
-          set(state => ({ workflowTriggers: state.workflowTriggers.filter(t => t.id !== id) }));
+          set((state) => ({ workflowTriggers: state.workflowTriggers.filter((t) => t.id !== id) }));
         } catch (error) {
           set({ error: (error as Error).message });
         }
@@ -391,7 +403,10 @@ export const useIntegrationStore = create<IntegrationState>()(
       startSalesforceOAuth: async (redirectUri: string, isSandbox = false) => {
         set({ isConnecting: true, error: null });
         try {
-          const { authorization_url } = await salesforceService.getAuthorizationUrl(redirectUri, isSandbox);
+          const { authorization_url } = await salesforceService.getAuthorizationUrl(
+            redirectUri,
+            isSandbox
+          );
           return authorization_url;
         } catch (error) {
           set({ error: (error as Error).message, isConnecting: false });

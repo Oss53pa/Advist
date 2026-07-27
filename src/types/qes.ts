@@ -14,11 +14,7 @@ export type CertificateStatus =
   | 'suspended';
 
 // Verification method enumeration
-export type VerificationMethod =
-  | 'video_id'
-  | 'id_scan'
-  | 'in_person'
-  | 'existing_cert';
+export type VerificationMethod = 'video_id' | 'id_scan' | 'in_person' | 'existing_cert';
 
 // Verification session status enumeration
 export type VerificationSessionStatus =

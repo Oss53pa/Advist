@@ -63,7 +63,7 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
         bgColor: 'bg-yellow-50',
         borderColor: 'border-yellow-200',
         label: t('qes.noCertificate', 'Aucun certificat'),
-        description: t('qes.noCertificateDesc', 'Vous n\'avez pas de certificat qualifié actif'),
+        description: t('qes.noCertificateDesc', "Vous n'avez pas de certificat qualifié actif"),
       };
     }
 
@@ -75,7 +75,7 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
           bgColor: 'bg-green-50',
           borderColor: 'border-green-200',
           label: t('qes.active', 'Actif'),
-          description: t('qes.activeDesc', 'Votre certificat est valide et prêt à l\'emploi'),
+          description: t('qes.activeDesc', "Votre certificat est valide et prêt à l'emploi"),
         };
       case 'pending_verification':
       case 'verification_in_progress':
@@ -85,7 +85,7 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
           bgColor: 'bg-yellow-50',
           borderColor: 'border-yellow-200',
           label: t('qes.pending', 'En cours'),
-          description: t('qes.pendingDesc', 'Vérification d\'identité en cours'),
+          description: t('qes.pendingDesc', "Vérification d'identité en cours"),
         };
       case 'pending_issuance':
         return {
@@ -94,7 +94,7 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
           bgColor: 'bg-blue-50',
           borderColor: 'border-blue-200',
           label: t('qes.issuance', 'Émission'),
-          description: t('qes.issuanceDesc', 'Votre certificat est en cours d\'émission'),
+          description: t('qes.issuanceDesc', "Votre certificat est en cours d'émission"),
         };
       case 'expired':
         return {
@@ -137,7 +137,9 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`${compact ? 'p-3' : 'p-4'} bg-gray-50 border border-gray-200 rounded-lg animate-pulse`}>
+      <div
+        className={`${compact ? 'p-3' : 'p-4'} bg-gray-50 border border-gray-200 rounded-lg animate-pulse`}
+      >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gray-200 rounded-lg" />
           <div className="flex-1">
@@ -155,12 +157,7 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
         <div className="flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 text-red-600" />
           <span className="text-sm text-red-600">{error}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={loadCertificate}
-            className="ml-auto"
-          >
+          <Button variant="ghost" size="sm" onClick={loadCertificate} className="ml-auto">
             <RefreshCw className="w-4 h-4" />
           </Button>
         </div>
@@ -181,10 +178,7 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
               <span className="font-medium text-gray-900 text-sm">
                 {t('qes.qesCertificate', 'Certificat QES')}
               </span>
-              <Badge
-                variant={certificate?.is_valid ? 'success' : 'warning'}
-                className="text-xs"
-              >
+              <Badge variant={certificate?.is_valid ? 'success' : 'warning'} className="text-xs">
                 {config.label}
               </Badge>
             </div>
@@ -202,12 +196,11 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
   return (
     <div className={`${config.bgColor} border ${config.borderColor} rounded-xl overflow-hidden`}>
       {/* Header */}
-      <div
-        className="p-4 cursor-pointer"
-        onClick={() => certificate && setIsExpanded(!isExpanded)}
-      >
+      <div className="p-4 cursor-pointer" onClick={() => certificate && setIsExpanded(!isExpanded)}>
         <div className="flex items-center gap-4">
-          <div className={`w-12 h-12 ${config.bgColor} rounded-xl flex items-center justify-center border ${config.borderColor}`}>
+          <div
+            className={`w-12 h-12 ${config.bgColor} rounded-xl flex items-center justify-center border ${config.borderColor}`}
+          >
             <StatusIcon className={`w-6 h-6 ${config.color}`} />
           </div>
 
@@ -216,15 +209,9 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
               <h3 className="font-semibold text-gray-900">
                 {t('qes.qualifiedCertificate', 'Certificat Qualifié eIDAS')}
               </h3>
-              <Badge
-                variant={certificate?.is_valid ? 'success' : 'warning'}
-              >
-                {config.label}
-              </Badge>
+              <Badge variant={certificate?.is_valid ? 'success' : 'warning'}>{config.label}</Badge>
             </div>
-            <p className="text-sm text-gray-600 mt-1">
-              {config.description}
-            </p>
+            <p className="text-sm text-gray-600 mt-1">{config.description}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -257,9 +244,7 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
                 <p className="text-xs text-gray-500 uppercase tracking-wide">
                   {t('qes.provider', 'Fournisseur')}
                 </p>
-                <p className="text-sm font-medium text-gray-900">
-                  {certificate.qtsp_provider}
-                </p>
+                <p className="text-sm font-medium text-gray-900">{certificate.qtsp_provider}</p>
               </div>
             </div>
 
@@ -302,9 +287,11 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
                   <p className="text-xs text-gray-500 uppercase tracking-wide">
                     {t('qes.remaining', 'Jours restants')}
                   </p>
-                  <p className={`text-sm font-medium ${
-                    certificate.days_until_expiry <= 30 ? 'text-orange-600' : 'text-gray-900'
-                  }`}>
+                  <p
+                    className={`text-sm font-medium ${
+                      certificate.days_until_expiry <= 30 ? 'text-orange-600' : 'text-gray-900'
+                    }`}
+                  >
                     {certificate.days_until_expiry} {t('qes.days', 'jours')}
                   </p>
                 </div>
@@ -318,12 +305,8 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
                 <p className="text-xs text-gray-500 uppercase tracking-wide">
                   {t('qes.holder', 'Titulaire')}
                 </p>
-                <p className="text-sm font-medium text-gray-900">
-                  {certificate.user_name}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {certificate.user_email}
-                </p>
+                <p className="text-sm font-medium text-gray-900">{certificate.user_name}</p>
+                <p className="text-xs text-gray-500">{certificate.user_email}</p>
               </div>
             </div>
 
@@ -344,25 +327,26 @@ export const CertificateStatus: React.FC<CertificateStatusProps> = ({
           </div>
 
           {/* Warning for expiring soon */}
-          {certificate.days_until_expiry !== undefined && certificate.days_until_expiry <= 30 && certificate.is_valid && (
-            <div className="mt-4 p-3 bg-orange-100 border border-orange-200 rounded-lg">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-orange-600" />
-                <p className="text-sm text-orange-800">
-                  {t('qes.expiringWarning', 'Votre certificat expire bientôt. Pensez à le renouveler.')}
-                </p>
+          {certificate.days_until_expiry !== undefined &&
+            certificate.days_until_expiry <= 30 &&
+            certificate.is_valid && (
+              <div className="mt-4 p-3 bg-orange-100 border border-orange-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-orange-600" />
+                  <p className="text-sm text-orange-800">
+                    {t(
+                      'qes.expiringWarning',
+                      'Votre certificat expire bientôt. Pensez à le renouveler.'
+                    )}
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Actions */}
           {showActions && (
             <div className="flex gap-3 mt-4 pt-4 border-t border-gray-200/50">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={loadCertificate}
-              >
+              <Button variant="ghost" size="sm" onClick={loadCertificate}>
                 <RefreshCw className="w-4 h-4 mr-2" />
                 {t('qes.refresh', 'Actualiser')}
               </Button>

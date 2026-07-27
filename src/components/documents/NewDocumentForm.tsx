@@ -72,7 +72,9 @@ export const NewDocumentForm: React.FC<NewDocumentFormProps> = ({ onClose, baseP
         onClose();
         navigate(`${basePath}/documents`);
       } else {
-        setError(t('documents.createError', 'Erreur lors de la création du document. Veuillez réessayer.'));
+        setError(
+          t('documents.createError', 'Erreur lors de la création du document. Veuillez réessayer.')
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -119,7 +121,10 @@ export const NewDocumentForm: React.FC<NewDocumentFormProps> = ({ onClose, baseP
             </div>
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); setFile(null); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setFile(null);
+              }}
               className="p-1 hover:bg-green-50 rounded-full"
             >
               <X size={18} className="text-advist-success" />
@@ -163,7 +168,9 @@ export const NewDocumentForm: React.FC<NewDocumentFormProps> = ({ onClose, baseP
         >
           <option value="">{t('documents.selectType', 'Sélectionnez un type')}</option>
           {documentTypes.map((type) => (
-            <option key={type.value} value={type.value}>{type.label}</option>
+            <option key={type.value} value={type.value}>
+              {type.label}
+            </option>
           ))}
         </select>
       </div>
@@ -171,7 +178,8 @@ export const NewDocumentForm: React.FC<NewDocumentFormProps> = ({ onClose, baseP
       {/* Description */}
       <div>
         <label className="block text-sm font-medium text-advist-gray900 mb-2">
-          {t('documents.description', 'Description')} <span className="text-advist-blue-light">({t('common.optional', 'optionnel')})</span>
+          {t('documents.description', 'Description')}{' '}
+          <span className="text-advist-blue-light">({t('common.optional', 'optionnel')})</span>
         </label>
         <textarea
           value={description}
@@ -191,10 +199,20 @@ export const NewDocumentForm: React.FC<NewDocumentFormProps> = ({ onClose, baseP
 
       {/* Actions */}
       <div className="flex gap-3 pt-4 border-t border-advist-bg">
-        <Button type="button" variant="ghost" className="flex-1" onClick={onClose} disabled={isSubmitting}>
+        <Button
+          type="button"
+          variant="ghost"
+          className="flex-1"
+          onClick={onClose}
+          disabled={isSubmitting}
+        >
           {t('common.cancel', 'Annuler')}
         </Button>
-        <Button type="submit" className="flex-1" disabled={!file || !title || !docType || isSubmitting}>
+        <Button
+          type="submit"
+          className="flex-1"
+          disabled={!file || !title || !docType || isSubmitting}
+        >
           {isSubmitting ? (
             <>
               <Loader2 size={16} className="mr-2 animate-spin" />

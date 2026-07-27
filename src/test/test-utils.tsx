@@ -52,10 +52,7 @@ function AllTheProviders({ children }: AllTheProvidersProps) {
  * });
  * ```
  */
-function renderWithProviders(
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>
-) {
+function renderWithProviders(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) {
   return render(ui, { wrapper: AllTheProviders, ...options });
 }
 

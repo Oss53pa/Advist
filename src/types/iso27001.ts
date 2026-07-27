@@ -298,12 +298,7 @@ export interface Vulnerability {
   created_at: string;
 }
 
-export type VulnerabilityType =
-  | 'technical'
-  | 'organizational'
-  | 'physical'
-  | 'human'
-  | 'process';
+export type VulnerabilityType = 'technical' | 'organizational' | 'physical' | 'human' | 'process';
 
 // =============================================================================
 // INTERNAL AUDITS
@@ -367,11 +362,7 @@ export type AuditStatus =
   | 'reporting'
   | 'completed'
   | 'cancelled';
-export type AuditConclusion =
-  | 'conformant'
-  | 'minor_nc'
-  | 'major_nc'
-  | 'not_conformant';
+export type AuditConclusion = 'conformant' | 'minor_nc' | 'major_nc' | 'not_conformant';
 
 export interface ExternalAuditor {
   name: string;
@@ -405,12 +396,7 @@ export interface AuditFinding {
   corrective_actions?: CorrectiveAction[];
 }
 
-export type FindingType =
-  | 'nc_major'
-  | 'nc_minor'
-  | 'observation'
-  | 'opportunity'
-  | 'positive';
+export type FindingType = 'nc_major' | 'nc_minor' | 'observation' | 'opportunity' | 'positive';
 
 export type FindingStatus =
   | 'open'
@@ -615,12 +601,7 @@ export interface InformationAsset {
   linked_risks?: string[];
 }
 
-export type ClassificationLevel =
-  | 'public'
-  | 'internal'
-  | 'confidential'
-  | 'restricted'
-  | 'secret';
+export type ClassificationLevel = 'public' | 'internal' | 'confidential' | 'restricted' | 'secret';
 
 export type BusinessValue = 'low' | 'medium' | 'high' | 'critical';
 
@@ -759,19 +740,9 @@ export interface SecurityPolicy {
   pending_acknowledgments_count?: number;
 }
 
-export type PolicyType =
-  | 'policy'
-  | 'standard'
-  | 'procedure'
-  | 'guideline'
-  | 'instruction';
+export type PolicyType = 'policy' | 'standard' | 'procedure' | 'guideline' | 'instruction';
 
-export type PolicyStatus =
-  | 'draft'
-  | 'in_review'
-  | 'approved'
-  | 'published'
-  | 'retired';
+export type PolicyStatus = 'draft' | 'in_review' | 'approved' | 'published' | 'retired';
 
 export interface PolicyApplicability {
   all_personnel?: boolean;

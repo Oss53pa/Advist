@@ -15,9 +15,7 @@ const ISO27001ObjectivesPage: React.FC = () => {
             </div>
             {t('iso27001.objectives.title')}
           </h1>
-          <p className="text-advist-text-secondary mt-1">
-            {t('iso27001.objectives.subtitle')}
-          </p>
+          <p className="text-advist-text-secondary mt-1">{t('iso27001.objectives.subtitle')}</p>
         </div>
         <button className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors">
           <Plus className="w-4 h-4" />

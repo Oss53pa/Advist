@@ -149,7 +149,9 @@ export const subscriptionsService = {
       query = query.eq('status', filters.status);
     }
     if (filters?.search) {
-      query = query.or(`organizations.name.ilike.%${filters.search}%,organizations.slug.ilike.%${filters.search}%`);
+      query = query.or(
+        `organizations.name.ilike.%${filters.search}%,organizations.slug.ilike.%${filters.search}%`
+      );
     }
 
     const { data, error, count } = await query;
@@ -368,11 +370,7 @@ export const addonsService = {
   },
 
   async get(id: string): Promise<Addon> {
-    const { data, error } = await supabase
-      .from('addons')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('addons').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as unknown as Addon;
@@ -402,10 +400,7 @@ export const addonsService = {
   },
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('addons')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('addons').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },

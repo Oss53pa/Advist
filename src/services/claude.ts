@@ -184,7 +184,7 @@ export const claudeService = {
     onToken: (token: string) => void,
     onComplete?: (fullResponse: string) => void,
     systemPrompt?: string,
-    options?: { model?: string; maxTokens?: number },
+    options?: { model?: string; maxTokens?: number }
   ): Promise<void> {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -265,7 +265,7 @@ export const claudeService = {
       organizationName?: string;
       currentPage?: string;
     },
-    options?: { model?: string; stream?: boolean; onToken?: (token: string) => void },
+    options?: { model?: string; stream?: boolean; onToken?: (token: string) => void }
   ): Promise<ClaudeResponse> {
     const { supabase } = await import('../lib/supabase');
     let contextBlock = '';
@@ -310,16 +310,19 @@ export const claudeService = {
       contextBlock += `\nPage actuelle: ${context.currentPage}`;
     }
 
-    const enrichedSystem = SYSTEM_PROMPTS.assistant + (contextBlock ? `\n\nCONTEXTE EN TEMPS REEL:${contextBlock}` : '');
+    const enrichedSystem =
+      SYSTEM_PROMPTS.assistant + (contextBlock ? `\n\nCONTEXTE EN TEMPS REEL:${contextBlock}` : '');
 
     if (options?.stream && options?.onToken) {
       let finalResponse = '';
       await this.chatStream(
         messages,
         options.onToken,
-        (full) => { finalResponse = full; },
+        (full) => {
+          finalResponse = full;
+        },
         enrichedSystem,
-        { model: options.model },
+        { model: options.model }
       );
       return {
         id: '',
@@ -338,8 +341,16 @@ export const claudeService = {
    */
   getAvailableModels(): Array<{ id: string; name: string; description: string }> {
     return [
-      { id: 'claude-haiku-4-5-20251001', name: 'Claude 4.5 Haiku', description: 'Rapide et économique' },
-      { id: 'claude-sonnet-4-20250514', name: 'Claude 4 Sonnet', description: 'Équilibré (Recommandé)' },
+      {
+        id: 'claude-haiku-4-5-20251001',
+        name: 'Claude 4.5 Haiku',
+        description: 'Rapide et économique',
+      },
+      {
+        id: 'claude-sonnet-4-20250514',
+        name: 'Claude 4 Sonnet',
+        description: 'Équilibré (Recommandé)',
+      },
       { id: 'claude-opus-4-20250514', name: 'Claude 4 Opus', description: 'Plus puissant' },
     ];
   },

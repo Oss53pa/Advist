@@ -183,9 +183,20 @@ export interface BusinessMetrics {
 }
 
 // Types for Best Practices
-export type BestPracticeCategory = 'validation' | 'signature' | 'workflow' | 'collaboration' | 'security' | 'efficiency';
+export type BestPracticeCategory =
+  | 'validation'
+  | 'signature'
+  | 'workflow'
+  | 'collaboration'
+  | 'security'
+  | 'efficiency';
 export type BestPracticePriority = 'low' | 'medium' | 'high' | 'critical';
-export type BestPracticeStatus = 'not_adopted' | 'suggested' | 'in_progress' | 'implemented' | 'dismissed';
+export type BestPracticeStatus =
+  | 'not_adopted'
+  | 'suggested'
+  | 'in_progress'
+  | 'implemented'
+  | 'dismissed';
 
 export interface BestPractice {
   id: string;
@@ -319,10 +330,7 @@ export const analyticsService = {
   /**
    * Get ROI calculation
    */
-  async getROI(params?: {
-    startDate?: string;
-    endDate?: string;
-  }): Promise<ROIData> {
+  async getROI(params?: { startDate?: string; endDate?: string }): Promise<ROIData> {
     return invokeRpc<ROIData>('get_roi_analysis', {
       p_start_date: params?.startDate ?? null,
       p_end_date: params?.endDate ?? null,
@@ -545,7 +553,10 @@ export function getTrendIcon(direction: 'up' | 'down' | 'stable'): string {
   return icons[direction] || 'minus';
 }
 
-export function getTrendColor(direction: 'up' | 'down' | 'stable', lowerIsBetter: boolean = false): string {
+export function getTrendColor(
+  direction: 'up' | 'down' | 'stable',
+  lowerIsBetter: boolean = false
+): string {
   if (direction === 'stable') return 'text-advist-text-secondary';
 
   const isPositive = lowerIsBetter ? direction === 'down' : direction === 'up';

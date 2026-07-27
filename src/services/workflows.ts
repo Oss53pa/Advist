@@ -7,17 +7,15 @@
  */
 import { supabase } from '../lib/supabase';
 import { parseSupabaseError } from './supabase-helpers';
-import type {
-  WorkflowTemplate,
-  WorkflowInstance,
-  Task,
-} from '../types';
+import type { WorkflowTemplate, WorkflowInstance, Task } from '../types';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 async function requireAuth(): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Non authentifié');
   return user.id;
 }
@@ -135,7 +133,7 @@ async function mapInstance(row: Record<string, any>): Promise<WorkflowInstance> 
 function mapTask(
   assignee: Record<string, any>,
   step: Record<string, any>,
-  instance: Record<string, any>,
+  instance: Record<string, any>
 ): Task {
   return {
     id: assignee.id,
@@ -210,10 +208,7 @@ export const workflowsService = {
     return mapTemplate(row);
   },
 
-  async updateTemplate(
-    id: string,
-    data: Partial<WorkflowTemplate>,
-  ): Promise<WorkflowTemplate> {
+  async updateTemplate(id: string, data: Partial<WorkflowTemplate>): Promise<WorkflowTemplate> {
     const update: Record<string, unknown> = {};
     if (data.name !== undefined) update.name = data.name;
     if (data.description !== undefined) update.description = data.description;
@@ -233,10 +228,7 @@ export const workflowsService = {
   },
 
   async deleteTemplate(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('workflow_templates')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('workflow_templates').delete().eq('id', id);
 
     if (error) throw new Error(parseSupabaseError(error).message);
   },
@@ -310,9 +302,7 @@ export const workflowsService = {
   async getInstanceHistory(id: string): Promise<unknown[]> {
     const { data, error } = await supabase
       .from('workflow_history')
-      .select(
-        '*, user:profiles!workflow_history_user_id_fkey(id, first_name, last_name)',
-      )
+      .select('*, user:profiles!workflow_history_user_id_fkey(id, first_name, last_name)')
       .eq('instance_id', id)
       .order('created_at', { ascending: false });
 
@@ -321,9 +311,7 @@ export const workflowsService = {
     return (data || []).map((h: any) => ({
       id: h.id,
       action: h.action,
-      actor: h.user
-        ? { id: h.user.id, name: `${h.user.first_name} ${h.user.last_name}` }
-        : null,
+      actor: h.user ? { id: h.user.id, name: `${h.user.first_name} ${h.user.last_name}` } : null,
       timestamp: h.created_at,
       details: h.details,
       comment: h.comment,
@@ -363,7 +351,8 @@ export const workflowsService = {
 
     const { data, error } = await supabase
       .from('workflow_assignees')
-      .select(`
+      .select(
+        `
         *,
         step:workflow_steps!workflow_assignees_step_id_fkey(
           id, step_number, name, step_type, status, due_date,
@@ -373,7 +362,8 @@ export const workflowsService = {
             document:documents!workflow_instances_document_id_fkey(id, title)
           )
         )
-      `)
+      `
+      )
       .eq('user_id', userId)
       .eq('status', 'pending')
       .order('created_at', { ascending: false });
@@ -388,7 +378,8 @@ export const workflowsService = {
   async getTask(id: string): Promise<Task> {
     const { data, error } = await supabase
       .from('workflow_assignees')
-      .select(`
+      .select(
+        `
         *,
         step:workflow_steps!workflow_assignees_step_id_fkey(
           id, step_number, name, step_type, status, due_date,
@@ -398,7 +389,8 @@ export const workflowsService = {
             document:documents!workflow_instances_document_id_fkey(id, title)
           )
         )
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
@@ -556,17 +548,17 @@ export const workflowsService = {
     }
   },
 
-  async delegateTask(
-    id: string,
-    delegateTo: string,
-    comment?: string,
-  ): Promise<void> {
+  async delegateTask(id: string, delegateTo: string, comment?: string): Promise<void> {
     const userId = await requireAuth();
 
     // Get the original assignee's step
     const { data: original, error } = await supabase
       .from('workflow_assignees')
-      .update({ status: 'approved', comment: `Délégué. ${comment || ''}`, acted_at: new Date().toISOString() })
+      .update({
+        status: 'approved',
+        comment: `Délégué. ${comment || ''}`,
+        acted_at: new Date().toISOString(),
+      })
       .eq('id', id)
       .select('step_id')
       .single();
@@ -625,7 +617,7 @@ export const workflowsService = {
         canDelegate: boolean;
         message?: string;
       };
-    },
+    }
   ): Promise<WorkflowInstance> {
     const userId = await requireAuth();
 
@@ -652,10 +644,12 @@ export const workflowsService = {
     } else if (data.insertPosition === 'next') {
       newStepNumber = (instance?.current_step || 0) + 1;
       // Shift existing steps
-      await supabase.rpc('increment_step_numbers', {
-        p_instance_id: workflowId,
-        p_from_step: newStepNumber,
-      }).then(() => {});
+      await supabase
+        .rpc('increment_step_numbers', {
+          p_instance_id: workflowId,
+          p_from_step: newStepNumber,
+        })
+        .then(() => {});
     } else {
       newStepNumber = instance?.current_step || 1;
     }
@@ -708,10 +702,7 @@ export const workflowsService = {
     const userId = await requireAuth();
 
     // Delete assignees for this step
-    await supabase
-      .from('workflow_assignees')
-      .delete()
-      .eq('step_id', stepId);
+    await supabase.from('workflow_assignees').delete().eq('step_id', stepId);
 
     // Delete the step
     const { error } = await supabase
@@ -745,11 +736,7 @@ export const workflowsService = {
     return this.getInstance(workflowId);
   },
 
-  async skipStep(
-    workflowId: string,
-    stepId: string,
-    reason: string,
-  ): Promise<WorkflowInstance> {
+  async skipStep(workflowId: string, stepId: string, reason: string): Promise<WorkflowInstance> {
     const userId = await requireAuth();
     const now = new Date().toISOString();
 
@@ -795,7 +782,7 @@ export const workflowsService = {
         priority: 'low' | 'medium' | 'high';
       }>;
       deadline?: string;
-    },
+    }
   ): Promise<void> {
     const userId = await requireAuth();
 
@@ -828,9 +815,7 @@ export const workflowsService = {
     });
   },
 
-  async getPendingModifications(
-    workflowId: string,
-  ): Promise<
+  async getPendingModifications(workflowId: string): Promise<
     Array<{
       id: string;
       requestedBy: { id: string; name: string };
@@ -846,9 +831,7 @@ export const workflowsService = {
   > {
     const { data, error } = await supabase
       .from('workflow_history')
-      .select(
-        '*, user:profiles!workflow_history_user_id_fkey(id, first_name, last_name)',
-      )
+      .select('*, user:profiles!workflow_history_user_id_fkey(id, first_name, last_name)')
       .eq('instance_id', workflowId)
       .eq('action', 'modifications_requested')
       .order('created_at', { ascending: false });
@@ -869,10 +852,7 @@ export const workflowsService = {
     }));
   },
 
-  async completeModifications(
-    workflowId: string,
-    modificationId: string,
-  ): Promise<void> {
+  async completeModifications(workflowId: string, modificationId: string): Promise<void> {
     const userId = await requireAuth();
 
     await supabase.from('workflow_history').insert({
@@ -887,9 +867,7 @@ export const workflowsService = {
   // Timeline
   // -----------------------------------------------------------------------
 
-  async getTimeline(
-    workflowId: string,
-  ): Promise<
+  async getTimeline(workflowId: string): Promise<
     Array<{
       id: string;
       action: string;
@@ -901,9 +879,7 @@ export const workflowsService = {
   > {
     const { data, error } = await supabase
       .from('workflow_history')
-      .select(
-        '*, user:profiles!workflow_history_user_id_fkey(id, first_name, last_name)',
-      )
+      .select('*, user:profiles!workflow_history_user_id_fkey(id, first_name, last_name)')
       .eq('instance_id', workflowId)
       .order('created_at', { ascending: false });
 

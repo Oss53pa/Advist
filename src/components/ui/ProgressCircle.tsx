@@ -34,7 +34,8 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
   const offset = circumference - (value / 100) * circumference;
 
   // Résoudre la couleur (soit depuis le map, soit utiliser directement si c'est déjà hex/rgb)
-  const resolveColor = (c: string) => colorMap[c] || (c.startsWith('#') || c.startsWith('rgb') ? c : '#252D44');
+  const resolveColor = (c: string) =>
+    colorMap[c] || (c.startsWith('#') || c.startsWith('rgb') ? c : '#252D44');
 
   return (
     <div className={`relative ${className}`} style={{ width: size, height: size }}>

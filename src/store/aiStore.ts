@@ -8,7 +8,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { invokeEdgeFunction } from '../lib/supabase';
-import { OpenRouterModelId, OPENROUTER_MODELS, OPENROUTER_FREE_MODELS } from '../services/openrouter';
+import {
+  OpenRouterModelId,
+  OPENROUTER_MODELS,
+  OPENROUTER_FREE_MODELS,
+} from '../services/openrouter';
 import { ClaudeModelId, CLAUDE_MODELS } from './claudeStore';
 
 // Provider types
@@ -55,7 +59,9 @@ interface AIState {
 
   // Getters
   getCurrentModel: () => string;
-  getCurrentModelInfo: () => { id: string; name: string; description: string; free?: boolean } | undefined;
+  getCurrentModelInfo: () =>
+    | { id: string; name: string; description: string; free?: boolean }
+    | undefined;
   isReady: () => boolean;
 }
 
@@ -96,7 +102,7 @@ export const useAIStore = create<AIState>()(
       },
 
       setOpenRouterModel: (model: OpenRouterModelId) => {
-        const isFreeModel = OPENROUTER_FREE_MODELS.some(m => m.id === model);
+        const isFreeModel = OPENROUTER_FREE_MODELS.some((m) => m.id === model);
         set((state) => ({
           config: {
             ...state.config,
@@ -113,7 +119,7 @@ export const useAIStore = create<AIState>()(
         set((state) => {
           let model = state.config.openrouter.model;
           if (useFree) {
-            const isFree = OPENROUTER_FREE_MODELS.some(m => m.id === model);
+            const isFree = OPENROUTER_FREE_MODELS.some((m) => m.id === model);
             if (!isFree) {
               model = 'meta-llama/llama-3.2-3b-instruct:free';
             }
@@ -177,7 +183,7 @@ export const useAIStore = create<AIState>()(
         try {
           if (config.provider === 'openrouter') {
             const isFreeModel = OPENROUTER_FREE_MODELS.some(
-              m => m.id === config.openrouter.model
+              (m) => m.id === config.openrouter.model
             );
 
             if (isFreeModel) {
@@ -270,9 +276,9 @@ export const useAIStore = create<AIState>()(
       getCurrentModelInfo: () => {
         const { config } = get();
         if (config.provider === 'openrouter') {
-          return OPENROUTER_MODELS.find(m => m.id === config.openrouter.model);
+          return OPENROUTER_MODELS.find((m) => m.id === config.openrouter.model);
         }
-        return CLAUDE_MODELS.find(m => m.id === config.claude.model);
+        return CLAUDE_MODELS.find((m) => m.id === config.claude.model);
       },
 
       isReady: () => {

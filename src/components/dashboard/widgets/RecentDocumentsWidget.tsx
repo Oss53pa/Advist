@@ -25,14 +25,38 @@ export const RecentDocumentsWidget: React.FC<RecentDocumentsWidgetProps> = ({ co
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 400));
+      await new Promise((resolve) => setTimeout(resolve, 400));
 
       const mockDocs: DocumentItem[] = [
-        { id: 1, title: 'Contrat de prestation Q4', type: 'Contrat', updatedAt: '2 min', status: 'pending' },
-        { id: 2, title: 'Budget prévisionnel 2025', type: 'Budget', updatedAt: '15 min', status: 'approved' },
+        {
+          id: 1,
+          title: 'Contrat de prestation Q4',
+          type: 'Contrat',
+          updatedAt: '2 min',
+          status: 'pending',
+        },
+        {
+          id: 2,
+          title: 'Budget prévisionnel 2025',
+          type: 'Budget',
+          updatedAt: '15 min',
+          status: 'approved',
+        },
         { id: 3, title: 'Rapport financier', type: 'Rapport', updatedAt: '1h', status: 'draft' },
-        { id: 4, title: 'Procédure qualité v2', type: 'Procédure', updatedAt: '2h', status: 'in_review' },
-        { id: 5, title: 'Facture client ABC', type: 'Facture', updatedAt: '3h', status: 'approved' },
+        {
+          id: 4,
+          title: 'Procédure qualité v2',
+          type: 'Procédure',
+          updatedAt: '2h',
+          status: 'in_review',
+        },
+        {
+          id: 5,
+          title: 'Facture client ABC',
+          type: 'Facture',
+          updatedAt: '3h',
+          status: 'approved',
+        },
       ];
 
       const limit = config.settings.limit || 5;
@@ -56,7 +80,7 @@ export const RecentDocumentsWidget: React.FC<RecentDocumentsWidgetProps> = ({ co
   if (loading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3].map(i => (
+        {[1, 2, 3].map((i) => (
           <div key={i} className="animate-pulse flex items-center gap-3">
             <div className="w-8 h-8 bg-advist-surface-dark rounded"></div>
             <div className="flex-1">
@@ -71,7 +95,7 @@ export const RecentDocumentsWidget: React.FC<RecentDocumentsWidgetProps> = ({ co
 
   return (
     <div className="space-y-2">
-      {documents.map(doc => (
+      {documents.map((doc) => (
         <Link
           key={doc.id}
           to={`/user/documents/${doc.id}`}

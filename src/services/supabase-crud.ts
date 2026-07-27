@@ -74,9 +74,7 @@ export function createCrudService<T extends Record<string, unknown>>(
 
       // Apply search filter (ilike on multiple columns)
       if (search) {
-        const searchFilter = searchColumns
-          .map((col) => `${col}.ilike.%${search}%`)
-          .join(',');
+        const searchFilter = searchColumns.map((col) => `${col}.ilike.%${search}%`).join(',');
         query = query.or(searchFilter);
       }
 
@@ -106,11 +104,7 @@ export function createCrudService<T extends Record<string, unknown>>(
     },
 
     async getById(id: string, select: string = defaultSelect): Promise<T> {
-      const { data, error } = await supabase
-        .from(tableName)
-        .select(select)
-        .eq('id', id)
-        .single();
+      const { data, error } = await supabase.from(tableName).select(select).eq('id', id).single();
 
       if (error) throw parseSupabaseError(error);
       return data as T;
@@ -140,10 +134,7 @@ export function createCrudService<T extends Record<string, unknown>>(
     },
 
     async remove(id: string): Promise<void> {
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from(tableName).delete().eq('id', id);
 
       if (error) throw parseSupabaseError(error);
     },

@@ -21,17 +21,9 @@ export type IntegrationProvider =
   | 'sap_s4'
   | 'salesforce';
 
-export type IntegrationStatus =
-  | 'pending'
-  | 'connected'
-  | 'expired'
-  | 'error'
-  | 'disconnected';
+export type IntegrationStatus = 'pending' | 'connected' | 'expired' | 'error' | 'disconnected';
 
-export type SyncDirection =
-  | 'import_only'
-  | 'export_only'
-  | 'bidirectional';
+export type SyncDirection = 'import_only' | 'export_only' | 'bidirectional';
 
 export interface IntegrationConnection {
   id: string;
@@ -182,14 +174,17 @@ export interface TestConnectionResult {
 // Provider Configuration
 // ==========================================
 
-export const INTEGRATION_PROVIDERS: Record<IntegrationProvider, {
-  name: string;
-  category: 'cloud' | 'erp' | 'crm';
-  icon: string;
-  description: string;
-  authType: 'oauth' | 'credentials';
-  features: string[];
-}> = {
+export const INTEGRATION_PROVIDERS: Record<
+  IntegrationProvider,
+  {
+    name: string;
+    category: 'cloud' | 'erp' | 'crm';
+    icon: string;
+    description: string;
+    authType: 'oauth' | 'credentials';
+    features: string[];
+  }
+> = {
   microsoft_365: {
     name: 'Microsoft 365',
     category: 'cloud',
@@ -329,7 +324,10 @@ export const integrationService = {
     return conn as IntegrationConnection;
   },
 
-  async updateConnection(id: string, data: Partial<IntegrationConnection>): Promise<IntegrationConnection> {
+  async updateConnection(
+    id: string,
+    data: Partial<IntegrationConnection>
+  ): Promise<IntegrationConnection> {
     const { data: conn, error } = await supabase
       .from('integration_connections')
       .update(data as Record<string, unknown>)
@@ -342,16 +340,16 @@ export const integrationService = {
   },
 
   async deleteConnection(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('integration_connections')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('integration_connections').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
 
   // OAuth Flow
-  async getAuthorizationUrl(id: string, redirectUri: string): Promise<{ authorization_url: string; state: string }> {
+  async getAuthorizationUrl(
+    id: string,
+    redirectUri: string
+  ): Promise<{ authorization_url: string; state: string }> {
     return invokeEdgeFunction<{ authorization_url: string; state: string }>('integration-oauth', {
       action: 'authorize_url',
       connection_id: id,
@@ -359,7 +357,12 @@ export const integrationService = {
     });
   },
 
-  async handleOAuthCallback(id: string, code: string, state: string, redirectUri: string): Promise<{ success: boolean; message: string }> {
+  async handleOAuthCallback(
+    id: string,
+    code: string,
+    state: string,
+    redirectUri: string
+  ): Promise<{ success: boolean; message: string }> {
     return invokeEdgeFunction<{ success: boolean; message: string }>('integration-oauth', {
       action: 'oauth_callback',
       connection_id: id,
@@ -370,7 +373,10 @@ export const integrationService = {
   },
 
   // Credentials Auth (for on-premise ERP)
-  async connectWithCredentials(id: string, credentials: ERPCredentials): Promise<TestConnectionResult> {
+  async connectWithCredentials(
+    id: string,
+    credentials: ERPCredentials
+  ): Promise<TestConnectionResult> {
     return invokeEdgeFunction<TestConnectionResult>('integration-erp', {
       action: 'connect',
       connection_id: id,
@@ -388,7 +394,10 @@ export const integrationService = {
       .single();
 
     if (error) throw parseSupabaseError(error);
-    return { success: true, message: `Connection ${(data as IntegrationConnection).name} disconnected.` };
+    return {
+      success: true,
+      message: `Connection ${(data as IntegrationConnection).name} disconnected.`,
+    };
   },
 
   async testConnection(id: string): Promise<TestConnectionResult> {
@@ -397,7 +406,10 @@ export const integrationService = {
     });
   },
 
-  async syncNow(id: string, fullSync: boolean = false): Promise<{ success: boolean; message: string }> {
+  async syncNow(
+    id: string,
+    fullSync: boolean = false
+  ): Promise<{ success: boolean; message: string }> {
     return invokeEdgeFunction<{ success: boolean; message: string }>('integration-sync', {
       connection_id: id,
       full_sync: fullSync,
@@ -405,30 +417,49 @@ export const integrationService = {
   },
 
   // Cloud Storage Operations
-  async listFolders(id: string, parentId?: string): Promise<{ folders: CloudFolder[]; files: CloudFile[] }> {
-    return invokeEdgeFunction<{ folders: CloudFolder[]; files: CloudFile[] }>('integration-cloud-storage', {
-      action: 'list_folders',
-      connection_id: id,
-      parent_id: parentId,
-    });
+  async listFolders(
+    id: string,
+    parentId?: string
+  ): Promise<{ folders: CloudFolder[]; files: CloudFile[] }> {
+    return invokeEdgeFunction<{ folders: CloudFolder[]; files: CloudFile[] }>(
+      'integration-cloud-storage',
+      {
+        action: 'list_folders',
+        connection_id: id,
+        parent_id: parentId,
+      }
+    );
   },
 
-  async listFiles(id: string, folderId?: string): Promise<{ files: CloudFile[]; next_page_token?: string }> {
-    return invokeEdgeFunction<{ files: CloudFile[]; next_page_token?: string }>('integration-cloud-storage', {
-      action: 'list_files',
-      connection_id: id,
-      folder_id: folderId,
-    });
+  async listFiles(
+    id: string,
+    folderId?: string
+  ): Promise<{ files: CloudFile[]; next_page_token?: string }> {
+    return invokeEdgeFunction<{ files: CloudFile[]; next_page_token?: string }>(
+      'integration-cloud-storage',
+      {
+        action: 'list_files',
+        connection_id: id,
+        folder_id: folderId,
+      }
+    );
   },
 
   // ERP Document Operations
-  async listERPDocuments(id: string, docType: string, pageToken?: string): Promise<{ documents: ERPDocument[]; next_page_token?: string }> {
-    return invokeEdgeFunction<{ documents: ERPDocument[]; next_page_token?: string }>('integration-erp', {
-      action: 'list_documents',
-      connection_id: id,
-      doc_type: docType,
-      page_token: pageToken,
-    });
+  async listERPDocuments(
+    id: string,
+    docType: string,
+    pageToken?: string
+  ): Promise<{ documents: ERPDocument[]; next_page_token?: string }> {
+    return invokeEdgeFunction<{ documents: ERPDocument[]; next_page_token?: string }>(
+      'integration-erp',
+      {
+        action: 'list_documents',
+        connection_id: id,
+        doc_type: docType,
+        page_token: pageToken,
+      }
+    );
   },
 
   // Document Mappings
@@ -443,7 +474,9 @@ export const integrationService = {
     return (data as IntegrationDocumentMapping[]) ?? [];
   },
 
-  async createDocumentMapping(data: Partial<IntegrationDocumentMapping>): Promise<IntegrationDocumentMapping> {
+  async createDocumentMapping(
+    data: Partial<IntegrationDocumentMapping>
+  ): Promise<IntegrationDocumentMapping> {
     const { data: mapping, error } = await supabase
       .from('integration_mappings')
       .insert({ ...data, mapping_type: 'document' } as Record<string, unknown>)
@@ -454,7 +487,10 @@ export const integrationService = {
     return mapping as IntegrationDocumentMapping;
   },
 
-  async updateDocumentMapping(id: string, data: Partial<IntegrationDocumentMapping>): Promise<IntegrationDocumentMapping> {
+  async updateDocumentMapping(
+    id: string,
+    data: Partial<IntegrationDocumentMapping>
+  ): Promise<IntegrationDocumentMapping> {
     const { data: mapping, error } = await supabase
       .from('integration_mappings')
       .update(data as Record<string, unknown>)
@@ -467,10 +503,7 @@ export const integrationService = {
   },
 
   async deleteDocumentMapping(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('integration_mappings')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('integration_mappings').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -498,7 +531,10 @@ export const integrationService = {
     return mapping as IntegrationSyncMapping;
   },
 
-  async updateSyncMapping(id: string, data: Partial<IntegrationSyncMapping>): Promise<IntegrationSyncMapping> {
+  async updateSyncMapping(
+    id: string,
+    data: Partial<IntegrationSyncMapping>
+  ): Promise<IntegrationSyncMapping> {
     const { data: mapping, error } = await supabase
       .from('integration_mappings')
       .update(data as Record<string, unknown>)
@@ -511,10 +547,7 @@ export const integrationService = {
   },
 
   async deleteSyncMapping(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('integration_mappings')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('integration_mappings').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -554,7 +587,9 @@ export const integrationService = {
     return (data as IntegrationWorkflowTrigger[]) ?? [];
   },
 
-  async createWorkflowTrigger(data: Partial<IntegrationWorkflowTrigger>): Promise<IntegrationWorkflowTrigger> {
+  async createWorkflowTrigger(
+    data: Partial<IntegrationWorkflowTrigger>
+  ): Promise<IntegrationWorkflowTrigger> {
     const { data: trigger, error } = await supabase
       .from('integration_workflow_triggers')
       .insert(data as Record<string, unknown>)
@@ -565,7 +600,10 @@ export const integrationService = {
     return trigger as IntegrationWorkflowTrigger;
   },
 
-  async updateWorkflowTrigger(id: string, data: Partial<IntegrationWorkflowTrigger>): Promise<IntegrationWorkflowTrigger> {
+  async updateWorkflowTrigger(
+    id: string,
+    data: Partial<IntegrationWorkflowTrigger>
+  ): Promise<IntegrationWorkflowTrigger> {
     const { data: trigger, error } = await supabase
       .from('integration_workflow_triggers')
       .update(data as Record<string, unknown>)
@@ -578,10 +616,7 @@ export const integrationService = {
   },
 
   async deleteWorkflowTrigger(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('integration_workflow_triggers')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('integration_workflow_triggers').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -637,21 +672,34 @@ export const salesforceService = {
     }
   },
 
-  async getAuthorizationUrl(redirectUri: string, isSandbox: boolean = false): Promise<{ authorization_url: string; state: string; connection_id: string }> {
-    return invokeEdgeFunction<{ authorization_url: string; state: string; connection_id: string }>('salesforce-oauth', {
-      action: 'authorize_url',
-      redirect_uri: redirectUri,
-      is_sandbox: isSandbox,
-    });
+  async getAuthorizationUrl(
+    redirectUri: string,
+    isSandbox: boolean = false
+  ): Promise<{ authorization_url: string; state: string; connection_id: string }> {
+    return invokeEdgeFunction<{ authorization_url: string; state: string; connection_id: string }>(
+      'salesforce-oauth',
+      {
+        action: 'authorize_url',
+        redirect_uri: redirectUri,
+        is_sandbox: isSandbox,
+      }
+    );
   },
 
-  async handleOAuthCallback(code: string, state: string, redirectUri: string): Promise<{ success: boolean; message: string; connection_id: string }> {
-    return invokeEdgeFunction<{ success: boolean; message: string; connection_id: string }>('salesforce-oauth', {
-      action: 'oauth_callback',
-      code,
-      state,
-      redirect_uri: redirectUri,
-    });
+  async handleOAuthCallback(
+    code: string,
+    state: string,
+    redirectUri: string
+  ): Promise<{ success: boolean; message: string; connection_id: string }> {
+    return invokeEdgeFunction<{ success: boolean; message: string; connection_id: string }>(
+      'salesforce-oauth',
+      {
+        action: 'oauth_callback',
+        code,
+        state,
+        redirect_uri: redirectUri,
+      }
+    );
   },
 
   async disconnect(id: string): Promise<{ success: boolean; message: string }> {
@@ -678,16 +726,30 @@ export const salesforceService = {
     });
   },
 
-  async query(id: string, soql: string): Promise<{ success: boolean; total_size: number; records: unknown[] }> {
-    return invokeEdgeFunction<{ success: boolean; total_size: number; records: unknown[] }>('salesforce-api', {
-      action: 'query',
-      connection_id: id,
-      query: soql,
-    });
+  async query(
+    id: string,
+    soql: string
+  ): Promise<{ success: boolean; total_size: number; records: unknown[] }> {
+    return invokeEdgeFunction<{ success: boolean; total_size: number; records: unknown[] }>(
+      'salesforce-api',
+      {
+        action: 'query',
+        connection_id: id,
+        query: soql,
+      }
+    );
   },
 
-  async getOpportunities(id: string, stage?: string, limit: number = 50): Promise<{ success: boolean; count: number; opportunities: SalesforceOpportunity[] }> {
-    return invokeEdgeFunction<{ success: boolean; count: number; opportunities: SalesforceOpportunity[] }>('salesforce-api', {
+  async getOpportunities(
+    id: string,
+    stage?: string,
+    limit: number = 50
+  ): Promise<{ success: boolean; count: number; opportunities: SalesforceOpportunity[] }> {
+    return invokeEdgeFunction<{
+      success: boolean;
+      count: number;
+      opportunities: SalesforceOpportunity[];
+    }>('salesforce-api', {
       action: 'get_opportunities',
       connection_id: id,
       stage,
@@ -695,7 +757,12 @@ export const salesforceService = {
     });
   },
 
-  async generateContract(id: string, opportunityId: string, templateId: string, autoSignature: boolean = false): Promise<{ success: boolean; message: string }> {
+  async generateContract(
+    id: string,
+    opportunityId: string,
+    templateId: string,
+    autoSignature: boolean = false
+  ): Promise<{ success: boolean; message: string }> {
     return invokeEdgeFunction<{ success: boolean; message: string }>('salesforce-api', {
       action: 'generate_contract',
       connection_id: id,

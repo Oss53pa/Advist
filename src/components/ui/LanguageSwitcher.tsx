@@ -33,9 +33,10 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
             onClick={() => handleLanguageChange(lang.code)}
             className={`
               px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
-              ${i18n.language === lang.code
-                ? 'bg-advist-dark text-white'
-                : 'text-advist-gray900 hover:bg-advist-bg'
+              ${
+                i18n.language === lang.code
+                  ? 'bg-advist-dark text-white'
+                  : 'text-advist-gray900 hover:bg-advist-bg'
               }
             `}
           >
@@ -74,9 +75,10 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                   onClick={() => handleLanguageChange(lang.code)}
                   className={`
                     flex items-center justify-between w-full px-4 py-2.5 text-left transition-colors
-                    ${i18n.language === lang.code
-                      ? 'bg-advist-bg text-advist-gray900'
-                      : 'text-advist-gray900 hover:bg-advist-bg/50'
+                    ${
+                      i18n.language === lang.code
+                        ? 'bg-advist-bg text-advist-gray900'
+                        : 'text-advist-gray900 hover:bg-advist-bg/50'
                     }
                   `}
                 >

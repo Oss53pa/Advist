@@ -19,9 +19,7 @@ export const CalendarPage: React.FC = () => {
         </button>
         <div>
           <h1 className="text-2xl font-bold text-advist-gray900">{t('calendar.title')}</h1>
-          <p className="text-advist-blue-light mt-1">
-            {t('calendar.subtitle')}
-          </p>
+          <p className="text-advist-blue-light mt-1">{t('calendar.subtitle')}</p>
         </div>
       </div>
 

@@ -15,14 +15,14 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`flex items-center border border-advist-border rounded-xl overflow-hidden ${className}`}>
+    <div
+      className={`flex items-center border border-advist-border rounded-xl overflow-hidden ${className}`}
+    >
       <button
         type="button"
         onClick={() => onChange('grid')}
         className={`p-2 transition-all duration-240 ${
-          value === 'grid'
-            ? 'bg-advist-dark text-white'
-            : 'text-advist-gray900 hover:bg-advist-bg'
+          value === 'grid' ? 'bg-advist-dark text-white' : 'text-advist-gray900 hover:bg-advist-bg'
         }`}
         title="Vue grille"
       >
@@ -32,9 +32,7 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
         type="button"
         onClick={() => onChange('table')}
         className={`p-2 transition-all duration-240 ${
-          value === 'table'
-            ? 'bg-advist-dark text-white'
-            : 'text-advist-gray900 hover:bg-advist-bg'
+          value === 'table' ? 'bg-advist-dark text-white' : 'text-advist-gray900 hover:bg-advist-bg'
         }`}
         title="Vue liste"
       >

@@ -122,17 +122,20 @@ export interface DashboardTemplate {
 }
 
 // Default widget definitions
-export const WIDGET_DEFINITIONS: Record<WidgetType, {
-  name: string;
-  description: string;
-  icon: string;
-  defaultSize: WidgetSize;
-  minWidth: number;
-  minHeight: number;
-  maxWidth: number;
-  maxHeight: number;
-  defaultSettings: Partial<WidgetSettings>;
-}> = {
+export const WIDGET_DEFINITIONS: Record<
+  WidgetType,
+  {
+    name: string;
+    description: string;
+    icon: string;
+    defaultSize: WidgetSize;
+    minWidth: number;
+    minHeight: number;
+    maxWidth: number;
+    maxHeight: number;
+    defaultSettings: Partial<WidgetSettings>;
+  }
+> = {
   stats_card: {
     name: 'Carte statistique',
     description: 'Affiche une métrique clé avec tendance',
@@ -228,7 +231,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, {
   },
   workflow_status: {
     name: 'Statut des workflows',
-    description: 'Vue d\'ensemble des workflows',
+    description: "Vue d'ensemble des workflows",
     icon: 'git-branch',
     defaultSize: 'medium',
     minWidth: 2,
@@ -264,7 +267,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, {
     },
   },
   activity_feed: {
-    name: 'Fil d\'activité',
+    name: "Fil d'activité",
     description: 'Activité récente',
     icon: 'activity',
     defaultSize: 'medium',
@@ -303,7 +306,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, {
   },
   folder_overview: {
     name: 'Vue dossier',
-    description: 'Aperçu d\'un dossier/projet',
+    description: "Aperçu d'un dossier/projet",
     icon: 'folder',
     defaultSize: 'large',
     minWidth: 3,
@@ -316,7 +319,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, {
   },
   team_activity: {
     name: 'Activité équipe',
-    description: 'Activité des membres de l\'équipe',
+    description: "Activité des membres de l'équipe",
     icon: 'users',
     defaultSize: 'medium',
     minWidth: 2,
@@ -569,11 +572,7 @@ export const dashboardService = {
    * Get a single dashboard
    */
   async getDashboard(id: string): Promise<DashboardConfig> {
-    const { data, error } = await supabase
-      .from('dashboards')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('dashboards').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as unknown as DashboardConfig;
@@ -596,7 +595,9 @@ export const dashboardService = {
   /**
    * Create a new dashboard
    */
-  async createDashboard(data: Omit<DashboardConfig, 'id' | 'createdAt' | 'updatedAt'>): Promise<DashboardConfig> {
+  async createDashboard(
+    data: Omit<DashboardConfig, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<DashboardConfig> {
     const { data: result, error } = await supabase
       .from('dashboards')
       .insert(data as Record<string, unknown>)
@@ -626,10 +627,7 @@ export const dashboardService = {
    * Delete a dashboard
    */
   async deleteDashboard(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('dashboards')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('dashboards').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -647,10 +645,7 @@ export const dashboardService = {
     if (unsetError) throw parseSupabaseError(unsetError);
 
     // Then set the new default
-    const { error } = await supabase
-      .from('dashboards')
-      .update({ is_default: true })
-      .eq('id', id);
+    const { error } = await supabase.from('dashboards').update({ is_default: true }).eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -718,7 +713,11 @@ export const dashboardService = {
   /**
    * Update widget configuration
    */
-  async updateWidget(dashboardId: string, widgetId: string, config: Partial<WidgetConfig>): Promise<WidgetConfig> {
+  async updateWidget(
+    dashboardId: string,
+    widgetId: string,
+    config: Partial<WidgetConfig>
+  ): Promise<WidgetConfig> {
     const { data: result, error } = await supabase
       .from('dashboard_widgets')
       .update(config as Record<string, unknown>)

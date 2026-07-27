@@ -71,7 +71,7 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({
 
       onConsent(result.id);
     } catch (err) {
-      setError((err as Error).message || 'Erreur lors de l\'enregistrement du consentement');
+      setError((err as Error).message || "Erreur lors de l'enregistrement du consentement");
     } finally {
       setLoading(false);
     }
@@ -85,9 +85,7 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({
           <Shield className="w-5 h-5 text-primary-700" />
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900">
-            Consentement obligatoire
-          </h3>
+          <h3 className="font-semibold text-gray-900">Consentement obligatoire</h3>
           <p className="text-sm text-gray-500">
             Loi ivoirienne n°2013-546 — Signature electronique
           </p>
@@ -135,8 +133,11 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({
             disabled={!hasScrolledToBottom}
             className="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
           />
-          <span className={`text-sm ${!hasScrolledToBottom ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900'}`}>
-            Je confirme etre <strong>{signerName || signerEmail}</strong> et etre autorise(e) a signer ce document.
+          <span
+            className={`text-sm ${!hasScrolledToBottom ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900'}`}
+          >
+            Je confirme etre <strong>{signerName || signerEmail}</strong> et etre autorise(e) a
+            signer ce document.
           </span>
         </label>
 
@@ -148,10 +149,12 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({
             disabled={!hasScrolledToBottom}
             className="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
           />
-          <span className={`text-sm ${!hasScrolledToBottom ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900'}`}>
+          <span
+            className={`text-sm ${!hasScrolledToBottom ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900'}`}
+          >
             <Scale className="w-3 h-3 inline mr-1" />
-            J'accepte que ma signature electronique a la meme valeur juridique qu'une signature manuscrite
-            (Loi n°2013-546).
+            J'accepte que ma signature electronique a la meme valeur juridique qu'une signature
+            manuscrite (Loi n°2013-546).
           </span>
         </label>
 
@@ -163,7 +166,9 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({
             disabled={!hasScrolledToBottom}
             className="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
           />
-          <span className={`text-sm ${!hasScrolledToBottom ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900'}`}>
+          <span
+            className={`text-sm ${!hasScrolledToBottom ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900'}`}
+          >
             Je declare avoir lu et compris l'integralite du document « {documentTitle} ».
           </span>
         </label>
@@ -176,9 +181,15 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({
             disabled={!hasScrolledToBottom}
             className="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
           />
-          <span className={`text-sm ${!hasScrolledToBottom ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900'}`}>
+          <span
+            className={`text-sm ${!hasScrolledToBottom ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900'}`}
+          >
             J'accepte les{' '}
-            <a href="/legal/cgu" target="_blank" className="text-primary-600 underline hover:text-primary-700">
+            <a
+              href="/legal/cgu"
+              target="_blank"
+              className="text-primary-600 underline hover:text-primary-700"
+            >
               Conditions Generales d'Utilisation
             </a>{' '}
             d'ADVIST.
@@ -187,22 +198,14 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({
       </div>
 
       {/* Error */}
-      {error && (
-        <div className="px-4 py-2 bg-red-50 text-red-600 text-sm">
-          {error}
-        </div>
-      )}
+      {error && <div className="px-4 py-2 bg-red-50 text-red-600 text-sm">{error}</div>}
 
       {/* Actions */}
       <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-white">
         <Button variant="outline" onClick={onCancel} disabled={loading}>
           Annuler
         </Button>
-        <Button
-          onClick={handleSubmit}
-          disabled={!allChecked || loading}
-          className="gap-2"
-        >
+        <Button onClick={handleSubmit} disabled={!allChecked || loading} className="gap-2">
           {loading ? (
             <>Enregistrement...</>
           ) : (

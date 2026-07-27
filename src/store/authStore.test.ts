@@ -28,7 +28,9 @@ vi.mock('../services/authCookie', () => ({
 vi.mock('../lib/supabase', () => ({
   supabase: {
     auth: {
-      getSession: vi.fn(() => Promise.resolve({ data: { session: { access_token: 'test-token' } } })),
+      getSession: vi.fn(() =>
+        Promise.resolve({ data: { session: { access_token: 'test-token' } } })
+      ),
       onAuthStateChange: vi.fn(() => ({
         data: { subscription: { unsubscribe: vi.fn() } },
       })),

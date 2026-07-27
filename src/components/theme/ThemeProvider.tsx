@@ -28,8 +28,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const root = document.documentElement;
 
     // Apply dark mode class
-    const isDark = settings.themeMode === 'dark' ||
-      (settings.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const isDark =
+      settings.themeMode === 'dark' ||
+      (settings.themeMode === 'system' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
     root.classList.toggle('dark', isDark);
 
     // Apply font
@@ -48,7 +50,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     });
 
     // Apply border radius
-    const radius = BORDER_RADIUS_OPTIONS.find((r) => r.id === settings.borderRadius)?.value || '8px';
+    const radius =
+      BORDER_RADIUS_OPTIONS.find((r) => r.id === settings.borderRadius)?.value || '8px';
     root.style.setProperty('--border-radius', radius);
     root.style.setProperty('--border-radius-lg', `calc(${radius} * 1.5)`);
     root.style.setProperty('--border-radius-xl', `calc(${radius} * 2)`);

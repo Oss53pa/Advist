@@ -27,7 +27,7 @@ export const SecurityAlertsWidget: React.FC<SecurityAlertsWidgetProps> = ({ conf
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 400));
+      await new Promise((resolve) => setTimeout(resolve, 400));
 
       const mockAlerts: SecurityAlertItem[] = [
         {
@@ -69,7 +69,7 @@ export const SecurityAlertsWidget: React.FC<SecurityAlertsWidgetProps> = ({ conf
       const limit = config.settings.limit || 5;
 
       const filtered = mockAlerts
-        .filter(a => severityFilter.includes(a.severity))
+        .filter((a) => severityFilter.includes(a.severity))
         .slice(0, limit);
 
       setAlerts(filtered);
@@ -80,7 +80,10 @@ export const SecurityAlertsWidget: React.FC<SecurityAlertsWidgetProps> = ({ conf
   }, [config]);
 
   const getSeverityConfig = (severity: string) => {
-    const configs: Record<string, { icon: React.ReactNode; bg: string; border: string; text: string }> = {
+    const configs: Record<
+      string,
+      { icon: React.ReactNode; bg: string; border: string; text: string }
+    > = {
       critical: {
         icon: <AlertOctagon size={16} />,
         bg: 'bg-advist-surface-dark',
@@ -112,7 +115,7 @@ export const SecurityAlertsWidget: React.FC<SecurityAlertsWidgetProps> = ({ conf
   if (loading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3].map(i => (
+        {[1, 2, 3].map((i) => (
           <div key={i} className="animate-pulse p-3 border border-advist-border rounded-lg">
             <div className="h-4 w-3/4 bg-advist-surface-dark rounded mb-2"></div>
             <div className="h-3 w-1/2 bg-advist-surface-dark rounded"></div>
@@ -133,7 +136,7 @@ export const SecurityAlertsWidget: React.FC<SecurityAlertsWidgetProps> = ({ conf
 
   return (
     <div className="space-y-2">
-      {alerts.map(alert => {
+      {alerts.map((alert) => {
         const config = getSeverityConfig(alert.severity);
         return (
           <Link
@@ -161,7 +164,9 @@ export const SecurityAlertsWidget: React.FC<SecurityAlertsWidgetProps> = ({ conf
                   </span>
                 </div>
               </div>
-              <span className={`px-2 py-0.5 rounded text-xs font-medium ${config.text} ${config.bg}`}>
+              <span
+                className={`px-2 py-0.5 rounded text-xs font-medium ${config.text} ${config.bg}`}
+              >
                 {alert.severity}
               </span>
             </div>

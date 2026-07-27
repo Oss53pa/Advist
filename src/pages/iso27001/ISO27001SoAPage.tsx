@@ -15,9 +15,7 @@ const ISO27001SoAPage: React.FC = () => {
             </div>
             {t('iso27001.soa.title')}
           </h1>
-          <p className="text-advist-text-secondary mt-1">
-            {t('iso27001.soa.subtitle')}
-          </p>
+          <p className="text-advist-text-secondary mt-1">{t('iso27001.soa.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-advist-border rounded-xl hover:bg-advist-surface transition-colors">
@@ -74,7 +72,9 @@ const ISO27001SoAPage: React.FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-advist-gray900">8</p>
-              <p className="text-xs text-advist-text-secondary">{t('iso27001.soa.notImplemented')}</p>
+              <p className="text-xs text-advist-text-secondary">
+                {t('iso27001.soa.notImplemented')}
+              </p>
             </div>
           </div>
         </div>

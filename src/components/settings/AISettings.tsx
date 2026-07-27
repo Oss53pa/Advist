@@ -100,9 +100,7 @@ export const AISettings: React.FC = () => {
 
   const getCurrentModels = () => {
     if (config.provider === 'openrouter') {
-      return config.openrouter.useFreeModels
-        ? OPENROUTER_FREE_MODELS
-        : OPENROUTER_MODELS;
+      return config.openrouter.useFreeModels ? OPENROUTER_FREE_MODELS : OPENROUTER_MODELS;
     }
     return CLAUDE_MODELS;
   };
@@ -135,7 +133,10 @@ export const AISettings: React.FC = () => {
               {t('settings.ai.title', 'Intelligence Artificielle')}
             </h2>
             <p className="text-advist-gray900/60 mt-1">
-              {t('settings.ai.multiProviderDesc', 'Configurez votre fournisseur d\'IA - choisissez entre des modeles gratuits ou payants')}
+              {t(
+                'settings.ai.multiProviderDesc',
+                "Configurez votre fournisseur d'IA - choisissez entre des modeles gratuits ou payants"
+              )}
             </p>
           </div>
           {config.isConfigured && (
@@ -170,7 +171,9 @@ export const AISettings: React.FC = () => {
               </div>
               <div>
                 <p className="font-semibold text-advist-gray900">OpenRouter</p>
-                <Badge variant="success" className="text-xs">Gratuit disponible</Badge>
+                <Badge variant="success" className="text-xs">
+                  Gratuit disponible
+                </Badge>
               </div>
             </div>
             <p className="text-sm text-advist-gray900/60">
@@ -193,7 +196,9 @@ export const AISettings: React.FC = () => {
               </div>
               <div>
                 <p className="font-semibold text-advist-gray900">Claude (Anthropic)</p>
-                <Badge variant="warning" className="text-xs">Cle API requise</Badge>
+                <Badge variant="warning" className="text-xs">
+                  Cle API requise
+                </Badge>
               </div>
             </div>
             <p className="text-sm text-advist-gray900/60">
@@ -206,9 +211,7 @@ export const AISettings: React.FC = () => {
       {/* OpenRouter Free/Paid Toggle */}
       {config.provider === 'openrouter' && (
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-advist-gray900 mb-4">
-            Type de modeles
-          </h3>
+          <h3 className="text-lg font-semibold text-advist-gray900 mb-4">Type de modeles</h3>
           <div className="flex gap-4">
             <button
               onClick={() => setOpenRouterUseFreeModels(true)}
@@ -251,9 +254,7 @@ export const AISettings: React.FC = () => {
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-advist-gray900 mb-4 flex items-center gap-2">
             <Key size={20} />
-            {config.provider === 'openrouter'
-              ? 'Cle API OpenRouter'
-              : 'Cle API Claude'}
+            {config.provider === 'openrouter' ? 'Cle API OpenRouter' : 'Cle API Claude'}
           </h3>
 
           {config.isConfigured && !isEditing && currentApiKey ? (
@@ -263,15 +264,9 @@ export const AISettings: React.FC = () => {
                   <p className="text-sm text-advist-gray900/60 mb-1">
                     {t('settings.ai.currentKey', 'Cle actuelle')}
                   </p>
-                  <code className="text-advist-gray900 font-mono">
-                    {displayApiKey}
-                  </code>
+                  <code className="text-advist-gray900 font-mono">{displayApiKey}</code>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowApiKey(!showApiKey)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => setShowApiKey(!showApiKey)}>
                   {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
                 </Button>
               </div>
@@ -285,17 +280,10 @@ export const AISettings: React.FC = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditing(true)}
-                >
+                <Button variant="outline" onClick={() => setIsEditing(true)}>
                   {t('settings.ai.changeKey', 'Modifier la cle')}
                 </Button>
-                <Button
-                  variant="ghost"
-                  onClick={handleTestConnection}
-                  disabled={isValidating}
-                >
+                <Button variant="ghost" onClick={handleTestConnection} disabled={isValidating}>
                   {isValidating ? (
                     <Loader2 size={18} className="animate-spin mr-2" />
                   ) : (
@@ -330,10 +318,7 @@ export const AISettings: React.FC = () => {
                       {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  <Button
-                    onClick={handleSaveApiKey}
-                    disabled={!isValidKey()}
-                  >
+                  <Button onClick={handleSaveApiKey} disabled={!isValidKey()}>
                     {t('common.save', 'Enregistrer')}
                   </Button>
                 </div>
@@ -349,9 +334,11 @@ export const AISettings: React.FC = () => {
                 <p className="text-sm text-primary-800">
                   Obtenez votre cle API sur{' '}
                   <a
-                    href={config.provider === 'openrouter'
-                      ? 'https://openrouter.ai/keys'
-                      : 'https://console.anthropic.com/settings/keys'}
+                    href={
+                      config.provider === 'openrouter'
+                        ? 'https://openrouter.ai/keys'
+                        : 'https://console.anthropic.com/settings/keys'
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-medium underline inline-flex items-center gap-1"
@@ -363,10 +350,7 @@ export const AISettings: React.FC = () => {
               </div>
 
               {config.isConfigured && (
-                <Button
-                  variant="ghost"
-                  onClick={() => setIsEditing(false)}
-                >
+                <Button variant="ghost" onClick={() => setIsEditing(false)}>
                   {t('common.cancel', 'Annuler')}
                 </Button>
               )}
@@ -385,42 +369,41 @@ export const AISettings: React.FC = () => {
       )}
 
       {/* Test Connection for Free Models */}
-      {config.provider === 'openrouter' && config.openrouter.useFreeModels && !config.isConfigured && (
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-advist-gray900 mb-1">
-                Pret a utiliser
-              </h3>
-              <p className="text-sm text-advist-gray900/60">
-                Les modeles gratuits ne necessitent pas de cle API. Testez la connexion pour commencer.
-              </p>
+      {config.provider === 'openrouter' &&
+        config.openrouter.useFreeModels &&
+        !config.isConfigured && (
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-advist-gray900 mb-1">Pret a utiliser</h3>
+                <p className="text-sm text-advist-gray900/60">
+                  Les modeles gratuits ne necessitent pas de cle API. Testez la connexion pour
+                  commencer.
+                </p>
+              </div>
+              <Button onClick={handleTestConnection} disabled={isValidating}>
+                {isValidating ? (
+                  <Loader2 size={18} className="animate-spin mr-2" />
+                ) : (
+                  <Check size={18} className="mr-2" />
+                )}
+                Activer l'IA
+              </Button>
             </div>
-            <Button
-              onClick={handleTestConnection}
-              disabled={isValidating}
-            >
-              {isValidating ? (
-                <Loader2 size={18} className="animate-spin mr-2" />
-              ) : (
-                <Check size={18} className="mr-2" />
-              )}
-              Activer l'IA
-            </Button>
-          </div>
-          {validationError && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-              <p className="text-sm text-red-700 flex items-center gap-2">
-                <X size={16} />
-                {validationError}
-              </p>
-            </div>
-          )}
-        </Card>
-      )}
+            {validationError && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-sm text-red-700 flex items-center gap-2">
+                  <X size={16} />
+                  {validationError}
+                </p>
+              </div>
+            )}
+          </Card>
+        )}
 
       {/* Model Selection */}
-      {(config.isConfigured || (config.provider === 'openrouter' && config.openrouter.useFreeModels)) && (
+      {(config.isConfigured ||
+        (config.provider === 'openrouter' && config.openrouter.useFreeModels)) && (
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-advist-gray900 mb-4 flex items-center gap-2">
             <Sliders size={20} />
@@ -447,7 +430,9 @@ export const AISettings: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <p className="font-medium text-advist-gray900">{model.name}</p>
                       {'free' in model && model.free && (
-                        <Badge variant="success" className="text-xs">Gratuit</Badge>
+                        <Badge variant="success" className="text-xs">
+                          Gratuit
+                        </Badge>
                       )}
                     </div>
                     <p className="text-sm text-advist-gray900/60">{model.description}</p>
@@ -518,7 +503,10 @@ export const AISettings: React.FC = () => {
                     {t('settings.ai.chatAssistant', 'Assistant de chat')}
                   </p>
                   <p className="text-sm text-advist-gray900/60">
-                    {t('settings.ai.chatAssistantDesc', 'Chatbot pour repondre aux questions des utilisateurs')}
+                    {t(
+                      'settings.ai.chatAssistantDesc',
+                      'Chatbot pour repondre aux questions des utilisateurs'
+                    )}
                   </p>
                 </div>
               </div>
@@ -544,7 +532,10 @@ export const AISettings: React.FC = () => {
                     {t('settings.ai.documentAnalysis', 'Analyse de documents')}
                   </p>
                   <p className="text-sm text-advist-gray900/60">
-                    {t('settings.ai.documentAnalysisDesc', 'Resumer et analyser automatiquement les documents')}
+                    {t(
+                      'settings.ai.documentAnalysisDesc',
+                      'Resumer et analyser automatiquement les documents'
+                    )}
                   </p>
                 </div>
               </div>
@@ -569,7 +560,10 @@ export const AISettings: React.FC = () => {
             {t('settings.ai.dangerZone', 'Zone de danger')}
           </h3>
           <p className="text-sm text-advist-gray900/60 mb-4">
-            {t('settings.ai.clearConfigWarning', 'Supprimer la configuration effacera la cle API et desactivera toutes les fonctionnalites IA.')}
+            {t(
+              'settings.ai.clearConfigWarning',
+              'Supprimer la configuration effacera la cle API et desactivera toutes les fonctionnalites IA.'
+            )}
           </p>
           <Button
             variant="outline"

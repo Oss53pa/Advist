@@ -131,7 +131,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
         pressure,
       };
     },
-    [width, height],
+    [width, height]
   );
 
   // ------- Pointer events -------
@@ -142,21 +142,21 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       (e.target as Element).setPointerCapture(e.pointerId);
       setCurrentStroke([getPoint(e)]);
     },
-    [getPoint],
+    [getPoint]
   );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
       if (!currentStroke) return;
       e.preventDefault();
-      setCurrentStroke(prev => (prev ? [...prev, getPoint(e)] : null));
+      setCurrentStroke((prev) => (prev ? [...prev, getPoint(e)] : null));
     },
-    [currentStroke, getPoint],
+    [currentStroke, getPoint]
   );
 
   const handlePointerUp = useCallback(() => {
     if (currentStroke && currentStroke.length > 0) {
-      setStrokes(prev => [...prev, currentStroke]);
+      setStrokes((prev) => [...prev, currentStroke]);
     }
     setCurrentStroke(null);
   }, [currentStroke]);
@@ -168,12 +168,12 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       ...FREEHAND_OPTIONS[mode],
       simulatePressure: !hasPressure,
     }),
-    [mode, hasPressure],
+    [mode, hasPressure]
   );
 
   const renderedPaths = useMemo(() => {
     return strokes.map((stroke) => {
-      const inputPoints = stroke.map(p => [p.x, p.y, p.pressure]);
+      const inputPoints = stroke.map((p) => [p.x, p.y, p.pressure]);
       const outlinePoints = getStroke(inputPoints, freehandOptions);
       return getSvgPathFromStroke(outlinePoints);
     });
@@ -181,7 +181,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
 
   const currentPath = useMemo(() => {
     if (!currentStroke || currentStroke.length === 0) return '';
-    const inputPoints = currentStroke.map(p => [p.x, p.y, p.pressure]);
+    const inputPoints = currentStroke.map((p) => [p.x, p.y, p.pressure]);
     const outlinePoints = getStroke(inputPoints, freehandOptions);
     return getSvgPathFromStroke(outlinePoints);
   }, [currentStroke, freehandOptions]);
@@ -191,7 +191,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   // ------- Actions -------
 
   const handleUndo = useCallback(() => {
-    setStrokes(prev => prev.slice(0, -1));
+    setStrokes((prev) => prev.slice(0, -1));
   }, []);
 
   const handleClear = useCallback(() => {
@@ -280,9 +280,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
           ))}
 
           {/* Current (live) stroke */}
-          {currentPath && (
-            <path d={currentPath} fill={strokeColor} stroke="none" />
-          )}
+          {currentPath && <path d={currentPath} fill={strokeColor} stroke="none" />}
         </svg>
 
         {/* Empty placeholder */}

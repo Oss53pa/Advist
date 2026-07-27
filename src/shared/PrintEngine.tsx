@@ -3,104 +3,110 @@
 // Copier ce fichier dans src/shared/ de chaque app Atlas Studio
 // ============================================================
 
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect } from 'react';
 
 // ── TYPES ────────────────────────────────────────────────────
 
-export type PrintFormat = 'A3' | 'A4' | 'A5'
-export type PrintOrientation = 'portrait' | 'landscape'
+export type PrintFormat = 'A3' | 'A4' | 'A5';
+export type PrintOrientation = 'portrait' | 'landscape';
 
 export interface PrintConfig {
   /** Format papier — défaut : A4 */
-  format?: PrintFormat
+  format?: PrintFormat;
   /** Orientation — défaut : portrait */
-  orientation?: PrintOrientation
+  orientation?: PrintOrientation;
   /** Titre principal du document */
-  title?: string
+  title?: string;
   /** Sous-titre / période / référence */
-  subtitle?: string
+  subtitle?: string;
   /** Nom de l'application (ex: "WiseFM") */
-  appName?: string
+  appName?: string;
   /** Afficher le logo Atlas Studio */
-  showLogo?: boolean
+  showLogo?: boolean;
   /** Afficher la numérotation des pages */
-  showPageNumbers?: boolean
+  showPageNumbers?: boolean;
   /** Afficher la date d'impression */
-  showDate?: boolean
+  showDate?: boolean;
   /** Override marges en mm — optionnel */
-  margins?: { top?: number; right?: number; bottom?: number; left?: number }
+  margins?: { top?: number; right?: number; bottom?: number; left?: number };
   /** Callback avant impression */
-  onBeforePrint?: () => void
+  onBeforePrint?: () => void;
   /** Callback après impression */
-  onAfterPrint?: () => void
+  onAfterPrint?: () => void;
 }
 
 interface ResolvedConfig {
-  format: PrintFormat
-  orientation: PrintOrientation
-  dims: { wMM: number; hMM: number; wPX: number; hPX: number }
-  margins: { top: number; right: number; bottom: number; left: number }
-  title: string
-  subtitle: string
-  appName: string
-  showLogo: boolean
-  showPageNumbers: boolean
-  showDate: boolean
+  format: PrintFormat;
+  orientation: PrintOrientation;
+  dims: { wMM: number; hMM: number; wPX: number; hPX: number };
+  margins: { top: number; right: number; bottom: number; left: number };
+  title: string;
+  subtitle: string;
+  appName: string;
+  showLogo: boolean;
+  showPageNumbers: boolean;
+  showDate: boolean;
 }
 
 // ── FORMAT RESOLVER ──────────────────────────────────────────
 
-const FORMAT_DATA: Record<PrintFormat, Record<PrintOrientation, { wMM: number; hMM: number; wPX: number; hPX: number }>> = {
+const FORMAT_DATA: Record<
+  PrintFormat,
+  Record<PrintOrientation, { wMM: number; hMM: number; wPX: number; hPX: number }>
+> = {
   A3: {
-    portrait:  { wMM: 297, hMM: 420, wPX: 1123, hPX: 1587 },
+    portrait: { wMM: 297, hMM: 420, wPX: 1123, hPX: 1587 },
     landscape: { wMM: 420, hMM: 297, wPX: 1587, hPX: 1123 },
   },
   A4: {
-    portrait:  { wMM: 210, hMM: 297, wPX: 794,  hPX: 1123 },
-    landscape: { wMM: 297, hMM: 210, wPX: 1123, hPX: 794  },
+    portrait: { wMM: 210, hMM: 297, wPX: 794, hPX: 1123 },
+    landscape: { wMM: 297, hMM: 210, wPX: 1123, hPX: 794 },
   },
   A5: {
-    portrait:  { wMM: 148, hMM: 210, wPX: 559,  hPX: 794  },
-    landscape: { wMM: 210, hMM: 148, wPX: 794,  hPX: 559  },
+    portrait: { wMM: 148, hMM: 210, wPX: 559, hPX: 794 },
+    landscape: { wMM: 210, hMM: 148, wPX: 794, hPX: 559 },
   },
-}
+};
 
-const DEFAULT_MARGINS: Record<PrintFormat, { top: number; right: number; bottom: number; left: number }> = {
+const DEFAULT_MARGINS: Record<
+  PrintFormat,
+  { top: number; right: number; bottom: number; left: number }
+> = {
   A3: { top: 20, right: 18, bottom: 20, left: 18 },
   A4: { top: 15, right: 12, bottom: 15, left: 12 },
-  A5: { top: 10, right: 8,  bottom: 10, left: 8  },
-}
+  A5: { top: 10, right: 8, bottom: 10, left: 8 },
+};
 
 function resolveConfig(config: PrintConfig): ResolvedConfig {
-  const format: PrintFormat           = config.format      ?? 'A4'
-  const orientation: PrintOrientation = config.orientation ?? 'portrait'
-  const base = DEFAULT_MARGINS[format]
+  const format: PrintFormat = config.format ?? 'A4';
+  const orientation: PrintOrientation = config.orientation ?? 'portrait';
+  const base = DEFAULT_MARGINS[format];
   return {
     format,
     orientation,
     dims: FORMAT_DATA[format][orientation],
     margins: {
-      top:    config.margins?.top    ?? base.top,
-      right:  config.margins?.right  ?? base.right,
+      top: config.margins?.top ?? base.top,
+      right: config.margins?.right ?? base.right,
       bottom: config.margins?.bottom ?? base.bottom,
-      left:   config.margins?.left   ?? base.left,
+      left: config.margins?.left ?? base.left,
     },
-    title:           config.title           ?? '',
-    subtitle:        config.subtitle        ?? '',
-    appName:         config.appName         ?? 'Atlas Studio',
-    showLogo:        config.showLogo        ?? true,
+    title: config.title ?? '',
+    subtitle: config.subtitle ?? '',
+    appName: config.appName ?? 'Atlas Studio',
+    showLogo: config.showLogo ?? true,
     showPageNumbers: config.showPageNumbers ?? true,
-    showDate:        config.showDate        ?? true,
-  }
+    showDate: config.showDate ?? true,
+  };
 }
 
 // ── STYLE INJECTOR ───────────────────────────────────────────
 
-const STYLE_ID = 'atlas-print-engine-css'
+const STYLE_ID = 'atlas-print-engine-css';
 
 function buildPrintCSS(rc: ResolvedConfig): string {
-  const { dims, margins, format } = rc
-  const fontSize = format === 'A5' ? '9pt' : format === 'A3' ? '12pt' : '10pt'
+  const { dims, margins, format } = rc;
+  const fontSize = format === 'A5' ? '9pt' : format === 'A3' ? '12pt' : '10pt';
 
   return `
     @page {
@@ -151,82 +157,128 @@ function buildPrintCSS(rc: ResolvedConfig): string {
       .atlas-page-break { page-break-after: always !important; break-after: always !important; }
       .atlas-no-break { page-break-inside: avoid !important; break-inside: avoid !important; }
     }
-  `
+  `;
 }
 
 function injectCSS(rc: ResolvedConfig): void {
-  document.getElementById(STYLE_ID)?.remove()
-  const el = document.createElement('style')
-  el.id = STYLE_ID
-  el.innerHTML = buildPrintCSS(rc)
-  document.head.appendChild(el)
+  document.getElementById(STYLE_ID)?.remove();
+  const el = document.createElement('style');
+  el.id = STYLE_ID;
+  el.innerHTML = buildPrintCSS(rc);
+  document.head.appendChild(el);
 }
 
 function removeCSS(): void {
-  document.getElementById(STYLE_ID)?.remove()
+  document.getElementById(STYLE_ID)?.remove();
 }
 
 // ── PRINT HEADER ─────────────────────────────────────────────
 
 function PrintHeader({ rc }: { rc: ResolvedConfig }) {
-  const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+  const date = new Date().toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
   return (
-    <div className="atlas-print-header" style={{
-      display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-      borderBottom: '1.5px solid #111', paddingBottom: 10, marginBottom: 18,
-    }}>
+    <div
+      className="atlas-print-header"
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        borderBottom: '1.5px solid #111',
+        paddingBottom: 10,
+        marginBottom: 18,
+      }}
+    >
       <div>
         {rc.showLogo && (
           <div style={{ fontSize: 14, fontWeight: 800, color: '#EF9F27', letterSpacing: 1 }}>
             ATLAS<span style={{ fontWeight: 300, color: '#000' }}>S</span>
           </div>
         )}
-        <div style={{ fontSize: 7, letterSpacing: 2, textTransform: 'uppercase', color: '#888', fontWeight: 600, marginTop: 1 }}>
+        <div
+          style={{
+            fontSize: 7,
+            letterSpacing: 2,
+            textTransform: 'uppercase',
+            color: '#888',
+            fontWeight: 600,
+            marginTop: 1,
+          }}
+        >
           {rc.appName}
         </div>
       </div>
       <div style={{ textAlign: 'center', flex: 1, padding: '0 16px' }}>
         {rc.title && <div style={{ fontSize: 11, fontWeight: 700, color: '#000' }}>{rc.title}</div>}
-        {rc.subtitle && <div style={{ fontSize: 8, color: '#555', marginTop: 2 }}>{rc.subtitle}</div>}
+        {rc.subtitle && (
+          <div style={{ fontSize: 8, color: '#555', marginTop: 2 }}>{rc.subtitle}</div>
+        )}
       </div>
       <div style={{ textAlign: 'right', minWidth: 80 }}>
         {rc.showDate && <div style={{ fontSize: 7, color: '#666' }}>{date}</div>}
-        <div style={{ fontSize: 7, color: '#EF9F27', fontWeight: 700, letterSpacing: 1, marginTop: 1 }}>CONFIDENTIEL</div>
+        <div
+          style={{ fontSize: 7, color: '#EF9F27', fontWeight: 700, letterSpacing: 1, marginTop: 1 }}
+        >
+          CONFIDENTIEL
+        </div>
       </div>
     </div>
-  )
+  );
 }
 
 // ── PRINT FOOTER ─────────────────────────────────────────────
 
 function PrintFooter({ rc }: { rc: ResolvedConfig }) {
-  const orientLabel = rc.orientation === 'portrait' ? 'Portrait' : 'Paysage'
+  const orientLabel = rc.orientation === 'portrait' ? 'Portrait' : 'Paysage';
   return (
-    <div className="atlas-print-footer" style={{
-      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      borderTop: '0.5px solid #ccc', paddingTop: 6, marginTop: 16,
-      fontSize: 7, color: '#888',
-    }}>
-      <span>Atlas Studio © {new Date().getFullYear()} — {rc.appName}</span>
+    <div
+      className="atlas-print-footer"
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderTop: '0.5px solid #ccc',
+        paddingTop: 6,
+        marginTop: 16,
+        fontSize: 7,
+        color: '#888',
+      }}
+    >
+      <span>
+        Atlas Studio © {new Date().getFullYear()} — {rc.appName}
+      </span>
       {rc.showPageNumbers && (
-        <span>Page <span className="atlas-page-number" /> / <span className="atlas-page-count" /></span>
+        <span>
+          Page <span className="atlas-page-number" /> / <span className="atlas-page-count" />
+        </span>
       )}
-      <span style={{ opacity: 0.6 }}>{rc.format} {orientLabel}</span>
+      <span style={{ opacity: 0.6 }}>
+        {rc.format} {orientLabel}
+      </span>
     </div>
-  )
+  );
 }
 
 // ── PRINT WRAPPER ─────────────────────────────────────────────
 
-export function PrintWrapper({ children, config }: { children: React.ReactNode; config: PrintConfig }) {
-  const rc = resolveConfig(config)
+export function PrintWrapper({
+  children,
+  config,
+}: {
+  children: React.ReactNode;
+  config: PrintConfig;
+}) {
+  const rc = resolveConfig(config);
   return (
     <div id="atlas-print-root" style={{ width: '100%', background: 'white', color: 'black' }}>
       <PrintHeader rc={rc} />
       <div className="atlas-print-content">{children}</div>
       <PrintFooter rc={rc} />
     </div>
-  )
+  );
 }
 
 // ── PREVIEW MODAL ─────────────────────────────────────────────
@@ -256,93 +308,138 @@ const MODAL_CSS = `
 .apm-page{background:white;box-shadow:0 8px 40px rgba(0,0,0,0.6);flex-shrink:0;overflow:hidden;transition:width .2s,height .2s}
 .apm-inner{transform-origin:top left;font-family:system-ui,sans-serif;color:#000;background:#fff}
 .apm-footerbar{height:26px;background:#0a0a0a;border-top:1px solid #1e1e1e;display:flex;align-items:center;justify-content:center;font-size:8px;letter-spacing:1.5px;color:#333;flex-shrink:0;width:100%}
-`
+`;
 
 interface PreviewProps {
-  isOpen: boolean
-  onClose: () => void
-  onPrint: (rc: ResolvedConfig) => void
-  children: React.ReactNode
-  config: PrintConfig
+  isOpen: boolean;
+  onClose: () => void;
+  onPrint: (rc: ResolvedConfig) => void;
+  children: React.ReactNode;
+  config: PrintConfig;
 }
 
 function PrintPreviewModal({ isOpen, onClose, onPrint, children, config }: PreviewProps) {
-  const [format, setFormat]           = useState<PrintFormat>(config.format ?? 'A4')
-  const [orientation, setOrientation] = useState<PrintOrientation>(config.orientation ?? 'portrait')
-  const [zoom, setZoom]               = useState(80)
+  const [format, setFormat] = useState<PrintFormat>(config.format ?? 'A4');
+  const [orientation, setOrientation] = useState<PrintOrientation>(
+    config.orientation ?? 'portrait'
+  );
+  const [zoom, setZoom] = useState(80);
 
   useEffect(() => {
     if (!document.getElementById('apm-styles')) {
-      const s = document.createElement('style')
-      s.id = 'apm-styles'
-      s.innerHTML = MODAL_CSS
-      document.head.appendChild(s)
+      const s = document.createElement('style');
+      s.id = 'apm-styles';
+      s.innerHTML = MODAL_CSS;
+      document.head.appendChild(s);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [isOpen])
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-    if (isOpen) window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [isOpen, onClose])
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isOpen, onClose]);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
-  const rc = resolveConfig({ ...config, format, orientation })
-  const { dims, margins } = rc
-  const scale = zoom / 100
-  const PX_PER_MM = 3.7795275591
+  const rc = resolveConfig({ ...config, format, orientation });
+  const { dims, margins } = rc;
+  const scale = zoom / 100;
+  const PX_PER_MM = 3.7795275591;
 
   const handlePrint = () => {
-    onClose()
-    setTimeout(() => onPrint(rc), 150)
-  }
+    onClose();
+    setTimeout(() => onPrint(rc), 150);
+  };
 
   return (
     <div className="apm-backdrop">
       <div className="apm-topbar">
         <div className="apm-brand">Aperçu impression</div>
         <div className="apm-controls">
-          <select className="apm-select" value={format} onChange={e => setFormat(e.target.value as PrintFormat)}>
+          <select
+            className="apm-select"
+            value={format}
+            onChange={(e) => setFormat(e.target.value as PrintFormat)}
+          >
             <option value="A4">A4</option>
             <option value="A3">A3</option>
             <option value="A5">A5</option>
           </select>
           <div className="apm-tgrp">
-            <button className={`apm-tbtn ${orientation === 'portrait' ? 'apm-on' : ''}`} onClick={() => setOrientation('portrait')}>Portrait</button>
-            <button className={`apm-tbtn ${orientation === 'landscape' ? 'apm-on' : ''}`} onClick={() => setOrientation('landscape')}>Paysage</button>
+            <button
+              className={`apm-tbtn ${orientation === 'portrait' ? 'apm-on' : ''}`}
+              onClick={() => setOrientation('portrait')}
+            >
+              Portrait
+            </button>
+            <button
+              className={`apm-tbtn ${orientation === 'landscape' ? 'apm-on' : ''}`}
+              onClick={() => setOrientation('landscape')}
+            >
+              Paysage
+            </button>
           </div>
           <div className="apm-zgrp">
-            <button className="apm-zbtn" onClick={() => setZoom(z => Math.max(25, z - 10))}>−</button>
+            <button className="apm-zbtn" onClick={() => setZoom((z) => Math.max(25, z - 10))}>
+              −
+            </button>
             <span className="apm-zlbl">{zoom}%</span>
-            <button className="apm-zbtn" onClick={() => setZoom(z => Math.min(150, z + 10))}>+</button>
+            <button className="apm-zbtn" onClick={() => setZoom((z) => Math.min(150, z + 10))}>
+              +
+            </button>
           </div>
-          <span className="apm-diminfo">{dims.wMM} × {dims.hMM} mm</span>
+          <span className="apm-diminfo">
+            {dims.wMM} × {dims.hMM} mm
+          </span>
         </div>
         <div className="apm-actions">
           <button className="apm-btnprint" onClick={handlePrint}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
             </svg>
             Imprimer
           </button>
-          <button className="apm-btnclose" onClick={onClose}>✕</button>
+          <button className="apm-btnclose" onClick={onClose}>
+            ✕
+          </button>
         </div>
       </div>
 
       <div className="apm-canvas">
-        <div className="apm-page" style={{ width: Math.round(dims.wPX * scale), height: Math.round(dims.hPX * scale) }}>
-          <div className="apm-inner" style={{
-            width: dims.wPX,
-            height: dims.hPX,
-            transform: `scale(${scale})`,
-            padding: `${Math.round(margins.top * PX_PER_MM)}px ${Math.round(margins.right * PX_PER_MM)}px ${Math.round(margins.bottom * PX_PER_MM)}px ${Math.round(margins.left * PX_PER_MM)}px`,
-          }}>
+        <div
+          className="apm-page"
+          style={{ width: Math.round(dims.wPX * scale), height: Math.round(dims.hPX * scale) }}
+        >
+          <div
+            className="apm-inner"
+            style={{
+              width: dims.wPX,
+              height: dims.hPX,
+              transform: `scale(${scale})`,
+              padding: `${Math.round(margins.top * PX_PER_MM)}px ${Math.round(margins.right * PX_PER_MM)}px ${Math.round(margins.bottom * PX_PER_MM)}px ${Math.round(margins.left * PX_PER_MM)}px`,
+            }}
+          >
             <PrintHeader rc={rc} />
             <div>{children}</div>
             <PrintFooter rc={rc} />
@@ -352,50 +449,59 @@ function PrintPreviewModal({ isOpen, onClose, onPrint, children, config }: Previ
 
       <div className="apm-footerbar">ATLAS STUDIO · PRINT ENGINE · ÉCHAP POUR FERMER</div>
     </div>
-  )
+  );
 }
 
 // ── usePrint HOOK ─────────────────────────────────────────────
 
 export function usePrint(config: PrintConfig = {}) {
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  const openPreview  = useCallback(() => setIsPreviewOpen(true),  [])
-  const closePreview = useCallback(() => setIsPreviewOpen(false), [])
+  const openPreview = useCallback(() => setIsPreviewOpen(true), []);
+  const closePreview = useCallback(() => setIsPreviewOpen(false), []);
 
-  const executePrint = useCallback((rc: ResolvedConfig) => {
-    config.onBeforePrint?.()
-    injectCSS(rc)
-    window.print()
-    window.addEventListener('afterprint', () => {
-      removeCSS()
-      config.onAfterPrint?.()
-    }, { once: true })
-  }, [config])
+  const executePrint = useCallback(
+    (rc: ResolvedConfig) => {
+      config.onBeforePrint?.();
+      injectCSS(rc);
+      window.print();
+      window.addEventListener(
+        'afterprint',
+        () => {
+          removeCSS();
+          config.onAfterPrint?.();
+        },
+        { once: true }
+      );
+    },
+    [config]
+  );
 
   const printDirect = useCallback(() => {
-    executePrint(resolveConfig(config))
-  }, [config, executePrint])
+    executePrint(resolveConfig(config));
+  }, [config, executePrint]);
 
-  return { openPreview, closePreview, isPreviewOpen, executePrint, printDirect }
+  return { openPreview, closePreview, isPreviewOpen, executePrint, printDirect };
 }
 
 // ── PrintButton — COMPOSANT CLÉ EN MAIN ──────────────────────
 // Usage : <PrintButton config={{ title: '...', appName: 'WiseFM' }}><MonContenu /></PrintButton>
 
 interface PrintButtonProps {
-  config?: PrintConfig
-  children: React.ReactNode
-  label?: string
-  className?: string
-  style?: React.CSSProperties
+  config?: PrintConfig;
+  children: React.ReactNode;
+  label?: string;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export function PrintButton({ config = {}, children, label, className, style }: PrintButtonProps) {
-  const { openPreview, closePreview, isPreviewOpen, executePrint } = usePrint(config)
+  const { openPreview, closePreview, isPreviewOpen, executePrint } = usePrint(config);
 
   const defaultStyle: React.CSSProperties = {
-    display: 'inline-flex', alignItems: 'center', gap: 7,
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 7,
     padding: '7px 15px',
     background: 'transparent',
     border: '1px solid #d0d0d0',
@@ -405,7 +511,7 @@ export function PrintButton({ config = {}, children, label, className, style }: 
     fontFamily: 'inherit',
     color: 'inherit',
     transition: 'border-color .15s',
-  }
+  };
 
   return (
     <>
@@ -415,8 +521,19 @@ export function PrintButton({ config = {}, children, label, className, style }: 
         style={style ?? defaultStyle}
         data-no-print="true"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="6 9 6 2 18 2 18 9" />
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+          <rect x="6" y="14" width="12" height="8" />
         </svg>
         {label ?? 'Aperçu / Imprimer'}
       </button>
@@ -430,7 +547,7 @@ export function PrintButton({ config = {}, children, label, className, style }: 
         {children}
       </PrintPreviewModal>
     </>
-  )
+  );
 }
 
 // ── CLASSES UTILITAIRES ───────────────────────────────────────

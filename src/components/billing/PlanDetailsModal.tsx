@@ -138,12 +138,7 @@ export const PlanDetailsModal: React.FC<PlanDetailsModalProps> = ({
   ];
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={t('billing.planDetails.title')}
-      size="lg"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title={t('billing.planDetails.title')} size="lg">
       <div className="space-y-6">
         {/* Plan Header */}
         <div className={`p-6 rounded-2xl bg-gradient-to-br ${colorClass} text-white`}>
@@ -244,9 +239,7 @@ export const PlanDetailsModal: React.FC<PlanDetailsModalProps> = ({
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">{t('billing.planDetails.auditLogs')}</div>
-                  <div className="font-semibold text-gray-900">
-                    {planInfo.limits.auditLogs}
-                  </div>
+                  <div className="font-semibold text-gray-900">{planInfo.limits.auditLogs}</div>
                 </div>
               </div>
             </div>

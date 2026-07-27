@@ -20,18 +20,30 @@ type TabId = 'theme' | 'colors' | 'typography' | 'layout';
 const TABS = [
   { id: 'theme' as TabId, labelKey: 'theme.themeMode', defaultLabel: 'Theme', icon: Sun },
   { id: 'colors' as TabId, labelKey: 'theme.colors', defaultLabel: 'Couleurs', icon: Palette },
-  { id: 'typography' as TabId, labelKey: 'theme.typography', defaultLabel: 'Typographie', icon: Type },
+  {
+    id: 'typography' as TabId,
+    labelKey: 'theme.typography',
+    defaultLabel: 'Typographie',
+    icon: Type,
+  },
   { id: 'layout' as TabId, labelKey: 'theme.layout', defaultLabel: 'Mise en page', icon: Square },
 ];
 
-const THEME_MODES: { id: ThemeMode; icon: React.ElementType; labelKey: string; defaultLabel: string; descKey: string; defaultDesc: string }[] = [
+const THEME_MODES: {
+  id: ThemeMode;
+  icon: React.ElementType;
+  labelKey: string;
+  defaultLabel: string;
+  descKey: string;
+  defaultDesc: string;
+}[] = [
   {
     id: 'light',
     icon: Sun,
     labelKey: 'theme.lightMode',
     defaultLabel: 'Clair',
     descKey: 'theme.lightModeDesc',
-    defaultDesc: 'Interface claire pour un usage en journee'
+    defaultDesc: 'Interface claire pour un usage en journee',
   },
   {
     id: 'dark',
@@ -39,7 +51,7 @@ const THEME_MODES: { id: ThemeMode; icon: React.ElementType; labelKey: string; d
     labelKey: 'theme.darkMode',
     defaultLabel: 'Sombre',
     descKey: 'theme.darkModeDesc',
-    defaultDesc: 'Interface sombre pour reduire la fatigue oculaire'
+    defaultDesc: 'Interface sombre pour reduire la fatigue oculaire',
   },
   {
     id: 'system',
@@ -47,13 +59,17 @@ const THEME_MODES: { id: ThemeMode; icon: React.ElementType; labelKey: string; d
     labelKey: 'theme.systemMode',
     defaultLabel: 'Systeme',
     descKey: 'theme.systemModeDesc',
-    defaultDesc: 'Suit les preferences de votre systeme'
+    defaultDesc: 'Suit les preferences de votre systeme',
   },
 ];
 
 const COLOR_FIELDS = [
   { key: 'primary' as const, labelKey: 'theme.colorPrimary', defaultLabel: 'Couleur principale' },
-  { key: 'secondary' as const, labelKey: 'theme.colorSecondary', defaultLabel: 'Couleur secondaire' },
+  {
+    key: 'secondary' as const,
+    labelKey: 'theme.colorSecondary',
+    defaultLabel: 'Couleur secondaire',
+  },
   { key: 'accent' as const, labelKey: 'theme.colorAccent', defaultLabel: "Couleur d'accent" },
   { key: 'background' as const, labelKey: 'theme.colorBackground', defaultLabel: 'Arriere-plan' },
   { key: 'surface' as const, labelKey: 'theme.colorSurface', defaultLabel: 'Surface' },
@@ -105,10 +121,10 @@ export const ThemeCustomizer: React.FC = () => {
           {/* Theme Mode Selection */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-advist-gray900 mb-2">
-              {t('theme.selectThemeMode', 'Mode d\'affichage')}
+              {t('theme.selectThemeMode', "Mode d'affichage")}
             </h3>
             <p className="text-sm text-advist-gray900/60 mb-6">
-              {t('theme.selectThemeModeDesc', 'Choisissez le mode d\'affichage de votre interface')}
+              {t('theme.selectThemeModeDesc', "Choisissez le mode d'affichage de votre interface")}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {THEME_MODES.map((mode) => {
@@ -121,11 +137,13 @@ export const ThemeCustomizer: React.FC = () => {
                     showCheck
                     className="!p-6"
                   >
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 mx-auto transition-colors ${
-                      isSelected
-                        ? 'bg-advist-dark text-white'
-                        : 'bg-advist-surface-dark text-advist-gray900'
-                    }`}>
+                    <div
+                      className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 mx-auto transition-colors ${
+                        isSelected
+                          ? 'bg-advist-dark text-white'
+                          : 'bg-advist-surface-dark text-advist-gray900'
+                      }`}
+                    >
                       <mode.icon size={28} />
                     </div>
                     <span className="text-base font-semibold text-advist-gray900 block mb-1">
@@ -145,29 +163,48 @@ export const ThemeCustomizer: React.FC = () => {
             <h3 className="text-lg font-semibold text-advist-gray900 mb-4">
               {t('theme.preview', 'Apercu')}
             </h3>
-            <div className={`p-6 rounded-xl transition-colors ${isDarkMode() ? 'bg-[#1A1D24]' : 'bg-advist-surface-dark'}`}>
-              <div className={`p-4 rounded-lg mb-4 transition-colors ${isDarkMode() ? 'bg-[#252D44]' : 'bg-white'}`}>
+            <div
+              className={`p-6 rounded-xl transition-colors ${isDarkMode() ? 'bg-[#1A1D24]' : 'bg-advist-surface-dark'}`}
+            >
+              <div
+                className={`p-4 rounded-lg mb-4 transition-colors ${isDarkMode() ? 'bg-[#252D44]' : 'bg-white'}`}
+              >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isDarkMode() ? 'bg-advist-gold-light' : 'bg-advist-dark'}`}>
-                    {isDarkMode() ? <Moon size={20} className="text-white" /> : <Sun size={20} className="text-white" />}
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${isDarkMode() ? 'bg-advist-gold-light' : 'bg-advist-dark'}`}
+                  >
+                    {isDarkMode() ? (
+                      <Moon size={20} className="text-white" />
+                    ) : (
+                      <Sun size={20} className="text-white" />
+                    )}
                   </div>
                   <div>
-                    <p className={`font-semibold transition-colors ${isDarkMode() ? 'text-white' : 'text-advist-gray900'}`}>
-                      {isDarkMode() ? t('theme.darkModeActive', 'Mode sombre actif') : t('theme.lightModeActive', 'Mode clair actif')}
+                    <p
+                      className={`font-semibold transition-colors ${isDarkMode() ? 'text-white' : 'text-advist-gray900'}`}
+                    >
+                      {isDarkMode()
+                        ? t('theme.darkModeActive', 'Mode sombre actif')
+                        : t('theme.lightModeActive', 'Mode clair actif')}
                     </p>
-                    <p className={`text-sm transition-colors ${isDarkMode() ? 'text-advist-text-muted' : 'text-advist-gray900/60'}`}>
+                    <p
+                      className={`text-sm transition-colors ${isDarkMode() ? 'text-advist-text-muted' : 'text-advist-gray900/60'}`}
+                    >
                       {settings.themeMode === 'system'
                         ? t('theme.systemModeInfo', 'Base sur les preferences systeme')
-                        : t('theme.manualModeInfo', 'Mode selectionne manuellement')
-                      }
+                        : t('theme.manualModeInfo', 'Mode selectionne manuellement')}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button className={`px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors ${isDarkMode() ? 'bg-advist-gold-light' : 'bg-advist-dark'}`}>
+                  <button
+                    className={`px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors ${isDarkMode() ? 'bg-advist-gold-light' : 'bg-advist-dark'}`}
+                  >
                     {t('theme.sampleButton', 'Bouton exemple')}
                   </button>
-                  <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isDarkMode() ? 'bg-advist-dark text-white' : 'bg-advist-surface-dark text-advist-gray900'}`}>
+                  <button
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isDarkMode() ? 'bg-advist-dark text-white' : 'bg-advist-surface-dark text-advist-gray900'}`}
+                  >
                     {t('theme.sampleSecondary', 'Secondaire')}
                   </button>
                 </div>
@@ -178,8 +215,16 @@ export const ThemeCustomizer: React.FC = () => {
                     key={i}
                     className={`flex-1 h-8 rounded-lg transition-colors ${
                       isDarkMode()
-                        ? i === 1 ? 'bg-advist-gold-light' : i === 2 ? 'bg-[#3D4556]' : 'bg-[#2D3548]'
-                        : i === 1 ? 'bg-advist-dark' : i === 2 ? 'bg-advist-gold-light' : 'bg-white'
+                        ? i === 1
+                          ? 'bg-advist-gold-light'
+                          : i === 2
+                            ? 'bg-[#3D4556]'
+                            : 'bg-[#2D3548]'
+                        : i === 1
+                          ? 'bg-advist-dark'
+                          : i === 2
+                            ? 'bg-advist-gold-light'
+                            : 'bg-white'
                     }`}
                   />
                 ))}
@@ -213,7 +258,9 @@ export const ThemeCustomizer: React.FC = () => {
                         <div
                           key={colorKey}
                           className="w-8 h-8 rounded-lg"
-                          style={{ backgroundColor: preset.colors[colorKey as keyof typeof preset.colors] }}
+                          style={{
+                            backgroundColor: preset.colors[colorKey as keyof typeof preset.colors],
+                          }}
                         />
                       ))}
                     </div>
@@ -260,7 +307,10 @@ export const ThemeCustomizer: React.FC = () => {
               {t('theme.preview', 'Apercu')}
             </h3>
             <div className="p-6 rounded-xl" style={{ backgroundColor: currentColors.background }}>
-              <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: currentColors.surface }}>
+              <div
+                className="p-4 rounded-lg mb-4"
+                style={{ backgroundColor: currentColors.surface }}
+              >
                 <div className="flex items-center gap-3 mb-3">
                   <div
                     className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -312,7 +362,10 @@ export const ThemeCustomizer: React.FC = () => {
                   selected={settings.fontFamily === font.id}
                   onClick={() => setFontFamily(font.id)}
                 >
-                  <span className="text-lg text-advist-gray900 block mb-1" style={{ fontFamily: font.value }}>
+                  <span
+                    className="text-lg text-advist-gray900 block mb-1"
+                    style={{ fontFamily: font.value }}
+                  >
                     Aa
                   </span>
                   <span className="text-xs text-advist-gray900/60">{font.name}</span>
@@ -334,7 +387,10 @@ export const ThemeCustomizer: React.FC = () => {
                   onClick={() => setFontSize(size.id)}
                   className="flex-1"
                 >
-                  <span className="text-advist-gray900 block mb-1" style={{ fontSize: `${size.scale * 16}px` }}>
+                  <span
+                    className="text-advist-gray900 block mb-1"
+                    style={{ fontSize: `${size.scale * 16}px` }}
+                  >
                     Texte
                   </span>
                   <span className="text-xs text-advist-gray900/60">{size.name}</span>
@@ -359,7 +415,10 @@ export const ThemeCustomizer: React.FC = () => {
                 {t('theme.previewDocTitle', 'Titre de document')}
               </h4>
               <p className="text-advist-gray900/80">
-                {t('theme.previewDocText', 'Voici un exemple de texte avec la police et la taille selectionnees.')}
+                {t(
+                  'theme.previewDocText',
+                  'Voici un exemple de texte avec la police et la taille selectionnees.'
+                )}
               </p>
               <p className="text-sm text-advist-gray900/60">
                 {t('theme.previewDocSmall', 'Texte secondaire plus petit pour les details.')}
@@ -391,7 +450,10 @@ export const ThemeCustomizer: React.FC = () => {
                     style={{ borderRadius: option.value }}
                   />
                   <span className="text-xs text-advist-gray900/60">
-                    {t(`theme.radius${option.id.charAt(0).toUpperCase() + option.id.slice(1)}`, option.label)}
+                    {t(
+                      `theme.radius${option.id.charAt(0).toUpperCase() + option.id.slice(1)}`,
+                      option.label
+                    )}
                   </span>
                 </SelectionButton>
               ))}
@@ -404,7 +466,10 @@ export const ThemeCustomizer: React.FC = () => {
               checked={settings.compactMode}
               onChange={setCompactMode}
               label={t('theme.compactMode', 'Mode compact')}
-              description={t('theme.compactModeDesc', "Reduit l'espacement pour afficher plus de contenu")}
+              description={t(
+                'theme.compactModeDesc',
+                "Reduit l'espacement pour afficher plus de contenu"
+              )}
             />
           </Card>
 
@@ -413,13 +478,16 @@ export const ThemeCustomizer: React.FC = () => {
             <h3 className="text-lg font-semibold text-advist-gray900 mb-4">
               {t('theme.preview', 'Apercu')}
             </h3>
-            <div className={`p-4 bg-advist-bg rounded-lg ${settings.compactMode ? 'space-y-2' : 'space-y-4'}`}>
+            <div
+              className={`p-4 bg-advist-bg rounded-lg ${settings.compactMode ? 'space-y-2' : 'space-y-4'}`}
+            >
               {[1, 2].map((i) => (
                 <div
                   key={i}
                   className={`bg-white ${settings.compactMode ? 'p-2' : 'p-4'}`}
                   style={{
-                    borderRadius: BORDER_RADIUS_OPTIONS.find((r) => r.id === settings.borderRadius)?.value,
+                    borderRadius: BORDER_RADIUS_OPTIONS.find((r) => r.id === settings.borderRadius)
+                      ?.value,
                   }}
                 >
                   <div className="h-3 w-3/4 bg-advist-dark/20 rounded mb-2" />

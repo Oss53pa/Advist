@@ -27,9 +27,10 @@ export const SelectionButton: React.FC<SelectionButtonProps> = ({
       onClick={onClick}
       className={`
         relative p-4 rounded-xl border-2 text-center transition-all duration-240
-        ${selected
-          ? 'border-advist-blue-light bg-advist-gold-light/10 shadow-sm'
-          : 'border-advist-border hover:border-advist-blue-light/50'
+        ${
+          selected
+            ? 'border-advist-blue-light bg-advist-gold-light/10 shadow-sm'
+            : 'border-advist-border hover:border-advist-blue-light/50'
         }
         ${className}
       `}

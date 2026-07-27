@@ -28,11 +28,7 @@ export {
   complianceDashboardService,
 } from './compliance';
 export { default as complianceService } from './compliance';
-export {
-  integrationService,
-  salesforceService,
-  INTEGRATION_PROVIDERS,
-} from './integrations';
+export { integrationService, salesforceService, INTEGRATION_PROVIDERS } from './integrations';
 export type {
   IntegrationConnection,
   IntegrationProvider,

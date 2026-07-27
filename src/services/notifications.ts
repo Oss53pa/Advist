@@ -10,7 +10,12 @@
  */
 import { supabase } from '../lib/supabase';
 import { parseSupabaseError, getPaginationRange } from './supabase-helpers';
-import type { Notification, NotificationPreferences, NotificationChannel, PaginatedResponse } from '../types';
+import type {
+  Notification,
+  NotificationPreferences,
+  NotificationChannel,
+  PaginatedResponse,
+} from '../types';
 import { whatsappService } from './whatsapp';
 
 // ---------------------------------------------------------------------------
@@ -18,7 +23,9 @@ import { whatsappService } from './whatsapp';
 // ---------------------------------------------------------------------------
 
 async function requireAuth(): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Non authentifié');
   return user.id;
 }
@@ -240,7 +247,9 @@ export const notificationsService = {
   /**
    * Update user notification preferences
    */
-  async updatePreferences(preferences: Partial<NotificationPreferences>): Promise<NotificationPreferences> {
+  async updatePreferences(
+    preferences: Partial<NotificationPreferences>
+  ): Promise<NotificationPreferences> {
     const userId = await requireAuth();
 
     // Convert preferences object to upsert rows
@@ -270,13 +279,14 @@ export const notificationsService = {
       requesterName?: string;
       comment?: string;
       actionUrl?: string;
-    },
+    }
   ): Promise<void> {
     // Get user's channel preferences for workflow_updates
     const prefs = await this.getPreferences();
-    const channels = prefs.workflow_updates?.length > 0
-      ? prefs.workflow_updates
-      : ['in_app' as NotificationChannel];
+    const channels =
+      prefs.workflow_updates?.length > 0
+        ? prefs.workflow_updates
+        : ['in_app' as NotificationChannel];
 
     const messages: Record<string, { subject: string; body: string }> = {
       pending: {
@@ -320,12 +330,13 @@ export const notificationsService = {
       daysRemaining: number;
       documentType?: string;
       actionUrl?: string;
-    },
+    }
   ): Promise<void> {
     const prefs = await this.getPreferences();
-    const channels = prefs.deadline_reminders?.length > 0
-      ? prefs.deadline_reminders
-      : ['in_app' as NotificationChannel, 'email' as NotificationChannel];
+    const channels =
+      prefs.deadline_reminders?.length > 0
+        ? prefs.deadline_reminders
+        : ['in_app' as NotificationChannel, 'email' as NotificationChannel];
 
     let urgency = '';
     if (data.daysRemaining <= 1) {
@@ -415,25 +426,51 @@ function buildPreferencesFromRows(rows: Record<string, any>[]): NotificationPref
 
 function preferencesToRows(
   userId: string,
-  prefs: Partial<NotificationPreferences>,
+  prefs: Partial<NotificationPreferences>
 ): Array<{ user_id: string; event_type: string; channel: string; is_enabled: boolean }> {
-  const rows: Array<{ user_id: string; event_type: string; channel: string; is_enabled: boolean }> = [];
+  const rows: Array<{ user_id: string; event_type: string; channel: string; is_enabled: boolean }> =
+    [];
 
   // Channel-level enables
   if (prefs.email_enabled !== undefined) {
-    rows.push({ user_id: userId, event_type: '_channel_email', channel: 'email', is_enabled: prefs.email_enabled });
+    rows.push({
+      user_id: userId,
+      event_type: '_channel_email',
+      channel: 'email',
+      is_enabled: prefs.email_enabled,
+    });
   }
   if (prefs.push_enabled !== undefined) {
-    rows.push({ user_id: userId, event_type: '_channel_push', channel: 'push', is_enabled: prefs.push_enabled });
+    rows.push({
+      user_id: userId,
+      event_type: '_channel_push',
+      channel: 'push',
+      is_enabled: prefs.push_enabled,
+    });
   }
   if (prefs.whatsapp_enabled !== undefined) {
-    rows.push({ user_id: userId, event_type: '_channel_whatsapp', channel: 'whatsapp', is_enabled: prefs.whatsapp_enabled });
+    rows.push({
+      user_id: userId,
+      event_type: '_channel_whatsapp',
+      channel: 'whatsapp',
+      is_enabled: prefs.whatsapp_enabled,
+    });
   }
   if (prefs.sms_enabled !== undefined) {
-    rows.push({ user_id: userId, event_type: '_channel_sms', channel: 'sms', is_enabled: prefs.sms_enabled });
+    rows.push({
+      user_id: userId,
+      event_type: '_channel_sms',
+      channel: 'sms',
+      is_enabled: prefs.sms_enabled,
+    });
   }
   if (prefs.quiet_hours_enabled !== undefined) {
-    rows.push({ user_id: userId, event_type: '_quiet_hours', channel: 'in_app', is_enabled: prefs.quiet_hours_enabled });
+    rows.push({
+      user_id: userId,
+      event_type: '_quiet_hours',
+      channel: 'in_app',
+      is_enabled: prefs.quiet_hours_enabled,
+    });
   }
 
   // Per-event-type channel lists

@@ -13,11 +13,7 @@
  * Generate a cryptographically secure random key for AES-GCM encryption
  */
 async function generateEncryptionKey(): Promise<CryptoKey> {
-  return crypto.subtle.generateKey(
-    { name: 'AES-GCM', length: 256 },
-    true,
-    ['encrypt', 'decrypt']
-  );
+  return crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
 }
 
 /**
@@ -51,11 +47,7 @@ export async function encryptForSession(plaintext: string): Promise<string> {
     // Generate a random IV for each encryption
     const iv = crypto.getRandomValues(new Uint8Array(12));
 
-    const encrypted = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv },
-      key,
-      data
-    );
+    const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
 
     // Combine IV + encrypted data and encode as base64
     const combined = new Uint8Array(iv.length + encrypted.byteLength);
@@ -88,11 +80,7 @@ export async function decryptFromSession(encrypted: string): Promise<string> {
     const iv = combined.slice(0, 12);
     const data = combined.slice(12);
 
-    const decrypted = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv },
-      key,
-      data
-    );
+    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
 
     const decoder = new TextDecoder();
     return decoder.decode(decrypted);
@@ -231,7 +219,7 @@ export function generateVerificationCode(groups: number = 4, groupLength: number
 export function generateSecureHash(): string {
   const array = new Uint8Array(16);
   crypto.getRandomValues(array);
-  return `sha256-${  Array.from(array)
+  return `sha256-${Array.from(array)
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('')}`;
 }

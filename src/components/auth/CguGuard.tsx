@@ -18,7 +18,9 @@ export const CguGuard: React.FC<CguGuardProps> = ({ children }) => {
   const [showModal, setShowModal] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [accepted, setAccepted] = useState(false);
-  const [currentVersion, setCurrentVersion] = useState<{ id: string; version: string } | null>(null);
+  const [currentVersion, setCurrentVersion] = useState<{ id: string; version: string } | null>(
+    null
+  );
 
   useEffect(() => {
     checkCguAcceptance();
@@ -26,7 +28,9 @@ export const CguGuard: React.FC<CguGuardProps> = ({ children }) => {
 
   const checkCguAcceptance = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         setLoading(false);
         return;
@@ -70,7 +74,9 @@ export const CguGuard: React.FC<CguGuardProps> = ({ children }) => {
 
     setAccepting(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       await supabase.from('cgu_acceptances').insert({
@@ -128,13 +134,11 @@ export const CguGuard: React.FC<CguGuardProps> = ({ children }) => {
               ) : (
                 <>
                   <p className="text-gray-600 text-sm mb-4">
-                    Pour continuer a utiliser ADVIST, veuillez accepter les Conditions
-                    Generales d'Utilisation en vigueur.
+                    Pour continuer a utiliser ADVIST, veuillez accepter les Conditions Generales
+                    d'Utilisation en vigueur.
                   </p>
 
-                  <p className="text-gray-600 text-sm mb-4">
-                    Les CGU encadrent notamment :
-                  </p>
+                  <p className="text-gray-600 text-sm mb-4">Les CGU encadrent notamment :</p>
                   <ul className="text-sm text-gray-600 space-y-1 mb-6 list-disc pl-5">
                     <li>La valeur juridique de la signature electronique (Loi CI 2013-546)</li>
                     <li>La duree de conservation des donnees (10 ans pour les contrats)</li>

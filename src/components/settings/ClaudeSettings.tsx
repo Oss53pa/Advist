@@ -83,7 +83,10 @@ export const ClaudeSettings: React.FC = () => {
               {t('settings.ai.title', 'Intelligence Artificielle')}
             </h2>
             <p className="text-advist-gray900/60 mt-1">
-              {t('settings.ai.description', 'Configurez Claude AI pour activer l\'assistant intelligent et l\'analyse de documents')}
+              {t(
+                'settings.ai.description',
+                "Configurez Claude AI pour activer l'assistant intelligent et l'analyse de documents"
+              )}
             </p>
           </div>
           {config.isConfigured && (
@@ -109,15 +112,9 @@ export const ClaudeSettings: React.FC = () => {
                 <p className="text-sm text-advist-gray900/60 mb-1">
                   {t('settings.ai.currentKey', 'Clé actuelle')}
                 </p>
-                <code className="text-advist-gray900 font-mono">
-                  {displayApiKey}
-                </code>
+                <code className="text-advist-gray900 font-mono">{displayApiKey}</code>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowApiKey(!showApiKey)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setShowApiKey(!showApiKey)}>
                 {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
               </Button>
             </div>
@@ -125,23 +122,14 @@ export const ClaudeSettings: React.FC = () => {
             <div className="flex items-center gap-2 text-sm text-advist-gray900/60">
               <Check size={16} className="text-green-500" />
               {t('settings.ai.lastValidated', 'Dernière validation')}:{' '}
-              {config.lastValidated
-                ? new Date(config.lastValidated).toLocaleString('fr-FR')
-                : '-'}
+              {config.lastValidated ? new Date(config.lastValidated).toLocaleString('fr-FR') : '-'}
             </div>
 
             <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setIsEditing(true)}
-              >
+              <Button variant="outline" onClick={() => setIsEditing(true)}>
                 {t('settings.ai.changeKey', 'Modifier la clé')}
               </Button>
-              <Button
-                variant="ghost"
-                onClick={handleTestConnection}
-                disabled={isValidating}
-              >
+              <Button variant="ghost" onClick={handleTestConnection} disabled={isValidating}>
                 {isValidating ? (
                   <Loader2 size={18} className="animate-spin mr-2" />
                 ) : (
@@ -184,7 +172,10 @@ export const ClaudeSettings: React.FC = () => {
               {apiKeyInput && !isValidApiKeyFormat(apiKeyInput) && (
                 <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
                   <AlertTriangle size={14} />
-                  {t('settings.ai.invalidKeyFormat', 'Format de clé invalide. La clé doit commencer par "sk-ant-"')}
+                  {t(
+                    'settings.ai.invalidKeyFormat',
+                    'Format de clé invalide. La clé doit commencer par "sk-ant-"'
+                  )}
                 </p>
               )}
             </div>
@@ -205,10 +196,7 @@ export const ClaudeSettings: React.FC = () => {
             </div>
 
             {config.isConfigured && (
-              <Button
-                variant="ghost"
-                onClick={() => setIsEditing(false)}
-              >
+              <Button variant="ghost" onClick={() => setIsEditing(false)}>
                 {t('common.cancel', 'Annuler')}
               </Button>
             )}
@@ -319,7 +307,10 @@ export const ClaudeSettings: React.FC = () => {
                     {t('settings.ai.chatAssistant', 'Assistant de chat')}
                   </p>
                   <p className="text-sm text-advist-gray900/60">
-                    {t('settings.ai.chatAssistantDesc', 'Chatbot pour répondre aux questions des utilisateurs')}
+                    {t(
+                      'settings.ai.chatAssistantDesc',
+                      'Chatbot pour répondre aux questions des utilisateurs'
+                    )}
                   </p>
                 </div>
               </div>
@@ -345,7 +336,10 @@ export const ClaudeSettings: React.FC = () => {
                     {t('settings.ai.documentAnalysis', 'Analyse de documents')}
                   </p>
                   <p className="text-sm text-advist-gray900/60">
-                    {t('settings.ai.documentAnalysisDesc', 'Résumer et analyser automatiquement les documents')}
+                    {t(
+                      'settings.ai.documentAnalysisDesc',
+                      'Résumer et analyser automatiquement les documents'
+                    )}
                   </p>
                 </div>
               </div>
@@ -370,7 +364,10 @@ export const ClaudeSettings: React.FC = () => {
             {t('settings.ai.dangerZone', 'Zone de danger')}
           </h3>
           <p className="text-sm text-advist-gray900/60 mb-4">
-            {t('settings.ai.clearConfigWarning', 'Supprimer la configuration effacera la clé API et désactivera toutes les fonctionnalités IA.')}
+            {t(
+              'settings.ai.clearConfigWarning',
+              'Supprimer la configuration effacera la clé API et désactivera toutes les fonctionnalités IA.'
+            )}
           </p>
           <Button
             variant="outline"

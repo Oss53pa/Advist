@@ -174,7 +174,11 @@ export const NotificationsPage: React.FC = () => {
   const [preferences, setPreferences] = useState<NotificationPreferences>(DEFAULT_PREFERENCES);
   const [groupByDate, setGroupByDate] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(['today', 'yesterday', 'thisWeek']);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([
+    'today',
+    'yesterday',
+    'thisWeek',
+  ]);
 
   useEffect(() => {
     if (!userId) {
@@ -187,7 +191,8 @@ export const NotificationsPage: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('notifications')
-          .select(`
+          .select(
+            `
             id,
             type,
             title,
@@ -203,7 +208,8 @@ export const NotificationsPage: React.FC = () => {
               first_name,
               last_name
             )
-          `)
+          `
+          )
           .eq('recipient_id', userId)
           .order('created_at', { ascending: false })
           .limit(100);
@@ -223,15 +229,17 @@ export const NotificationsPage: React.FC = () => {
           const sender = senderProfile
             ? {
                 id: index,
-                name: `${senderProfile.first_name || ''} ${senderProfile.last_name || ''}`.trim() || 'Systeme',
+                name:
+                  `${senderProfile.first_name || ''} ${senderProfile.last_name || ''}`.trim() ||
+                  'Systeme',
               }
             : undefined;
 
           const status: Notification['status'] = row.is_archived
             ? 'archived'
             : row.is_read
-            ? 'read'
-            : 'unread';
+              ? 'read'
+              : 'unread';
 
           return {
             id: index + 1, // Use numeric id for selection compatibility
@@ -277,7 +285,9 @@ export const NotificationsPage: React.FC = () => {
 
   const unreadCount = notifications.filter((n) => n.status === 'unread').length;
   const archivedCount = notifications.filter((n) => n.status === 'archived').length;
-  const actionableCount = notifications.filter((n) => n.status === 'unread' && n.is_actionable).length;
+  const actionableCount = notifications.filter(
+    (n) => n.status === 'unread' && n.is_actionable
+  ).length;
 
   // v2: Group notifications by date
   const groupNotificationsByDate = (notifs: Notification[]) => {
@@ -329,7 +339,10 @@ export const NotificationsPage: React.FC = () => {
     );
     const dbId = getDbId(id);
     if (dbId) {
-      await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).eq('id', dbId);
+      await supabase
+        .from('notifications')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .eq('id', dbId);
     }
   };
 
@@ -379,9 +392,7 @@ export const NotificationsPage: React.FC = () => {
 
   const handleDeleteSelected = async () => {
     const dbIds = selectedNotifications.map(getDbId).filter(Boolean) as string[];
-    setNotifications((prev) =>
-      prev.filter((n) => !selectedNotifications.includes(n.id))
-    );
+    setNotifications((prev) => prev.filter((n) => !selectedNotifications.includes(n.id)));
     setSelectedNotifications([]);
     if (dbIds.length > 0) {
       await supabase.from('notifications').delete().in('id', dbIds);
@@ -398,7 +409,10 @@ export const NotificationsPage: React.FC = () => {
     );
     setSelectedNotifications([]);
     if (dbIds.length > 0) {
-      await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).in('id', dbIds);
+      await supabase
+        .from('notifications')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .in('id', dbIds);
     }
   };
 
@@ -449,14 +463,22 @@ export const NotificationsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-advist-gray900">{t('notifications.title', 'Notifications')}</h1>
+          <h1 className="text-2xl font-bold text-advist-gray900">
+            {t('notifications.title', 'Notifications')}
+          </h1>
           <p className="text-advist-gray900 mt-1">
             {unreadCount > 0 ? (
               <>
-                {t('notifications.unreadCount', 'Vous avez {{count}} notification(s) non lue(s)', { count: unreadCount })}
+                {t('notifications.unreadCount', 'Vous avez {{count}} notification(s) non lue(s)', {
+                  count: unreadCount,
+                })}
                 {actionableCount > 0 && (
                   <span className="ml-2 text-advist-gold-dark">
-                    ({t('notifications.actionRequired', '{{count}} action(s) requise(s)', { count: actionableCount })})
+                    (
+                    {t('notifications.actionRequired', '{{count}} action(s) requise(s)', {
+                      count: actionableCount,
+                    })}
+                    )
                   </span>
                 )}
               </>
@@ -495,7 +517,12 @@ export const NotificationsPage: React.FC = () => {
             <Settings size={16} className="mr-2" />
             {t('notifications.preferences', 'Préférences')}
           </Button>
-          <Button variant="outline" size="sm" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleMarkAllAsRead}
+            disabled={unreadCount === 0}
+          >
             <CheckCheck size={16} className="mr-2" />
             {t('notifications.markAllRead', 'Tout marquer comme lu')}
           </Button>
@@ -543,7 +570,9 @@ export const NotificationsPage: React.FC = () => {
         <StatsCard
           icon={PenTool}
           label={t('notifications.stats.signatures', 'Signatures')}
-          value={notifications.filter((n) => n.type === 'signature' && n.status === 'unread').length}
+          value={
+            notifications.filter((n) => n.type === 'signature' && n.status === 'unread').length
+          }
           color="green"
         />
         <StatsCard
@@ -575,7 +604,11 @@ export const NotificationsPage: React.FC = () => {
                   {t('notifications.urgentActions', 'Actions urgentes requises')}
                 </p>
                 <p className="text-sm text-advist-gold-dark">
-                  {t('notifications.urgentActionsDesc', 'Vous avez {{count}} notification(s) nécessitant une action', { count: actionableCount })}
+                  {t(
+                    'notifications.urgentActionsDesc',
+                    'Vous avez {{count}} notification(s) nécessitant une action',
+                    { count: actionableCount }
+                  )}
                 </p>
               </div>
             </div>
@@ -621,7 +654,9 @@ export const NotificationsPage: React.FC = () => {
               <option value="all">{t('notifications.filters.allTypes', 'Tous les types')}</option>
               <option value="document">{t('notifications.filters.documents', 'Documents')}</option>
               <option value="workflow">{t('notifications.filters.workflows', 'Workflows')}</option>
-              <option value="signature">{t('notifications.filters.signatures', 'Signatures')}</option>
+              <option value="signature">
+                {t('notifications.filters.signatures', 'Signatures')}
+              </option>
               <option value="user">{t('notifications.filters.users', 'Utilisateurs')}</option>
               <option value="system">{t('notifications.filters.system', 'Système')}</option>
             </select>
@@ -630,10 +665,14 @@ export const NotificationsPage: React.FC = () => {
               onChange={(e) => setSelectedStatus(e.target.value)}
               className="px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
             >
-              <option value="all">{t('notifications.filters.allStatuses', 'Tous les statuts')}</option>
+              <option value="all">
+                {t('notifications.filters.allStatuses', 'Tous les statuts')}
+              </option>
               <option value="unread">{t('notifications.filters.unread', 'Non lues')}</option>
               <option value="read">{t('notifications.filters.read', 'Lues')}</option>
-              {showArchived && <option value="archived">{t('notifications.filters.archived', 'Archivées')}</option>}
+              {showArchived && (
+                <option value="archived">{t('notifications.filters.archived', 'Archivées')}</option>
+              )}
             </select>
             {/* v2: Group by date toggle */}
             <button
@@ -665,110 +704,115 @@ export const NotificationsPage: React.FC = () => {
           </div>
         </Card>
       ) : (
-      <Card className="overflow-hidden">
-        {/* Select All Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-advist-bg/50 border-b border-advist-bg">
-          <div className="flex items-center gap-4">
-            <input
-              type="checkbox"
-              checked={
-                selectedNotifications.length === filteredNotifications.length &&
-                filteredNotifications.length > 0
-              }
-              onChange={handleSelectAll}
-              className="w-4 h-4 rounded border-advist-bg text-advist-gray900 focus:ring-advist-gold"
-            />
-            <span className="text-sm text-advist-gray900">
-              {selectedNotifications.length > 0
-                ? t('notifications.selected', '{{count}} sélectionnée(s)', { count: selectedNotifications.length })
-                : t('notifications.selectAll', 'Sélectionner tout')}
+        <Card className="overflow-hidden">
+          {/* Select All Header */}
+          <div className="flex items-center justify-between px-4 py-3 bg-advist-bg/50 border-b border-advist-bg">
+            <div className="flex items-center gap-4">
+              <input
+                type="checkbox"
+                checked={
+                  selectedNotifications.length === filteredNotifications.length &&
+                  filteredNotifications.length > 0
+                }
+                onChange={handleSelectAll}
+                className="w-4 h-4 rounded border-advist-bg text-advist-gray900 focus:ring-advist-gold"
+              />
+              <span className="text-sm text-advist-gray900">
+                {selectedNotifications.length > 0
+                  ? t('notifications.selected', '{{count}} sélectionnée(s)', {
+                      count: selectedNotifications.length,
+                    })
+                  : t('notifications.selectAll', 'Sélectionner tout')}
+              </span>
+            </div>
+            <span className="text-sm text-advist-blue-light">
+              {t('notifications.showing', '{{count}} notification(s)', {
+                count: filteredNotifications.length,
+              })}
             </span>
           </div>
-          <span className="text-sm text-advist-blue-light">
-            {t('notifications.showing', '{{count}} notification(s)', { count: filteredNotifications.length })}
-          </span>
-        </div>
 
-        {/* v2: Grouped or flat notifications */}
-        {groupByDate && groupedNotifications ? (
-          <div>
-            {groupedNotifications.map((group) => (
-              <div key={group.key}>
-                {/* Group header */}
-                <button
-                  onClick={() => toggleGroup(group.key)}
-                  className="w-full flex items-center justify-between px-4 py-2 bg-advist-bg/30 hover:bg-advist-bg/50 transition-all duration-240"
-                >
-                  <div className="flex items-center gap-2">
-                    {expandedGroups.includes(group.key) ? (
-                      <ChevronDown size={16} className="text-advist-gray900" />
-                    ) : (
-                      <ChevronUp size={16} className="text-advist-gray900" />
-                    )}
-                    <span className="font-medium text-advist-gray900">{group.label}</span>
-                    <Badge variant="secondary" size="sm">
-                      {group.notifications.length}
-                    </Badge>
-                    {group.notifications.filter((n) => n.status === 'unread').length > 0 && (
-                      <Badge variant="danger" size="sm">
-                        {group.notifications.filter((n) => n.status === 'unread').length} {t('notifications.new', 'nouvelle(s)')}
+          {/* v2: Grouped or flat notifications */}
+          {groupByDate && groupedNotifications ? (
+            <div>
+              {groupedNotifications.map((group) => (
+                <div key={group.key}>
+                  {/* Group header */}
+                  <button
+                    onClick={() => toggleGroup(group.key)}
+                    className="w-full flex items-center justify-between px-4 py-2 bg-advist-bg/30 hover:bg-advist-bg/50 transition-all duration-240"
+                  >
+                    <div className="flex items-center gap-2">
+                      {expandedGroups.includes(group.key) ? (
+                        <ChevronDown size={16} className="text-advist-gray900" />
+                      ) : (
+                        <ChevronUp size={16} className="text-advist-gray900" />
+                      )}
+                      <span className="font-medium text-advist-gray900">{group.label}</span>
+                      <Badge variant="secondary" size="sm">
+                        {group.notifications.length}
                       </Badge>
-                    )}
-                  </div>
-                </button>
-                {/* Group content */}
-                {expandedGroups.includes(group.key) && (
-                  <div className="divide-y divide-advist-bg">
-                    {group.notifications.map((notification) => (
-                      <NotificationItem
-                        key={notification.id}
-                        notification={notification}
-                        isSelected={selectedNotifications.includes(notification.id)}
-                        onSelect={() => handleToggleSelect(notification.id)}
-                        onMarkAsRead={() => handleMarkAsRead(notification.id)}
-                        onArchive={() => handleArchive(notification.id)}
-                        onDelete={() => handleDelete(notification.id)}
-                        onQuickAction={() => handleQuickAction(notification)}
-                        formatDate={formatDate}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="divide-y divide-advist-bg">
-            {filteredNotifications.map((notification) => (
-              <NotificationItem
-                key={notification.id}
-                notification={notification}
-                isSelected={selectedNotifications.includes(notification.id)}
-                onSelect={() => handleToggleSelect(notification.id)}
-                onMarkAsRead={() => handleMarkAsRead(notification.id)}
-                onArchive={() => handleArchive(notification.id)}
-                onDelete={() => handleDelete(notification.id)}
-                onQuickAction={() => handleQuickAction(notification)}
-                formatDate={formatDate}
-              />
-            ))}
-          </div>
-        )}
+                      {group.notifications.filter((n) => n.status === 'unread').length > 0 && (
+                        <Badge variant="danger" size="sm">
+                          {group.notifications.filter((n) => n.status === 'unread').length}{' '}
+                          {t('notifications.new', 'nouvelle(s)')}
+                        </Badge>
+                      )}
+                    </div>
+                  </button>
+                  {/* Group content */}
+                  {expandedGroups.includes(group.key) && (
+                    <div className="divide-y divide-advist-bg">
+                      {group.notifications.map((notification) => (
+                        <NotificationItem
+                          key={notification.id}
+                          notification={notification}
+                          isSelected={selectedNotifications.includes(notification.id)}
+                          onSelect={() => handleToggleSelect(notification.id)}
+                          onMarkAsRead={() => handleMarkAsRead(notification.id)}
+                          onArchive={() => handleArchive(notification.id)}
+                          onDelete={() => handleDelete(notification.id)}
+                          onQuickAction={() => handleQuickAction(notification)}
+                          formatDate={formatDate}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="divide-y divide-advist-bg">
+              {filteredNotifications.map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  isSelected={selectedNotifications.includes(notification.id)}
+                  onSelect={() => handleToggleSelect(notification.id)}
+                  onMarkAsRead={() => handleMarkAsRead(notification.id)}
+                  onArchive={() => handleArchive(notification.id)}
+                  onDelete={() => handleDelete(notification.id)}
+                  onQuickAction={() => handleQuickAction(notification)}
+                  formatDate={formatDate}
+                />
+              ))}
+            </div>
+          )}
 
-        {filteredNotifications.length === 0 && (
-          <div className="text-center py-12">
-            <Bell size={48} className="mx-auto text-advist-blue-light mb-4" />
-            <h3 className="text-lg font-medium text-advist-gray900">
-              {showArchived
-                ? t('notifications.noArchivedNotifications', 'Aucune notification archivée')
-                : t('notifications.noNotifications', 'Aucune notification')}
-            </h3>
-            <p className="text-advist-gray900 mt-1">
-              {t('notifications.allUpToDate', 'Vous êtes à jour avec toutes vos notifications')}
-            </p>
-          </div>
-        )}
-      </Card>
+          {filteredNotifications.length === 0 && (
+            <div className="text-center py-12">
+              <Bell size={48} className="mx-auto text-advist-blue-light mb-4" />
+              <h3 className="text-lg font-medium text-advist-gray900">
+                {showArchived
+                  ? t('notifications.noArchivedNotifications', 'Aucune notification archivée')
+                  : t('notifications.noNotifications', 'Aucune notification')}
+              </h3>
+              <p className="text-advist-gray900 mt-1">
+                {t('notifications.allUpToDate', 'Vous êtes à jour avec toutes vos notifications')}
+              </p>
+            </div>
+          )}
+        </Card>
       )}
 
       {/* v2: Quick Settings Summary */}
@@ -784,10 +828,10 @@ export const NotificationsPage: React.FC = () => {
                 {preferences.email.enabled && preferences.push.enabled
                   ? t('notifications.preferencesActive', 'Email et notifications push activés')
                   : preferences.email.enabled
-                  ? t('notifications.emailOnly', 'Email activé uniquement')
-                  : preferences.push.enabled
-                  ? t('notifications.pushOnly', 'Push activé uniquement')
-                  : t('notifications.allDisabled', 'Notifications désactivées')}
+                    ? t('notifications.emailOnly', 'Email activé uniquement')
+                    : preferences.push.enabled
+                      ? t('notifications.pushOnly', 'Push activé uniquement')
+                      : t('notifications.allDisabled', 'Notifications désactivées')}
                 {preferences.quietHours.enabled && (
                   <span className="ml-2 text-advist-gold-dark">
                     • {t('notifications.quietHoursActive', 'Heures calmes actives')}
@@ -841,11 +885,17 @@ const StatsCard: React.FC<{
       } ${highlight ? 'ring-2 ring-offset-2 ring-advist-gold' : ''}`}
     >
       <Component onClick={onClick} className="flex items-center gap-3 w-full">
-        <div className={`p-2 rounded-xl ${colorClasses[color]} ${highlight ? 'animate-pulse' : ''}`}>
+        <div
+          className={`p-2 rounded-xl ${colorClasses[color]} ${highlight ? 'animate-pulse' : ''}`}
+        >
           <Icon size={18} />
         </div>
         <div className="text-left">
-          <p className={`text-xl font-bold ${highlight ? 'text-advist-error' : 'text-advist-gray900'}`}>{value}</p>
+          <p
+            className={`text-xl font-bold ${highlight ? 'text-advist-error' : 'text-advist-gray900'}`}
+          >
+            {value}
+          </p>
           <p className="text-xs text-advist-gray900">{label}</p>
         </div>
       </Component>
@@ -883,10 +933,26 @@ const NotificationItem: React.FC<{
     if (!notification.is_actionable || notification.status !== 'unread') return null;
 
     const actionConfig = {
-      approve: { label: t('notifications.actions.approve', 'Approuver'), icon: Check, color: 'bg-advist-success hover:bg-green-50' },
-      sign: { label: t('notifications.actions.sign', 'Signer'), icon: PenTool, color: 'bg-advist-dark hover:bg-advist-dark' },
-      review: { label: t('notifications.actions.review', 'Réviser'), icon: Eye, color: 'bg-advist-dark hover:bg-advist-dark' },
-      view: { label: t('notifications.actions.view', 'Voir'), icon: Eye, color: 'bg-advist-surface-dark hover:bg-advist-dark' },
+      approve: {
+        label: t('notifications.actions.approve', 'Approuver'),
+        icon: Check,
+        color: 'bg-advist-success hover:bg-green-50',
+      },
+      sign: {
+        label: t('notifications.actions.sign', 'Signer'),
+        icon: PenTool,
+        color: 'bg-advist-dark hover:bg-advist-dark',
+      },
+      review: {
+        label: t('notifications.actions.review', 'Réviser'),
+        icon: Eye,
+        color: 'bg-advist-dark hover:bg-advist-dark',
+      },
+      view: {
+        label: t('notifications.actions.view', 'Voir'),
+        icon: Eye,
+        color: 'bg-advist-surface-dark hover:bg-advist-dark',
+      },
     };
 
     return notification.action_type ? actionConfig[notification.action_type] : null;
@@ -901,9 +967,24 @@ const NotificationItem: React.FC<{
     const deadline = new Date(notification.deadline);
     const hoursLeft = (deadline.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-    if (hoursLeft < 0) return { status: 'overdue', label: t('notifications.overdue', 'En retard'), color: 'text-advist-error bg-advist-gold-light' };
-    if (hoursLeft < 4) return { status: 'urgent', label: t('notifications.veryUrgent', 'Très urgent'), color: 'text-advist-error bg-advist-gold-light' };
-    if (hoursLeft < 24) return { status: 'soon', label: t('notifications.dueSoon', 'Bientôt'), color: 'text-advist-gold-dark bg-advist-gold-light' };
+    if (hoursLeft < 0)
+      return {
+        status: 'overdue',
+        label: t('notifications.overdue', 'En retard'),
+        color: 'text-advist-error bg-advist-gold-light',
+      };
+    if (hoursLeft < 4)
+      return {
+        status: 'urgent',
+        label: t('notifications.veryUrgent', 'Très urgent'),
+        color: 'text-advist-error bg-advist-gold-light',
+      };
+    if (hoursLeft < 24)
+      return {
+        status: 'soon',
+        label: t('notifications.dueSoon', 'Bientôt'),
+        color: 'text-advist-gold-dark bg-advist-gold-light',
+      };
     return null;
   };
 
@@ -934,7 +1015,11 @@ const NotificationItem: React.FC<{
       >
         <Icon
           size={18}
-          className={notification.status === 'unread' ? `text-${typeConfig.color}-600` : 'text-advist-gray900'}
+          className={
+            notification.status === 'unread'
+              ? `text-${typeConfig.color}-600`
+              : 'text-advist-gray900'
+          }
         />
         {notification.priority === 'high' && notification.status === 'unread' && (
           <div className="absolute -top-1 -right-1 w-3 h-3 bg-advist-error rounded-full animate-pulse" />
@@ -966,13 +1051,16 @@ const NotificationItem: React.FC<{
                 </span>
               )}
             </div>
-            <p className="text-sm text-advist-gray900 mt-1 line-clamp-2">
-              {notification.body}
-            </p>
+            <p className="text-sm text-advist-gray900 mt-1 line-clamp-2">{notification.body}</p>
 
             {/* v2: Additional info row */}
             <div className="flex items-center gap-3 mt-2 flex-wrap">
-              <Badge variant={typeConfig.color as 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'} size="sm">
+              <Badge
+                variant={
+                  typeConfig.color as 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'
+                }
+                size="sm"
+              >
                 {typeConfig.label}
               </Badge>
               {notification.sender && (
@@ -985,9 +1073,17 @@ const NotificationItem: React.FC<{
                 {formatDate(notification.created_at)}
               </span>
               {notification.deadline && (
-                <span className={`flex items-center gap-1 text-xs ${deadlineUrgency ? deadlineUrgency.color.split(' ')[0] : 'text-advist-blue-light'}`}>
+                <span
+                  className={`flex items-center gap-1 text-xs ${deadlineUrgency ? deadlineUrgency.color.split(' ')[0] : 'text-advist-blue-light'}`}
+                >
                   <Calendar size={12} />
-                  {t('notifications.deadline', 'Échéance')}: {new Date(notification.deadline).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  {t('notifications.deadline', 'Échéance')}:{' '}
+                  {new Date(notification.deadline).toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </span>
               )}
             </div>
@@ -997,11 +1093,7 @@ const NotificationItem: React.FC<{
           <div className="flex items-center gap-2 flex-shrink-0">
             {/* Quick action button */}
             {actionButton && (
-              <Button
-                size="sm"
-                className={actionButton.color}
-                onClick={onQuickAction}
-              >
+              <Button size="sm" className={actionButton.color} onClick={onQuickAction}>
                 <actionButton.icon size={14} className="mr-1" />
                 {actionButton.label}
               </Button>
@@ -1136,7 +1228,12 @@ const NotificationPreferencesModal: React.FC<{
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('notifications.preferencesModalTitle', 'Préférences de notification')} size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('notifications.preferencesModalTitle', 'Préférences de notification')}
+      size="lg"
+    >
       <div className="space-y-6">
         {/* Tabs */}
         <div className="flex gap-2 border-b border-advist-bg pb-3">
@@ -1144,7 +1241,11 @@ const NotificationPreferencesModal: React.FC<{
             { key: 'email', label: t('notifications.prefs.email', 'Email'), icon: Mail },
             { key: 'push', label: t('notifications.prefs.push', 'Push'), icon: Smartphone },
             { key: 'inApp', label: t('notifications.prefs.inApp', 'Application'), icon: Monitor },
-            { key: 'quietHours', label: t('notifications.prefs.quietHours', 'Heures calmes'), icon: BellOff },
+            {
+              key: 'quietHours',
+              label: t('notifications.prefs.quietHours', 'Heures calmes'),
+              icon: BellOff,
+            },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -1166,14 +1267,23 @@ const NotificationPreferencesModal: React.FC<{
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-advist-gray900">{t('notifications.prefs.emailNotifications', 'Notifications par email')}</p>
-                <p className="text-sm text-advist-gray900">{t('notifications.prefs.emailDesc', 'Recevez des notifications par email')}</p>
+                <p className="font-medium text-advist-gray900">
+                  {t('notifications.prefs.emailNotifications', 'Notifications par email')}
+                </p>
+                <p className="text-sm text-advist-gray900">
+                  {t('notifications.prefs.emailDesc', 'Recevez des notifications par email')}
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={localPrefs.email.enabled}
-                  onChange={() => setLocalPrefs((prev) => ({ ...prev, email: { ...prev.email, enabled: !prev.email.enabled } }))}
+                  onChange={() =>
+                    setLocalPrefs((prev) => ({
+                      ...prev,
+                      email: { ...prev.email, enabled: !prev.email.enabled },
+                    }))
+                  }
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-advist-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -1188,12 +1298,26 @@ const NotificationPreferencesModal: React.FC<{
                   </label>
                   <select
                     value={localPrefs.email.digest}
-                    onChange={(e) => setLocalPrefs((prev) => ({ ...prev, email: { ...prev.email, digest: e.target.value as 'instant' | 'daily' | 'weekly' } }))}
+                    onChange={(e) =>
+                      setLocalPrefs((prev) => ({
+                        ...prev,
+                        email: {
+                          ...prev.email,
+                          digest: e.target.value as 'instant' | 'daily' | 'weekly',
+                        },
+                      }))
+                    }
                     className="w-full px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
                   >
-                    <option value="instant">{t('notifications.prefs.instant', 'Instantané')}</option>
-                    <option value="daily">{t('notifications.prefs.daily', 'Résumé quotidien')}</option>
-                    <option value="weekly">{t('notifications.prefs.weekly', 'Résumé hebdomadaire')}</option>
+                    <option value="instant">
+                      {t('notifications.prefs.instant', 'Instantané')}
+                    </option>
+                    <option value="daily">
+                      {t('notifications.prefs.daily', 'Résumé quotidien')}
+                    </option>
+                    <option value="weekly">
+                      {t('notifications.prefs.weekly', 'Résumé hebdomadaire')}
+                    </option>
                   </select>
                 </div>
 
@@ -1202,7 +1326,10 @@ const NotificationPreferencesModal: React.FC<{
                     {t('notifications.prefs.notificationTypes', 'Types de notifications')}
                   </label>
                   {Object.entries(typeLabels).map(([key, { label, icon: TypeIcon }]) => (
-                    <div key={key} className="flex items-center justify-between py-2 border-b border-advist-bg last:border-0">
+                    <div
+                      key={key}
+                      className="flex items-center justify-between py-2 border-b border-advist-bg last:border-0"
+                    >
                       <div className="flex items-center gap-3">
                         <TypeIcon size={18} className="text-advist-gray900" />
                         <span className="text-sm text-advist-gray900">{label}</span>
@@ -1210,8 +1337,12 @@ const NotificationPreferencesModal: React.FC<{
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={localPrefs.email.types[key as keyof typeof localPrefs.email.types]}
-                          onChange={() => toggleEmailType(key as keyof typeof localPrefs.email.types)}
+                          checked={
+                            localPrefs.email.types[key as keyof typeof localPrefs.email.types]
+                          }
+                          onChange={() =>
+                            toggleEmailType(key as keyof typeof localPrefs.email.types)
+                          }
                           className="sr-only peer"
                         />
                         <div className="w-9 h-5 bg-advist-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -1229,14 +1360,26 @@ const NotificationPreferencesModal: React.FC<{
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-advist-gray900">{t('notifications.prefs.pushNotifications', 'Notifications push')}</p>
-                <p className="text-sm text-advist-gray900">{t('notifications.prefs.pushDesc', 'Recevez des notifications sur votre appareil')}</p>
+                <p className="font-medium text-advist-gray900">
+                  {t('notifications.prefs.pushNotifications', 'Notifications push')}
+                </p>
+                <p className="text-sm text-advist-gray900">
+                  {t(
+                    'notifications.prefs.pushDesc',
+                    'Recevez des notifications sur votre appareil'
+                  )}
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={localPrefs.push.enabled}
-                  onChange={() => setLocalPrefs((prev) => ({ ...prev, push: { ...prev.push, enabled: !prev.push.enabled } }))}
+                  onChange={() =>
+                    setLocalPrefs((prev) => ({
+                      ...prev,
+                      push: { ...prev.push, enabled: !prev.push.enabled },
+                    }))
+                  }
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-advist-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -1249,7 +1392,10 @@ const NotificationPreferencesModal: React.FC<{
                   {t('notifications.prefs.notificationTypes', 'Types de notifications')}
                 </label>
                 {Object.entries(typeLabels).map(([key, { label, icon: TypeIcon }]) => (
-                  <div key={key} className="flex items-center justify-between py-2 border-b border-advist-bg last:border-0">
+                  <div
+                    key={key}
+                    className="flex items-center justify-between py-2 border-b border-advist-bg last:border-0"
+                  >
                     <div className="flex items-center gap-3">
                       <TypeIcon size={18} className="text-advist-gray900" />
                       <span className="text-sm text-advist-gray900">{label}</span>
@@ -1277,15 +1423,27 @@ const NotificationPreferencesModal: React.FC<{
               <div className="flex items-center gap-3">
                 <Volume2 size={18} className="text-advist-gray900" />
                 <div>
-                  <p className="font-medium text-advist-gray900">{t('notifications.prefs.sound', 'Son')}</p>
-                  <p className="text-sm text-advist-gray900">{t('notifications.prefs.soundDesc', 'Jouer un son lors de nouvelles notifications')}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {t('notifications.prefs.sound', 'Son')}
+                  </p>
+                  <p className="text-sm text-advist-gray900">
+                    {t(
+                      'notifications.prefs.soundDesc',
+                      'Jouer un son lors de nouvelles notifications'
+                    )}
+                  </p>
                 </div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={localPrefs.inApp.sound}
-                  onChange={() => setLocalPrefs((prev) => ({ ...prev, inApp: { ...prev.inApp, sound: !prev.inApp.sound } }))}
+                  onChange={() =>
+                    setLocalPrefs((prev) => ({
+                      ...prev,
+                      inApp: { ...prev.inApp, sound: !prev.inApp.sound },
+                    }))
+                  }
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-advist-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -1296,15 +1454,27 @@ const NotificationPreferencesModal: React.FC<{
               <div className="flex items-center gap-3">
                 <Monitor size={18} className="text-advist-gray900" />
                 <div>
-                  <p className="font-medium text-advist-gray900">{t('notifications.prefs.desktop', 'Notifications bureau')}</p>
-                  <p className="text-sm text-advist-gray900">{t('notifications.prefs.desktopDesc', 'Afficher les notifications sur le bureau')}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {t('notifications.prefs.desktop', 'Notifications bureau')}
+                  </p>
+                  <p className="text-sm text-advist-gray900">
+                    {t(
+                      'notifications.prefs.desktopDesc',
+                      'Afficher les notifications sur le bureau'
+                    )}
+                  </p>
                 </div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={localPrefs.inApp.desktop}
-                  onChange={() => setLocalPrefs((prev) => ({ ...prev, inApp: { ...prev.inApp, desktop: !prev.inApp.desktop } }))}
+                  onChange={() =>
+                    setLocalPrefs((prev) => ({
+                      ...prev,
+                      inApp: { ...prev.inApp, desktop: !prev.inApp.desktop },
+                    }))
+                  }
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-advist-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -1318,14 +1488,26 @@ const NotificationPreferencesModal: React.FC<{
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-advist-gray900">{t('notifications.prefs.quietHoursTitle', 'Heures calmes')}</p>
-                <p className="text-sm text-advist-gray900">{t('notifications.prefs.quietHoursDesc', 'Désactivez les notifications pendant certaines heures')}</p>
+                <p className="font-medium text-advist-gray900">
+                  {t('notifications.prefs.quietHoursTitle', 'Heures calmes')}
+                </p>
+                <p className="text-sm text-advist-gray900">
+                  {t(
+                    'notifications.prefs.quietHoursDesc',
+                    'Désactivez les notifications pendant certaines heures'
+                  )}
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={localPrefs.quietHours.enabled}
-                  onChange={() => setLocalPrefs((prev) => ({ ...prev, quietHours: { ...prev.quietHours, enabled: !prev.quietHours.enabled } }))}
+                  onChange={() =>
+                    setLocalPrefs((prev) => ({
+                      ...prev,
+                      quietHours: { ...prev.quietHours, enabled: !prev.quietHours.enabled },
+                    }))
+                  }
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-advist-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-advist-border rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-advist-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-advist-dark"></div>
@@ -1341,7 +1523,12 @@ const NotificationPreferencesModal: React.FC<{
                   <input
                     type="time"
                     value={localPrefs.quietHours.start}
-                    onChange={(e) => setLocalPrefs((prev) => ({ ...prev, quietHours: { ...prev.quietHours, start: e.target.value } }))}
+                    onChange={(e) =>
+                      setLocalPrefs((prev) => ({
+                        ...prev,
+                        quietHours: { ...prev.quietHours, start: e.target.value },
+                      }))
+                    }
                     className="w-full px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
                   />
                 </div>
@@ -1352,7 +1539,12 @@ const NotificationPreferencesModal: React.FC<{
                   <input
                     type="time"
                     value={localPrefs.quietHours.end}
-                    onChange={(e) => setLocalPrefs((prev) => ({ ...prev, quietHours: { ...prev.quietHours, end: e.target.value } }))}
+                    onChange={(e) =>
+                      setLocalPrefs((prev) => ({
+                        ...prev,
+                        quietHours: { ...prev.quietHours, end: e.target.value },
+                      }))
+                    }
                     className="w-full px-3 py-2 bg-advist-bg rounded-xl text-advist-gray900 focus:outline-none focus:ring-2 focus:ring-advist-gold"
                   />
                 </div>
@@ -1364,10 +1556,14 @@ const NotificationPreferencesModal: React.FC<{
                 <div className="flex items-center gap-2 text-advist-gold-dark">
                   <BellOff size={18} />
                   <p className="text-sm">
-                    {t('notifications.prefs.quietHoursInfo', 'Les notifications seront désactivées de {{start}} à {{end}}', {
-                      start: localPrefs.quietHours.start,
-                      end: localPrefs.quietHours.end,
-                    })}
+                    {t(
+                      'notifications.prefs.quietHoursInfo',
+                      'Les notifications seront désactivées de {{start}} à {{end}}',
+                      {
+                        start: localPrefs.quietHours.start,
+                        end: localPrefs.quietHours.end,
+                      }
+                    )}
                   </p>
                 </div>
               </div>
@@ -1380,9 +1576,7 @@ const NotificationPreferencesModal: React.FC<{
           <Button variant="ghost" onClick={onClose}>
             {t('common.cancel', 'Annuler')}
           </Button>
-          <Button onClick={handleSave}>
-            {t('common.save', 'Enregistrer')}
-          </Button>
+          <Button onClick={handleSave}>{t('common.save', 'Enregistrer')}</Button>
         </div>
       </div>
     </Modal>

@@ -117,7 +117,7 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
   if (!data) return null;
 
   // Simple bar chart visualization
-  const maxValue = Math.max(...data.datasets.flatMap(d => d.data));
+  const maxValue = Math.max(...data.datasets.flatMap((d) => d.data));
 
   return (
     <div className="h-full flex flex-col">
@@ -125,10 +125,7 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({ config }) => {
       <div className="flex items-center gap-4 mb-4">
         {data.datasets.map((dataset, idx) => (
           <div key={idx} className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: dataset.color }}
-            ></div>
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: dataset.color }}></div>
             <span className="text-xs text-advist-gray900/70">{dataset.label}</span>
           </div>
         ))}

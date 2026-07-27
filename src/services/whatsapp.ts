@@ -70,7 +70,9 @@ export interface WhatsAppConfig {
 // ---------------------------------------------------------------------------
 
 async function requireAuth(): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Non authentifié');
   return user.id;
 }
@@ -141,7 +143,7 @@ export const whatsappService = {
   async sendTextMessage(
     phoneNumber: string,
     message: string,
-    previewUrl = false,
+    previewUrl = false
   ): Promise<WhatsAppMessageResponse> {
     const payload: WhatsAppMessage = {
       to: formatPhoneNumber(phoneNumber),
@@ -165,7 +167,7 @@ export const whatsappService = {
     phoneNumber: string,
     templateName: string,
     language: string = 'fr',
-    parameters?: WhatsAppTemplateParameter[],
+    parameters?: WhatsAppTemplateParameter[]
   ): Promise<WhatsAppMessageResponse> {
     const payload: WhatsAppMessage = {
       to: formatPhoneNumber(phoneNumber),
@@ -190,7 +192,7 @@ export const whatsappService = {
     phoneNumber: string,
     documentUrl: string,
     filename: string,
-    caption?: string,
+    caption?: string
   ): Promise<WhatsAppMessageResponse> {
     const payload: WhatsAppMessage = {
       to: formatPhoneNumber(phoneNumber),
@@ -230,7 +232,7 @@ export const whatsappService = {
       validatorName?: string;
       comment?: string;
       actionUrl?: string;
-    },
+    }
   ): Promise<WhatsAppMessageResponse> {
     const templateMap = {
       pending: ADVIST_TEMPLATES.WORKFLOW_PENDING,
@@ -268,7 +270,7 @@ export const whatsappService = {
       deadlineDate: string;
       documentType?: string;
       actionUrl?: string;
-    },
+    }
   ): Promise<WhatsAppMessageResponse> {
     let templateName: string;
 
@@ -309,7 +311,12 @@ export const whatsappService = {
       },
     ];
 
-    return this.sendTemplateMessage(phoneNumber, ADVIST_TEMPLATES.OTP_VERIFICATION, 'fr', parameters);
+    return this.sendTemplateMessage(
+      phoneNumber,
+      ADVIST_TEMPLATES.OTP_VERIFICATION,
+      'fr',
+      parameters
+    );
   },
 
   /**
@@ -328,7 +335,7 @@ export const whatsappService = {
    * Get user's WhatsApp notification preferences
    */
   async getPreferences(userId?: string): Promise<NotificationPreferences> {
-    const uid = userId || await requireAuth();
+    const uid = userId || (await requireAuth());
 
     const { data, error } = await supabase
       .from('notification_preferences')
@@ -352,7 +359,7 @@ export const whatsappService = {
       timezone: 'Africa/Abidjan',
     };
 
-    for (const row of (data || [])) {
+    for (const row of data || []) {
       if (row.event_type === '_channel_whatsapp') prefs.whatsapp_enabled = row.is_enabled;
       if (row.event_type === '_channel_email') prefs.email_enabled = row.is_enabled;
       if (row.event_type === '_channel_push') prefs.push_enabled = row.is_enabled;
@@ -367,14 +374,24 @@ export const whatsappService = {
    */
   async updatePreferences(
     preferences: Partial<NotificationPreferences>,
-    userId?: string,
+    userId?: string
   ): Promise<NotificationPreferences> {
-    const uid = userId || await requireAuth();
+    const uid = userId || (await requireAuth());
 
-    const rows: Array<{ user_id: string; event_type: string; channel: string; is_enabled: boolean }> = [];
+    const rows: Array<{
+      user_id: string;
+      event_type: string;
+      channel: string;
+      is_enabled: boolean;
+    }> = [];
 
     if (preferences.whatsapp_enabled !== undefined) {
-      rows.push({ user_id: uid, event_type: '_channel_whatsapp', channel: 'whatsapp', is_enabled: preferences.whatsapp_enabled });
+      rows.push({
+        user_id: uid,
+        event_type: '_channel_whatsapp',
+        channel: 'whatsapp',
+        is_enabled: preferences.whatsapp_enabled,
+      });
     }
 
     if (rows.length > 0) {
@@ -401,7 +418,12 @@ export const whatsappService = {
       body: { message_id: messageId },
     });
     if (error) throw new Error(error.message);
-    return data as { id: string; status: 'sent' | 'delivered' | 'read' | 'failed'; timestamp: string; error?: string };
+    return data as {
+      id: string;
+      status: 'sent' | 'delivered' | 'read' | 'failed';
+      timestamp: string;
+      error?: string;
+    };
   },
 
   /**
@@ -410,7 +432,7 @@ export const whatsappService = {
   async sendBulk(
     recipients: Array<{ phoneNumber: string; params?: Record<string, string> }>,
     templateName: string,
-    language: string = 'fr',
+    language: string = 'fr'
   ): Promise<{
     successful: number;
     failed: number;
@@ -450,26 +472,26 @@ function formatPhoneNumber(phone: string): string {
 
   // If starts with 00, replace with +
   if (cleaned.startsWith('00')) {
-    return `+${  cleaned.slice(2)}`;
+    return `+${cleaned.slice(2)}`;
   }
 
   // Côte d'Ivoire numbers
   if (cleaned.startsWith('225')) {
-    return `+${  cleaned}`;
+    return `+${cleaned}`;
   }
 
   // If starts with 0, assume Côte d'Ivoire local format
   if (cleaned.startsWith('0')) {
-    return `+225${  cleaned.slice(1)}`;
+    return `+225${cleaned.slice(1)}`;
   }
 
   // 10-digit number without country code, assume Côte d'Ivoire
   if (cleaned.length === 10) {
-    return `+225${  cleaned}`;
+    return `+225${cleaned}`;
   }
 
   // Default: add + prefix
-  return `+${  cleaned}`;
+  return `+${cleaned}`;
 }
 
 export default whatsappService;

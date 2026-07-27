@@ -20,7 +20,7 @@ export const ROLE_CONFIG: Record<RoleType, RoleConfig> = {
     label: 'Administrateur',
     color: 'red',
     icon: Shield,
-    description: 'Gestion complete de l\'organisation',
+    description: "Gestion complete de l'organisation",
   },
   manager: {
     label: 'Manager',
