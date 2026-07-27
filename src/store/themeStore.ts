@@ -77,22 +77,22 @@ export const BORDER_RADIUS_OPTIONS = [
 // Theme mode
 export type ThemeMode = 'light' | 'dark' | 'system';
 
-// Default ADVIST colors (used as base for presets and defaults)
+// Default ADVIST colors — Ivoire & Laiton (police Dosis inchangée)
 const DEFAULT_COLORS = {
-  primary: '#252D44',
-  secondary: '#7EAED9',
-  accent: '#F59E0B',
-  background: '#E8EAEC',
-  surface: '#FDFDFD',
+  primary: '#131C2E', // navy chaud
+  secondary: '#78716A', // taupe chaud (texte secondaire)
+  accent: '#B9975B', // laiton (brass)
+  background: '#FAF7F1', // ivoire
+  surface: '#FFFFFF',
 };
 
-// Dark mode colors
+// Dark mode colors — Ivoire & Laiton (variante sombre)
 const DARK_MODE_COLORS = {
-  primary: '#E8EAEC',
-  secondary: '#7EAED9',
-  accent: '#FF6B6B',
-  background: '#1A1D24',
-  surface: '#252D44',
+  primary: '#FAF7F1',
+  secondary: '#A39B8F',
+  accent: '#D4B87E', // laiton clair
+  background: '#0D1424',
+  surface: '#131C2E',
 };
 
 // Preset color themes with light and dark variants
