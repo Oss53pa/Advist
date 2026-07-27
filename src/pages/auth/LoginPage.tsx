@@ -138,12 +138,12 @@ export const LoginPage: React.FC = () => {
                 />
                 <span className="text-[13px] text-white/50">{t('auth.rememberMe')}</span>
               </label>
-              <Link
-                to="/forgot-password"
+              <a
+                href="https://atlas-studio.org/portal/forgot-password"
                 className="text-[13px] text-[#b8a47e] hover:text-[#d4c6a5] transition-colors"
               >
                 {t('auth.forgotPassword')}
-              </Link>
+              </a>
             </div>
 
             <button
