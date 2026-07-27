@@ -91,7 +91,7 @@ export const AuditPage: React.FC = () => {
       setIsLoading(true);
       try {
         const { data, error } = await supabase
-          .from('audit_logs')
+          .from('advist_audit_logs')
           .select(
             `
             id,

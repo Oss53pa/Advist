@@ -876,9 +876,9 @@ export const documentsService = {
       .order('created_at');
 
     const { data: auditLogs } = await supabase
-      .from('audit_logs')
-      .select('*, user:profiles!audit_logs_user_id_fkey(id, first_name, last_name)')
-      .eq('resource_type', 'document')
+      .from('advist_audit_logs')
+      .select('*, user:profiles!advist_audit_logs_user_id_fkey(id, first_name, last_name)')
+      .eq('resource_type', 'documents')
       .eq('resource_id', documentId)
       .order('created_at');
 

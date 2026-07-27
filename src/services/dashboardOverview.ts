@@ -102,10 +102,10 @@ export async function getDashboardStats(orgId: string, userId: string): Promise<
 export async function getRecentActivity(orgId: string, limit = 4): Promise<RecentActivityItem[]> {
   try {
     const { data, error } = await supabase
-      .from('audit_logs')
-      .select('id, action, resource_name, resource_type, timestamp')
+      .from('advist_audit_logs')
+      .select('id, action, resource_name, resource_type, created_at')
       .eq('organization_id', orgId)
-      .order('timestamp', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(limit);
 
     if (error || !data) return [];
@@ -113,7 +113,7 @@ export async function getRecentActivity(orgId: string, limit = 4): Promise<Recen
       id: row.id as string,
       action: (row.action as string) ?? 'activité',
       resourceName: (row.resource_name as string) ?? (row.resource_type as string) ?? null,
-      at: (row.timestamp as string) ?? new Date().toISOString(),
+      at: (row.created_at as string) ?? new Date().toISOString(),
     }));
   } catch {
     return [];

@@ -208,17 +208,17 @@ export async function getAdminWeeklyActivity(orgId: string): Promise<number[]> {
     const fromIso = monday.toISOString();
 
     const { data, error } = await supabase
-      .from('audit_logs')
-      .select('timestamp')
+      .from('advist_audit_logs')
+      .select('created_at')
       .eq('organization_id', orgId)
-      .gte('timestamp', fromIso)
+      .gte('created_at', fromIso)
       .limit(5000);
 
     if (error || !data) return new Array(7).fill(0);
 
     const counts = new Array(7).fill(0);
     for (const row of data) {
-      const t = new Date(row.timestamp as string);
+      const t = new Date(row.created_at as string);
       const idx = (t.getDay() + 6) % 7; // Mon=0
       if (idx >= 0 && idx < 7) counts[idx]++;
     }
