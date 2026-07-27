@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAtlasSupabaseClient } from './createAtlasSupabaseClient';
 import type { Database } from './database.types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -8,17 +8,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY environment variables');
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
-    },
-  },
+export const supabase = createAtlasSupabaseClient<Database>({
+  url: supabaseUrl,
+  anonKey: supabaseAnonKey,
+  storageKey: 'advist-auth',
 });
 
 /**
