@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { syncAppBranding } from '../../lib/brandingSync';
 
 type Status = 'loading' | 'error';
 
@@ -52,6 +53,10 @@ export default function ExternalAuthPage() {
       if (otpError) {
         throw new Error(otpError.message);
       }
+
+      // Resync this app's branding palette into raw_user_meta_data so native
+      // Atlas Studio Auth emails render in Advist colors. Non-blocking.
+      await syncAppBranding('advist');
 
       // Fetch plan tier from Supabase (server-side source of truth)
       // Never trust JWT payload for plan tier — it is unverified client-side
