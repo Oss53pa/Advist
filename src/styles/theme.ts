@@ -115,7 +115,32 @@ export const colors = {
 // CONFIGURATION TAILWIND
 // =============================================================================
 
+// Echelle de gris CHAUDE (ivoire → navy chaud). Redefinit les palettes froides
+// intégrées de Tailwind (gray/slate/neutral/zinc) pour que les centaines de
+// classes `bg-gray-*`, `text-slate-*`, etc. déjà présentes dans l'app adoptent
+// automatiquement l'identité Ivoire & Laiton, sans éditer chaque composant.
+const warmGray = {
+  50: '#FAF7F1',
+  100: '#F1ECE1',
+  200: '#E8E2D6',
+  300: '#D8CFBF',
+  400: '#A39B8F',
+  500: '#78716A',
+  600: '#57534E',
+  700: '#44403A',
+  800: '#2A2620',
+  900: '#1C1917',
+  950: '#131C2E',
+} as const;
+
 export const tailwindColors = {
+  // Palettes froides de Tailwind redefinies en chaud (voir warmGray)
+  gray: warmGray,
+  slate: warmGray,
+  neutral: warmGray,
+  zinc: warmGray,
+  stone: warmGray,
+
   // Primary Grayscale
   primary: {
     50: palette.primary50,
@@ -261,7 +286,7 @@ export const cssVariables = {
     '--color-text-muted': palette.primary500,
     '--color-text-label': palette.primary300,
     '--color-border': palette.primary700,
-    '--color-border-dark': '#334155',
+    '--color-border-dark': '#44403A',
     '--color-success': status.success,
     '--color-warning': status.warning,
     '--color-error': status.error,

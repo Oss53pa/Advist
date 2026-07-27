@@ -73,7 +73,7 @@ export const PremiumChart: React.FC<PremiumChartProps> = ({
     if (type === 'bar') {
       return (
         <BarChart data={data}>
-          {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.5} />}
+          {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#E8E2D6" strokeOpacity={0.5} />}
           <XAxis dataKey={xAxisKey} tick={axisStyle} axisLine={false} tickLine={false} />
           <YAxis tick={axisStyle} axisLine={false} tickLine={false} width={40} />
           <Tooltip content={<CustomTooltip />} />
@@ -88,7 +88,7 @@ export const PremiumChart: React.FC<PremiumChartProps> = ({
     if (type === 'line') {
       return (
         <LineChart data={data}>
-          {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.5} />}
+          {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#E8E2D6" strokeOpacity={0.5} />}
           <XAxis dataKey={xAxisKey} tick={axisStyle} axisLine={false} tickLine={false} />
           <YAxis tick={axisStyle} axisLine={false} tickLine={false} width={40} />
           <Tooltip content={<CustomTooltip />} />
@@ -122,7 +122,7 @@ export const PremiumChart: React.FC<PremiumChartProps> = ({
             </linearGradient>
           )}
         </defs>
-        {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.4} />}
+        {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#E8E2D6" strokeOpacity={0.4} />}
         <XAxis dataKey={xAxisKey} tick={axisStyle} axisLine={false} tickLine={false} />
         <YAxis tick={axisStyle} axisLine={false} tickLine={false} width={40} />
         <Tooltip content={<CustomTooltip />} />

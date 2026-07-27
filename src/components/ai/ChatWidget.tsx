@@ -11,7 +11,6 @@ import {
   Send,
   Trash2,
   Loader2,
-  Brain,
   User,
   Minimize2,
   Maximize2,
@@ -318,11 +317,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
               setIsOpen(true);
             }
           }}
-          className="p-4 bg-gradient-to-br from-primary-900 to-primary-900 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
+          className="proph3t-orb relative w-16 h-16 rounded-full transition-transform duration-300 hover:scale-110 group"
           title={t('ai.chat.open', "Ouvrir l'assistant IA")}
         >
-          <Brain className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></span>
+          <img src="/proph3t.png" alt="Proph3t" className="w-full h-full object-contain" />
+          <span className="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></span>
         </button>
       </div>
     );
@@ -347,7 +346,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
       >
         <div className="flex items-center gap-2">
           <GripVertical className="w-4 h-4 text-white/50" />
-          <Brain className="w-5 h-5 text-white" />
+          <img src="/proph3t.png" alt="Proph3t" className="w-7 h-7 object-contain" />
           <span className="text-xl text-white" style={{ fontFamily: "'Grand Hotel', cursive" }}>
             Proph3t
           </span>
@@ -461,16 +460,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ context }) => {
                   className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
                 >
                   <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.role === 'user'
-                        ? 'bg-advist-primary'
-                        : 'bg-gradient-to-br from-primary-900 to-primary-900'
+                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center overflow-hidden ${
+                      message.role === 'user' ? 'bg-advist-primary' : ''
                     }`}
                   >
                     {message.role === 'user' ? (
                       <User className="w-4 h-4 text-white" />
                     ) : (
-                      <Brain className="w-4 h-4 text-white" />
+                      <img
+                        src="/proph3t.png"
+                        alt="Proph3t"
+                        className="w-full h-full object-contain"
+                      />
                     )}
                   </div>
                   <div

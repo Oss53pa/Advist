@@ -413,7 +413,7 @@ export default function TeamSettingsPage() {
                         )}
                       </div>
                     )}
-                    {isMe && <span style={{ fontSize: 11, color: '#64748B' }}>—</span>}
+                    {isMe && <span style={{ fontSize: 11, color: '#78716A' }}>—</span>}
                   </td>
                 </tr>
               );
@@ -447,7 +447,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: '#F8FAFC',
     borderRadius: 8,
     fontSize: 13,
-    color: '#64748B',
+    color: '#78716A',
     marginBottom: 16,
   },
   inviteForm: {
@@ -455,7 +455,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: 24,
     borderRadius: 12,
     marginBottom: 24,
-    border: '1px solid #E2E8F0',
+    border: '1px solid #E8E2D6',
   },
   formRow: { display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 },
   label: { fontSize: 13, fontWeight: 600, color: '#475569' },
@@ -464,18 +464,18 @@ const styles: Record<string, React.CSSProperties> = {
     background: '#fff',
     borderRadius: 12,
     overflow: 'hidden',
-    border: '1px solid #E2E8F0',
+    border: '1px solid #E8E2D6',
   },
   table: { width: '100%', borderCollapse: 'collapse' },
   th: {
     padding: '12px 16px',
     textAlign: 'left',
     fontSize: 12,
-    color: '#64748B',
+    color: '#78716A',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     background: '#F8FAFC',
-    borderBottom: '1px solid #E2E8F0',
+    borderBottom: '1px solid #E8E2D6',
   },
   td: {
     padding: '14px 16px',

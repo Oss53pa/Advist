@@ -30,7 +30,7 @@ export const Card: React.FC<CardProps> = ({
         shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.02)]
         ${paddingStyles[padding]}
         ${hoverable ? 'hover:shadow-[0_4px_16px_rgba(0,0,0,0.08),0_12px_40px_rgba(0,0,0,0.04)] hover:border-[#B9975B]/30 transition-all duration-300 cursor-pointer' : 'transition-shadow duration-200'}
-        dark:bg-[#1B2740] dark:border-[#334155]
+        dark:bg-[#1B2740] dark:border-[#44403A]
         ${className}
       `}
       onClick={onClick}
