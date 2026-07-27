@@ -10,12 +10,20 @@ import { invokeEdgeFunction } from '../lib/supabase';
 
 // Available Claude models
 export const CLAUDE_MODELS = [
-  { id: 'claude-haiku-4-5-20251001', name: 'Claude 4.5 Haiku', description: 'Rapide et économique' },
-  { id: 'claude-sonnet-4-20250514', name: 'Claude 4 Sonnet', description: 'Équilibré (Recommandé)' },
+  {
+    id: 'claude-haiku-4-5-20251001',
+    name: 'Claude 4.5 Haiku',
+    description: 'Rapide et économique',
+  },
+  {
+    id: 'claude-sonnet-4-20250514',
+    name: 'Claude 4 Sonnet',
+    description: 'Équilibré (Recommandé)',
+  },
   { id: 'claude-opus-4-20250514', name: 'Claude 4 Opus', description: 'Plus puissant' },
 ] as const;
 
-export type ClaudeModelId = typeof CLAUDE_MODELS[number]['id'];
+export type ClaudeModelId = (typeof CLAUDE_MODELS)[number]['id'];
 
 export interface ClaudeConfig {
   model: ClaudeModelId;

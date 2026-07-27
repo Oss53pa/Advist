@@ -57,7 +57,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       const { notifications, unreadCount } = get();
       set({
         notifications: notifications.map((n) =>
-          n.id === id ? { ...n, status: 'read' as const, read_at: new Date().toISOString() } : n,
+          n.id === id ? { ...n, status: 'read' as const, read_at: new Date().toISOString() } : n
         ),
         unreadCount: Math.max(0, unreadCount - 1),
       });
@@ -122,7 +122,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             notifications: [notification, ...notifications],
             unreadCount: unreadCount + 1,
           });
-        },
+        }
       )
       .on(
         'postgres_changes',
@@ -144,13 +144,13 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                   status: row.is_read ? ('read' as const) : n.status,
                   read_at: row.read_at || n.read_at,
                 }
-              : n,
+              : n
           );
 
           // Recount unread
           const unreadCount = updated.filter((n) => n.status !== 'read').length;
           set({ notifications: updated, unreadCount });
-        },
+        }
       )
       .subscribe();
 

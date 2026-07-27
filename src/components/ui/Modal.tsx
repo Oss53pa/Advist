@@ -91,10 +91,7 @@ export const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      role="presentation"
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center" role="presentation">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-advist-dark/50 backdrop-blur-sm"
@@ -122,7 +119,9 @@ export const Modal: React.FC<ModalProps> = ({
         {(title || showCloseButton) && (
           <div className="flex items-center justify-between px-6 py-4 border-b border-advist-border">
             {title && (
-              <h2 id={titleId.current} className="text-xl font-medium text-advist-gray900">{title}</h2>
+              <h2 id={titleId.current} className="text-xl font-medium text-advist-gray900">
+                {title}
+              </h2>
             )}
             {showCloseButton && (
               <button
@@ -137,9 +136,7 @@ export const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Body */}
-        <div className="px-6 py-4 overflow-y-auto max-h-[calc(90vh-8rem)]">
-          {children}
-        </div>
+        <div className="px-6 py-4 overflow-y-auto max-h-[calc(90vh-8rem)]">{children}</div>
       </div>
     </div>
   );

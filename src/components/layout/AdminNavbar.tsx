@@ -86,14 +86,19 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({ onMenuClick }) => {
             >
               <Bell size={20} className="text-advist-gray900" />
               {unreadCount > 0 && (
-                <span className={`absolute top-1.5 right-1.5 w-4 h-4 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}>
+                <span
+                  className={`absolute top-1.5 right-1.5 w-4 h-4 ${planTheme.bg} ${planTheme.textOnBg} text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg`}
+                >
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
             </button>
 
             {showNotifications && (
-              <AdminNotificationDropdown onClose={() => setShowNotifications(false)} planTheme={planTheme} />
+              <AdminNotificationDropdown
+                onClose={() => setShowNotifications(false)}
+                planTheme={planTheme}
+              />
             )}
           </div>
 
@@ -109,7 +114,9 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({ onMenuClick }) => {
                   src={user?.avatar}
                   size="sm"
                 />
-                <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 ${planTheme.bgGradient} rounded-full border-2 border-white flex items-center justify-center shadow-lg`}>
+                <div
+                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 ${planTheme.bgGradient} rounded-full border-2 border-white flex items-center justify-center shadow-lg`}
+                >
                   <Shield size={7} className={planTheme.textOnBg} />
                 </div>
               </div>
@@ -122,7 +129,11 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({ onMenuClick }) => {
             </button>
 
             {showUserMenu && (
-              <AdminDropdownMenu onClose={() => setShowUserMenu(false)} onLogout={handleLogout} planTheme={planTheme} />
+              <AdminDropdownMenu
+                onClose={() => setShowUserMenu(false)}
+                onLogout={handleLogout}
+                planTheme={planTheme}
+              />
             )}
           </div>
         </div>
@@ -141,7 +152,9 @@ const AdminNotificationDropdown: React.FC<{
     <>
       <div className="fixed inset-0" onClick={onClose} />
       <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-advist-border overflow-hidden">
-        <div className={`flex items-center justify-between px-4 py-3 border-b border-advist-border ${planTheme.bgGradient}`}>
+        <div
+          className={`flex items-center justify-between px-4 py-3 border-b border-advist-border ${planTheme.bgGradient}`}
+        >
           <h3 className={`font-semibold ${planTheme.textOnBg}`}>Notifications Admin</h3>
           <button
             onClick={() => markAllAsRead()}
@@ -152,9 +165,7 @@ const AdminNotificationDropdown: React.FC<{
         </div>
         <div className="max-h-96 overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="p-4 text-center text-advist-text-muted">
-              Aucune notification
-            </div>
+            <div className="p-4 text-center text-advist-text-muted">Aucune notification</div>
           ) : (
             notifications.slice(0, 5).map((notif) => (
               <div
@@ -188,11 +199,7 @@ const AdminDropdownMenu: React.FC<{
   onClose: () => void;
   onLogout: () => void;
   planTheme: ReturnType<typeof usePlanTheme>['theme'];
-}> = ({
-  onClose,
-  onLogout,
-  planTheme,
-}) => {
+}> = ({ onClose, onLogout, planTheme }) => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
 

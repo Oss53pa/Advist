@@ -73,7 +73,9 @@ export interface SavedSignature {
 // ---------------------------------------------------------------------------
 
 async function requireAuth(): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Non authentifié');
   return user.id;
 }
@@ -99,9 +101,8 @@ class SignatureService {
     return (data || []).map((s: any) => ({
       id: s.id,
       userId: s.user_id,
-      signatureData: typeof s.signature_data === 'string'
-        ? JSON.parse(s.signature_data)
-        : s.signature_data,
+      signatureData:
+        typeof s.signature_data === 'string' ? JSON.parse(s.signature_data) : s.signature_data,
       name: s.name,
       isDefault: s.is_default || false,
       createdAt: s.created_at,
@@ -112,7 +113,7 @@ class SignatureService {
     userId: string,
     signatureData: SignatureData,
     name: string,
-    setAsDefault = false,
+    setAsDefault = false
   ): Promise<SavedSignature> {
     // If setting as default, unset other defaults
     if (setAsDefault) {
@@ -195,7 +196,7 @@ class SignatureService {
     signatureType: 'simple' | 'advanced' | 'qualified',
     pin?: string,
     verificationId?: string,
-    consentId?: string,
+    consentId?: string
   ): Promise<SignatureCertificate> {
     if ((signatureType === 'advanced' || signatureType === 'qualified') && !pin) {
       throw new Error('PIN required for advanced/qualified signatures');
@@ -211,7 +212,7 @@ class SignatureService {
     if (doc?.organization_id) {
       const { data: quotaResult, error: quotaError } = await supabase.functions.invoke(
         'check-signature-quota',
-        { body: { organization_id: doc.organization_id } },
+        { body: { organization_id: doc.organization_id } }
       );
       if (quotaError || (quotaResult && !quotaResult.allowed)) {
         const reason = quotaResult?.reason || 'QUOTA_CHECK_FAILED';
@@ -219,7 +220,7 @@ class SignatureService {
           throw new Error('Quota de signatures mensuel atteint. Veuillez upgrader votre plan.');
         }
         if (reason === 'FEATURE_NOT_AVAILABLE') {
-          throw new Error('Cette fonctionnalité n\'est pas disponible avec votre plan actuel.');
+          throw new Error("Cette fonctionnalité n'est pas disponible avec votre plan actuel.");
         }
       }
     }
@@ -268,7 +269,7 @@ class SignatureService {
             signer_id: signerId,
             signature_image_base64: signatureData.data,
           },
-        },
+        }
       );
 
       if (tsError || !tsData) {
@@ -283,9 +284,9 @@ class SignatureService {
       // P0-SIG001: NE PAS permettre de signer sans timestamp serveur
       // C'est une exigence légale (Loi CI 2013-546, Art. 11)
       throw new Error(
-        'Service d\'horodatage indisponible. La signature ne peut pas être apposée ' +
-        'sans horodatage serveur certifié (Loi n°2013-546). Veuillez réessayer. ' +
-        `Détail: ${(err as Error).message}`,
+        "Service d'horodatage indisponible. La signature ne peut pas être apposée " +
+          'sans horodatage serveur certifié (Loi n°2013-546). Veuillez réessayer. ' +
+          `Détail: ${(err as Error).message}`
       );
     }
 
@@ -362,10 +363,7 @@ class SignatureService {
         .single();
 
       if (doc?.organization_id) {
-        await documentRetentionService.applyDefaultRetention(
-          documentId,
-          doc.organization_id,
-        );
+        await documentRetentionService.applyDefaultRetention(documentId, doc.organization_id);
       }
     } catch {
       // Retention is non-blocking — log but don't fail the signature
@@ -402,7 +400,9 @@ class SignatureService {
   async verifySignature(certificateId: string): Promise<SignatureVerificationResult> {
     const { data: docSig, error } = await supabase
       .from('document_signatures')
-      .select('*, signer:profiles!document_signatures_user_id_fkey(id, first_name, last_name, email)')
+      .select(
+        '*, signer:profiles!document_signatures_user_id_fkey(id, first_name, last_name, email)'
+      )
       .eq('id', certificateId)
       .single();
 
@@ -426,7 +426,12 @@ class SignatureService {
     }
 
     // Verify integrity seal (new) or legacy hash
-    if (docSig.integrity_seal && docSig.document_hash && docSig.signature_image_hash && docSig.server_timestamp) {
+    if (
+      docSig.integrity_seal &&
+      docSig.document_hash &&
+      docSig.signature_image_hash &&
+      docSig.server_timestamp
+    ) {
       // New integrity seal verification
       const sealPayload = [
         docSig.document_hash,
@@ -437,7 +442,9 @@ class SignatureService {
       const recomputedSeal = await this.generateHash(sealPayload);
 
       if (recomputedSeal !== docSig.integrity_seal) {
-        errors.push('Integrity seal verification failed - signature or document may have been tampered');
+        errors.push(
+          'Integrity seal verification failed - signature or document may have been tampered'
+        );
       }
     } else {
       // Legacy hash verification (pre-valeur probante signatures)
@@ -450,7 +457,7 @@ class SignatureService {
             signatureData: signatureData.data?.slice(-100),
             timestamp: new Date(docSig.signed_at).getTime(),
             type: docSig.signature_type,
-          }),
+          })
         );
 
         if (recomputedHash !== docSig.signature_hash) {
@@ -476,9 +483,7 @@ class SignatureService {
       id: docSig.id,
       documentId: docSig.document_id,
       signerId: docSig.user_id,
-      signerName: docSig.signer
-        ? `${docSig.signer.first_name} ${docSig.signer.last_name}`
-        : '',
+      signerName: docSig.signer ? `${docSig.signer.first_name} ${docSig.signer.last_name}` : '',
       signerEmail: docSig.signer?.email || '',
       signatureType: docSig.signature_type,
       signatureData: meta.signature_data || { data: '', format: 'png' },
@@ -539,7 +544,9 @@ class SignatureService {
   async getDocumentSignatures(documentId: string): Promise<SignatureCertificate[]> {
     const { data, error } = await supabase
       .from('document_signatures')
-      .select('*, signer:profiles!document_signatures_user_id_fkey(id, first_name, last_name, email)')
+      .select(
+        '*, signer:profiles!document_signatures_user_id_fkey(id, first_name, last_name, email)'
+      )
       .eq('document_id', documentId)
       .order('signed_at');
 
@@ -551,9 +558,7 @@ class SignatureService {
         id: s.id,
         documentId: s.document_id,
         signerId: s.user_id,
-        signerName: s.signer
-          ? `${s.signer.first_name} ${s.signer.last_name}`
-          : '',
+        signerName: s.signer ? `${s.signer.first_name} ${s.signer.last_name}` : '',
         signerEmail: s.signer?.email || '',
         signatureType: s.signature_type,
         signatureData: meta.signature_data || { data: '', format: 'png' },
@@ -563,7 +568,7 @@ class SignatureService {
         geoLocation: meta.geo_location,
         hash: s.signature_hash,
         previousHash: meta.previous_hash,
-        status: s.status === 'revoked' ? 'revoked' as const : 'valid' as const,
+        status: s.status === 'revoked' ? ('revoked' as const) : ('valid' as const),
       };
     });
   }
@@ -611,7 +616,7 @@ class SignatureService {
   }
 
   private async getLastDocumentSignature(
-    documentId: string,
+    documentId: string
   ): Promise<{ signature_hash: string } | null> {
     const { data } = await supabase
       .from('document_signatures')

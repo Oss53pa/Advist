@@ -24,7 +24,8 @@ interface LogEntry {
 
 const IS_PRODUCTION = import.meta.env.PROD;
 const IS_DEV = import.meta.env.DEV;
-const LOG_LEVEL = (import.meta.env.VITE_LOG_LEVEL as LogLevel) || (IS_PRODUCTION ? 'warn' : 'debug');
+const LOG_LEVEL =
+  (import.meta.env.VITE_LOG_LEVEL as LogLevel) || (IS_PRODUCTION ? 'warn' : 'debug');
 
 const LOG_LEVELS: Record<LogLevel, number> = {
   debug: 0,
@@ -49,7 +50,6 @@ export async function initSentry(): Promise<void> {
 
   const dsn = import.meta.env.VITE_SENTRY_DSN;
   if (!dsn) {
-     
     console.warn('[logger] VITE_SENTRY_DSN not set — Sentry disabled');
     return;
   }
@@ -88,7 +88,6 @@ export async function initSentry(): Promise<void> {
     });
     sentryModule = Sentry;
   } catch {
-     
     console.warn('[logger] @sentry/react not available — install it for production error tracking');
   }
 }
@@ -145,19 +144,15 @@ function outputToConsole(entry: LogEntry): void {
 
     switch (entry.level) {
       case 'debug':
-         
         console.debug(prefix, entry.message, entry.context || '');
         break;
       case 'info':
-         
         console.info(prefix, entry.message, entry.context || '');
         break;
       case 'warn':
-         
         console.warn(prefix, entry.message, entry.context || '');
         break;
       case 'error':
-         
         console.error(prefix, entry.message, entry.context || '');
         break;
     }

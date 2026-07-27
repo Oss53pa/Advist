@@ -45,12 +45,7 @@ const getColorFromName = (name: string): string => {
   return colors[Math.abs(hash) % colors.length];
 };
 
-export const Avatar: React.FC<AvatarProps> = ({
-  src,
-  name,
-  size = 'md',
-  className = '',
-}) => {
+export const Avatar: React.FC<AvatarProps> = ({ src, name, size = 'md', className = '' }) => {
   if (src) {
     return (
       <img
@@ -87,11 +82,7 @@ interface AvatarGroupProps {
   size?: AvatarSize;
 }
 
-export const AvatarGroup: React.FC<AvatarGroupProps> = ({
-  users,
-  max = 4,
-  size = 'sm',
-}) => {
+export const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, max = 4, size = 'sm' }) => {
   const visibleUsers = users.slice(0, max);
   const remainingCount = users.length - max;
 

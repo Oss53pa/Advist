@@ -149,7 +149,9 @@ export interface UpdateProjectData extends Partial<CreateProjectData> {
 // Helpers
 // ---------------------------------------------------------------------------
 async function requireAuth(): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Non authentifié');
   return user.id;
 }
@@ -205,7 +207,10 @@ function mapTimelineEntry(row: Record<string, any>): TimelineEntry {
     description: row.description || undefined,
     details: meta,
     user: row.user_profile
-      ? { id: row.user_profile.id, name: `${row.user_profile.first_name} ${row.user_profile.last_name}` }
+      ? {
+          id: row.user_profile.id,
+          name: `${row.user_profile.first_name} ${row.user_profile.last_name}`,
+        }
       : undefined,
     documentId: meta.document_id,
     documentTitle: meta.document_title,
@@ -216,7 +221,10 @@ function mapTimelineEntry(row: Record<string, any>): TimelineEntry {
   };
 }
 
-const ROLE_PERMISSIONS: Record<MemberRole, { add: boolean; remove: boolean; manage: boolean; settings: boolean }> = {
+const ROLE_PERMISSIONS: Record<
+  MemberRole,
+  { add: boolean; remove: boolean; manage: boolean; settings: boolean }
+> = {
   viewer: { add: false, remove: false, manage: false, settings: false },
   contributor: { add: true, remove: false, manage: false, settings: false },
   editor: { add: true, remove: true, manage: false, settings: false },
@@ -238,16 +246,12 @@ export const projectService = {
   }): Promise<Project[]> {
     let query = supabase
       .from('projects')
-      .select(
-        '*, creator:profiles!projects_created_by_fkey(id, first_name, last_name)',
-      )
+      .select('*, creator:profiles!projects_created_by_fkey(id, first_name, last_name)')
       .eq('is_archived', false);
 
     if (filters?.status) query = query.eq('status', filters.status);
     if (filters?.search) {
-      query = query.or(
-        `name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`,
-      );
+      query = query.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
     }
     if (filters?.startDate) query = query.gte('start_date', filters.startDate);
     if (filters?.endDate) query = query.lte('end_date', filters.endDate);
@@ -291,9 +295,7 @@ export const projectService = {
   async getProject(id: string): Promise<ProjectDetail> {
     const { data: row, error } = await supabase
       .from('projects')
-      .select(
-        '*, creator:profiles!projects_created_by_fkey(id, first_name, last_name)',
-      )
+      .select('*, creator:profiles!projects_created_by_fkey(id, first_name, last_name)')
       .eq('id', id)
       .single();
 
@@ -312,7 +314,9 @@ export const projectService = {
         .eq('project_id', id),
       supabase
         .from('project_documents')
-        .select('*, document:documents!project_documents_document_id_fkey(id, title, status, document_type_id)')
+        .select(
+          '*, document:documents!project_documents_document_id_fkey(id, title, status, document_type_id)'
+        )
         .eq('project_id', id),
       supabase
         .from('project_timeline')
@@ -320,10 +324,7 @@ export const projectService = {
         .eq('project_id', id)
         .order('created_at', { ascending: false })
         .limit(50),
-      supabase
-        .from('project_workflows')
-        .select('*')
-        .eq('project_id', id),
+      supabase.from('project_workflows').select('*').eq('project_id', id),
     ]);
 
     const project = mapProject(row);
@@ -552,7 +553,11 @@ export const projectService = {
     };
   },
 
-  async updateMember(projectId: string, memberId: string, data: Partial<ProjectMember>): Promise<ProjectMember> {
+  async updateMember(
+    projectId: string,
+    memberId: string,
+    data: Partial<ProjectMember>
+  ): Promise<ProjectMember> {
     const update: Record<string, unknown> = {};
     if (data.role) update.role = data.role;
 
@@ -597,7 +602,7 @@ export const projectService = {
     projectId: string,
     documentId: string,
     _role: DocumentRole = 'main',
-    _notes?: string,
+    _notes?: string
   ): Promise<ProjectDocument> {
     const userId = await requireAuth();
 
@@ -608,7 +613,9 @@ export const projectService = {
         document_id: documentId,
         added_by: userId,
       })
-      .select('*, document:documents!project_documents_document_id_fkey(id, title, status, document_type_id)')
+      .select(
+        '*, document:documents!project_documents_document_id_fkey(id, title, status, document_type_id)'
+      )
       .single();
 
     if (error) throw new Error(parseSupabaseError(error).message);
@@ -637,13 +644,15 @@ export const projectService = {
   async updateDocument(
     projectId: string,
     projectDocumentId: string,
-    _data: { role?: DocumentRole; order?: number; notes?: string },
+    _data: { role?: DocumentRole; order?: number; notes?: string }
   ): Promise<ProjectDocument> {
     // project_documents table is a simple junction; role/order/notes are stored
     // in metadata or a future column. For now, just re-fetch.
     const { data: row, error } = await supabase
       .from('project_documents')
-      .select('*, document:documents!project_documents_document_id_fkey(id, title, status, document_type_id)')
+      .select(
+        '*, document:documents!project_documents_document_id_fkey(id, title, status, document_type_id)'
+      )
       .eq('id', projectDocumentId)
       .eq('project_id', projectId)
       .single();
@@ -675,7 +684,7 @@ export const projectService = {
 
   async reorderDocuments(
     _projectId: string,
-    _documentOrders: { id: string; order: number }[],
+    _documentOrders: { id: string; order: number }[]
   ): Promise<void> {
     // Order is not stored in project_documents currently.
     // This would require an order column to be added.
@@ -689,7 +698,7 @@ export const projectService = {
       startDate?: string;
       endDate?: string;
       limit?: number;
-    },
+    }
   ): Promise<TimelineEntry[]> {
     let query = supabase
       .from('project_timeline')
@@ -731,7 +740,7 @@ export const projectService = {
   async addWorkflow(
     projectId: string,
     workflowTemplateId: string,
-    config: { isDefault?: boolean; appliesToDocumentTypes?: string[]; autoStart?: boolean },
+    config: { isDefault?: boolean; appliesToDocumentTypes?: string[]; autoStart?: boolean }
   ): Promise<ProjectWorkflow> {
     const { data: row, error } = await supabase
       .from('project_workflows')
@@ -769,7 +778,7 @@ export const projectService = {
   async startDocumentWorkflow(
     projectId: string,
     documentId: string,
-    workflowTemplateId?: string,
+    workflowTemplateId?: string
   ): Promise<{ workflowInstanceId: string }> {
     const userId = await requireAuth();
 
@@ -822,37 +831,24 @@ export const projectService = {
     daysRemaining?: number;
     progressHistory: { date: string; progress: number }[];
   }> {
-    const [
-      { data: docs },
-      { data: members },
-      { data: workflows },
-      { data: project },
-    ] = await Promise.all([
-      supabase
-        .from('project_documents')
-        .select('document:documents!project_documents_document_id_fkey(status, document_type_id)')
-        .eq('project_id', projectId),
-      supabase
-        .from('project_members')
-        .select('id')
-        .eq('project_id', projectId),
-      supabase
-        .from('project_workflows')
-        .select('status')
-        .eq('project_id', projectId),
-      supabase
-        .from('projects')
-        .select('end_date')
-        .eq('id', projectId)
-        .single(),
-    ]);
+    const [{ data: docs }, { data: members }, { data: workflows }, { data: project }] =
+      await Promise.all([
+        supabase
+          .from('project_documents')
+          .select('document:documents!project_documents_document_id_fkey(status, document_type_id)')
+          .eq('project_id', projectId),
+        supabase.from('project_members').select('id').eq('project_id', projectId),
+        supabase.from('project_workflows').select('status').eq('project_id', projectId),
+        supabase.from('projects').select('end_date').eq('id', projectId).single(),
+      ]);
 
     const byStatus: Record<string, number> = {};
     const byType: Record<string, number> = {};
     for (const d of docs || []) {
       const doc = d.document as any;
       if (doc?.status) byStatus[doc.status] = (byStatus[doc.status] || 0) + 1;
-      if (doc?.document_type_id) byType[doc.document_type_id] = (byType[doc.document_type_id] || 0) + 1;
+      if (doc?.document_type_id)
+        byType[doc.document_type_id] = (byType[doc.document_type_id] || 0) + 1;
     }
 
     let daysRemaining: number | undefined;
@@ -915,7 +911,7 @@ export const projectService = {
           project_id: dup.id,
           user_id: m.user_id,
           role: m.role,
-        })),
+        }))
       );
     }
 
@@ -932,7 +928,7 @@ export const projectService = {
             project_id: dup.id,
             document_id: d.document_id,
             added_by: d.added_by,
-          })),
+          }))
         );
       }
     }
@@ -966,7 +962,11 @@ export function getStatusConfig(status: ProjectStatus): {
     draft: { label: 'Brouillon', color: 'text-advist-text-secondary', bgColor: 'bg-advist-bg' },
     active: { label: 'Actif', color: 'text-advist-success', bgColor: 'bg-green-50' },
     on_hold: { label: 'En pause', color: 'text-advist-gold-dark', bgColor: 'bg-advist-gold-light' },
-    completed: { label: 'Terminé', color: 'text-advist-gray900', bgColor: 'bg-advist-surface-dark' },
+    completed: {
+      label: 'Terminé',
+      color: 'text-advist-gray900',
+      bgColor: 'bg-advist-surface-dark',
+    },
     archived: { label: 'Archivé', color: 'text-advist-gray900', bgColor: 'bg-advist-surface-dark' },
     cancelled: { label: 'Annulé', color: 'text-red-600', bgColor: 'bg-red-100' },
   };
@@ -997,14 +997,30 @@ export function getTimelineEventConfig(eventType: TimelineEventType): {
     status_changed: { label: 'Statut modifié', icon: 'refresh-cw', color: 'text-advist-gray900' },
     document_added: { label: 'Document ajouté', icon: 'file-plus', color: 'text-advist-gray900' },
     document_removed: { label: 'Document retiré', icon: 'file-minus', color: 'text-red-500' },
-    document_approved: { label: 'Document approuvé', icon: 'check-circle', color: 'text-advist-success' },
+    document_approved: {
+      label: 'Document approuvé',
+      icon: 'check-circle',
+      color: 'text-advist-success',
+    },
     document_signed: { label: 'Document signé', icon: 'pen-tool', color: 'text-advist-gray900' },
     member_added: { label: 'Membre ajouté', icon: 'user-plus', color: 'text-advist-gray900' },
     member_removed: { label: 'Membre retiré', icon: 'user-minus', color: 'text-red-500' },
-    workflow_started: { label: 'Workflow démarré', icon: 'git-branch', color: 'text-advist-gold-dark' },
-    workflow_completed: { label: 'Workflow terminé', icon: 'check-square', color: 'text-advist-success' },
+    workflow_started: {
+      label: 'Workflow démarré',
+      icon: 'git-branch',
+      color: 'text-advist-gold-dark',
+    },
+    workflow_completed: {
+      label: 'Workflow terminé',
+      icon: 'check-square',
+      color: 'text-advist-success',
+    },
     comment: { label: 'Commentaire', icon: 'message-circle', color: 'text-advist-text-secondary' },
-    deadline_approaching: { label: 'Échéance proche', icon: 'clock', color: 'text-advist-gold-dark' },
+    deadline_approaching: {
+      label: 'Échéance proche',
+      icon: 'clock',
+      color: 'text-advist-gold-dark',
+    },
     milestone_reached: { label: 'Jalon atteint', icon: 'flag', color: 'text-advist-success' },
   };
   return configs[eventType];

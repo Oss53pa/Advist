@@ -27,7 +27,9 @@ interface OfflineState {
   // Actions
   setOnlineStatus: (isOnline: boolean) => void;
   loadPendingActions: () => Promise<void>;
-  addOfflineAction: (action: Omit<OfflineAction, 'id' | 'synced' | 'synced_at'>) => Promise<OfflineAction>;
+  addOfflineAction: (
+    action: Omit<OfflineAction, 'id' | 'synced' | 'synced_at'>
+  ) => Promise<OfflineAction>;
   syncNow: () => Promise<void>;
   refreshStorageStats: () => Promise<void>;
   clearOfflineData: () => Promise<void>;
@@ -77,7 +79,7 @@ export const useOfflineStore = create<OfflineState>((set, get) => ({
     try {
       const action = await offlineService.saveOfflineAction(actionData);
 
-      set(state => ({
+      set((state) => ({
         pendingActions: [...state.pendingActions, action],
         pendingCount: state.pendingCount + 1,
       }));

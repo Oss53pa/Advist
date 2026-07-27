@@ -92,3 +92,7 @@ supabase/.branches/
 # Windows artifacts
 nul
 test-results/
+
+# Test artifacts
+coverage/
+playwright-report/

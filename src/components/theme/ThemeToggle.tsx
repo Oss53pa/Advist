@@ -42,9 +42,10 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         className={`
           relative inline-flex items-center justify-center
           p-2 rounded-lg transition-all duration-300
-          ${isDarkMode()
-            ? 'bg-advist-dark text-advist-gold hover:bg-advist-dark/80'
-            : 'bg-advist-bg text-advist-gray900 hover:bg-advist-border'
+          ${
+            isDarkMode()
+              ? 'bg-advist-dark text-advist-gold hover:bg-advist-dark/80'
+              : 'bg-advist-bg text-advist-gray900 hover:bg-advist-border'
           }
         `}
         title={isDarkMode() ? 'Passer en mode clair' : 'Passer en mode sombre'}
@@ -66,9 +67,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           />
         </div>
         {showLabel && (
-          <span className="ml-2 text-sm font-medium">
-            {isDarkMode() ? 'Sombre' : 'Clair'}
-          </span>
+          <span className="ml-2 text-sm font-medium">{isDarkMode() ? 'Sombre' : 'Clair'}</span>
         )}
       </button>
     );
@@ -81,40 +80,43 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         <button
           className={`
             flex items-center gap-2 px-3 py-2 rounded-lg transition-colors
-            ${isDarkMode()
-              ? 'bg-advist-dark text-white hover:bg-advist-dark'
-              : 'bg-advist-bg text-advist-gray900 hover:bg-advist-border'
+            ${
+              isDarkMode()
+                ? 'bg-advist-dark text-white hover:bg-advist-dark'
+                : 'bg-advist-bg text-advist-gray900 hover:bg-advist-border'
             }
           `}
         >
-          {React.cloneElement(MODE_ICONS[settings.themeMode] as React.ReactElement, { size: iconSize })}
+          {React.cloneElement(MODE_ICONS[settings.themeMode] as React.ReactElement, {
+            size: iconSize,
+          })}
           {showLabel && (
             <span className="text-sm font-medium">{MODE_LABELS[settings.themeMode]}</span>
           )}
         </button>
 
-        <div className={`
+        <div
+          className={`
           absolute right-0 mt-2 w-40 py-1 rounded-lg shadow-lg border z-50
           opacity-0 invisible group-hover:opacity-100 group-hover:visible
           transition-all duration-200
-          ${isDarkMode()
-            ? 'bg-advist-dark border-primary-700'
-            : 'bg-white border-advist-bg'
-          }
-        `}>
+          ${isDarkMode() ? 'bg-advist-dark border-primary-700' : 'bg-white border-advist-bg'}
+        `}
+        >
           {(['light', 'dark', 'system'] as ThemeMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => setThemeMode(mode)}
               className={`
                 w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors
-                ${settings.themeMode === mode
-                  ? isDarkMode()
-                    ? 'bg-advist-dark text-white'
-                    : 'bg-advist-bg text-advist-gray900'
-                  : isDarkMode()
-                    ? 'text-advist-text-muted hover:bg-advist-dark'
-                    : 'text-advist-text-secondary hover:bg-advist-bg'
+                ${
+                  settings.themeMode === mode
+                    ? isDarkMode()
+                      ? 'bg-advist-dark text-white'
+                      : 'bg-advist-bg text-advist-gray900'
+                    : isDarkMode()
+                      ? 'text-advist-text-muted hover:bg-advist-dark'
+                      : 'text-advist-text-secondary hover:bg-advist-bg'
                 }
               `}
             >
@@ -129,23 +131,26 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
   // Segmented button (default)
   return (
-    <div className={`
+    <div
+      className={`
       inline-flex items-center p-1 rounded-lg
       ${isDarkMode() ? 'bg-advist-dark' : 'bg-advist-bg'}
-    `}>
+    `}
+    >
       {(['light', 'dark', 'system'] as ThemeMode[]).map((mode) => (
         <button
           key={mode}
           onClick={() => setThemeMode(mode)}
           className={`
             flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-all
-            ${settings.themeMode === mode
-              ? isDarkMode()
-                ? 'bg-advist-dark text-white shadow-sm'
-                : 'bg-white text-advist-gray900 shadow-sm'
-              : isDarkMode()
-                ? 'text-advist-text-muted hover:text-advist-text-muted'
-                : 'text-advist-text-secondary hover:text-advist-gray900'
+            ${
+              settings.themeMode === mode
+                ? isDarkMode()
+                  ? 'bg-advist-dark text-white shadow-sm'
+                  : 'bg-white text-advist-gray900 shadow-sm'
+                : isDarkMode()
+                  ? 'text-advist-text-muted hover:text-advist-text-muted'
+                  : 'text-advist-text-secondary hover:text-advist-gray900'
             }
           `}
           title={MODE_LABELS[mode]}

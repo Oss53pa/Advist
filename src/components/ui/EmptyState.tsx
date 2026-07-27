@@ -20,9 +20,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     <div className={`text-center py-12 ${className}`}>
       <Icon size={48} className="mx-auto text-advist-blue-light mb-4" />
       <h3 className="text-lg font-medium text-advist-gray900">{title}</h3>
-      {description && (
-        <p className="text-advist-gray900 mt-1 max-w-md mx-auto">{description}</p>
-      )}
+      {description && <p className="text-advist-gray900 mt-1 max-w-md mx-auto">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   );

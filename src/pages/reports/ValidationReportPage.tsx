@@ -141,7 +141,7 @@ const ValidationReportPage: React.FC = () => {
       startedAt: reportData.workflow.startedAt,
       completedAt: reportData.workflow.completedAt,
       initiatedBy: reportData.workflow.initiatedBy,
-      steps: reportData.steps.map(step => ({
+      steps: reportData.steps.map((step) => ({
         id: step.id,
         order: step.order,
         name: step.name,
@@ -214,9 +214,7 @@ const ValidationReportPage: React.FC = () => {
             />
           </div>
 
-          {error && (
-            <p className="text-advist-error text-sm text-center mb-4">{error}</p>
-          )}
+          {error && <p className="text-advist-error text-sm text-center mb-4">{error}</p>}
 
           <Button
             variant="primary"
@@ -267,12 +265,24 @@ const ValidationReportPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <PrintButton config={{ title: 'Compte Rendu de Validation', appName: 'Advist' }}>
               <div>
-                <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>RAPPORT DE VALIDATION</h2>
+                <h2 style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>
+                  RAPPORT DE VALIDATION
+                </h2>
                 <p>Référence : {report.referenceNumber}</p>
-                <p>Document : {report.document.title} — {report.document.type} — v{report.document.version}</p>
-                <p>Workflow : {report.workflow.name} — {report.workflow.status === 'completed' ? 'Terminé' : 'En cours'}</p>
+                <p>
+                  Document : {report.document.title} — {report.document.type} — v
+                  {report.document.version}
+                </p>
+                <p>
+                  Workflow : {report.workflow.name} —{' '}
+                  {report.workflow.status === 'completed' ? 'Terminé' : 'En cours'}
+                </p>
                 <p>Initié par : {report.workflow.initiatedBy.name}</p>
-                <p>Étapes : {report.steps.length} — Approuvées : {report.steps.filter(s => s.status === 'approved').length} — Rejetées : {report.steps.filter(s => s.status === 'rejected').length}</p>
+                <p>
+                  Étapes : {report.steps.length} — Approuvées :{' '}
+                  {report.steps.filter((s) => s.status === 'approved').length} — Rejetées :{' '}
+                  {report.steps.filter((s) => s.status === 'rejected').length}
+                </p>
                 {report.verificationCode && <p>Code de vérification : {report.verificationCode}</p>}
               </div>
             </PrintButton>
@@ -301,9 +311,7 @@ const ValidationReportPage: React.FC = () => {
         <div ref={reportRef} className="bg-white rounded-xl shadow-lg p-6 space-y-3">
           {/* Header - Compact */}
           <div className="text-center border-b-2 border-advist-dark pb-3">
-            <h1 className="text-xl font-bold text-advist-gray900 mb-1">
-              RAPPORT DE VALIDATION
-            </h1>
+            <h1 className="text-xl font-bold text-advist-gray900 mb-1">RAPPORT DE VALIDATION</h1>
             <p className="text-sm text-advist-gray900">Certificat de Workflow Documentaire</p>
             <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-advist-bg rounded-xl">
               <Hash size={14} className="text-advist-blue-light" />
@@ -324,7 +332,9 @@ const ValidationReportPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <p className="text-advist-blue-light">Titre</p>
-                  <p className="font-medium text-advist-gray900 truncate">{report.document.title}</p>
+                  <p className="font-medium text-advist-gray900 truncate">
+                    {report.document.title}
+                  </p>
                 </div>
                 <div>
                   <p className="text-advist-blue-light">Type</p>
@@ -340,7 +350,9 @@ const ValidationReportPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-advist-blue-light">Créé le</p>
-                  <p className="font-medium text-advist-gray900">{formatDate(report.document.createdAt)}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {formatDate(report.document.createdAt)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-advist-blue-light">Par</p>
@@ -370,21 +382,30 @@ const ValidationReportPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-advist-gray900">Initié par</p>
-                  <p className="font-medium text-advist-gray900">{report.workflow.initiatedBy.name}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {report.workflow.initiatedBy.name}
+                  </p>
                 </div>
                 <div>
                   <p className="text-advist-gray900">Début</p>
-                  <p className="font-medium text-advist-gray900">{formatDate(report.workflow.startedAt)}</p>
+                  <p className="font-medium text-advist-gray900">
+                    {formatDate(report.workflow.startedAt)}
+                  </p>
                 </div>
                 {report.workflow.completedAt && (
                   <div>
                     <p className="text-advist-gray900">Fin</p>
-                    <p className="font-medium text-advist-gray900">{formatDate(report.workflow.completedAt)}</p>
+                    <p className="font-medium text-advist-gray900">
+                      {formatDate(report.workflow.completedAt)}
+                    </p>
                   </div>
                 )}
                 <div>
                   <p className="text-advist-gray900">Statut</p>
-                  <Badge variant={report.workflow.status === 'completed' ? 'success' : 'warning'} size="sm">
+                  <Badge
+                    variant={report.workflow.status === 'completed' ? 'success' : 'warning'}
+                    size="sm"
+                  >
                     {report.workflow.status === 'completed' ? 'Terminé' : 'En cours'}
                   </Badge>
                 </div>
@@ -400,19 +421,22 @@ const ValidationReportPage: React.FC = () => {
             </div>
             <div className="bg-green-50 border border-advist-success rounded-xl p-2 text-center">
               <p className="text-xl font-bold text-advist-success">
-                {report.steps.filter(s => s.status === 'approved').length}
+                {report.steps.filter((s) => s.status === 'approved').length}
               </p>
               <p className="text-xs text-advist-success">Approuvées</p>
             </div>
             <div className="bg-advist-gold-light border border-advist-gold rounded-xl p-2 text-center">
               <p className="text-xl font-bold text-advist-error">
-                {report.steps.filter(s => s.status === 'rejected').length}
+                {report.steps.filter((s) => s.status === 'rejected').length}
               </p>
               <p className="text-xs text-advist-error">Rejetées</p>
             </div>
             <div className="bg-advist-gold-light border border-advist-gold rounded-xl p-2 text-center">
               <p className="text-xl font-bold text-advist-gray900">
-                {report.steps.filter(s => s.type === 'signature' && s.status === 'approved').length}
+                {
+                  report.steps.filter((s) => s.type === 'signature' && s.status === 'approved')
+                    .length
+                }
               </p>
               <p className="text-xs text-advist-gray900">Signatures</p>
             </div>
@@ -456,14 +480,20 @@ const ValidationReportPage: React.FC = () => {
                   <div className="flex-1 grid grid-cols-3 gap-2 text-xs">
                     <div>
                       <p className="text-advist-blue-light">Signé par</p>
-                      <p className="font-medium text-advist-gray900">{report.finalSignature.signedBy.name}</p>
+                      <p className="font-medium text-advist-gray900">
+                        {report.finalSignature.signedBy.name}
+                      </p>
                       {report.finalSignature.signedBy.title && (
-                        <p className="text-[10px] text-advist-gray900">{report.finalSignature.signedBy.title}</p>
+                        <p className="text-[10px] text-advist-gray900">
+                          {report.finalSignature.signedBy.title}
+                        </p>
                       )}
                     </div>
                     <div>
                       <p className="text-advist-blue-light">Date</p>
-                      <p className="text-advist-gray900">{formatDate(report.finalSignature.signedAt)}</p>
+                      <p className="text-advist-gray900">
+                        {formatDate(report.finalSignature.signedAt)}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -504,8 +534,8 @@ const ValidationReportPage: React.FC = () => {
               <AlertTriangle size={14} className="text-advist-gold-dark flex-shrink-0 mt-0.5" />
               <div className="text-[10px] text-advist-gold-dark">
                 <p>
-                  Ce rapport constitue une preuve électronique conforme au Règlement eIDAS.
-                  Les signatures apposées ont valeur juridique équivalente aux signatures manuscrites.
+                  Ce rapport constitue une preuve électronique conforme au Règlement eIDAS. Les
+                  signatures apposées ont valeur juridique équivalente aux signatures manuscrites.
                 </p>
               </div>
             </div>
@@ -513,7 +543,9 @@ const ValidationReportPage: React.FC = () => {
 
           {/* Footer - Compact */}
           <div className="text-center text-[10px] text-advist-blue-light pt-2 border-t border-advist-bg">
-            <p>ADVIST - GED | Réf: {report.referenceNumber} | {formatDate(report.generatedAt)}</p>
+            <p>
+              ADVIST - GED | Réf: {report.referenceNumber} | {formatDate(report.generatedAt)}
+            </p>
           </div>
         </div>
       </div>

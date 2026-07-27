@@ -25,7 +25,9 @@ import type {
 // Helper
 // ---------------------------------------------------------------------------
 async function requireAuth(): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Non authentifié');
   return user.id;
 }
@@ -119,7 +121,7 @@ export const qesService = {
   },
 
   async requestCertificate(
-    verificationMethod: VerificationMethod,
+    verificationMethod: VerificationMethod
   ): Promise<CertificateRequestResponse> {
     const userId = await requireAuth();
 
@@ -161,10 +163,7 @@ export const qesService = {
     } as CertificateRequestResponse;
   },
 
-  async revokeCertificate(
-    certificateId: string,
-    reason: string,
-  ): Promise<QualifiedCertificate> {
+  async revokeCertificate(certificateId: string, reason: string): Promise<QualifiedCertificate> {
     const { data, error } = await supabase
       .from('qualified_certificates')
       .update({
@@ -183,9 +182,7 @@ export const qesService = {
   // Identity Verification
   // -----------------------------------------------------------------------
 
-  async getVerificationStatus(): Promise<
-    IdentityVerificationSession | { status: 'no_session' }
-  > {
+  async getVerificationStatus(): Promise<IdentityVerificationSession | { status: 'no_session' }> {
     const userId = await requireAuth();
 
     const { data, error } = await supabase
@@ -213,7 +210,7 @@ export const qesService = {
     documentId: string,
     signatureId: string,
     positions?: Array<{ page: number; x: number; y: number; width: number; height: number }>,
-    otpCode?: string,
+    otpCode?: string
   ): Promise<QESSignatureResult> {
     const userId = await requireAuth();
 
@@ -228,7 +225,7 @@ export const qesService = {
       .maybeSingle();
 
     if (!cert) {
-      throw new Error('Aucun certificat qualifié actif. Veuillez d\'abord obtenir un certificat.');
+      throw new Error("Aucun certificat qualifié actif. Veuillez d'abord obtenir un certificat.");
     }
 
     // OTP verification would be handled by Edge Function in Phase 5

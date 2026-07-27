@@ -26,17 +26,73 @@ export const ActivityFeedWidget: React.FC<ActivityFeedWidgetProps> = ({ config }
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 400));
+      await new Promise((resolve) => setTimeout(resolve, 400));
 
       const mockActivities: ActivityItem[] = [
-        { id: 1, type: 'sign', user: 'Marie Dupont', action: 'a signé', target: 'Contrat Q4', time: '2 min' },
-        { id: 2, type: 'view', user: 'Pierre Martin', action: 'a consulté', target: 'Budget 2025', time: '15 min' },
-        { id: 3, type: 'workflow', user: 'Sophie Bernard', action: 'a démarré', target: 'Workflow validation', time: '30 min' },
-        { id: 4, type: 'upload', user: 'Jean Koné', action: 'a importé', target: 'Facture 1234', time: '1h' },
-        { id: 5, type: 'approve', user: 'Aminata Touré', action: 'a approuvé', target: 'Rapport financier', time: '2h' },
-        { id: 6, type: 'comment', user: 'Paul Diallo', action: 'a commenté', target: 'Contrat fournisseur', time: '3h' },
-        { id: 7, type: 'sign', user: 'Marie Dupont', action: 'a signé', target: 'Avenant n°2', time: '4h' },
-        { id: 8, type: 'upload', user: 'Pierre Martin', action: 'a importé', target: 'Note interne', time: '5h' },
+        {
+          id: 1,
+          type: 'sign',
+          user: 'Marie Dupont',
+          action: 'a signé',
+          target: 'Contrat Q4',
+          time: '2 min',
+        },
+        {
+          id: 2,
+          type: 'view',
+          user: 'Pierre Martin',
+          action: 'a consulté',
+          target: 'Budget 2025',
+          time: '15 min',
+        },
+        {
+          id: 3,
+          type: 'workflow',
+          user: 'Sophie Bernard',
+          action: 'a démarré',
+          target: 'Workflow validation',
+          time: '30 min',
+        },
+        {
+          id: 4,
+          type: 'upload',
+          user: 'Jean Koné',
+          action: 'a importé',
+          target: 'Facture 1234',
+          time: '1h',
+        },
+        {
+          id: 5,
+          type: 'approve',
+          user: 'Aminata Touré',
+          action: 'a approuvé',
+          target: 'Rapport financier',
+          time: '2h',
+        },
+        {
+          id: 6,
+          type: 'comment',
+          user: 'Paul Diallo',
+          action: 'a commenté',
+          target: 'Contrat fournisseur',
+          time: '3h',
+        },
+        {
+          id: 7,
+          type: 'sign',
+          user: 'Marie Dupont',
+          action: 'a signé',
+          target: 'Avenant n°2',
+          time: '4h',
+        },
+        {
+          id: 8,
+          type: 'upload',
+          user: 'Pierre Martin',
+          action: 'a importé',
+          target: 'Note interne',
+          time: '5h',
+        },
       ];
 
       const limit = config.settings.limit || 10;
@@ -62,7 +118,7 @@ export const ActivityFeedWidget: React.FC<ActivityFeedWidgetProps> = ({ config }
   if (loading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3, 4].map(i => (
+        {[1, 2, 3, 4].map((i) => (
           <div key={i} className="animate-pulse flex items-center gap-3">
             <div className="w-8 h-8 bg-advist-surface-dark rounded-full"></div>
             <div className="flex-1">
@@ -77,11 +133,15 @@ export const ActivityFeedWidget: React.FC<ActivityFeedWidgetProps> = ({ config }
 
   return (
     <div className="space-y-3">
-      {activities.map(activity => (
+      {activities.map((activity) => (
         <div key={activity.id} className="flex items-start gap-3 group">
           <div className="w-8 h-8 bg-advist-surface-dark rounded-full flex items-center justify-center flex-shrink-0">
             {activity.userAvatar ? (
-              <img src={activity.userAvatar} alt={activity.user} className="w-full h-full rounded-full" />
+              <img
+                src={activity.userAvatar}
+                alt={activity.user}
+                className="w-full h-full rounded-full"
+              />
             ) : (
               <User size={14} className="text-advist-text-secondary" />
             )}

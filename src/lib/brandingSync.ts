@@ -5,15 +5,24 @@
  * Non bloquant.
  */
 import { supabase } from './supabase';
-const WORDMARK_CDN = 'https://cdn.jsdelivr.net/gh/Oss53pa/Atlas-studio-Console-Admin@main/public/wordmarks';
+const WORDMARK_CDN =
+  'https://cdn.jsdelivr.net/gh/Oss53pa/Atlas-studio-Console-Admin@main/public/wordmarks';
 const NEUTRAL = {
-  app: 'Atlas Studio', app_tagline: "L'écosystème Atlas Studio",
-  app_accent: '#6E8B58', app_accent_deep: '#52693F', app_accent_soft: '#EEF4E9',
+  app: 'Atlas Studio',
+  app_tagline: "L'écosystème Atlas Studio",
+  app_accent: '#6E8B58',
+  app_accent_deep: '#52693F',
+  app_accent_soft: '#EEF4E9',
   app_wordmark: `${WORDMARK_CDN}/wm-atlas-studio.png`,
 };
 export interface AppBrandingMeta {
-  app: string; app_id: string; app_tagline: string;
-  app_accent: string; app_accent_deep: string; app_accent_soft: string; app_wordmark: string;
+  app: string;
+  app_id: string;
+  app_tagline: string;
+  app_accent: string;
+  app_accent_deep: string;
+  app_accent_soft: string;
+  app_wordmark: string;
 }
 export async function syncAppBranding(appId: string): Promise<void> {
   try {

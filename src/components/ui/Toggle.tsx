@@ -25,7 +25,9 @@ export const Toggle: React.FC<ToggleProps> = ({
   const styles = sizeStyles[size];
 
   const toggle = (
-    <label className={`relative inline-flex items-center ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
+    <label
+      className={`relative inline-flex items-center ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+    >
       <input
         type="checkbox"
         checked={checked}

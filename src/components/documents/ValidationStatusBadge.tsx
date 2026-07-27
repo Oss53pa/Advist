@@ -3,14 +3,7 @@
  * Displays document validation status with appropriate styling
  */
 import React from 'react';
-import {
-  FileEdit,
-  Send,
-  Eye,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-} from 'lucide-react';
+import { FileEdit, Send, Eye, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 
 export type ValidationStatus =
@@ -28,12 +21,15 @@ interface ValidationStatusBadgeProps {
   className?: string;
 }
 
-const STATUS_CONFIG: Record<ValidationStatus, {
-  label: string;
-  variant: 'secondary' | 'warning' | 'success' | 'destructive';
-  icon: React.ElementType;
-  color: string;
-}> = {
+const STATUS_CONFIG: Record<
+  ValidationStatus,
+  {
+    label: string;
+    variant: 'secondary' | 'warning' | 'success' | 'destructive';
+    icon: React.ElementType;
+    color: string;
+  }
+> = {
   draft: {
     label: 'Brouillon',
     variant: 'secondary',

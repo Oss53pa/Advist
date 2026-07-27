@@ -64,9 +64,9 @@ export const consentService = {
   getFormData: async (): Promise<ConsentFormData> => {
     const purposes = await consentService.getPurposes();
     return {
-      required: purposes.filter(p => p.is_required),
-      optional: purposes.filter(p => !p.is_required),
-      version: Math.max(...purposes.map(p => p.version), 1),
+      required: purposes.filter((p) => p.is_required),
+      optional: purposes.filter((p) => !p.is_required),
+      version: Math.max(...purposes.map((p) => p.version), 1),
     };
   },
 
@@ -74,7 +74,9 @@ export const consentService = {
    * Get user's consents
    */
   getMyConsents: async (): Promise<Consent[]> => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
     const { data, error } = await supabase
@@ -112,15 +114,13 @@ export const consentService = {
    * Grant multiple consents at once
    */
   grantMultiple: async (purposeCodes: string[]): Promise<{ granted: string[] }> => {
-    const inserts = purposeCodes.map(code => ({
+    const inserts = purposeCodes.map((code) => ({
       purpose_code: code,
       consent_form_version: '1.0',
       is_granted: true,
     }));
 
-    const { error } = await supabase
-      .from('consents')
-      .insert(inserts);
+    const { error } = await supabase.from('consents').insert(inserts);
 
     if (error) throw parseSupabaseError(error);
     return { granted: purposeCodes };
@@ -147,7 +147,7 @@ export const consentService = {
    */
   hasConsent: async (purposeCode: string): Promise<boolean> => {
     const consents = await consentService.getMyConsents();
-    return consents.some(c => c.purpose_code === purposeCode && c.is_granted);
+    return consents.some((c) => c.purpose_code === purposeCode && c.is_granted);
   },
 };
 
@@ -336,7 +336,8 @@ export const processingRegisterService = {
       .order('created_at', { ascending: false });
 
     if (params?.legal_basis) query = query.eq('legal_basis', params.legal_basis);
-    if (params?.sensitive_data !== undefined) query = query.eq('sensitive_data', params.sensitive_data);
+    if (params?.sensitive_data !== undefined)
+      query = query.eq('sensitive_data', params.sensitive_data);
 
     const { data, error, count } = await query;
     if (error) throw parseSupabaseError(error);
@@ -382,7 +383,10 @@ export const processingRegisterService = {
   /**
    * Update an activity
    */
-  updateActivity: async (id: string, data: Partial<ProcessingActivity>): Promise<ProcessingActivity> => {
+  updateActivity: async (
+    id: string,
+    data: Partial<ProcessingActivity>
+  ): Promise<ProcessingActivity> => {
     const { data: updated, error } = await supabase
       .from('processing_activities')
       .update(data as Record<string, unknown>)
@@ -398,10 +402,7 @@ export const processingRegisterService = {
    * Delete an activity
    */
   deleteActivity: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('processing_activities')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('processing_activities').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -409,7 +410,11 @@ export const processingRegisterService = {
   /**
    * Export the register
    */
-  exportRegister: async (): Promise<{ organization: string; export_date: string; activities: ProcessingActivity[] }> => {
+  exportRegister: async (): Promise<{
+    organization: string;
+    export_date: string;
+    activities: ProcessingActivity[];
+  }> => {
     const { data, error } = await supabase
       .from('processing_activities')
       .select('*')
@@ -493,7 +498,10 @@ export const retentionService = {
   /**
    * Update a policy
    */
-  updatePolicy: async (id: string, data: Partial<DataRetentionPolicy>): Promise<DataRetentionPolicy> => {
+  updatePolicy: async (
+    id: string,
+    data: Partial<DataRetentionPolicy>
+  ): Promise<DataRetentionPolicy> => {
     const { data: updated, error } = await supabase
       .from('data_retention_policies')
       .update(data as Record<string, unknown>)
@@ -517,7 +525,9 @@ export const retentionService = {
   /**
    * Get executions
    */
-  getExecutions: async (params?: { status?: string }): Promise<PaginatedResponse<DataRetentionExecution>> => {
+  getExecutions: async (params?: {
+    status?: string;
+  }): Promise<PaginatedResponse<DataRetentionExecution>> => {
     let query = supabase
       .from('data_retention_executions')
       .select('*', { count: 'exact' })
@@ -579,11 +589,7 @@ export const breachService = {
    * Get a specific breach
    */
   getBreach: async (id: string): Promise<DataBreach> => {
-    const { data, error } = await supabase
-      .from('data_breaches')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('data_breaches').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as DataBreach;
@@ -655,7 +661,11 @@ export const breachService = {
   /**
    * Resolve a breach
    */
-  resolveBreach: async (id: string, lessonsLearned: string, preventiveMeasures: string): Promise<void> => {
+  resolveBreach: async (
+    id: string,
+    lessonsLearned: string,
+    preventiveMeasures: string
+  ): Promise<void> => {
     const { error } = await supabase
       .from('data_breaches')
       .update({
@@ -755,7 +765,9 @@ export const piaService = {
   /**
    * Create a PIA
    */
-  createAssessment: async (data: Partial<PrivacyImpactAssessment>): Promise<PrivacyImpactAssessment> => {
+  createAssessment: async (
+    data: Partial<PrivacyImpactAssessment>
+  ): Promise<PrivacyImpactAssessment> => {
     const { data: created, error } = await supabase
       .from('privacy_impact_assessments')
       .insert(data as Record<string, unknown>)
@@ -769,7 +781,10 @@ export const piaService = {
   /**
    * Update a PIA
    */
-  updateAssessment: async (id: string, data: Partial<PrivacyImpactAssessment>): Promise<PrivacyImpactAssessment> => {
+  updateAssessment: async (
+    id: string,
+    data: Partial<PrivacyImpactAssessment>
+  ): Promise<PrivacyImpactAssessment> => {
     const { data: updated, error } = await supabase
       .from('privacy_impact_assessments')
       .update(data as Record<string, unknown>)
@@ -920,7 +935,9 @@ export const signatureProofService = {
   /**
    * Verify proof integrity
    */
-  verifyProof: async (id: string): Promise<{
+  verifyProof: async (
+    id: string
+  ): Promise<{
     is_valid: boolean;
     chain_hash_valid: boolean;
     pdf_hash_valid: boolean;
@@ -955,9 +972,12 @@ export const trustServicesService = {
       };
     },
     verify: async (id: string): Promise<{ status: string; result: Record<string, unknown> }> => {
-      return invokeRpc<{ status: string; result: Record<string, unknown> }>('verify_qualified_timestamp', {
-        timestamp_id: id,
-      });
+      return invokeRpc<{ status: string; result: Record<string, unknown> }>(
+        'verify_qualified_timestamp',
+        {
+          timestamp_id: id,
+        }
+      );
     },
   },
 
@@ -991,7 +1011,9 @@ export const trustServicesService = {
 
   // Registered Deliveries
   registeredDeliveries: {
-    getAll: async (params?: { status?: string }): Promise<PaginatedResponse<RegisteredDelivery>> => {
+    getAll: async (params?: {
+      status?: string;
+    }): Promise<PaginatedResponse<RegisteredDelivery>> => {
       let query = supabase
         .from('registered_deliveries')
         .select('*', { count: 'exact' })
@@ -1089,10 +1111,15 @@ export const trustServicesService = {
       if (error) throw parseSupabaseError(error);
       return data as QualifiedArchive;
     },
-    verifyIntegrity: async (id: string): Promise<{ status: string; result: Record<string, unknown> }> => {
-      return invokeRpc<{ status: string; result: Record<string, unknown> }>('verify_archive_integrity', {
-        archive_id: id,
-      });
+    verifyIntegrity: async (
+      id: string
+    ): Promise<{ status: string; result: Record<string, unknown> }> => {
+      return invokeRpc<{ status: string; result: Record<string, unknown> }>(
+        'verify_archive_integrity',
+        {
+          archive_id: id,
+        }
+      );
     },
   },
 
@@ -1162,7 +1189,7 @@ async function hashText(text: string): Promise<string> {
   const data = encoder.encode(text);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 // =============================================================================

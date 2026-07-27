@@ -18,7 +18,7 @@ const STORES = {
   CACHED_FILES: 'cached-files',
 } as const;
 
-type StoreName = typeof STORES[keyof typeof STORES];
+type StoreName = (typeof STORES)[keyof typeof STORES];
 
 interface PendingAction {
   id: string;
@@ -155,11 +155,7 @@ class OfflineStorageService {
   /**
    * Get items by index
    */
-  async getByIndex<T>(
-    storeName: StoreName,
-    indexName: string,
-    value: IDBValidKey
-  ): Promise<T[]> {
+  async getByIndex<T>(storeName: StoreName, indexName: string, value: IDBValidKey): Promise<T[]> {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(storeName, 'readonly');

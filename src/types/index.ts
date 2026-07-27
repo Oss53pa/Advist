@@ -176,7 +176,14 @@ export interface Tag {
   color: string;
 }
 
-export type DocumentStatus = 'draft' | 'pending' | 'approved' | 'rejected' | 'archived' | 'cancelled' | 'signature_refused';
+export type DocumentStatus =
+  | 'draft'
+  | 'pending'
+  | 'approved'
+  | 'rejected'
+  | 'archived'
+  | 'cancelled'
+  | 'signature_refused';
 
 // v2: Document comments (distinct from annotations)
 export interface DocumentComment {
@@ -333,8 +340,21 @@ export interface WorkflowAssignee {
   refusal_is_definitive?: boolean;
 }
 
-export type WorkflowStatus = 'pending' | 'in_progress' | 'completed' | 'rejected' | 'cancelled' | 'recalled' | 'signature_refused';
-export type WorkflowStepStatus = 'pending' | 'in_progress' | 'completed' | 'rejected' | 'skipped' | 'escalated';
+export type WorkflowStatus =
+  | 'pending'
+  | 'in_progress'
+  | 'completed'
+  | 'rejected'
+  | 'cancelled'
+  | 'recalled'
+  | 'signature_refused';
+export type WorkflowStepStatus =
+  | 'pending'
+  | 'in_progress'
+  | 'completed'
+  | 'rejected'
+  | 'skipped'
+  | 'escalated';
 
 // Task type (for my-tasks)
 export interface Task {
@@ -703,12 +723,15 @@ export interface MarketingAnalytics {
   total_published: number;
   total_failed: number;
   metrics: PublicationMetrics;
-  by_platform: Record<SocialPlatform, {
-    posts: number;
-    likes: number;
-    comments: number;
-    shares: number;
-  }>;
+  by_platform: Record<
+    SocialPlatform,
+    {
+      posts: number;
+      likes: number;
+      comments: number;
+      shares: number;
+    }
+  >;
   by_status: {
     draft: number;
     scheduled: number;
@@ -823,7 +846,13 @@ export interface NewsletterCreateData {
 // =============================================================================
 
 // Consent Management
-export type ConsentLegalBasis = 'consent' | 'contract' | 'legal_obligation' | 'vital_interest' | 'public_interest' | 'legitimate_interest';
+export type ConsentLegalBasis =
+  | 'consent'
+  | 'contract'
+  | 'legal_obligation'
+  | 'vital_interest'
+  | 'public_interest'
+  | 'legitimate_interest';
 
 export interface ConsentPurpose {
   id: string;
@@ -867,8 +896,22 @@ export interface ConsentFormData {
 }
 
 // Data Subject Rights (DSAR)
-export type DSRRequestType = 'access' | 'rectification' | 'erasure' | 'restriction' | 'portability' | 'objection' | 'automated_decision';
-export type DSRStatus = 'pending' | 'identity_verification' | 'processing' | 'extension_requested' | 'completed' | 'rejected' | 'cancelled';
+export type DSRRequestType =
+  | 'access'
+  | 'rectification'
+  | 'erasure'
+  | 'restriction'
+  | 'portability'
+  | 'objection'
+  | 'automated_decision';
+export type DSRStatus =
+  | 'pending'
+  | 'identity_verification'
+  | 'processing'
+  | 'extension_requested'
+  | 'completed'
+  | 'rejected'
+  | 'cancelled';
 
 export interface DataSubjectRequest {
   id: string;
@@ -990,7 +1033,14 @@ export interface DataRetentionExecution {
 // Data Breach (RGPD Art. 33-34)
 export type BreachSeverity = 'low' | 'medium' | 'high' | 'critical';
 export type BreachType = 'confidentiality' | 'integrity' | 'availability';
-export type BreachStatus = 'detected' | 'investigating' | 'contained' | 'notified_cnil' | 'notified_users' | 'resolved' | 'closed';
+export type BreachStatus =
+  | 'detected'
+  | 'investigating'
+  | 'contained'
+  | 'notified_cnil'
+  | 'notified_users'
+  | 'resolved'
+  | 'closed';
 
 export interface DataBreach {
   id: string;
@@ -1094,7 +1144,15 @@ export interface PrivacyImpactAssessment {
 
 // eIDAS Signature Levels
 export type SignatureLevel = 'simple' | 'advanced' | 'qualified';
-export type AuthenticationMethod = 'email_otp' | 'sms_otp' | 'totp' | 'franceconnect' | 'franceconnect_plus' | 'video_identification' | 'id_document' | 'certificate';
+export type AuthenticationMethod =
+  | 'email_otp'
+  | 'sms_otp'
+  | 'totp'
+  | 'franceconnect'
+  | 'franceconnect_plus'
+  | 'video_identification'
+  | 'id_document'
+  | 'certificate';
 
 export interface SignatureProofFile {
   id: string;
@@ -1236,7 +1294,13 @@ export interface ElectronicSeal {
   created_at: string;
 }
 
-export type RegisteredDeliveryStatus = 'pending' | 'sent' | 'delivered' | 'read' | 'failed' | 'expired';
+export type RegisteredDeliveryStatus =
+  | 'pending'
+  | 'sent'
+  | 'delivered'
+  | 'read'
+  | 'failed'
+  | 'expired';
 
 export interface RegisteredDelivery {
   id: string;
@@ -1299,7 +1363,13 @@ export interface QualifiedArchive {
   updated_at: string;
 }
 
-export type AttributeType = 'role' | 'authorization' | 'qualification' | 'mandate' | 'membership' | 'custom';
+export type AttributeType =
+  | 'role'
+  | 'authorization'
+  | 'qualification'
+  | 'mandate'
+  | 'membership'
+  | 'custom';
 
 export interface AttributeAttestation {
   id: string;

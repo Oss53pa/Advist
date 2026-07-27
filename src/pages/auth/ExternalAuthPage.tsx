@@ -61,7 +61,9 @@ export default function ExternalAuthPage() {
       // Fetch plan tier from Supabase (server-side source of truth)
       // Never trust JWT payload for plan tier — it is unverified client-side
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) {
           const { data: profile } = await supabase
             .from('profiles')

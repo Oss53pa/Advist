@@ -103,11 +103,7 @@ export const PresenceIndicatorCompact: React.FC<PresenceIndicatorProps> = ({
     <div className="flex items-center gap-2">
       <div className="flex -space-x-1.5">
         {visibleParticipants.map((participant) => (
-          <div
-            key={participant.id}
-            className="relative"
-            title={participant.name}
-          >
+          <div key={participant.id} className="relative" title={participant.name}>
             <div
               className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium ring-1 ring-white/50"
               style={{ backgroundColor: participant.color }}
@@ -123,9 +119,7 @@ export const PresenceIndicatorCompact: React.FC<PresenceIndicatorProps> = ({
         )}
       </div>
       {participants.length > 0 && (
-        <span className="text-xs text-advist-text-secondary">
-          {participants.length} en ligne
-        </span>
+        <span className="text-xs text-advist-text-secondary">{participants.length} en ligne</span>
       )}
     </div>
   );

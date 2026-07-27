@@ -22,7 +22,7 @@ export interface AtlasSupabaseOptions {
 const noopLock = async <R>(
   _name: string,
   _acquireTimeout: number,
-  fn: () => Promise<R>,
+  fn: () => Promise<R>
 ): Promise<R> => fn();
 
 function makeResilientFetch(maxRetries: number) {
@@ -45,7 +45,7 @@ function makeResilientFetch(maxRetries: number) {
 }
 
 export function createAtlasSupabaseClient<DB = any>(
-  opts: AtlasSupabaseOptions,
+  opts: AtlasSupabaseOptions
 ): SupabaseClient<DB> {
   return createClient<DB>(opts.url, opts.anonKey, {
     auth: {

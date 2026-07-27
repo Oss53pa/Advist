@@ -124,7 +124,8 @@ export const ExternalUserPage: React.FC = () => {
         // Fetch document share by token
         const { data: share, error } = await supabase
           .from('document_shares')
-          .select(`
+          .select(
+            `
             id,
             token,
             document_id,
@@ -137,7 +138,8 @@ export const ExternalUserPage: React.FC = () => {
               organization:organization_id (name),
               owner:created_by (first_name, last_name, email)
             )
-          `)
+          `
+          )
           .eq('token', token)
           .eq('is_active', true)
           .single();
@@ -163,7 +165,7 @@ export const ExternalUserPage: React.FC = () => {
           documentType: doc.document_type || 'Document',
           documentPages: 0,
           documentSize: doc.file_size ? `${(doc.file_size / 1024 / 1024).toFixed(1)} MB` : '',
-          signerEmail: '',  // External signer email from workflow step
+          signerEmail: '', // External signer email from workflow step
           signerName: '',
           senderName: doc.owner ? `${doc.owner.first_name} ${doc.owner.last_name}` : '',
           senderEmail: doc.owner?.email || '',
@@ -226,7 +228,7 @@ export const ExternalUserPage: React.FC = () => {
       setOtpCountdown(result.expiresIn);
       setStep('otp_input');
     } catch (err) {
-      setOtpError((err as Error).message || 'Erreur lors de l\'envoi du code');
+      setOtpError((err as Error).message || "Erreur lors de l'envoi du code");
     } finally {
       setOtpLoading(false);
     }
@@ -274,9 +276,7 @@ export const ExternalUserPage: React.FC = () => {
       } else if (result.locked) {
         setOtpError('Trop de tentatives. Veuillez demander un nouveau code.');
       } else {
-        setOtpError(
-          `Code incorrect. ${result.remainingAttempts} tentative(s) restante(s).`,
-        );
+        setOtpError(`Code incorrect. ${result.remainingAttempts} tentative(s) restante(s).`);
         setOtpDigits(['', '', '', '', '', '']);
         otpInputRefs.current[0]?.focus();
       }
@@ -316,7 +316,7 @@ export const ExternalUserPage: React.FC = () => {
         'simple',
         undefined,
         verificationId || undefined,
-        consentId || undefined,
+        consentId || undefined
       );
       setStep('signed');
     } catch (err) {
@@ -404,14 +404,18 @@ export const ExternalUserPage: React.FC = () => {
                 {data.senderOrganization.charAt(0)}
               </div>
               <div>
-                <h1 className="text-base font-semibold text-primary-900">{data.senderOrganization}</h1>
+                <h1 className="text-base font-semibold text-primary-900">
+                  {data.senderOrganization}
+                </h1>
                 <p className="text-xs text-primary-500">vous a envoye un document a signer</p>
               </div>
             </div>
 
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-primary-50 rounded-lg text-sm">
               <User className="w-4 h-4 text-primary-400" />
-              <span className="font-medium text-primary-700">{data.signerName || data.signerEmail}</span>
+              <span className="font-medium text-primary-700">
+                {data.signerName || data.signerEmail}
+              </span>
             </div>
           </div>
         </div>
@@ -449,7 +453,10 @@ export const ExternalUserPage: React.FC = () => {
                 <div className="hidden sm:flex items-center gap-2 text-sm text-primary-700 bg-primary-100 px-3 py-1.5 rounded-lg">
                   <Calendar className="w-4 h-4" />
                   <span className="font-medium">
-                    {new Date(data.expiresAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                    {new Date(data.expiresAt).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'short',
+                    })}
                   </span>
                 </div>
               </div>
@@ -464,9 +471,13 @@ export const ExternalUserPage: React.FC = () => {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-base sm:text-lg font-semibold text-primary-900 leading-tight line-clamp-2">{data.documentTitle}</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-primary-900 leading-tight line-clamp-2">
+                    {data.documentTitle}
+                  </h3>
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-xs sm:text-sm text-primary-500">
-                    <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-primary-50 text-primary-800 font-medium rounded-md text-xs">{data.documentType}</span>
+                    <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-primary-50 text-primary-800 font-medium rounded-md text-xs">
+                      {data.documentType}
+                    </span>
                     {data.documentPages > 0 && <span>{data.documentPages} pages</span>}
                     {data.documentSize && (
                       <>
@@ -478,7 +489,9 @@ export const ExternalUserPage: React.FC = () => {
 
                   {data.message && (
                     <div className="hidden sm:block mt-4 p-3 bg-primary-50 rounded-lg border-l-4 border-primary-900">
-                      <p className="text-sm text-primary-600 italic line-clamp-2">"{data.message}"</p>
+                      <p className="text-sm text-primary-600 italic line-clamp-2">
+                        "{data.message}"
+                      </p>
                       <p className="text-xs text-primary-400 mt-1">-- {data.senderName}</p>
                     </div>
                   )}
@@ -495,7 +508,9 @@ export const ExternalUserPage: React.FC = () => {
                     <Clock className="w-4 h-4 text-primary-400" />
                     <span className="font-medium text-primary-700">Historique</span>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-primary-400 transition-transform ${showActivity ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 text-primary-400 transition-transform ${showActivity ? 'rotate-180' : ''}`}
+                  />
                 </button>
 
                 {showActivity && (
@@ -506,7 +521,11 @@ export const ExternalUserPage: React.FC = () => {
                       <span className="text-primary-400">&#8226;</span>
                       <span className="text-primary-400">{data.senderName}</span>
                       <span className="text-primary-400 ml-auto">
-                        {new Date(data.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        {new Date(data.createdAt).toLocaleDateString('fr-FR', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
                       </span>
                     </div>
                     {hasViewed && (
@@ -573,11 +592,15 @@ export const ExternalUserPage: React.FC = () => {
                       isSigned
                         ? 'bg-green-50 text-green-600 border-2 border-green-200'
                         : !hasViewed
-                        ? 'bg-primary-50 text-primary-400 cursor-not-allowed border-2 border-transparent'
-                        : 'bg-primary-900 text-white hover:bg-primary-800 active:bg-primary-800 shadow-lg shadow-primary-900/25 border-2 border-transparent'
+                          ? 'bg-primary-50 text-primary-400 cursor-not-allowed border-2 border-transparent'
+                          : 'bg-primary-900 text-white hover:bg-primary-800 active:bg-primary-800 shadow-lg shadow-primary-900/25 border-2 border-transparent'
                     }`}
                   >
-                    {isSigned ? <CheckCircle className="w-5 h-5" /> : <PenTool className="w-5 h-5" />}
+                    {isSigned ? (
+                      <CheckCircle className="w-5 h-5" />
+                    ) : (
+                      <PenTool className="w-5 h-5" />
+                    )}
                     {isSigned ? 'Signe' : 'Signer'}
                   </button>
                 </div>
@@ -596,7 +619,9 @@ export const ExternalUserPage: React.FC = () => {
           <div className="lg:col-span-2 flex flex-col gap-5 pb-16 lg:pb-0">
             {/* Sender Card */}
             <div className="bg-white rounded-xl border border-primary-200 p-5">
-              <p className="text-xs font-semibold text-primary-400 uppercase tracking-wider mb-3">Expediteur</p>
+              <p className="text-xs font-semibold text-primary-400 uppercase tracking-wider mb-3">
+                Expediteur
+              </p>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-primary-900 to-primary-900 rounded-xl flex items-center justify-center text-white font-bold shadow-md">
                   {data.senderName.charAt(0)}
@@ -614,7 +639,9 @@ export const ExternalUserPage: React.FC = () => {
 
             {/* Comment Section */}
             <div className="flex-1 bg-white rounded-xl border border-primary-200 p-5 flex flex-col">
-              <p className="text-xs font-semibold text-primary-400 uppercase tracking-wider mb-3">Commentaire</p>
+              <p className="text-xs font-semibold text-primary-400 uppercase tracking-wider mb-3">
+                Commentaire
+              </p>
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
@@ -712,7 +739,10 @@ export const ExternalUserPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-sm">{data.documentTitle}</h3>
-                  <p className="text-xs text-primary-400">{data.documentPages > 0 ? `${data.documentPages} pages` : ''} {data.documentSize}</p>
+                  <p className="text-xs text-primary-400">
+                    {data.documentPages > 0 ? `${data.documentPages} pages` : ''}{' '}
+                    {data.documentSize}
+                  </p>
                 </div>
               </div>
               <button
@@ -773,16 +803,16 @@ export const ExternalUserPage: React.FC = () => {
                   <p className="text-center text-gray-600 mb-1">
                     Un code a 6 chiffres a ete envoye a
                   </p>
-                  <p className="text-center font-semibold text-gray-900 mb-6">
-                    {data.signerEmail}
-                  </p>
+                  <p className="text-center font-semibold text-gray-900 mb-6">{data.signerEmail}</p>
 
                   {/* OTP Inputs */}
                   <div className="flex justify-center gap-2 sm:gap-3 mb-4">
                     {otpDigits.map((digit, index) => (
                       <input
                         key={index}
-                        ref={(el) => { otpInputRefs.current[index] = el; }}
+                        ref={(el) => {
+                          otpInputRefs.current[index] = el;
+                        }}
                         type="text"
                         inputMode="numeric"
                         maxLength={1}
@@ -903,7 +933,9 @@ export const ExternalUserPage: React.FC = () => {
                   <User className="w-4 h-4 text-primary-900" />
                 </div>
                 <div>
-                  <p className="font-medium text-primary-900 text-sm">{data.signerName || 'Signataire'}</p>
+                  <p className="font-medium text-primary-900 text-sm">
+                    {data.signerName || 'Signataire'}
+                  </p>
                   <p className="text-xs text-primary-500">{data.signerEmail}</p>
                 </div>
               </div>
@@ -986,7 +1018,11 @@ export const ExternalUserPage: React.FC = () => {
                   ) : (
                     <div className="relative">
                       <div className="p-6 bg-primary-50 rounded-lg border border-primary-200">
-                        <img src={uploadedSignature} alt="Signature" className="max-h-20 mx-auto object-contain" />
+                        <img
+                          src={uploadedSignature}
+                          alt="Signature"
+                          className="max-h-20 mx-auto object-contain"
+                        />
                       </div>
                       <button
                         onClick={() => setUploadedSignature(null)}

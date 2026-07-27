@@ -114,7 +114,7 @@ export const exportDossierService = {
     doc.text(
       `Date creation : ${new Date(workflow.created_at).toLocaleDateString('fr-FR')}`,
       20,
-      82,
+      82
     );
     doc.text(`Statut : ${workflow.status}`, 20, 89);
     doc.text(`Initiateur : ${workflow.initiator}`, 20, 96);
@@ -168,8 +168,8 @@ export const exportDossierService = {
           s.integrity_seal
             ? `${s.integrity_seal.substring(0, 16)}...`
             : s.signature_hash
-            ? `${s.signature_hash.substring(0, 12)}...`
-            : 'N/A',
+              ? `${s.signature_hash.substring(0, 12)}...`
+              : 'N/A',
         ]),
         styles: { fontSize: 8 },
         headStyles: { fillColor: [30, 30, 30] },
@@ -210,7 +210,7 @@ export const exportDossierService = {
         `ADVIST - Dossier certifie - Page ${i}/${pageCount} - Genere le ${new Date().toLocaleString('fr-FR')}`,
         105,
         290,
-        { align: 'center' },
+        { align: 'center' }
       );
     }
 
@@ -227,7 +227,7 @@ export const exportDossierService = {
     workflow: WorkflowData,
     documents: DocumentData[],
     signatures: SignatureData[],
-    verificationCode: string,
+    verificationCode: string
   ): void {
     doc.addPage();
 
@@ -238,7 +238,9 @@ export const exportDossierService = {
     doc.setFontSize(14);
     doc.text('CERTIFICAT DE SIGNATURE ELECTRONIQUE', 105, 15, { align: 'center' });
     doc.setFontSize(9);
-    doc.text('Conforme a la Loi ivoirienne n\u00b02013-546 du 30 juillet 2013', 105, 23, { align: 'center' });
+    doc.text('Conforme a la Loi ivoirienne n\u00b02013-546 du 30 juillet 2013', 105, 23, {
+      align: 'center',
+    });
     doc.text('relative aux transactions electroniques', 105, 29, { align: 'center' });
 
     doc.setTextColor(0);
@@ -273,7 +275,7 @@ export const exportDossierService = {
 
       (doc as any).autoTable({
         startY: y,
-        head: [['Signataire', 'Email', 'Verification', 'Date (serveur)', 'Sceau d\'integrite']],
+        head: [['Signataire', 'Email', 'Verification', 'Date (serveur)', "Sceau d'integrite"]],
         body: signatures.map((s) => [
           s.signer_name,
           s.signer_email || '',
@@ -281,9 +283,7 @@ export const exportDossierService = {
           s.server_timestamp
             ? new Date(s.server_timestamp).toLocaleString('fr-FR')
             : new Date(s.signed_at).toLocaleString('fr-FR'),
-          s.integrity_seal
-            ? `${s.integrity_seal.substring(0, 24)}...`
-            : 'N/A',
+          s.integrity_seal ? `${s.integrity_seal.substring(0, 24)}...` : 'N/A',
         ]),
         styles: { fontSize: 7 },
         headStyles: { fillColor: [30, 30, 30] },
@@ -314,8 +314,8 @@ export const exportDossierService = {
     doc.setTextColor(100);
     const legalLines = [
       'Ce document a ete signe electroniquement via la plateforme ADVIST (Atlas Studio).',
-      'Conformement a l\'article 9 de la Loi n\u00b02013-546, la signature electronique apposee',
-      'beneficie de la presomption de fiabilite des lors que les conditions de l\'article 11 sont reunies :',
+      "Conformement a l'article 9 de la Loi n\u00b02013-546, la signature electronique apposee",
+      "beneficie de la presomption de fiabilite des lors que les conditions de l'article 11 sont reunies :",
       '(i) donnees de creation propres au signataire, (ii) identite verifiee par OTP,',
       '(iii) controle exclusif, (iv) detection de toute modification via le hash SHA-256.',
       '',
@@ -340,13 +340,21 @@ export const exportDossierService = {
     ]);
 
     const consents = adapter.getConsents ? await adapter.getConsents(workflowId) : [];
-    const verifications = adapter.getVerifications ? await adapter.getVerifications(workflowId) : [];
+    const verifications = adapter.getVerifications
+      ? await adapter.getVerifications(workflowId)
+      : [];
     const verificationCode = generateVerificationCode();
 
     const zip = new JSZip();
 
     // 1. Generate certified PDF (with certification page)
-    const certifiedPdf = this.generateCertifiedPdf(workflow, documents, signatures, auditTrail, verificationCode);
+    const certifiedPdf = this.generateCertifiedPdf(
+      workflow,
+      documents,
+      signatures,
+      auditTrail,
+      verificationCode
+    );
     zip.file('02_DOCUMENT_SIGNE_CERTIFIE.pdf', certifiedPdf);
 
     // 2. Audit trail JSON
@@ -360,8 +368,8 @@ export const exportDossierService = {
           events: auditTrail,
         },
         null,
-        2,
-      ),
+        2
+      )
     );
 
     // 3. Signature proofs
@@ -385,17 +393,14 @@ export const exportDossierService = {
 
     // 4. Consent records
     if (consents.length > 0) {
-      zip.file(
-        '05_PREUVES_SIGNATURES/consentements.json',
-        JSON.stringify(consents, null, 2),
-      );
+      zip.file('05_PREUVES_SIGNATURES/consentements.json', JSON.stringify(consents, null, 2));
     }
 
     // 5. Verification records
     if (verifications.length > 0) {
       zip.file(
         '05_PREUVES_SIGNATURES/verifications_otp.json',
-        JSON.stringify(verifications, null, 2),
+        JSON.stringify(verifications, null, 2)
       );
     }
 
@@ -418,7 +423,10 @@ export const exportDossierService = {
     zip.file('06_HASHES_MANIFEST.json', JSON.stringify(hashesManifest, null, 2));
 
     // 7. Verification guide for judge/lawyer
-    zip.file('07_GUIDE_VERIFICATION.txt', this.generateVerificationGuide(workflow, verificationCode));
+    zip.file(
+      '07_GUIDE_VERIFICATION.txt',
+      this.generateVerificationGuide(workflow, verificationCode)
+    );
 
     // Generate and download ZIP
     const zipBlob = await zip.generateAsync({ type: 'blob' });
@@ -440,7 +448,7 @@ export const exportDossierService = {
     documents: DocumentData[],
     signatures: SignatureData[],
     auditTrail: AuditEntry[],
-    verificationCode: string,
+    verificationCode: string
   ): ArrayBuffer {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
@@ -490,7 +498,7 @@ export const exportDossierService = {
         `ADVIST - Document certifie - Page ${i}/${pageCount} - ${new Date().toLocaleString('fr-FR')}`,
         105,
         290,
-        { align: 'center' },
+        { align: 'center' }
       );
     }
 

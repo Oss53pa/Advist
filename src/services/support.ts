@@ -62,9 +62,7 @@ export const supportService = {
 
     // Apply filters
     if (filters?.search) {
-      query = query.or(
-        `title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
-      );
+      query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
     }
     if (filters?.status) {
       query = query.eq('status', filters.status);
@@ -131,10 +129,7 @@ export const supportService = {
   },
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('support_tickets')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('support_tickets').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },

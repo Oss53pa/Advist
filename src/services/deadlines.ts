@@ -110,10 +110,7 @@ export const deadlinesService = {
    * Get all deadlines with optional filters
    */
   async list(filters?: DeadlineFilters): Promise<Deadline[]> {
-    let query = supabase
-      .from('deadlines')
-      .select('*')
-      .order('date', { ascending: true });
+    let query = supabase.from('deadlines').select('*').order('date', { ascending: true });
 
     if (filters?.startDate) {
       query = query.gte('date', filters.startDate);
@@ -143,11 +140,7 @@ export const deadlinesService = {
    * Get a single deadline
    */
   async get(id: string): Promise<Deadline> {
-    const { data, error } = await supabase
-      .from('deadlines')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('deadlines').select('*').eq('id', id).single();
 
     if (error) throw parseSupabaseError(error);
     return data as Deadline;
@@ -156,7 +149,9 @@ export const deadlinesService = {
   /**
    * Create a new deadline
    */
-  async create(data: Omit<Deadline, 'id' | 'daysRemaining' | 'status' | 'createdBy'>): Promise<Deadline> {
+  async create(
+    data: Omit<Deadline, 'id' | 'daysRemaining' | 'status' | 'createdBy'>
+  ): Promise<Deadline> {
     const { data: deadline, error } = await supabase
       .from('deadlines')
       .insert(data as Record<string, unknown>)
@@ -186,10 +181,7 @@ export const deadlinesService = {
    * Delete a deadline
    */
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('deadlines')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('deadlines').delete().eq('id', id);
 
     if (error) throw parseSupabaseError(error);
   },
@@ -260,7 +252,10 @@ export const deadlinesService = {
   /**
    * Configure reminders for a deadline
    */
-  async configureReminders(deadlineId: string, reminders: Omit<ReminderConfig, 'id' | 'sent'>[]): Promise<Deadline> {
+  async configureReminders(
+    deadlineId: string,
+    reminders: Omit<ReminderConfig, 'id' | 'sent'>[]
+  ): Promise<Deadline> {
     // Delete existing reminders and insert new ones
     const { error: deleteError } = await supabase
       .from('deadline_reminders')
@@ -277,9 +272,7 @@ export const deadlinesService = {
     }));
 
     if (reminderRows.length > 0) {
-      const { error: insertError } = await supabase
-        .from('deadline_reminders')
-        .insert(reminderRows);
+      const { error: insertError } = await supabase.from('deadline_reminders').insert(reminderRows);
 
       if (insertError) throw parseSupabaseError(insertError);
     }
@@ -291,7 +284,10 @@ export const deadlinesService = {
   /**
    * Send manual reminder for a deadline
    */
-  async sendReminder(deadlineId: string, channels?: ('in_app' | 'email' | 'whatsapp' | 'sms')[]): Promise<void> {
+  async sendReminder(
+    deadlineId: string,
+    channels?: ('in_app' | 'email' | 'whatsapp' | 'sms')[]
+  ): Promise<void> {
     await invokeEdgeFunction('deadline-cron', {
       action: 'send_reminder',
       deadline_id: deadlineId,
@@ -302,7 +298,11 @@ export const deadlinesService = {
   /**
    * Create deadline from document (auto-detect expiration)
    */
-  async createFromDocument(documentId: number, type: Deadline['type'], date: string): Promise<Deadline> {
+  async createFromDocument(
+    documentId: number,
+    type: Deadline['type'],
+    date: string
+  ): Promise<Deadline> {
     const { data, error } = await supabase
       .from('deadlines')
       .insert({
@@ -321,7 +321,9 @@ export const deadlinesService = {
   /**
    * Bulk create deadlines
    */
-  async bulkCreate(deadlines: Array<Omit<Deadline, 'id' | 'daysRemaining' | 'status' | 'createdBy'>>): Promise<Deadline[]> {
+  async bulkCreate(
+    deadlines: Array<Omit<Deadline, 'id' | 'daysRemaining' | 'status' | 'createdBy'>>
+  ): Promise<Deadline[]> {
     const { data, error } = await supabase
       .from('deadlines')
       .insert(deadlines as Record<string, unknown>[])
@@ -334,13 +336,15 @@ export const deadlinesService = {
   /**
    * Get auto-generated tasks based on deadlines
    */
-  async getGeneratedTasks(deadlineId: string): Promise<Array<{
-    id: string;
-    title: string;
-    dueDate: string;
-    status: 'pending' | 'completed';
-    assignedTo?: { id: number; name: string };
-  }>> {
+  async getGeneratedTasks(deadlineId: string): Promise<
+    Array<{
+      id: string;
+      title: string;
+      dueDate: string;
+      status: 'pending' | 'completed';
+      assignedTo?: { id: number; name: string };
+    }>
+  > {
     const { data, error } = await supabase.rpc('get_deadline_tasks', {
       p_deadline_id: deadlineId,
     });
@@ -358,7 +362,10 @@ export const deadlinesService = {
   /**
    * Create workflow from deadline (e.g., renewal workflow)
    */
-  async createWorkflowFromDeadline(deadlineId: string, workflowTemplateId: number): Promise<{
+  async createWorkflowFromDeadline(
+    deadlineId: string,
+    workflowTemplateId: number
+  ): Promise<{
     workflowId: number;
     message: string;
   }> {

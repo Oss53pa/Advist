@@ -4,7 +4,15 @@
  * Data fetched from Supabase counts
  */
 import React, { useEffect, useState } from 'react';
-import { TrendingUp, TrendingDown, Minus, FileText, GitBranch, PenTool, CheckSquare } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  FileText,
+  GitBranch,
+  PenTool,
+  CheckSquare,
+} from 'lucide-react';
 import { WidgetConfig } from '../../../services/dashboard';
 import { supabase } from '../../../lib/supabase';
 import { useAuthStore } from '../../../store';
@@ -78,7 +86,10 @@ export const StatsCardWidget: React.FC<StatsCardWidgetProps> = ({ config }) => {
           case 'pending_tasks': {
             const { count } = await supabase
               .from('workflow_assignees')
-              .select('*, step:workflow_steps!inner(instance:workflow_instances!inner(organization_id))', { count: 'exact', head: true })
+              .select(
+                '*, step:workflow_steps!inner(instance:workflow_instances!inner(organization_id))',
+                { count: 'exact', head: true }
+              )
               .eq('step.instance.organization_id', orgId)
               .eq('status', 'pending');
             value = count ?? 0;

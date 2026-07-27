@@ -153,7 +153,7 @@ class VersionCompareService {
     documentId: string,
     leftVersionId: string,
     rightVersionId: string,
-    _noCache = false,
+    _noCache = false
   ): Promise<CompareResponse> {
     const { data, error } = await supabase
       .from('document_versions')
@@ -231,10 +231,7 @@ class VersionCompareService {
       documentId,
       versionCount: versions.length,
       history,
-      message:
-        versions.length <= 1
-          ? 'Ce document n\'a qu\'une seule version.'
-          : undefined,
+      message: versions.length <= 1 ? "Ce document n'a qu'une seule version." : undefined,
     };
   }
 }

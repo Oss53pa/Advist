@@ -61,7 +61,7 @@ export const DraggableFloatingButton: React.FC<DraggableFloatingButtonProps> = (
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      setPosition(prev => ({
+      setPosition((prev) => ({
         x: Math.min(prev.x, window.innerWidth - 60),
         y: Math.min(prev.y, window.innerHeight - 60),
       }));

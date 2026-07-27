@@ -42,7 +42,7 @@ class DocumentRetentionService {
   async applyDefaultRetention(
     documentId: string,
     organizationId: string,
-    documentType?: string,
+    documentType?: string
   ): Promise<RetentionRecord> {
     return this.applyRetention({
       documentId,
@@ -75,7 +75,7 @@ class DocumentRetentionService {
           locked_at: new Date().toISOString(),
           storage_path: params.storagePath || null,
         },
-        { onConflict: 'document_id' },
+        { onConflict: 'document_id' }
       )
       .select()
       .single();
