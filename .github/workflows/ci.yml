@@ -49,6 +49,10 @@ jobs:
     name: Supabase Migrations
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # Ne bloque pas la CI quand les secrets Supabase ne sont pas configurés
+    # (le contexte `secrets` étant interdit dans un `if:`, on passe par env).
+    env:
+      HAS_SUPABASE: ${{ secrets.SUPABASE_PROJECT_REF != '' }}
 
     steps:
       - name: Checkout code
@@ -63,9 +67,11 @@ jobs:
         run: npm install -g supabase
 
       - name: Link Supabase project
+        if: env.HAS_SUPABASE == 'true'
         run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} -p ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       - name: Push migrations
+        if: env.HAS_SUPABASE == 'true'
         run: supabase db push -p ${{ secrets.SUPABASE_DB_PASSWORD }}
 
   build:
@@ -100,7 +106,9 @@ jobs:
     name: E2E Tests (Playwright)
     runs-on: ubuntu-latest
     needs: build
-    if: hashFiles('e2e/**/*.spec.ts') != ''
+    # NB : `hashFiles()` est interdit dans un `if:` de job (pas de workspace à
+    # l'évaluation du graphe → échec de validation du workflow au démarrage).
+    # Le garde est donc porté au niveau des étapes (après checkout).
 
     steps:
       - name: Checkout code
@@ -116,6 +124,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
+        if: hashFiles('e2e/**/*.spec.ts') != ''
         run: npx playwright install --with-deps chromium
 
       - name: Download build artifacts
@@ -125,6 +134,7 @@ jobs:
           path: dist/
 
       - name: Run Playwright E2E tests
+        if: hashFiles('e2e/**/*.spec.ts') != ''
         run: npx playwright test
         env:
           CI: true
