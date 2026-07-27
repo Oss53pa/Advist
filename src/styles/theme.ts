@@ -11,23 +11,23 @@
 // =============================================================================
 
 export const palette = {
-  // Midnight scale (navy → white)
-  primary50: '#f7f8fa', // Fond de page
-  primary100: '#f0f2f5', // Fond de cartes alt, scrollbar
-  primary200: '#e1e5ec', // Bordures, separateurs
-  primary300: '#c8cfd9', // Scrollbar thumb
-  primary400: '#8b95a5', // Texte placeholder, icones desactivees
-  primary500: '#5e6b7d', // Texte secondaire, descriptions
-  primary600: '#3d4a5c', // Texte intermediaire, labels
-  primary700: '#1e293b', // Texte boutons ghost
-  primary800: '#162032', // Boutons hover
-  primary900: '#0f172a', // Texte principal, boutons primaires
-  primary950: '#080e1b', // Boutons actifs
+  // Ivoire & Laiton — ivoire chaud → navy chaud
+  primary50: '#FAF7F1', // Fond de page (ivoire)
+  primary100: '#F1ECE1', // Fond de cartes alt, scrollbar
+  primary200: '#E8E2D6', // Bordures, separateurs
+  primary300: '#D8CFBF', // Scrollbar thumb
+  primary400: '#A39B8F', // Texte placeholder, icones desactivees
+  primary500: '#78716A', // Texte secondaire, descriptions
+  primary600: '#57534E', // Texte intermediaire, labels
+  primary700: '#26314A', // Texte boutons ghost
+  primary800: '#1B2740', // Boutons hover
+  primary900: '#131C2E', // Texte principal, boutons primaires (navy chaud)
+  primary950: '#0D1424', // Boutons actifs
 
-  // Gold accent
-  gold: '#b8a47e', // Accent dore institutionnel
-  goldLight: '#d4c6a5',
-  goldDark: '#9a8561',
+  // Laiton (brass) accent
+  gold: '#B9975B', // Accent laiton institutionnel
+  goldLight: '#D4B87E',
+  goldDark: '#8A6C34',
 
   // White
   white: '#FFFFFF',
@@ -171,7 +171,7 @@ export const tailwindColors = {
     gold: palette.gold,
     'gold-dark': palette.goldDark,
     'gold-light': palette.goldLight,
-    'gold-muted': '#f5f0e8',
+    'gold-muted': '#F5EDDD',
 
     bg: palette.primary50,
     surface: palette.white,
@@ -229,12 +229,12 @@ export const tailwindColors = {
 export const cssVariables = {
   light: {
     '--color-background': palette.primary50,
-    '--color-background-rgb': '247 248 250',
+    '--color-background-rgb': '250 247 241',
     '--color-surface': palette.white,
     '--color-surface-rgb': '255 255 255',
     '--color-surface-alt': palette.primary100,
     '--color-primary': palette.primary900,
-    '--color-primary-rgb': '15 23 42',
+    '--color-primary-rgb': '19 28 46',
     '--color-gold': palette.gold,
     '--color-text-primary': palette.primary900,
     '--color-text-secondary': palette.primary500,

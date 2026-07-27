@@ -42,7 +42,7 @@ export const LandingPage: React.FC = () => {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0f172a] overflow-x-hidden">
+    <div className="min-h-screen bg-[#131C2E] overflow-x-hidden">
       <Header />
       <HeroSection onDemoClick={() => setIsDemoModalOpen(true)} />
       <TrustedBySection />
@@ -95,14 +95,14 @@ const HowItWorksSection: React.FC = () => {
   }, [isVisible, steps.length]);
 
   return (
-    <section ref={ref} id="how-it-works" className="py-32 bg-[#0f172a]">
+    <section ref={ref} id="how-it-works" className="py-32 bg-[#131C2E]">
       <div className="max-w-7xl mx-auto px-6">
         <div
           className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#b8a47e]/10 border border-[#b8a47e]/20 rounded-full mb-6">
-            <Zap className="w-4 h-4 text-[#b8a47e]" />
-            <span className="text-sm font-medium text-[#b8a47e]">Simple & rapide</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#B9975B]/10 border border-[#B9975B]/20 rounded-full mb-6">
+            <Zap className="w-4 h-4 text-[#B9975B]" />
+            <span className="text-sm font-medium text-[#B9975B]">Simple & rapide</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">Demarrez en 4 etapes</h2>
           <p className="text-lg text-white/40">Configuration en moins de 5 minutes</p>
@@ -112,7 +112,7 @@ const HowItWorksSection: React.FC = () => {
           {/* Progress line */}
           <div className="absolute top-24 left-0 right-0 h-px bg-white/10 hidden md:block">
             <div
-              className="h-full bg-[#b8a47e] transition-all duration-500"
+              className="h-full bg-[#B9975B] transition-all duration-500"
               style={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
             />
           </div>
@@ -130,7 +130,7 @@ const HowItWorksSection: React.FC = () => {
                 <div
                   className={`absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10 transition-all duration-300 ${
                     i <= activeStep
-                      ? 'bg-[#b8a47e] text-[#0f172a] scale-110'
+                      ? 'bg-[#B9975B] text-[#131C2E] scale-110'
                       : 'bg-white/10 text-white/40'
                   }`}
                 >
@@ -138,19 +138,19 @@ const HowItWorksSection: React.FC = () => {
                 </div>
 
                 <div
-                  className={`relative p-6 bg-[#1e293b] rounded-2xl border-2 transition-all duration-300 ${
+                  className={`relative p-6 bg-[#1B2740] rounded-2xl border-2 transition-all duration-300 ${
                     i === activeStep
-                      ? 'border-[#b8a47e]/50 shadow-xl shadow-[#b8a47e]/5 scale-105'
+                      ? 'border-[#B9975B]/50 shadow-xl shadow-[#B9975B]/5 scale-105'
                       : 'border-white/5 hover:border-white/10 hover:shadow-lg'
                   }`}
                 >
                   <div
                     className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all duration-300 ${
-                      i === activeStep ? 'bg-[#b8a47e] scale-110' : 'bg-white/5'
+                      i === activeStep ? 'bg-[#B9975B] scale-110' : 'bg-white/5'
                     }`}
                   >
                     <step.icon
-                      className={`w-8 h-8 ${i === activeStep ? 'text-[#0f172a]' : 'text-white/40'}`}
+                      className={`w-8 h-8 ${i === activeStep ? 'text-[#131C2E]' : 'text-white/40'}`}
                     />
                   </div>
                   <h3 className="font-medium text-white mb-1">{step.title}</h3>
@@ -206,14 +206,14 @@ const ComplianceSection: React.FC = () => {
   ];
 
   return (
-    <section ref={ref} id="compliance" className="py-32 bg-[#080e1b] relative overflow-hidden">
+    <section ref={ref} id="compliance" className="py-32 bg-[#0D1424] relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6">
         <div
           className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#b8a47e]/10 backdrop-blur border border-[#b8a47e]/20 rounded-full mb-6">
-            <BadgeCheck className="w-4 h-4 text-[#b8a47e]" />
-            <span className="text-sm font-medium text-[#b8a47e]">Conformite & Integrations</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#B9975B]/10 backdrop-blur border border-[#B9975B]/20 rounded-full mb-6">
+            <BadgeCheck className="w-4 h-4 text-[#B9975B]" />
+            <span className="text-sm font-medium text-[#B9975B]">Conformite & Integrations</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">Conforme RGPD & eIDAS</h2>
           <p className="text-lg text-white/40 max-w-2xl mx-auto">
@@ -227,11 +227,11 @@ const ComplianceSection: React.FC = () => {
           {items.map((item, i) => (
             <div
               key={i}
-              className="p-6 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/[0.08] hover:border-[#b8a47e]/10 transition-all"
+              className="p-6 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/[0.08] hover:border-[#B9975B]/10 transition-all"
             >
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 bg-[#b8a47e]/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                  <item.icon className="w-7 h-7 text-[#b8a47e]" />
+                <div className="w-14 h-14 bg-[#B9975B]/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-7 h-7 text-[#B9975B]" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-medium text-white mb-2">{item.title}</h3>
@@ -240,7 +240,7 @@ const ComplianceSection: React.FC = () => {
                     {item.badges.map((badge, j) => (
                       <span
                         key={j}
-                        className="px-3 py-1 bg-[#b8a47e]/10 border border-[#b8a47e]/20 rounded-full text-xs font-medium text-[#b8a47e]/70"
+                        className="px-3 py-1 bg-[#B9975B]/10 border border-[#B9975B]/20 rounded-full text-xs font-medium text-[#B9975B]/70"
                       >
                         {badge}
                       </span>
@@ -261,7 +261,7 @@ const ComplianceSection: React.FC = () => {
                 key={i}
                 className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/5 rounded-xl"
               >
-                <BadgeCheck className="w-5 h-5 text-[#b8a47e]/40" />
+                <BadgeCheck className="w-5 h-5 text-[#B9975B]/40" />
                 <div>
                   <p className="font-medium text-white/80">{cert.name}</p>
                   <p className="text-xs text-white/30">{cert.desc}</p>
@@ -290,17 +290,17 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
   ];
 
   return (
-    <section ref={ref} id="demo" className="py-32 bg-[#0f172a] relative overflow-hidden">
+    <section ref={ref} id="demo" className="py-32 bg-[#131C2E] relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6">
         <div
           className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#b8a47e]/10 border border-[#b8a47e]/20 rounded-full mb-6">
-            <Play className="w-4 h-4 text-[#b8a47e]" />
-            <span className="text-sm font-medium text-[#b8a47e]">Essayez maintenant</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#B9975B]/10 border border-[#B9975B]/20 rounded-full mb-6">
+            <Play className="w-4 h-4 text-[#B9975B]" />
+            <span className="text-sm font-medium text-[#B9975B]">Essayez maintenant</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">
-            Testez ADVIST en <span className="text-[#b8a47e]">conditions reelles</span>
+            Testez ADVIST en <span className="text-[#B9975B]">conditions reelles</span>
           </h2>
           <p className="text-lg text-white/40 max-w-2xl mx-auto">
             Decouvrez nos fonctionnalites cles avec ces demos interactives. Aucune inscription
@@ -317,7 +317,7 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
                 onClick={() => setActiveDemo(tab.id)}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all ${
                   activeDemo === tab.id
-                    ? 'bg-[#b8a47e] text-[#0f172a] shadow-lg'
+                    ? 'bg-[#B9975B] text-[#131C2E] shadow-lg'
                     : 'text-white/50 hover:text-white/80'
                 }`}
               >
@@ -332,14 +332,14 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
         <div
           className={`relative transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="relative bg-[#1e293b] rounded-3xl shadow-2xl overflow-hidden border border-white/5">
-            <div className="bg-[#0f172a] px-6 py-5">
+          <div className="relative bg-[#1B2740] rounded-3xl shadow-2xl overflow-hidden border border-white/5">
+            <div className="bg-[#131C2E] px-6 py-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#b8a47e]/10 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-[#B9975B]/10 rounded-xl flex items-center justify-center">
                     {React.createElement(
                       demoTabs.find((t) => t.id === activeDemo)?.icon || Monitor,
-                      { className: 'w-6 h-6 text-[#b8a47e]' }
+                      { className: 'w-6 h-6 text-[#B9975B]' }
                     )}
                   </div>
                   <div>
@@ -355,14 +355,14 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
                     </p>
                   </div>
                 </div>
-                <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#b8a47e]/10 rounded-xl">
-                  <Sparkles className="w-4 h-4 text-[#b8a47e]" />
-                  <span className="text-[#b8a47e]/60 text-sm font-medium">Demo interactive</span>
+                <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#B9975B]/10 rounded-xl">
+                  <Sparkles className="w-4 h-4 text-[#B9975B]" />
+                  <span className="text-[#B9975B]/60 text-sm font-medium">Demo interactive</span>
                 </div>
               </div>
             </div>
 
-            <div className="p-6 max-h-[500px] overflow-y-auto bg-[#1e293b]">
+            <div className="p-6 max-h-[500px] overflow-y-auto bg-[#1B2740]">
               {activeDemo === 'workflow' && <InteractiveWorkflowDemo />}
               {activeDemo === 'signature' && <InteractiveSignatureDemo />}
               {activeDemo === 'documents' && <InteractiveDocumentDemo />}
@@ -374,7 +374,7 @@ const InteractiveDemoSection: React.FC<{ onOpenModal: () => void }> = ({ onOpenM
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={onOpenModal}
-              className="group inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-[#b8a47e] text-[#0f172a] text-sm font-medium rounded-2xl hover:bg-[#d4c6a5] hover:shadow-xl transition-all"
+              className="group inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-[#B9975B] text-[#131C2E] text-sm font-medium rounded-2xl hover:bg-[#D4B87E] hover:shadow-xl transition-all"
             >
               <Play className="w-5 h-5" />
               Decouvrir toutes les demos
@@ -430,14 +430,14 @@ const TestimonialsSection: React.FC = () => {
   }, [testimonials.length]);
 
   return (
-    <section ref={ref} className="py-32 bg-[#0f172a]">
+    <section ref={ref} className="py-32 bg-[#131C2E]">
       <div className="max-w-7xl mx-auto px-6">
         <div
           className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#b8a47e]/10 border border-[#b8a47e]/20 rounded-full mb-6">
-            <Star className="w-4 h-4 text-[#b8a47e]" />
-            <span className="text-sm font-medium text-[#b8a47e]">Temoignages</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#B9975B]/10 border border-[#B9975B]/20 rounded-full mb-6">
+            <Star className="w-4 h-4 text-[#B9975B]" />
+            <span className="text-sm font-medium text-[#B9975B]">Temoignages</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">
             Ce qu'ils disent de nous
@@ -447,13 +447,13 @@ const TestimonialsSection: React.FC = () => {
         <div
           className={`relative max-w-4xl mx-auto mb-12 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="relative bg-[#1e293b] rounded-3xl p-8 md:p-12 border border-white/5">
-            <Quote className="w-12 h-12 text-[#b8a47e]/20 mb-6" />
+          <div className="relative bg-[#1B2740] rounded-3xl p-8 md:p-12 border border-white/5">
+            <Quote className="w-12 h-12 text-[#B9975B]/20 mb-6" />
             <p className="text-xl md:text-2xl text-white/70 font-medium leading-relaxed mb-8">
               "{testimonials[activeIndex].quote}"
             </p>
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-[#b8a47e]/10 flex items-center justify-center text-[#b8a47e] text-xl font-bold">
+              <div className="w-14 h-14 rounded-2xl bg-[#B9975B]/10 flex items-center justify-center text-[#B9975B] text-xl font-bold">
                 {testimonials[activeIndex].author
                   .split(' ')
                   .map((n) => n[0])
@@ -473,7 +473,7 @@ const TestimonialsSection: React.FC = () => {
                   key={i}
                   onClick={() => setActiveIndex(i)}
                   className={`h-2 rounded-full transition-all ${
-                    i === activeIndex ? 'bg-[#b8a47e] w-8' : 'bg-white/10 w-2 hover:bg-white/20'
+                    i === activeIndex ? 'bg-[#B9975B] w-8' : 'bg-white/10 w-2 hover:bg-white/20'
                   }`}
                 />
               ))}
@@ -514,17 +514,17 @@ const IAPromotionSection: React.FC = () => {
   ];
 
   return (
-    <section ref={ref} id="proph3t" className="py-32 bg-[#080e1b]">
+    <section ref={ref} id="proph3t" className="py-32 bg-[#0D1424]">
       <div className="max-w-7xl mx-auto px-6 relative">
         <div
           className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#b8a47e]/10 border border-[#b8a47e]/20 rounded-full mb-6">
-            <Sparkles className="w-4 h-4 text-[#b8a47e]" />
-            <span className="text-sm font-medium text-[#b8a47e]">Nouveau - Option IA</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#B9975B]/10 border border-[#B9975B]/20 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-[#B9975B]" />
+            <span className="text-sm font-medium text-[#B9975B]">Nouveau - Option IA</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">
-            Decouvrez <span className="font-decorative text-[#b8a47e]">Proph3t</span>
+            Decouvrez <span className="font-decorative text-[#B9975B]">Proph3t</span>
           </h2>
           <p className="text-base text-white/40 font-light max-w-2xl mx-auto">
             Votre assistant IA intelligent pour transformer votre gestion documentaire
@@ -534,13 +534,13 @@ const IAPromotionSection: React.FC = () => {
         <div
           className={`relative transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="relative bg-[#1e293b] rounded-3xl border border-white/5 p-8 md:p-12">
+          <div className="relative bg-[#1B2740] rounded-3xl border border-white/5 p-8 md:p-12">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Features */}
               <div>
                 <div className="flex items-center gap-3 mb-8">
-                  <div className="w-14 h-14 bg-[#b8a47e] rounded-2xl flex items-center justify-center">
-                    <Sparkles className="w-7 h-7 text-[#0f172a]" />
+                  <div className="w-14 h-14 bg-[#B9975B] rounded-2xl flex items-center justify-center">
+                    <Sparkles className="w-7 h-7 text-[#131C2E]" />
                   </div>
                   <div>
                     <h3 className="text-xl font-normal text-white">Offre IA</h3>
@@ -551,8 +551,8 @@ const IAPromotionSection: React.FC = () => {
                 <div className="grid sm:grid-cols-2 gap-6">
                   {iaFeatures.map((feature, i) => (
                     <div key={i} className="group flex items-start gap-4">
-                      <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#b8a47e] transition-all duration-300">
-                        <feature.icon className="w-6 h-6 text-white/40 group-hover:text-[#0f172a] transition-colors" />
+                      <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#B9975B] transition-all duration-300">
+                        <feature.icon className="w-6 h-6 text-white/40 group-hover:text-[#131C2E] transition-colors" />
                       </div>
                       <div>
                         <h4 className="font-medium text-white mb-1">{feature.title}</h4>
@@ -565,11 +565,11 @@ const IAPromotionSection: React.FC = () => {
 
               {/* Pricing CTA */}
               <div className="lg:pl-8 lg:border-l border-white/10">
-                <div className="bg-[#0f172a] rounded-2xl p-8 border border-white/5">
+                <div className="bg-[#131C2E] rounded-2xl p-8 border border-white/5">
                   <div className="text-center mb-6">
                     <p className="text-sm font-medium text-white/40 mb-2">A partir de</p>
                     <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-3xl font-medium text-[#b8a47e]">25 000</span>
+                      <span className="text-3xl font-medium text-[#B9975B]">25 000</span>
                       <span className="text-lg text-white/40">FCFA/mois</span>
                     </div>
                     <p className="text-sm text-white/30 mt-1">Ajoute a votre plan mensuel</p>
@@ -583,8 +583,8 @@ const IAPromotionSection: React.FC = () => {
                       'Annulation flexible',
                     ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3">
-                        <div className="w-5 h-5 bg-[#b8a47e] rounded-full flex items-center justify-center flex-shrink-0">
-                          <Check className="w-3 h-3 text-[#0f172a]" />
+                        <div className="w-5 h-5 bg-[#B9975B] rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="w-3 h-3 text-[#131C2E]" />
                         </div>
                         <span className="text-sm text-white/50">{item}</span>
                       </li>
@@ -592,7 +592,7 @@ const IAPromotionSection: React.FC = () => {
                   </ul>
 
                   <a href="https://atlas-studio.org/portal?app=advist">
-                    <button className="w-full py-3.5 bg-[#b8a47e] text-[#0f172a] text-sm font-medium rounded-xl hover:bg-[#d4c6a5] transition-all flex items-center justify-center gap-2">
+                    <button className="w-full py-3.5 bg-[#B9975B] text-[#131C2E] text-sm font-medium rounded-xl hover:bg-[#D4B87E] transition-all flex items-center justify-center gap-2">
                       Souscrire a l'offre IA
                       <ArrowRight className="w-5 h-5" />
                     </button>

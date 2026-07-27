@@ -35,14 +35,14 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer id="contact" className="bg-[#0f172a]">
+    <footer id="contact" className="bg-[#131C2E]">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand column */}
           <div className="col-span-2">
             <Link to="/" className="inline-flex items-center mb-3">
-              <span className="font-decorative text-2xl text-[#b8a47e]">Advist</span>
+              <span className="font-decorative text-2xl text-[#B9975B]">Advist</span>
             </Link>
             <a
               href="https://atlas-studio.org"
@@ -65,14 +65,14 @@ export const Footer: React.FC = () => {
             <div className="space-y-3 mb-6">
               <a
                 href="mailto:contact@advist.com"
-                className="flex items-center gap-3 text-white/40 hover:text-[#b8a47e] transition-colors"
+                className="flex items-center gap-3 text-white/40 hover:text-[#B9975B] transition-colors"
               >
                 <Mail className="w-4 h-4" />
                 <span className="text-sm">contact@advist.com</span>
               </a>
               <a
                 href="tel:+2250102030405"
-                className="flex items-center gap-3 text-white/40 hover:text-[#b8a47e] transition-colors"
+                className="flex items-center gap-3 text-white/40 hover:text-[#B9975B] transition-colors"
               >
                 <Phone className="w-4 h-4" />
                 <span className="text-sm">+225 01 02 03 04 05</span>
@@ -92,9 +92,9 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-10 h-10 bg-white/5 hover:bg-[#b8a47e]/10 rounded-xl flex items-center justify-center transition-colors group"
+                  className="w-10 h-10 bg-white/5 hover:bg-[#B9975B]/10 rounded-xl flex items-center justify-center transition-colors group"
                 >
-                  <social.icon className="w-5 h-5 text-white/40 group-hover:text-[#b8a47e] transition-colors" />
+                  <social.icon className="w-5 h-5 text-white/40 group-hover:text-[#B9975B] transition-colors" />
                 </a>
               ))}
             </div>
@@ -102,7 +102,7 @@ export const Footer: React.FC = () => {
 
           {/* Links columns */}
           <div>
-            <h4 className="font-medium text-[#b8a47e] mb-4">
+            <h4 className="font-medium text-[#B9975B] mb-4">
               {t('footer.sections.product', 'Produit')}
             </h4>
             <ul className="space-y-3">
@@ -111,14 +111,14 @@ export const Footer: React.FC = () => {
                   {link.href.startsWith('#') ? (
                     <a
                       href={link.href}
-                      className="text-sm text-white/40 hover:text-[#b8a47e] transition-colors"
+                      className="text-sm text-white/40 hover:text-[#B9975B] transition-colors"
                     >
                       {link.label}
                     </a>
                   ) : (
                     <Link
                       to={link.href}
-                      className="text-sm text-white/40 hover:text-[#b8a47e] transition-colors"
+                      className="text-sm text-white/40 hover:text-[#B9975B] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -129,7 +129,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-medium text-[#b8a47e] mb-4">
+            <h4 className="font-medium text-[#B9975B] mb-4">
               {t('footer.sections.resources', 'Ressources')}
             </h4>
             <ul className="space-y-3">
@@ -139,7 +139,7 @@ export const Footer: React.FC = () => {
                     href={link.href}
                     target={(link as any).external ? '_blank' : undefined}
                     rel={(link as any).external ? 'noopener noreferrer' : undefined}
-                    className="inline-flex items-center gap-1 text-sm text-white/40 hover:text-[#b8a47e] transition-colors"
+                    className="inline-flex items-center gap-1 text-sm text-white/40 hover:text-[#B9975B] transition-colors"
                   >
                     {link.label}
                     {(link as any).external && <ArrowUpRight className="w-3 h-3" />}
@@ -150,13 +150,13 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-medium text-[#b8a47e] mb-4">Legal</h4>
+            <h4 className="font-medium text-[#B9975B] mb-4">Legal</h4>
             <ul className="space-y-3">
               {LEGAL_LINKS.map((link, i) => (
                 <li key={i}>
                   <Link
                     to={link.href}
-                    className="text-sm text-white/40 hover:text-[#b8a47e] transition-colors"
+                    className="text-sm text-white/40 hover:text-[#B9975B] transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -173,12 +173,12 @@ export const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
               <p className="text-sm text-white/30">
-                © {currentYear} <span className="font-decorative text-[#b8a47e]">Advist</span> by{' '}
+                © {currentYear} <span className="font-decorative text-[#B9975B]">Advist</span> by{' '}
                 <a
                   href="https://atlas-studio.org/applications/advist"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-decorative text-[#b8a47e]/60 hover:text-[#b8a47e] transition-colors"
+                  className="font-decorative text-[#B9975B]/60 hover:text-[#B9975B] transition-colors"
                 >
                   Atlas Studio
                 </a>
@@ -190,7 +190,7 @@ export const Footer: React.FC = () => {
                     key={i}
                     className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md"
                   >
-                    <Shield className="w-3 h-3 text-[#b8a47e]/50" />
+                    <Shield className="w-3 h-3 text-[#B9975B]/50" />
                     <span className="text-xs text-white/40">{cert}</span>
                   </div>
                 ))}
@@ -199,25 +199,25 @@ export const Footer: React.FC = () => {
 
             <div className="text-center md:text-right">
               <div className="text-xs text-white/40">
-                <span className="font-medium text-[#b8a47e]">A</span>
+                <span className="font-medium text-[#B9975B]">A</span>
                 <span>pprobation</span>
                 <span className="mx-1">·</span>
-                <span className="font-medium text-[#b8a47e]">D</span>
+                <span className="font-medium text-[#B9975B]">D</span>
                 <span>ocumentaire</span>
                 <span className="mx-1">·</span>
-                <span className="font-medium text-[#b8a47e]">V</span>
+                <span className="font-medium text-[#B9975B]">V</span>
                 <span>alidation</span>
                 <span className="mx-1">·</span>
-                <span className="font-medium text-[#b8a47e]">I</span>
+                <span className="font-medium text-[#B9975B]">I</span>
                 <span>ntégrité</span>
                 <span className="mx-1">·</span>
-                <span className="font-medium text-[#b8a47e]">S</span>
+                <span className="font-medium text-[#B9975B]">S</span>
                 <span>écurité</span>
                 <span className="mx-1">·</span>
-                <span className="font-medium text-[#b8a47e]">T</span>
+                <span className="font-medium text-[#B9975B]">T</span>
                 <span>raçabilité</span>
               </div>
-              <p className="text-[11px] text-[#b8a47e]/40 mt-1 italic">
+              <p className="text-[11px] text-[#B9975B]/40 mt-1 italic">
                 « L'avis de confiance, la trace qui sécurise. »
               </p>
             </div>

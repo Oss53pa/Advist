@@ -41,10 +41,10 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[#131C2E] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Ambient glow */}
-      <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#b8a47e]/8 to-transparent rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3" />
-      <div className="fixed top-0 right-0 w-[400px] h-[400px] bg-[#b8a47e]/4 rounded-full blur-[100px] translate-x-1/4 -translate-y-1/4" />
+      <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#B9975B]/8 to-transparent rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3" />
+      <div className="fixed top-0 right-0 w-[400px] h-[400px] bg-[#B9975B]/4 rounded-full blur-[100px] translate-x-1/4 -translate-y-1/4" />
 
       <div className="relative w-full max-w-[420px]">
         {/* Back */}
@@ -58,14 +58,14 @@ export const LoginPage: React.FC = () => {
 
         {/* Logo */}
         <div className="text-center mb-10">
-          <h1 className="font-decorative text-4xl text-[#b8a47e] mb-2">Advist</h1>
+          <h1 className="font-decorative text-4xl text-[#B9975B] mb-2">Advist</h1>
           <p className="text-[13px] text-white/25 font-medium uppercase tracking-[0.15em]">
             {t('landing.hero.subtitle', 'Gestion Documentaire')}
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-[#1e293b]/80 backdrop-blur-xl rounded-2xl border border-white/[0.06] p-8 shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
+        <div className="bg-[#1B2740]/80 backdrop-blur-xl rounded-2xl border border-white/[0.06] p-8 shadow-[0_24px_64px_rgba(0,0,0,0.4)]">
           <h2 className="text-lg font-semibold text-white mb-6">{t('auth.login')}</h2>
 
           {error && (
@@ -93,7 +93,7 @@ export const LoginPage: React.FC = () => {
                 <input
                   type="email"
                   placeholder="votre@email.com"
-                  className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#b8a47e]/40 focus:ring-1 focus:ring-[#b8a47e]/20 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#B9975B]/40 focus:ring-1 focus:ring-[#B9975B]/20 transition-all"
                   {...register('email')}
                 />
               </div>
@@ -114,7 +114,7 @@ export const LoginPage: React.FC = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t('auth.passwordPlaceholder', 'Votre mot de passe')}
-                  className="w-full pl-10 pr-12 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#b8a47e]/40 focus:ring-1 focus:ring-[#b8a47e]/20 transition-all"
+                  className="w-full pl-10 pr-12 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#B9975B]/40 focus:ring-1 focus:ring-[#B9975B]/20 transition-all"
                   {...register('password')}
                 />
                 <button
@@ -134,13 +134,13 @@ export const LoginPage: React.FC = () => {
               <label className="flex items-center gap-2.5 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-white/10 bg-white/[0.04] text-[#b8a47e] focus:ring-[#b8a47e]/30 focus:ring-offset-0"
+                  className="w-4 h-4 rounded border-white/10 bg-white/[0.04] text-[#B9975B] focus:ring-[#B9975B]/30 focus:ring-offset-0"
                 />
                 <span className="text-[13px] text-white/50">{t('auth.rememberMe')}</span>
               </label>
               <a
                 href="https://atlas-studio.org/portal/forgot-password"
-                className="text-[13px] text-[#b8a47e] hover:text-[#d4c6a5] transition-colors"
+                className="text-[13px] text-[#B9975B] hover:text-[#D4B87E] transition-colors"
               >
                 {t('auth.forgotPassword')}
               </a>
@@ -149,7 +149,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-[#b8a47e] text-[#0f172a] text-sm font-bold rounded-xl hover:bg-[#d4c6a5] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#b8a47e]/15 hover:shadow-[#b8a47e]/25"
+              className="w-full py-3 bg-[#B9975B] text-[#131C2E] text-sm font-bold rounded-xl hover:bg-[#D4B87E] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#B9975B]/15 hover:shadow-[#B9975B]/25"
             >
               {isLoading ? (
                 <svg
@@ -182,7 +182,7 @@ export const LoginPage: React.FC = () => {
             <span className="text-[13px] text-white/30">{t('auth.noAccount')}</span>{' '}
             <Link
               to="/register"
-              className="text-[13px] text-[#b8a47e] font-semibold hover:text-[#d4c6a5] transition-colors"
+              className="text-[13px] text-[#B9975B] font-semibold hover:text-[#D4B87E] transition-colors"
             >
               {t('auth.register')}
             </Link>

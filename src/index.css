@@ -15,30 +15,30 @@
 @layer base {
   :root {
     /* Midnight Banking — fond institutionnel */
-    --color-background: #f7f8fa;
-    --color-background-rgb: 247 248 250;
+    --color-background: #faf7f1;
+    --color-background-rgb: 250 247 241;
     --color-surface: #ffffff;
     --color-surface-rgb: 255 255 255;
-    --color-surface-alt: #f0f2f5;
+    --color-surface-alt: #f1ece1;
 
-    /* Navy primaire */
-    --color-primary: #0f172a;
-    --color-primary-rgb: 15 23 42;
+    /* Navy chaud primaire */
+    --color-primary: #131c2e;
+    --color-primary-rgb: 19 28 46;
 
-    /* Gold accent institutionnel */
-    --color-gold: #b8a47e;
-    --color-gold-light: #d4c6a5;
-    --color-gold-dark: #9a8561;
+    /* Laiton (brass) accent institutionnel */
+    --color-gold: #b9975b;
+    --color-gold-light: #d4b87e;
+    --color-gold-dark: #8a6c34;
 
     /* Texte */
-    --color-text-primary: #0f172a;
-    --color-text-secondary: #5e6b7d;
-    --color-text-muted: #8b95a5;
-    --color-text-label: #3d4a5c;
+    --color-text-primary: #131c2e;
+    --color-text-secondary: #78716a;
+    --color-text-muted: #a39b8f;
+    --color-text-label: #57534e;
 
     /* Bordures */
-    --color-border: #e1e5ec;
-    --color-border-dark: #c8cfd9;
+    --color-border: #e8e2d6;
+    --color-border-dark: #d8cfbf;
 
     /* Etats */
     --color-success: #10b981;
@@ -54,21 +54,21 @@
   }
 
   .dark {
-    --color-background: #080e1b;
+    --color-background: #0d1424;
     --color-background-rgb: 8 14 27;
-    --color-surface: #0f172a;
+    --color-surface: #131c2e;
     --color-surface-rgb: 15 23 42;
-    --color-surface-alt: #1e293b;
-    --color-primary: #f7f8fa;
+    --color-surface-alt: #1b2740;
+    --color-primary: #faf7f1;
     --color-primary-rgb: 247 248 250;
-    --color-gold: #d4c6a5;
-    --color-gold-light: #b8a47e;
+    --color-gold: #d4b87e;
+    --color-gold-light: #b9975b;
     --color-gold-dark: #e8dcc4;
-    --color-text-primary: #f7f8fa;
-    --color-text-secondary: #8b95a5;
-    --color-text-muted: #5e6b7d;
-    --color-text-label: #c8cfd9;
-    --color-border: #1e293b;
+    --color-text-primary: #faf7f1;
+    --color-text-secondary: #a39b8f;
+    --color-text-muted: #78716a;
+    --color-text-label: #d8cfbf;
+    --color-border: #1b2740;
     --color-border-dark: #334155;
     --color-success: #10b981;
     --color-warning: #f59e0b;
@@ -140,7 +140,7 @@
      ===================================================== */
   .advist-card {
     @apply bg-white rounded-2xl p-6;
-    border: 1px solid #e5e5e5;
+    border: 1px solid #e8e2d6;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     transition:
       transform 200ms ease,
@@ -148,8 +148,8 @@
   }
 
   .dark .advist-card {
-    background: #262626;
-    border-color: #404040;
+    background: #1b2740;
+    border-color: #26314a;
   }
 
   .advist-card:hover {
@@ -163,7 +163,7 @@
   /* Card sombre */
   .advist-card-dark {
     @apply rounded-2xl p-6 text-white;
-    background: #171717;
+    background: #131c2e;
   }
 
   /* =====================================================
@@ -171,51 +171,51 @@
      ===================================================== */
   .advist-btn-primary {
     @apply px-6 py-3 rounded-xl font-medium;
-    background: #171717;
+    background: #131c2e;
     color: white;
     transition: all 200ms ease;
   }
 
   .advist-btn-primary:hover {
-    background: #262626;
+    background: #1b2740;
   }
 
   .advist-btn-primary:active {
-    background: #0a0a0a;
+    background: #0d1424;
   }
 
   .advist-btn-secondary {
     @apply px-6 py-3 rounded-xl font-medium bg-transparent;
-    border: 1px solid #e5e5e5;
-    color: #171717;
+    border: 1px solid #e8e2d6;
+    color: #131c2e;
     transition: all 200ms ease;
   }
 
   .advist-btn-secondary:hover {
-    background: #f5f5f5;
-    border-color: #d4d4d4;
+    background: #f1ece1;
+    border-color: #d8cfbf;
   }
 
   .advist-btn-ghost {
     @apply px-6 py-3 rounded-xl font-medium bg-transparent;
-    color: #404040;
+    color: #26314a;
     transition: all 200ms ease;
   }
 
   .advist-btn-ghost:hover {
-    background: #f5f5f5;
-    color: #171717;
+    background: #f1ece1;
+    color: #131c2e;
   }
 
   .advist-btn-float {
     @apply w-10 h-10 rounded-xl flex items-center justify-center;
-    background: #171717;
+    background: #131c2e;
     color: white;
     transition: all 200ms ease;
   }
 
   .advist-btn-float:hover {
-    background: #262626;
+    background: #1b2740;
   }
 
   .advist-btn-float-danger {
@@ -234,7 +234,7 @@
      ===================================================== */
   .advist-progress {
     @apply h-2 rounded-full overflow-hidden;
-    background: #f5f5f5;
+    background: #f1ece1;
   }
 
   .advist-progress-validated {
@@ -254,7 +254,7 @@
 
   .advist-progress-pending {
     @apply h-full rounded-full;
-    background: #e5e5e5;
+    background: #e8e2d6;
   }
 
   /* =====================================================
@@ -262,8 +262,8 @@
      ===================================================== */
   .advist-badge {
     @apply px-3 py-1.5 rounded-xl text-xs font-semibold;
-    background: #f5f5f5;
-    color: #171717;
+    background: #f1ece1;
+    color: #131c2e;
   }
 
   .advist-badge-success {
@@ -292,7 +292,7 @@
 
   .advist-badge-dark {
     @apply px-3 py-1.5 rounded-xl text-xs font-semibold text-white;
-    background: #171717;
+    background: #131c2e;
   }
 
   /* Badges de severite */
@@ -329,7 +329,7 @@
   }
 
   .advist-list-item:hover {
-    background: #fafafa;
+    background: #faf7f1;
   }
 
   /* =====================================================
@@ -337,7 +337,7 @@
      ===================================================== */
   .advist-nav {
     @apply text-white;
-    background: #171717;
+    background: #131c2e;
   }
 
   .advist-nav-item {
@@ -358,12 +358,12 @@
      ===================================================== */
   .advist-kpi {
     @apply relative p-4 rounded-2xl;
-    background: #fafafa;
+    background: #faf7f1;
   }
 
   .advist-kpi-dark {
     @apply relative p-4 rounded-2xl text-white;
-    background: #171717;
+    background: #131c2e;
   }
 
   /* =====================================================
@@ -383,20 +383,20 @@
      ===================================================== */
   .advist-input {
     @apply w-full px-4 py-3 rounded-xl border bg-white;
-    border-color: #e5e5e5;
+    border-color: #e8e2d6;
     transition:
       border-color 240ms ease,
       box-shadow 240ms ease;
   }
 
   .advist-input:focus {
-    border-color: #171717;
+    border-color: #131c2e;
     outline: none;
     box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.1);
   }
 
   .advist-input::placeholder {
-    color: #a3a3a3;
+    color: #a39b8f;
   }
 }
 
@@ -407,17 +407,17 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f5f5f5;
+  background: #f1ece1;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d4;
+  background: #d8cfbf;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a3a3a3;
+  background: #a39b8f;
 }
 
 /* =====================================================
@@ -435,7 +435,7 @@
   .user-sidebar,
   .admin-sidebar,
   .modal-backdrop,
-  .print\\:hidden,
+  .print\:hidden,
   .no-print,
   [class*='Sidebar'],
   [class*='Navbar'],
@@ -575,17 +575,17 @@
   }
 
   /* Le document doit prendre toute la page */
-  .w-\\[595px\\],
-  .h-\\[842px\\] {
+  .w-\[595px\],
+  .h-\[842px\] {
     width: 100% !important;
     height: auto !important;
     min-height: auto !important;
   }
 
   /* Supprimer le fond gris du viewer */
-  .bg-\\[\\#525659\\],
-  .bg-\\[\\#3A3D40\\],
-  .bg-\\[\\#2D2D2D\\] {
+  .bg-\[\#525659\],
+  .bg-\[\#3A3D40\],
+  .bg-\[\#2D2D2D\] {
     background: white !important;
   }
 
@@ -686,7 +686,7 @@ html[lang='ar'] {
 /* =====================================================
    ACCESSIBILITY - IMPROVED CONTRAST (WCAG AA)
    ===================================================== */
-/* Improved muted text contrast - from #a3a3a3 to #6b7280 */
+/* Improved muted text contrast - from #A39B8F to #6b7280 */
 .text-muted-accessible {
   color: #6b7280;
 }
@@ -720,7 +720,7 @@ html.dark textarea::placeholder {
 
 /* Focus indicators for better accessibility */
 :focus-visible {
-  outline: 2px solid #171717;
+  outline: 2px solid #131c2e;
   outline-offset: 2px;
 }
 
@@ -733,7 +733,7 @@ html.dark :focus-visible {
   position: absolute;
   top: -40px;
   left: 0;
-  background: #171717;
+  background: #131c2e;
   color: white;
   padding: 8px 16px;
   z-index: 100;
@@ -753,72 +753,72 @@ html.dark {
 }
 
 html.dark .advist-card {
-  background: #262626;
-  border-color: #404040;
+  background: #1b2740;
+  border-color: #26314a;
 }
 
 html.dark .advist-btn-secondary {
-  border-color: #404040;
-  color: #f5f5f5;
+  border-color: #26314a;
+  color: #f1ece1;
 }
 
 html.dark .advist-btn-secondary:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: #525252;
+  border-color: #57534e;
 }
 
 html.dark .advist-progress {
-  background: #404040;
+  background: #26314a;
 }
 
 html.dark .advist-badge {
-  background: #404040;
-  color: #f5f5f5;
+  background: #26314a;
+  color: #f1ece1;
 }
 
 html.dark .advist-list-item:hover {
-  background: #262626;
+  background: #1b2740;
 }
 
 html.dark ::-webkit-scrollbar-track {
-  background: #262626;
+  background: #1b2740;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-  background: #525252;
+  background: #57534e;
 }
 
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #737373;
+  background: #78716a;
 }
 
 html.dark input,
 html.dark textarea,
 html.dark select {
-  background-color: #262626;
-  border-color: #404040;
+  background-color: #1b2740;
+  border-color: #26314a;
   color: #ffffff;
 }
 
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-  color: #737373;
+  color: #78716a;
 }
 
 html.dark input:focus,
 html.dark textarea:focus,
 html.dark select:focus {
-  border-color: #525252;
+  border-color: #57534e;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
 html.dark .bg-white {
-  background-color: #262626 !important;
+  background-color: #1b2740 !important;
 }
 
 html.dark .bg-primary-50,
 html.dark .bg-primary-100 {
-  background-color: #171717 !important;
+  background-color: #131c2e !important;
 }
 
 html.dark .text-primary-900 {
@@ -827,17 +827,17 @@ html.dark .text-primary-900 {
 
 html.dark .text-primary-700,
 html.dark .text-primary-600 {
-  color: #a3a3a3 !important;
+  color: #a39b8f !important;
 }
 
 html.dark .text-primary-500 {
-  color: #737373 !important;
+  color: #78716a !important;
 }
 
 html.dark .border-primary-100,
 html.dark .border-primary-200,
 html.dark .border-primary-300 {
-  border-color: #404040 !important;
+  border-color: #26314a !important;
 }
 
 /* =====================================================
@@ -849,38 +849,38 @@ html.dark .border-primary-300 {
    own dark navy hero (rendered outside this scope).
 
    Official palette (user reference card):
-     bg          #f7f8fa   page background
+     bg          #FAF7F1   page background
      surface     #ffffff   card / panel
-     border      #e1e5ec   subtle separators
-     accent gold #b8a47e   secondary CTAs, highlights
-     primary     #0f172a   text + primary CTA
+     border      #E8E2D6   subtle separators
+     accent gold #B9975B   secondary CTAs, highlights
+     primary     #131C2E   text + primary CTA
    ===================================================== */
 
 body.theme-midnight {
-  --color-background: #f7f8fa;
+  --color-background: #faf7f1;
   --color-surface: #ffffff;
-  --color-surface-alt: #f0f2f5;
-  --color-primary: #0f172a;
-  --color-gold: #b8a47e;
-  --color-gold-light: #d4c6a5;
-  --color-gold-dark: #9a8561;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #5e6b7d;
-  --color-text-muted: #8b95a5;
-  --color-text-label: #3d4a5c;
-  --color-border: #e1e5ec;
-  --color-border-dark: #c8cfd9;
+  --color-surface-alt: #f1ece1;
+  --color-primary: #131c2e;
+  --color-gold: #b9975b;
+  --color-gold-light: #d4b87e;
+  --color-gold-dark: #8a6c34;
+  --color-text-primary: #131c2e;
+  --color-text-secondary: #78716a;
+  --color-text-muted: #a39b8f;
+  --color-text-label: #57534e;
+  --color-border: #e8e2d6;
+  --color-border-dark: #d8cfbf;
 
-  background-color: #f7f8fa !important;
+  background-color: #faf7f1 !important;
   background-image: none !important;
-  color: #0f172a;
+  color: #131c2e;
   color-scheme: light;
 }
 
 body.theme-midnight main,
 body.theme-midnight .bg-page,
 body.theme-midnight .min-h-screen {
-  background-color: #f7f8fa !important;
+  background-color: #faf7f1 !important;
   background-image: none !important;
 }
 
@@ -897,7 +897,7 @@ body.theme-midnight .bg-advist-surface-dark,
 body.theme-midnight .bg-gray-50,
 body.theme-midnight .bg-slate-50,
 body.theme-midnight .bg-neutral-50 {
-  background-color: #f0f2f5 !important;
+  background-color: #f1ece1 !important;
 }
 
 /* Primary CTA — navy with white text */
@@ -905,32 +905,32 @@ body.theme-midnight .bg-primary-900,
 body.theme-midnight .bg-primary-950,
 body.theme-midnight .bg-advist-dark,
 body.theme-midnight .bg-advist-navy {
-  background-color: #0f172a !important;
+  background-color: #131c2e !important;
   color: #ffffff !important;
 }
 
 body.theme-midnight .hover\:bg-primary-900:hover,
 body.theme-midnight .hover\:bg-primary-800:hover,
 body.theme-midnight .hover\:bg-advist-dark-hover:hover {
-  background-color: #1e293b !important;
+  background-color: #1b2740 !important;
   color: #ffffff !important;
 }
 
 /* Gold accent surfaces */
 body.theme-midnight .bg-advist-gold {
-  background-color: #b8a47e !important;
-  color: #0f172a !important;
+  background-color: #b9975b !important;
+  color: #131c2e !important;
 }
 
 body.theme-midnight .text-advist-gold,
 body.theme-midnight .text-advist-accent {
-  color: #b8a47e !important;
+  color: #b9975b !important;
 }
 
 body.theme-midnight .bg-advist-gold-light\/20,
 body.theme-midnight .bg-advist-gold\/10 {
   background-color: rgba(184, 164, 126, 0.18) !important;
-  color: #9a8561 !important;
+  color: #8a6c34 !important;
 }
 
 /* Text scale — institutional navy gradient */
@@ -938,7 +938,7 @@ body.theme-midnight .text-primary-900,
 body.theme-midnight .text-advist-dark,
 body.theme-midnight .text-advist-gray900,
 body.theme-midnight .text-black {
-  color: #0f172a !important;
+  color: #131c2e !important;
 }
 
 body.theme-midnight .text-primary-700,
@@ -948,7 +948,7 @@ body.theme-midnight .text-advist-gray700,
 body.theme-midnight .text-advist-gray600,
 body.theme-midnight .text-gray-700,
 body.theme-midnight .text-gray-600 {
-  color: #5e6b7d !important;
+  color: #78716a !important;
 }
 
 body.theme-midnight .text-primary-500,
@@ -958,10 +958,10 @@ body.theme-midnight .text-advist-gray500,
 body.theme-midnight .text-advist-gray400,
 body.theme-midnight .text-gray-500,
 body.theme-midnight .text-gray-400 {
-  color: #8b95a5 !important;
+  color: #a39b8f !important;
 }
 
-/* Borders — hairline #e1e5ec */
+/* Borders — hairline #E8E2D6 */
 body.theme-midnight .border,
 body.theme-midnight .border-t,
 body.theme-midnight .border-b,
@@ -976,13 +976,13 @@ body.theme-midnight .border-gray-100,
 body.theme-midnight .border-gray-200,
 body.theme-midnight .border-slate-100,
 body.theme-midnight .border-slate-200 {
-  border-color: #e1e5ec !important;
+  border-color: #e8e2d6 !important;
 }
 
 body.theme-midnight .border-primary-300,
 body.theme-midnight .border-advist-border-dark,
 body.theme-midnight .border-gray-300 {
-  border-color: #c8cfd9 !important;
+  border-color: #d8cfbf !important;
 }
 
 /* Cards — premium elevated panels: hairline border + layered depth so
@@ -1015,19 +1015,19 @@ body.theme-midnight input,
 body.theme-midnight textarea,
 body.theme-midnight select {
   background-color: #ffffff !important;
-  border-color: #e1e5ec !important;
-  color: #0f172a !important;
+  border-color: #e8e2d6 !important;
+  color: #131c2e !important;
 }
 
 body.theme-midnight input::placeholder,
 body.theme-midnight textarea::placeholder {
-  color: #8b95a5 !important;
+  color: #a39b8f !important;
 }
 
 body.theme-midnight input:focus,
 body.theme-midnight textarea:focus,
 body.theme-midnight select:focus {
-  border-color: #0f172a !important;
+  border-color: #131c2e !important;
   box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08) !important;
 }
 
@@ -1051,5 +1051,5 @@ body.theme-midnight .bg-advist-info-light {
 
 /* Focus outline uses the institutional navy */
 body.theme-midnight :focus-visible {
-  outline-color: #0f172a;
+  outline-color: #131c2e;
 }

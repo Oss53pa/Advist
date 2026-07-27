@@ -21,11 +21,11 @@ export const FeaturesSection: React.FC = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   return (
-    <section ref={ref} id="features" className="py-32 bg-[#080e1b] relative overflow-hidden">
+    <section ref={ref} id="features" className="py-32 bg-[#0D1424] relative overflow-hidden">
       {/* Subtle background */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#b8a47e]/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#b8a47e]/10 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#B9975B]/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#B9975B]/10 to-transparent" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6">
@@ -33,14 +33,14 @@ export const FeaturesSection: React.FC = () => {
         <div
           className={`text-center mb-20 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#b8a47e]/10 border border-[#b8a47e]/20 rounded-full mb-6">
-            <Sparkles className="w-4 h-4 text-[#b8a47e]" />
-            <span className="text-sm font-medium text-[#b8a47e]">Fonctionnalites</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#B9975B]/10 border border-[#B9975B]/20 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-[#B9975B]" />
+            <span className="text-sm font-medium text-[#B9975B]">Fonctionnalites</span>
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-6 tracking-tight">
             Tout ce dont vous avez
             <br />
-            <span className="text-[#b8a47e]">besoin pour reussir</span>
+            <span className="text-[#B9975B]">besoin pour reussir</span>
           </h2>
           <p className="text-base text-white/40 font-light max-w-2xl mx-auto">
             Une plateforme complete pour digitaliser et automatiser vos processus documentaires
@@ -57,13 +57,13 @@ export const FeaturesSection: React.FC = () => {
             onMouseEnter={() => setHoveredCard(0)}
             onMouseLeave={() => setHoveredCard(null)}
           >
-            <div className="absolute inset-0 bg-[#1e293b]" />
+            <div className="absolute inset-0 bg-[#1B2740]" />
 
             <div className="relative p-8 md:p-12 h-full flex flex-col justify-between min-h-[500px]">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#b8a47e]/10 backdrop-blur rounded-full mb-6">
-                  <FileText className="w-4 h-4 text-[#b8a47e]" />
-                  <span className="text-sm font-medium text-[#b8a47e]">Gestion documentaire</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#B9975B]/10 backdrop-blur rounded-full mb-6">
+                  <FileText className="w-4 h-4 text-[#B9975B]" />
+                  <span className="text-sm font-medium text-[#B9975B]">Gestion documentaire</span>
                 </div>
 
                 <h3 className="text-2xl md:text-3xl font-light text-white mb-4">
@@ -97,14 +97,14 @@ export const FeaturesSection: React.FC = () => {
                         className={`flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer ${hoveredCard === 0 ? 'animate-fade-in' : ''}`}
                         style={{ animationDelay: `${i * 100}ms` }}
                       >
-                        <div className="w-10 h-10 bg-[#b8a47e]/10 rounded-lg flex items-center justify-center">
-                          <FileText className="w-5 h-5 text-[#b8a47e]/50" />
+                        <div className="w-10 h-10 bg-[#B9975B]/10 rounded-lg flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-[#B9975B]/50" />
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-medium text-white/90">{doc.name}</p>
                           <p className="text-xs text-white/30">Modifie il y a 2h</p>
                         </div>
-                        <div className="w-2 h-2 bg-[#b8a47e]/30 rounded-full" />
+                        <div className="w-2 h-2 bg-[#B9975B]/30 rounded-full" />
                       </div>
                     ))}
                   </div>
@@ -116,7 +116,7 @@ export const FeaturesSection: React.FC = () => {
                 {['Versioning auto', 'OCR integre', 'Full-text search', 'Tags'].map((tag, i) => (
                   <span
                     key={i}
-                    className="px-3 py-1.5 bg-[#b8a47e]/10 rounded-full text-xs font-medium text-[#b8a47e]/70"
+                    className="px-3 py-1.5 bg-[#B9975B]/10 rounded-full text-xs font-medium text-[#B9975B]/70"
                   >
                     {tag}
                   </span>
@@ -127,15 +127,15 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Workflows Card */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1e293b] transition-all duration-700 delay-100 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1B2740] transition-all duration-700 delay-100 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
             onMouseEnter={() => setHoveredCard(1)}
             onMouseLeave={() => setHoveredCard(null)}
           >
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[280px]">
-              <div className="w-12 h-12 bg-[#b8a47e] rounded-xl flex items-center justify-center mb-4">
-                <GitBranch className="w-6 h-6 text-[#0f172a]" />
+              <div className="w-12 h-12 bg-[#B9975B] rounded-xl flex items-center justify-center mb-4">
+                <GitBranch className="w-6 h-6 text-[#131C2E]" />
               </div>
               <h3 className="text-lg font-medium text-white mb-2">Workflows sur mesure</h3>
               <p className="text-sm text-white/40 mb-auto">
@@ -148,13 +148,13 @@ export const FeaturesSection: React.FC = () => {
                   <React.Fragment key={i}>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                        i < 2 ? 'bg-[#b8a47e] text-[#0f172a]' : 'bg-white/10 text-white/40'
+                        i < 2 ? 'bg-[#B9975B] text-[#131C2E]' : 'bg-white/10 text-white/40'
                       }`}
                     >
                       {i < 2 ? <Check className="w-4 h-4" /> : i + 1}
                     </div>
                     {i < 2 && (
-                      <div className={`w-8 h-0.5 ${i < 1 ? 'bg-[#b8a47e]' : 'bg-white/20'}`} />
+                      <div className={`w-8 h-0.5 ${i < 1 ? 'bg-[#B9975B]' : 'bg-white/20'}`} />
                     )}
                   </React.Fragment>
                 ))}
@@ -164,13 +164,13 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Signature Card */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#0f172a] border border-[#b8a47e]/10 transition-all duration-700 delay-200 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#131C2E] border border-[#B9975B]/10 transition-all duration-700 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[280px]">
-              <div className="w-12 h-12 bg-[#b8a47e]/10 rounded-xl flex items-center justify-center mb-4">
-                <PenTool className="w-6 h-6 text-[#b8a47e]" />
+              <div className="w-12 h-12 bg-[#B9975B]/10 rounded-xl flex items-center justify-center mb-4">
+                <PenTool className="w-6 h-6 text-[#B9975B]" />
               </div>
               <h3 className="text-lg font-medium text-white mb-2">Signature electronique</h3>
               <p className="text-sm text-white/40 mb-auto">
@@ -190,8 +190,8 @@ export const FeaturesSection: React.FC = () => {
                   />
                 </svg>
                 <div className="flex items-center gap-2 mt-2">
-                  <Lock className="w-3 h-3 text-[#b8a47e]/40" />
-                  <span className="text-xs text-[#b8a47e]/40">Certifie eIDAS</span>
+                  <Lock className="w-3 h-3 text-[#B9975B]/40" />
+                  <span className="text-xs text-[#B9975B]/40">Certifie eIDAS</span>
                 </div>
               </div>
             </div>
@@ -199,16 +199,16 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Stats Row */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1e293b] transition-all duration-700 delay-300 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1B2740] transition-all duration-700 delay-300 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[200px]">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-[#b8a47e] rounded-xl flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-[#0f172a]" />
+                <div className="w-12 h-12 bg-[#B9975B] rounded-xl flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-[#131C2E]" />
                 </div>
-                <TrendingUp className="w-6 h-6 text-[#b8a47e]/40" />
+                <TrendingUp className="w-6 h-6 text-[#B9975B]/40" />
               </div>
               <h3 className="text-lg font-medium text-white mb-1">Analytics temps reel</h3>
               <p className="text-sm text-white/40 mb-auto">KPIs et tableaux de bord</p>
@@ -217,7 +217,7 @@ export const FeaturesSection: React.FC = () => {
                 {[40, 65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 80].map((h, i) => (
                   <div
                     key={i}
-                    className="flex-1 bg-[#b8a47e]/20 rounded-t transition-all duration-500 group-hover:bg-[#b8a47e]/40"
+                    className="flex-1 bg-[#B9975B]/20 rounded-t transition-all duration-500 group-hover:bg-[#B9975B]/40"
                     style={{ height: `${h}%` }}
                   />
                 ))}
@@ -227,12 +227,12 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Mobile App Card */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#0f172a] border border-white/5 transition-all duration-700 delay-400 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#131C2E] border border-white/5 transition-all duration-700 delay-400 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             <div className="absolute top-4 right-4">
-              <span className="px-2 py-1 bg-[#b8a47e]/10 rounded-full text-xs font-medium text-[#b8a47e]">
+              <span className="px-2 py-1 bg-[#B9975B]/10 rounded-full text-xs font-medium text-[#B9975B]">
                 À VENIR
               </span>
             </div>
@@ -256,13 +256,13 @@ export const FeaturesSection: React.FC = () => {
 
           {/* Security Card */}
           <div
-            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1e293b] transition-all duration-700 delay-500 ${
+            className={`col-span-12 md:col-span-4 group relative rounded-3xl overflow-hidden bg-[#1B2740] transition-all duration-700 delay-500 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             <div className="relative p-6 md:p-8 h-full flex flex-col min-h-[200px]">
-              <div className="w-12 h-12 bg-[#b8a47e] rounded-xl flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-[#0f172a]" />
+              <div className="w-12 h-12 bg-[#B9975B] rounded-xl flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-[#131C2E]" />
               </div>
               <h3 className="text-lg font-medium text-white mb-1">Securite maximale</h3>
               <p className="text-sm text-white/40">Chiffrement AES-256, detection fraude IA</p>
@@ -271,7 +271,7 @@ export const FeaturesSection: React.FC = () => {
                 {['AES-256', 'ISO 27001', 'RGPD'].map((badge, i) => (
                   <span
                     key={i}
-                    className="px-2 py-1 bg-[#b8a47e]/10 rounded text-xs text-[#b8a47e]/70"
+                    className="px-2 py-1 bg-[#B9975B]/10 rounded text-xs text-[#B9975B]/70"
                   >
                     {badge}
                   </span>
@@ -286,7 +286,7 @@ export const FeaturesSection: React.FC = () => {
           className={`mt-16 text-center transition-all duration-700 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <a href="https://atlas-studio.org/portal?app=advist">
-            <button className="group inline-flex items-center gap-3 px-7 py-3.5 bg-[#b8a47e] text-[#0f172a] text-sm font-medium rounded-full hover:bg-[#d4c6a5] transition-all hover:shadow-[0_0_40px_8px_rgba(200,169,97,0.15)]">
+            <button className="group inline-flex items-center gap-3 px-7 py-3.5 bg-[#B9975B] text-[#131C2E] text-sm font-medium rounded-full hover:bg-[#D4B87E] transition-all hover:shadow-[0_0_40px_8px_rgba(200,169,97,0.15)]">
               Decouvrir toutes les fonctionnalites
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>

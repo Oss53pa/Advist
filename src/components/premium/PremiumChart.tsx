@@ -23,7 +23,7 @@ interface PremiumChartProps {
   title?: string;
   subtitle?: string;
   height?: number;
-  color?: string; // default: gold #b8a47e
+  color?: string; // default: gold #B9975B
   secondaryDataKey?: string;
   secondaryColor?: string;
   showGrid?: boolean;
@@ -33,7 +33,7 @@ interface PremiumChartProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl px-3 py-2 bg-[#0f172a] dark:bg-[#1e293b] border border-[#1e293b] shadow-xl">
+    <div className="rounded-xl px-3 py-2 bg-[#131C2E] dark:bg-[#1B2740] border border-[#1B2740] shadow-xl">
       <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
         {label}
       </p>
@@ -54,9 +54,9 @@ export const PremiumChart: React.FC<PremiumChartProps> = ({
   title,
   subtitle,
   height = 280,
-  color = '#b8a47e',
+  color = '#B9975B',
   secondaryDataKey,
-  secondaryColor = '#0f172a',
+  secondaryColor = '#131C2E',
   showGrid = true,
   className = '',
 }) => {

@@ -14,11 +14,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#0f172a] text-white hover:bg-[#1e293b] focus:ring-[#0f172a]/20 shadow-sm hover:shadow-md',
-  secondary: 'bg-[#f7f8fa] text-[#0f172a] hover:bg-[#e1e5ec] focus:ring-[#e1e5ec]',
+    'bg-[#131C2E] text-white hover:bg-[#1B2740] focus:ring-[#131C2E]/20 shadow-sm hover:shadow-md',
+  secondary: 'bg-[#FAF7F1] text-[#131C2E] hover:bg-[#E8E2D6] focus:ring-[#E8E2D6]',
   outline:
-    'border border-[#e1e5ec] text-[#0f172a] hover:bg-[#f7f8fa] hover:border-[#c8cfd9] focus:ring-[#e1e5ec]',
-  ghost: 'text-[#0f172a] hover:bg-[#f7f8fa] focus:ring-[#e1e5ec]',
+    'border border-[#E8E2D6] text-[#131C2E] hover:bg-[#FAF7F1] hover:border-[#D8CFBF] focus:ring-[#E8E2D6]',
+  ghost: 'text-[#131C2E] hover:bg-[#FAF7F1] focus:ring-[#E8E2D6]',
   danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500/20 shadow-sm',
 };
 
@@ -109,10 +109,10 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
       className={`
         ${floatingSizeStyles[size]}
         rounded-full flex items-center justify-center
-        ${variant === 'danger' ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-[#0f172a] text-white hover:bg-[#1e293b]'}
+        ${variant === 'danger' ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-[#131C2E] text-white hover:bg-[#1B2740]'}
         shadow-lg transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-offset-2
-        ${variant === 'danger' ? 'focus:ring-red-500/20' : 'focus:ring-[#0f172a]/20'}
+        ${variant === 'danger' ? 'focus:ring-red-500/20' : 'focus:ring-[#131C2E]/20'}
         ${className}
       `}
       {...props}

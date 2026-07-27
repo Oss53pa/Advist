@@ -14,13 +14,13 @@ describe('Button', () => {
   it('applies primary variant by default', () => {
     render(<Button>Primary</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-[#0f172a]');
+    expect(button).toHaveClass('bg-[#131C2E]');
   });
 
   it('applies secondary variant styles', () => {
     render(<Button variant="secondary">Secondary</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-[#f7f8fa]');
+    expect(button).toHaveClass('bg-[#FAF7F1]');
   });
 
   it('applies outline variant styles', () => {
@@ -32,7 +32,7 @@ describe('Button', () => {
   it('applies ghost variant styles', () => {
     render(<Button variant="ghost">Ghost</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('hover:bg-[#f7f8fa]');
+    expect(button).toHaveClass('hover:bg-[#FAF7F1]');
   });
 
   it('applies danger variant styles', () => {
@@ -148,7 +148,7 @@ describe('FloatingButton', () => {
   it('applies default variant styles', () => {
     render(<FloatingButton>+</FloatingButton>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-[#0f172a]');
+    expect(button).toHaveClass('bg-[#131C2E]');
   });
 
   it('applies danger variant styles', () => {

@@ -371,9 +371,9 @@ export const Dashboard: React.FC = () => {
                   { label: 'En attente', value: pendingCount },
                   { label: 'Approuves', value: approvedCount },
                 ].map((stat, i) => (
-                  <div key={i} className="bg-white rounded-2xl p-6 border border-[#e1e5ec]">
-                    <p className="text-sm font-medium text-[#5e6b7d]">{stat.label}</p>
-                    <p className="text-4xl font-bold text-[#0f172a]">{stat.value}</p>
+                  <div key={i} className="bg-white rounded-2xl p-6 border border-[#E8E2D6]">
+                    <p className="text-sm font-medium text-[#78716A]">{stat.label}</p>
+                    <p className="text-4xl font-bold text-[#131C2E]">{stat.value}</p>
                   </div>
                 ))}
               </div>
@@ -392,10 +392,10 @@ export const Dashboard: React.FC = () => {
                   flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200
                   ${
                     blocked
-                      ? 'bg-[#e1e5ec] text-[#8b95a5] cursor-not-allowed'
+                      ? 'bg-[#E8E2D6] text-[#A39B8F] cursor-not-allowed'
                       : isNewDoc
-                        ? 'bg-[#0f172a] text-white hover:bg-[#1e293b] shadow-lg shadow-[#0f172a]/15'
-                        : 'bg-white text-[#0f172a] border border-[#e1e5ec] hover:border-[#b8a47e] hover:shadow-md'
+                        ? 'bg-[#131C2E] text-white hover:bg-[#1B2740] shadow-lg shadow-[#131C2E]/15'
+                        : 'bg-white text-[#131C2E] border border-[#E8E2D6] hover:border-[#B9975B] hover:shadow-md'
                   }
                 `}
               >
@@ -444,34 +444,34 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Pending Tasks - 2 columns */}
         <div className="xl:col-span-2">
-          <div className="bg-white rounded-2xl border border-[#e1e5ec] overflow-hidden shadow-card">
-            <div className="flex items-center justify-between p-6 border-b border-[#e1e5ec]">
+          <div className="bg-white rounded-2xl border border-[#E8E2D6] overflow-hidden shadow-card">
+            <div className="flex items-center justify-between p-6 border-b border-[#E8E2D6]">
               <div>
-                <h2 className="text-lg font-bold text-[#0f172a]">
+                <h2 className="text-lg font-bold text-[#131C2E]">
                   {t('dashboard.pendingTasks', 'Taches en attente')}
                 </h2>
-                <p className="text-sm text-[#5e6b7d] mt-0.5">
+                <p className="text-sm text-[#78716A] mt-0.5">
                   {pendingTasks.length}{' '}
                   {t('dashboard.tasksRequireAttention', 'taches necessitent votre attention')}
                 </p>
               </div>
               <Link
                 to={`${basePath}/workflows`}
-                className="flex items-center gap-1.5 text-sm font-semibold text-[#0f172a] hover:text-[#b8a47e] transition-colors"
+                className="flex items-center gap-1.5 text-sm font-semibold text-[#131C2E] hover:text-[#B9975B] transition-colors"
               >
                 {t('dashboard.viewAll', 'Voir tout')}
                 <ArrowRight size={14} />
               </Link>
             </div>
 
-            <div className="divide-y divide-[#e1e5ec]">
+            <div className="divide-y divide-[#E8E2D6]">
               {pendingTasks.map((task) => {
                 const urgency = getDeadlineUrgency(task.deadline);
                 return (
                   <button
                     key={task.id}
                     onClick={() => handleTaskClick(task)}
-                    className="w-full flex items-center gap-4 p-5 hover:bg-[#f7f8fa] transition-all duration-200 text-left group"
+                    className="w-full flex items-center gap-4 p-5 hover:bg-[#FAF7F1] transition-all duration-200 text-left group"
                   >
                     {/* Priority bar */}
                     <div
@@ -479,14 +479,14 @@ export const Dashboard: React.FC = () => {
                         task.priority === 'high'
                           ? 'bg-red-500'
                           : task.priority === 'medium'
-                            ? 'bg-[#b8a47e]'
+                            ? 'bg-[#B9975B]'
                             : 'bg-emerald-500'
                       }`}
                     />
                     <Avatar name={task.assignedBy.name} size="md" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-[#0f172a] truncate">{task.document}</p>
+                        <p className="font-semibold text-[#131C2E] truncate">{task.document}</p>
                         <Badge
                           variant={
                             task.type === 'signature'
@@ -503,7 +503,7 @@ export const Dashboard: React.FC = () => {
                           {task.typeLabel}
                         </Badge>
                       </div>
-                      <p className="text-sm text-[#5e6b7d] mt-1">
+                      <p className="text-sm text-[#78716A] mt-1">
                         {t('dashboard.assignedBy', 'Assigne par')} {task.assignedBy.name}
                       </p>
                     </div>
@@ -513,7 +513,7 @@ export const Dashboard: React.FC = () => {
                           ? 'bg-red-50 text-red-600'
                           : urgency === 'soon'
                             ? 'bg-amber-50 text-amber-700'
-                            : 'bg-[#f7f8fa] text-[#5e6b7d]'
+                            : 'bg-[#FAF7F1] text-[#78716A]'
                       }`}
                     >
                       <Calendar size={12} />
@@ -521,7 +521,7 @@ export const Dashboard: React.FC = () => {
                     </div>
                     <ChevronRight
                       size={18}
-                      className="text-[#8b95a5] group-hover:text-[#0f172a] transition-colors"
+                      className="text-[#A39B8F] group-hover:text-[#131C2E] transition-colors"
                     />
                   </button>
                 );
@@ -533,10 +533,10 @@ export const Dashboard: React.FC = () => {
                 <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <CheckCircle size={28} className="text-emerald-500" />
                 </div>
-                <p className="text-[#0f172a] font-semibold">
+                <p className="text-[#131C2E] font-semibold">
                   {t('dashboard.allCaughtUp', 'Vous etes a jour !')}
                 </p>
-                <p className="text-sm text-[#5e6b7d] mt-1">
+                <p className="text-sm text-[#78716A] mt-1">
                   {t('dashboard.noTasksPending', 'Aucune tache en attente')}
                 </p>
               </div>
@@ -548,16 +548,16 @@ export const Dashboard: React.FC = () => {
         <div className="space-y-5">
           {/* Urgent Alert */}
           {pendingTasks.some((t) => getDeadlineUrgency(t.deadline) === 'urgent') && (
-            <div className="bg-gradient-to-r from-[#f5f0e8] to-amber-50/50 rounded-2xl p-5 border border-[#b8a47e]/30">
+            <div className="bg-gradient-to-r from-[#F5EDDD] to-amber-50/50 rounded-2xl p-5 border border-[#B9975B]/30">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-[#b8a47e] rounded-xl flex-shrink-0">
+                <div className="p-2 bg-[#B9975B] rounded-xl flex-shrink-0">
                   <Zap size={18} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#0f172a] text-sm">
+                  <h3 className="font-bold text-[#131C2E] text-sm">
                     {t('dashboard.urgentAttention', 'Attention urgente')}
                   </h3>
-                  <p className="text-xs text-[#5e6b7d] mt-1 leading-relaxed">
+                  <p className="text-xs text-[#78716A] mt-1 leading-relaxed">
                     {t(
                       'dashboard.urgentTasksCount',
                       'Taches dont la date limite approche dans les 24h'
@@ -569,35 +569,35 @@ export const Dashboard: React.FC = () => {
           )}
 
           {/* Recent Documents */}
-          <div className="bg-white rounded-2xl border border-[#e1e5ec] overflow-hidden shadow-card">
-            <div className="flex items-center justify-between p-5 border-b border-[#e1e5ec]">
-              <h2 className="text-sm font-bold text-[#0f172a]">
+          <div className="bg-white rounded-2xl border border-[#E8E2D6] overflow-hidden shadow-card">
+            <div className="flex items-center justify-between p-5 border-b border-[#E8E2D6]">
+              <h2 className="text-sm font-bold text-[#131C2E]">
                 {t('dashboard.recentDocuments', 'Documents recents')}
               </h2>
               <Link
                 to={`${basePath}/documents`}
-                className="p-2 hover:bg-[#f7f8fa] rounded-xl transition-colors"
+                className="p-2 hover:bg-[#FAF7F1] rounded-xl transition-colors"
               >
-                <ArrowRight size={16} className="text-[#0f172a]" />
+                <ArrowRight size={16} className="text-[#131C2E]" />
               </Link>
             </div>
 
-            <div className="divide-y divide-[#e1e5ec]">
+            <div className="divide-y divide-[#E8E2D6]">
               {recentDocuments.slice(0, 4).map((doc) => (
                 <Link
                   key={doc.id}
                   to={`${basePath}/documents/${doc.id}`}
-                  className="flex items-center gap-3 p-4 hover:bg-[#f7f8fa] transition-colors group"
+                  className="flex items-center gap-3 p-4 hover:bg-[#FAF7F1] transition-colors group"
                 >
-                  <div className="p-2 bg-[#f7f8fa] rounded-xl group-hover:bg-[#0f172a] transition-colors">
+                  <div className="p-2 bg-[#FAF7F1] rounded-xl group-hover:bg-[#131C2E] transition-colors">
                     <FileText
                       size={16}
-                      className="text-[#5e6b7d] group-hover:text-[#b8a47e] transition-colors"
+                      className="text-[#78716A] group-hover:text-[#B9975B] transition-colors"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[#0f172a] text-sm truncate">{doc.title}</p>
-                    <p className="text-[11px] text-[#8b95a5] mt-0.5">
+                    <p className="font-semibold text-[#131C2E] text-sm truncate">{doc.title}</p>
+                    <p className="text-[11px] text-[#A39B8F] mt-0.5">
                       {doc.type} &middot; {formatDate(doc.date)}
                     </p>
                   </div>
@@ -608,7 +608,7 @@ export const Dashboard: React.FC = () => {
 
             <Link
               to={`${basePath}/documents`}
-              className="flex items-center justify-center gap-2 p-4 text-xs font-semibold text-[#0f172a] hover:text-[#b8a47e] hover:bg-[#f7f8fa] transition-colors border-t border-[#e1e5ec]"
+              className="flex items-center justify-center gap-2 p-4 text-xs font-semibold text-[#131C2E] hover:text-[#B9975B] hover:bg-[#FAF7F1] transition-colors border-t border-[#E8E2D6]"
             >
               {t('dashboard.viewAllDocuments', 'Voir tous les documents')}
               <ArrowRight size={14} />
@@ -616,12 +616,12 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {/* Activity Summary — Midnight panel */}
-          <div className="bg-[#0f172a] rounded-2xl p-5 shadow-elevated">
+          <div className="bg-[#131C2E] rounded-2xl p-5 shadow-elevated">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-white">
                 {t('dashboard.todayActivity', 'Activite du jour')}
               </h3>
-              <Sparkles size={16} className="text-[#b8a47e]" />
+              <Sparkles size={16} className="text-[#B9975B]" />
             </div>
             <MiniMetricStack metrics={activityMetrics} columns={3} />
           </div>
@@ -647,37 +647,37 @@ export const Dashboard: React.FC = () => {
       >
         {showTaskDetail && (
           <div className="space-y-6">
-            <div className="flex items-start gap-4 p-4 bg-[#f7f8fa] rounded-xl">
-              <div className="p-3 bg-white rounded-xl border border-[#e1e5ec]">
-                <FileText size={22} className="text-[#0f172a]" />
+            <div className="flex items-start gap-4 p-4 bg-[#FAF7F1] rounded-xl">
+              <div className="p-3 bg-white rounded-xl border border-[#E8E2D6]">
+                <FileText size={22} className="text-[#131C2E]" />
               </div>
               <div>
-                <p className="font-bold text-[#0f172a]">{showTaskDetail.document}</p>
-                <p className="text-sm text-[#5e6b7d] mt-1">
+                <p className="font-bold text-[#131C2E]">{showTaskDetail.document}</p>
+                <p className="text-sm text-[#78716A] mt-1">
                   {t('dashboard.assignedBy', 'Assigne par')} {showTaskDetail.assignedBy.name}
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-[#f7f8fa] rounded-xl">
-                <p className="text-[10px] text-[#8b95a5] uppercase tracking-wider font-bold">
+              <div className="p-4 bg-[#FAF7F1] rounded-xl">
+                <p className="text-[10px] text-[#A39B8F] uppercase tracking-wider font-bold">
                   {t('dashboard.taskType', 'Type')}
                 </p>
-                <p className="font-semibold text-[#0f172a] mt-1">{showTaskDetail.typeLabel}</p>
+                <p className="font-semibold text-[#131C2E] mt-1">{showTaskDetail.typeLabel}</p>
               </div>
-              <div className="p-4 bg-[#f7f8fa] rounded-xl">
-                <p className="text-[10px] text-[#8b95a5] uppercase tracking-wider font-bold">
+              <div className="p-4 bg-[#FAF7F1] rounded-xl">
+                <p className="text-[10px] text-[#A39B8F] uppercase tracking-wider font-bold">
                   {t('dashboard.deadline', 'Echeance')}
                 </p>
-                <p className="font-semibold text-[#0f172a] mt-1">
+                <p className="font-semibold text-[#131C2E] mt-1">
                   {formatDate(showTaskDetail.deadline)}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm text-[#5e6b7d]">{t('dashboard.priority', 'Priorite')}:</span>
+              <span className="text-sm text-[#78716A]">{t('dashboard.priority', 'Priorite')}:</span>
               <Badge
                 variant={
                   showTaskDetail.priority === 'high'
@@ -695,7 +695,7 @@ export const Dashboard: React.FC = () => {
               </Badge>
             </div>
 
-            <div className="flex gap-3 pt-4 border-t border-[#e1e5ec]">
+            <div className="flex gap-3 pt-4 border-t border-[#E8E2D6]">
               <Button variant="outline" className="flex-1" onClick={() => handleTaskAction('view')}>
                 <Eye size={16} className="mr-2" />
                 {t('dashboard.viewDocument', 'Voir le document')}

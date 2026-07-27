@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -196,7 +196,7 @@ const ExternalBadge: React.FC<{
   const textSize = size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-[10px] px-1.5 py-0.5';
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full bg-[#b8a47e]/12 text-[#9a8561] ring-1 ring-[#b8a47e]/30 font-medium ${textSize}`}
+      className={`inline-flex items-center gap-1 rounded-full bg-[#B9975B]/12 text-[#8A6C34] ring-1 ring-[#B9975B]/30 font-medium ${textSize}`}
       title={external.organizationName ? `Externe — ${external.organizationName}` : 'Externe'}
     >
       <ExternalLink size={size === 'sm' ? 12 : 10} />

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -137,14 +137,14 @@ export const UserDashboard: React.FC = () => {
             key={label}
             className="relative overflow-hidden bg-white rounded-2xl border border-[#e8ebf0] p-5 shadow-[0_1px_3px_rgba(15,23,42,0.04),0_10px_30px_-12px_rgba(15,23,42,0.10)] transition-shadow hover:shadow-[0_1px_3px_rgba(15,23,42,0.05),0_16px_40px_-12px_rgba(15,23,42,0.16)]"
           >
-            <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-[#b8a47e] to-[#d4c6a5]" />
+            <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-[#B9975B] to-[#D4B87E]" />
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-3xl font-bold text-[#0f172a] tracking-tight">{value}</p>
-                <p className="text-sm text-[#5e6b7d] mt-1">{label}</p>
+                <p className="text-3xl font-bold text-[#131C2E] tracking-tight">{value}</p>
+                <p className="text-sm text-[#78716A] mt-1">{label}</p>
               </div>
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[#b8a47e]/12 ring-1 ring-[#b8a47e]/20">
-                <Icon size={22} className="text-[#9a8561]" />
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[#B9975B]/12 ring-1 ring-[#B9975B]/20">
+                <Icon size={22} className="text-[#8A6C34]" />
               </div>
             </div>
           </div>
@@ -217,8 +217,8 @@ export const UserDashboard: React.FC = () => {
                       key={activity.id}
                       className="flex items-center gap-3 p-3 bg-advist-surface-dark rounded-xl"
                     >
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#b8a47e]/14 ring-1 ring-[#b8a47e]/20">
-                        <ActivityIcon size={16} className="text-[#9a8561]" />
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#B9975B]/14 ring-1 ring-[#B9975B]/20">
+                        <ActivityIcon size={16} className="text-[#8A6C34]" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-advist-gray900 capitalize">
@@ -269,7 +269,7 @@ export const UserDashboard: React.FC = () => {
                   className="block p-4 border border-advist-border rounded-xl hover:border-advist-dark hover:shadow-sm transition-all group"
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-[#b8a47e]/14 text-[#9a8561]">
+                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-[#B9975B]/14 text-[#8A6C34]">
                       En cours
                     </span>
                     <div className="flex items-center gap-1 text-xs text-advist-gray900/50">

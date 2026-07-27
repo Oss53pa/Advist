@@ -53,7 +53,7 @@ export const KpiCardPremium: React.FC<KpiCardPremiumProps> = ({
       `}
     >
       {/* Subtle top accent line — gold institutional */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#b8a47e]/30 via-[#d4c6a5]/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#B9975B]/30 via-[#D4B87E]/20 to-transparent" />
 
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -91,14 +91,14 @@ export const KpiCardPremium: React.FC<KpiCardPremiumProps> = ({
                 <AreaChart data={sparklineData}>
                   <defs>
                     <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#b8a47e" stopOpacity={0.3} />
-                      <stop offset="100%" stopColor="#b8a47e" stopOpacity={0} />
+                      <stop offset="0%" stopColor="#B9975B" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#B9975B" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <Area
                     type="monotone"
                     dataKey="v"
-                    stroke="#b8a47e"
+                    stroke="#B9975B"
                     strokeWidth={1.5}
                     fill="url(#sparkGrad)"
                     dot={false}
