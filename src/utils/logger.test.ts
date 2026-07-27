@@ -12,20 +12,13 @@ vi.mock('@sentry/react', () => ({
 }));
 
 describe('Logger', () => {
-  let _consoleSpy: {
-    debug: ReturnType<typeof vi.spyOn>;
-    info: ReturnType<typeof vi.spyOn>;
-    warn: ReturnType<typeof vi.spyOn>;
-    error: ReturnType<typeof vi.spyOn>;
-  };
-
   beforeEach(() => {
-    consoleSpy = {
-      debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
-      info: vi.spyOn(console, 'info').mockImplementation(() => {}),
-      warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-      error: vi.spyOn(console, 'error').mockImplementation(() => {}),
-    };
+    // Silence console output during the assertions below (they only check that
+    // the logger methods run without throwing, not the spy calls themselves).
+    vi.spyOn(console, 'debug').mockImplementation(() => {});
+    vi.spyOn(console, 'info').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {

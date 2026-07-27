@@ -14,13 +14,13 @@ describe('Button', () => {
   it('applies primary variant by default', () => {
     render(<Button>Primary</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-advist-gray900');
+    expect(button).toHaveClass('bg-[#0f172a]');
   });
 
   it('applies secondary variant styles', () => {
     render(<Button variant="secondary">Secondary</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-advist-gray100');
+    expect(button).toHaveClass('bg-[#f7f8fa]');
   });
 
   it('applies outline variant styles', () => {
@@ -32,31 +32,31 @@ describe('Button', () => {
   it('applies ghost variant styles', () => {
     render(<Button variant="ghost">Ghost</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('hover:bg-advist-gray100');
+    expect(button).toHaveClass('hover:bg-[#f7f8fa]');
   });
 
   it('applies danger variant styles', () => {
     render(<Button variant="danger">Danger</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-advist-error');
+    expect(button).toHaveClass('bg-red-500');
   });
 
   it('applies small size styles', () => {
     render(<Button size="sm">Small</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('px-4', 'py-1.5', 'text-sm');
+    expect(button).toHaveClass('px-3.5', 'py-1.5', 'text-[13px]');
   });
 
   it('applies medium size by default', () => {
     render(<Button>Medium</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('px-5', 'py-2.5', 'text-base');
+    expect(button).toHaveClass('px-5', 'py-2.5', 'text-sm');
   });
 
   it('applies large size styles', () => {
     render(<Button size="lg">Large</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('px-6', 'py-3', 'text-lg');
+    expect(button).toHaveClass('px-6', 'py-3', 'text-base');
   });
 
   it('handles click events', () => {
@@ -105,7 +105,7 @@ describe('Button', () => {
   it('applies rounded styles when rounded prop is true', () => {
     render(<Button rounded>Rounded</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('rounded-[50px]');
+    expect(button).toHaveClass('rounded-full');
   });
 
   it('applies default border radius when rounded is false', () => {
@@ -130,7 +130,11 @@ describe('Button', () => {
   });
 
   it('passes through additional props', () => {
-    render(<Button data-testid="test-button" aria-label="Test">Test</Button>);
+    render(
+      <Button data-testid="test-button" aria-label="Test">
+        Test
+      </Button>
+    );
     expect(screen.getByTestId('test-button')).toHaveAttribute('aria-label', 'Test');
   });
 });
@@ -144,13 +148,13 @@ describe('FloatingButton', () => {
   it('applies default variant styles', () => {
     render(<FloatingButton>+</FloatingButton>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-advist-gray900');
+    expect(button).toHaveClass('bg-[#0f172a]');
   });
 
   it('applies danger variant styles', () => {
     render(<FloatingButton variant="danger">X</FloatingButton>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-advist-error');
+    expect(button).toHaveClass('bg-red-500');
   });
 
   it('applies small size', () => {
