@@ -15,16 +15,17 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'src/test/', '**/*.d.ts', '**/*.config.*', '**/index.ts'],
-      // Plancher réaliste aligné sur la couverture actuelle du dépôt (~48-60 %).
+      // Plancher réaliste aligné sur la couverture actuelle du dépôt (~60-69 %).
       // Le seuil de 80 % était aspirationnel et jamais atteint : la CI ne
       // l'exécutait pas (le job échouait au démarrage). Ce plancher agit comme
-      // un cliquet anti-régression — à relever au fur et à mesure que la
-      // couverture progresse.
+      // un cliquet anti-régression — relevé après l'ajout des tests de
+      // documents.ts (couverture réelle : ~69 % stmts / 60 % branches /
+      // 73 % funcs / 71 % lines). On garde quelques points de marge.
       thresholds: {
-        statements: 55,
-        branches: 45,
-        functions: 55,
-        lines: 55,
+        statements: 65,
+        branches: 55,
+        functions: 68,
+        lines: 67,
       },
     },
     testTimeout: 10000,

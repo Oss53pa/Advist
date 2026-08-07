@@ -3,6 +3,7 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { documentsService } from './documents';
+import { downloadFile } from './supabase-helpers';
 
 // ---------------------------------------------------------------------------
 // Chainable Supabase query builder mock
@@ -23,6 +24,8 @@ function createQueryBuilder(resolvedValue: { data: any; error: any; count?: numb
     'order',
     'range',
     'single',
+    'maybeSingle',
+    'in',
     'ilike',
     'limit',
   ];
@@ -677,6 +680,326 @@ describe('documentsService', () => {
       const result = await documentsService.get('doc-1');
 
       expect(result.confidentiality_level).toBe('confidential');
+    });
+  });
+
+  // =========================================================================
+  // download()
+  // =========================================================================
+  describe('download()', () => {
+    it('should return the blob and increment the download counter', async () => {
+      mockFrom
+        .mockReturnValueOnce(
+          createQueryBuilder({ data: { file_path: 'p/f.pdf', download_count: 2 }, error: null })
+        )
+        .mockReturnValueOnce(createQueryBuilder({ data: null, error: null }));
+      const blob = new Blob(['hello']);
+      vi.mocked(downloadFile).mockResolvedValue(blob as unknown as Blob);
+
+      const result = await documentsService.download('doc-1');
+
+      expect(result).toBe(blob);
+      expect(downloadFile).toHaveBeenCalled();
+    });
+
+    it('should throw when the document has no file_path', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: { file_path: null }, error: null }));
+
+      await expect(documentsService.download('doc-1')).rejects.toThrow('Aucun fichier associé');
+    });
+
+    it('should throw when the download itself fails', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: { file_path: 'p/f.pdf' }, error: null }));
+      vi.mocked(downloadFile).mockResolvedValue(null as unknown as Blob);
+
+      await expect(documentsService.download('doc-1')).rejects.toThrow('téléchargement');
+    });
+  });
+
+  // =========================================================================
+  // getTypes() / createType()
+  // =========================================================================
+  describe('getTypes()', () => {
+    it('should map active document types with defaults', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({
+          data: [{ id: 'dt-1', name: 'Invoice', allowed_extensions: ['.pdf'] }],
+          error: null,
+        })
+      );
+
+      const types = await documentsService.getTypes();
+
+      expect(types).toHaveLength(1);
+      expect(types[0]).toMatchObject({ id: 'dt-1', name: 'Invoice', max_size: 50 });
+    });
+
+    it('should throw on Supabase error', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({ data: null, error: { message: 'boom', code: '500' } })
+      );
+      await expect(documentsService.getTypes()).rejects.toThrow('boom');
+    });
+  });
+
+  describe('createType()', () => {
+    it('should insert a document type scoped to the user org', async () => {
+      mockFrom
+        .mockReturnValueOnce(
+          createQueryBuilder({ data: { organization_id: FAKE_ORG_ID }, error: null })
+        ) // getUserOrgId
+        .mockReturnValueOnce(
+          createQueryBuilder({ data: { id: 'dt-9', name: 'Contract' }, error: null })
+        );
+
+      const result = await documentsService.createType({ name: 'Contract' });
+
+      expect(result).toMatchObject({ id: 'dt-9', name: 'Contract' });
+    });
+
+    it('should throw when not authenticated', async () => {
+      mockUnauthenticatedUser();
+      await expect(documentsService.createType({ name: 'x' })).rejects.toThrow('Non authentifié');
+    });
+  });
+
+  // =========================================================================
+  // Basic annotations
+  // =========================================================================
+  describe('annotations (basic)', () => {
+    const annotationRow = {
+      id: 'ann-1',
+      page_number: 1,
+      x_position: 10,
+      y_position: 20,
+      width: 100,
+      height: 40,
+      content: 'note',
+      annotation_type: 'comment',
+      color: '#fff',
+      created_at: '2025-01-01T00:00:00Z',
+      user: { id: FAKE_USER_ID, first_name: 'Jean', last_name: 'Dupont' },
+    };
+
+    it('getAnnotations() should map rows', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: [annotationRow], error: null }));
+      const result = await documentsService.getAnnotations('doc-1');
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('ann-1');
+    });
+
+    it('getAnnotations() should throw on error', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({ data: null, error: { message: 'nope', code: '1' } })
+      );
+      await expect(documentsService.getAnnotations('doc-1')).rejects.toThrow('nope');
+    });
+
+    it('addAnnotation() should insert and return the mapped annotation', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: annotationRow, error: null }));
+      const result = await documentsService.addAnnotation('doc-1', {
+        page: 1,
+        x: 10,
+        y: 20,
+        width: 100,
+        height: 40,
+        content: 'note',
+        type: 'comment',
+        color: '#fff',
+      } as any);
+      expect(result.id).toBe('ann-1');
+    });
+
+    it('updateAnnotation() should update provided fields only', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: annotationRow, error: null }));
+      const result = await documentsService.updateAnnotation('doc-1', 'ann-1', {
+        content: 'edited',
+      });
+      expect(result.id).toBe('ann-1');
+    });
+
+    it('deleteAnnotation() should resolve on success', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: null, error: null }));
+      await expect(documentsService.deleteAnnotation('doc-1', 'ann-1')).resolves.toBeUndefined();
+    });
+
+    it('deleteAnnotation() should throw on error', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({ data: null, error: { message: 'del-fail', code: '1' } })
+      );
+      await expect(documentsService.deleteAnnotation('doc-1', 'ann-1')).rejects.toThrow('del-fail');
+    });
+  });
+
+  // =========================================================================
+  // Validation workflow
+  // =========================================================================
+  describe('validation workflow', () => {
+    it('submitForReview() should set status pending and return submitted', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: null, error: null }));
+      const res = await documentsService.submitForReview('doc-1');
+      expect(res).toEqual({ status: 'success', validation_status: 'submitted' });
+    });
+
+    it('submitForReview() should throw on error', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({ data: null, error: { message: 'x', code: '1' } })
+      );
+      await expect(documentsService.submitForReview('doc-1')).rejects.toThrow('x');
+    });
+
+    it('startReview() should return under_review', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: null, error: null }));
+      const res = await documentsService.startReview('doc-1');
+      expect(res.validation_status).toBe('under_review');
+    });
+
+    it('validateDocument() should approve and return validated', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: null, error: null }));
+      const res = await documentsService.validateDocument('doc-1');
+      expect(res.validation_status).toBe('validated');
+    });
+
+    it('validateDocument() should throw when not authenticated', async () => {
+      mockUnauthenticatedUser();
+      await expect(documentsService.validateDocument('doc-1')).rejects.toThrow('Non authentifié');
+    });
+
+    it('rejectDocument() should set status rejected and log a comment', async () => {
+      mockFrom
+        .mockReturnValueOnce(createQueryBuilder({ data: null, error: null }))
+        .mockReturnValueOnce(createQueryBuilder({ data: null, error: null }));
+      const res = await documentsService.rejectDocument('doc-1', 'not good');
+      expect(res.validation_status).toBe('rejected');
+    });
+
+    it('requestChanges() should set draft and insert a comment', async () => {
+      mockFrom
+        .mockReturnValueOnce(createQueryBuilder({ data: null, error: null }))
+        .mockReturnValueOnce(createQueryBuilder({ data: null, error: null }));
+      const res = await documentsService.requestChanges('doc-1', 'please fix');
+      expect(res.validation_status).toBe('changes_requested');
+    });
+
+    it('getValidationHistory() should merge comments and audit logs sorted desc', async () => {
+      mockFrom
+        .mockReturnValueOnce(
+          createQueryBuilder({
+            data: [
+              {
+                created_at: '2025-01-01T00:00:00Z',
+                content: 'c1',
+                is_resolved: false,
+                page_number: 2,
+                user: { id: 'u1', first_name: 'A', last_name: 'B' },
+              },
+            ],
+            error: null,
+          })
+        )
+        .mockReturnValueOnce(
+          createQueryBuilder({
+            data: [
+              {
+                created_at: '2025-02-01T00:00:00Z',
+                action: 'validated',
+                details: { comment: 'ok', step: 1 },
+                user: { id: 'u2', first_name: 'C', last_name: 'D' },
+              },
+            ],
+            error: null,
+          })
+        );
+
+      const history = await documentsService.getValidationHistory('doc-1');
+
+      expect(history).toHaveLength(2);
+      // Most recent (audit log, Feb) first after desc sort.
+      expect(history[0].type).toBe('workflow_action');
+      expect(history[1].type).toBe('comment');
+    });
+  });
+
+  // =========================================================================
+  // Contextual annotations
+  // =========================================================================
+  describe('contextual annotations', () => {
+    const ctxRow = {
+      id: 'cx-1',
+      page_number: 1,
+      x_position: 5,
+      y_position: 6,
+      content: 'ctx',
+      annotation_type: 'comment',
+      color: '#000',
+      is_resolved: false,
+      created_at: '2025-01-01T00:00:00Z',
+      user: { id: FAKE_USER_ID, first_name: 'Jean', last_name: 'Dupont' },
+    };
+
+    it('getContextualAnnotations() should map rows', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: [ctxRow], error: null }));
+      const result = await documentsService.getContextualAnnotations('doc-1');
+      expect(result).toHaveLength(1);
+    });
+
+    it('createContextualAnnotation() should insert and map', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: ctxRow, error: null }));
+      const result = await documentsService.createContextualAnnotation('doc-1', {
+        page_number: 1,
+        position: { x: 5, y: 6 },
+        content: { text: 'ctx' },
+        annotation_type: 'comment',
+      } as any);
+      expect(result.id).toBe('cx-1');
+    });
+
+    it('resolveAnnotation() should mark resolved', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({ data: { ...ctxRow, is_resolved: true }, error: null })
+      );
+      const result = await documentsService.resolveAnnotation('doc-1', 'cx-1');
+      expect(result.id).toBe('cx-1');
+    });
+
+    it('resolveAnnotation() should throw on error', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({ data: null, error: { message: 'res-fail', code: '1' } })
+      );
+      await expect(documentsService.resolveAnnotation('doc-1', 'cx-1')).rejects.toThrow('res-fail');
+    });
+  });
+
+  // =========================================================================
+  // compareVersions()
+  // =========================================================================
+  describe('compareVersions()', () => {
+    const versionRow = (n: number) => ({
+      version_number: n,
+      created_at: `2025-0${n}-01T00:00:00Z`,
+      file_size: n * 100,
+      created_by_user: { id: 'u1', first_name: 'A', last_name: 'B' },
+    });
+
+    it('should return a comparison of two versions', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({ data: [versionRow(1), versionRow(2)], error: null })
+      );
+      const result = await documentsService.compareVersions('doc-1', 1, 2);
+      expect(result.version_a.number).toBe(1);
+      expect(result.version_b.number).toBe(2);
+    });
+
+    it('should throw when a version is missing', async () => {
+      mockFrom.mockReturnValue(createQueryBuilder({ data: [versionRow(1)], error: null }));
+      await expect(documentsService.compareVersions('doc-1', 1, 2)).rejects.toThrow('Version');
+    });
+
+    it('should throw on Supabase error', async () => {
+      mockFrom.mockReturnValue(
+        createQueryBuilder({ data: null, error: { message: 'cmp-fail', code: '1' } })
+      );
+      await expect(documentsService.compareVersions('doc-1', 1, 2)).rejects.toThrow('cmp-fail');
     });
   });
 });
