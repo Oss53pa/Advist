@@ -6,8 +6,20 @@
 
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_emitter BOOLEAN DEFAULT FALSE;
 
--- Les admins et managers sont émetteurs par défaut
-UPDATE profiles SET is_emitter = TRUE WHERE role IN ('admin', 'manager');
+-- Les admins et managers sont émetteurs par défaut.
+-- NB : les rôles ne sont pas une colonne de `profiles` mais sont modélisés
+-- via `user_roles` (jointure) → `roles.name`. On passe donc par une
+-- sous-requête EXISTS (idempotente, ré-exécutable).
+UPDATE profiles p
+SET is_emitter = TRUE
+WHERE EXISTS (
+  SELECT 1
+  FROM user_roles ur
+  JOIN roles r ON r.id = ur.role_id
+  WHERE ur.user_id = p.id
+    AND ur.is_active = TRUE
+    AND lower(r.name) IN ('admin', 'manager')
+);
 
 -- Index pour compter rapidement les émetteurs par organisation
 CREATE INDEX IF NOT EXISTS idx_profiles_emitter_org

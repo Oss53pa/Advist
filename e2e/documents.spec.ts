@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Documents (authenticated)', () => {
-  // TODO: Set up test auth state via Supabase service role key
-  // When a test Supabase instance is available, configure auth setup in
-  // e2e/auth.setup.ts using storageState pattern:
-  // https://playwright.dev/docs/auth#basic-shared-account-in-all-tests
+  // Un vrai backend Supabase est désormais démarré en CI (`supabase start`),
+  // mais ces tests authentifiés restent ignorés tant qu'un utilisateur de test
+  // n'est pas seedé et qu'un état d'auth partagé n'est pas configuré.
+  // Étape restante : créer l'utilisateur via l'API admin (clé service_role de
+  // la stack locale) puis configurer e2e/auth.setup.ts avec le pattern
+  // storageState : https://playwright.dev/docs/auth#basic-shared-account-in-all-tests
 
   test.skip('should display documents list', async ({ page }) => {
     await page.goto('/user/documents');
@@ -34,6 +36,12 @@ test.describe('Documents (authenticated)', () => {
 test.describe('Public Document Access', () => {
   test('should show error for non-existent document token', async ({ page }) => {
     await page.goto('/external/invalid-token');
-    await expect(page.getByText(/introuvable|non trouvé|404|erreur/i)).toBeVisible();
+    // ExternalUserPage : un token inconnu affiche « Lien invalide » /
+    // « Ce lien de signature est invalide ou a expiré. » (ou une erreur de
+    // chargement si l'accès anon est refusé) — dans tous les cas un message
+    // d'erreur visible.
+    await expect(page.getByText(/invalide|expir|introuvable|erreur/i).first()).toBeVisible({
+      timeout: 15000,
+    });
   });
 });

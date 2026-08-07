@@ -88,64 +88,83 @@ CREATE POLICY org_members_admin_all ON public.org_members FOR ALL
   USING (org_id IN (SELECT public.auth_org_ids('admin')))
   WITH CHECK (org_id IN (SELECT public.auth_org_ids('admin')));
 
--- 7) Backfill membership from ACTIVE licence_seats, deduped to one row per
---    (user_id, org_id) keeping the strongest role.
-INSERT INTO public.user_orgs (user_id, org_id, role)
-SELECT user_id, org_id, role FROM (
-  SELECT
-    ls.user_id,
-    ls.tenant_id AS org_id,
-    CASE ls.role
-      WHEN 'app_super_admin' THEN 'admin'
-      WHEN 'app_admin'       THEN 'admin'
-      WHEN 'editor'          THEN 'editor'
-      ELSE 'viewer'
-    END AS role,
-    ROW_NUMBER() OVER (
-      PARTITION BY ls.user_id, ls.tenant_id
-      ORDER BY CASE ls.role
-        WHEN 'app_super_admin' THEN 1
-        WHEN 'app_admin'       THEN 2
-        WHEN 'editor'          THEN 3
-        ELSE 4 END
-    ) AS rn
-  FROM public.licence_seats ls
-  WHERE ls.user_id IS NOT NULL
-    AND ls.status = 'active'
-    AND EXISTS (SELECT 1 FROM public.organizations o WHERE o.id = ls.tenant_id)
-) t
-WHERE t.rn = 1
-ON CONFLICT (user_id, org_id) DO UPDATE SET role = EXCLUDED.role;
+-- 7) + 8) Backfill membership & roster from ACTIVE licence_seats.
+--    `licence_seats` (l'ancien système d'accès mutualisé Atlas Studio) n'existe
+--    pas dans le schéma de ce dépôt : sans garde, ces INSERT échouent avec
+--    « relation licence_seats does not exist ». On enveloppe donc le backfill
+--    dans un bloc conditionnel en SQL dynamique (EXECUTE) — il ne s'exécute que
+--    si la table est présente (ex. base mutualisée), et est inoffensif sinon.
+DO $backfill$
+BEGIN
+  IF to_regclass('public.licence_seats') IS NULL THEN
+    RAISE NOTICE 'licence_seats absente : backfill user_orgs/org_members ignoré.';
+    RETURN;
+  END IF;
 
--- 8) Backfill roster, deduped per (org_id, email) preferring active + strongest role.
-INSERT INTO public.org_members (org_id, email, name, role, active)
-SELECT org_id, email, name, role, active FROM (
-  SELECT
-    ls.tenant_id AS org_id,
-    ls.email,
-    ls.full_name AS name,
-    CASE ls.role
-      WHEN 'app_super_admin' THEN 'admin'
-      WHEN 'app_admin'       THEN 'admin'
-      WHEN 'editor'          THEN 'editor'
-      ELSE 'viewer'
-    END AS role,
-    (ls.status = 'active') AS active,
-    ROW_NUMBER() OVER (
-      PARTITION BY ls.tenant_id, lower(ls.email)
-      ORDER BY (ls.status = 'active') DESC,
+  -- 7) Backfill membership, deduped à une ligne par (user_id, org_id),
+  --    en gardant le rôle le plus fort.
+  EXECUTE $sql$
+    INSERT INTO public.user_orgs (user_id, org_id, role)
+    SELECT user_id, org_id, role FROM (
+      SELECT
+        ls.user_id,
+        ls.tenant_id AS org_id,
         CASE ls.role
-          WHEN 'app_super_admin' THEN 1
-          WHEN 'app_admin'       THEN 2
-          WHEN 'editor'          THEN 3
-          ELSE 4 END
-    ) AS rn
-  FROM public.licence_seats ls
-  WHERE ls.email IS NOT NULL
-    AND EXISTS (SELECT 1 FROM public.organizations o WHERE o.id = ls.tenant_id)
-) t
-WHERE t.rn = 1
-ON CONFLICT (org_id, email) DO NOTHING;
+          WHEN 'app_super_admin' THEN 'admin'
+          WHEN 'app_admin'       THEN 'admin'
+          WHEN 'editor'          THEN 'editor'
+          ELSE 'viewer'
+        END AS role,
+        ROW_NUMBER() OVER (
+          PARTITION BY ls.user_id, ls.tenant_id
+          ORDER BY CASE ls.role
+            WHEN 'app_super_admin' THEN 1
+            WHEN 'app_admin'       THEN 2
+            WHEN 'editor'          THEN 3
+            ELSE 4 END
+        ) AS rn
+      FROM public.licence_seats ls
+      WHERE ls.user_id IS NOT NULL
+        AND ls.status = 'active'
+        AND EXISTS (SELECT 1 FROM public.organizations o WHERE o.id = ls.tenant_id)
+    ) t
+    WHERE t.rn = 1
+    ON CONFLICT (user_id, org_id) DO UPDATE SET role = EXCLUDED.role;
+  $sql$;
+
+  -- 8) Backfill roster, dedupé par (org_id, email) en préférant actif + rôle fort.
+  EXECUTE $sql$
+    INSERT INTO public.org_members (org_id, email, name, role, active)
+    SELECT org_id, email, name, role, active FROM (
+      SELECT
+        ls.tenant_id AS org_id,
+        ls.email,
+        ls.full_name AS name,
+        CASE ls.role
+          WHEN 'app_super_admin' THEN 'admin'
+          WHEN 'app_admin'       THEN 'admin'
+          WHEN 'editor'          THEN 'editor'
+          ELSE 'viewer'
+        END AS role,
+        (ls.status = 'active') AS active,
+        ROW_NUMBER() OVER (
+          PARTITION BY ls.tenant_id, lower(ls.email)
+          ORDER BY (ls.status = 'active') DESC,
+            CASE ls.role
+              WHEN 'app_super_admin' THEN 1
+              WHEN 'app_admin'       THEN 2
+              WHEN 'editor'          THEN 3
+              ELSE 4 END
+        ) AS rn
+      FROM public.licence_seats ls
+      WHERE ls.email IS NOT NULL
+        AND EXISTS (SELECT 1 FROM public.organizations o WHERE o.id = ls.tenant_id)
+    ) t
+    WHERE t.rn = 1
+    ON CONFLICT (org_id, email) DO NOTHING;
+  $sql$;
+END
+$backfill$;
 
 -- ════════════════════════════════════════════════════════════════════
 -- PATTERN TO COPY ONTO EACH NEW BUSINESS TABLE (one with organization_id)
