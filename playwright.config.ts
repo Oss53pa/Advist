@@ -20,6 +20,11 @@ export default defineConfig({
   },
   use: {
     baseURL: 'http://localhost:5173',
+    // Force la locale FR : l'app détecte la langue via `navigator` (i18next
+    // LanguageDetector). Sans cela, le chromium du runner CI est en anglais et
+    // les libellés (« Connexion », « Mot de passe oublié ? », …) ne
+    // correspondent plus aux specs. On teste l'app dans sa langue principale.
+    locale: 'fr-FR',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
