@@ -1,12 +1,27 @@
 import { createAtlasSupabaseClient } from './createAtlasSupabaseClient';
+import { checkSupabaseEnv } from './env';
 import type { Database } from './database.types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Ce module ne lève JAMAIS au chargement. Il l'a fait longtemps, et comme il
+// est importé par tout l'arbre applicatif, l'exception interrompait
+// l'évaluation du bundle : React ne montait jamais et l'application se rendait
+// entièrement blanche, sans erreur exploitable — un déploiement mal configuré
+// passait donc inaperçu.
+//
+// À la place, on expose le diagnostic : main.tsx le consulte AVANT de monter
+// l'application et affiche un écran lisible. Ce contrat permet de conserver
+// des imports statiques (donc le préchargement parallèle des chunks vendor)
+// tout en éliminant la page blanche.
+const check = checkSupabaseEnv(import.meta.env);
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY environment variables');
-}
+/** Liste vide si la configuration est exploitable. Voir main.tsx. */
+export const supabaseConfigProblems: string[] = check.ok ? [] : check.problems;
+
+// Valeurs de repli syntaxiquement valides : `createClient()` refuse une URL
+// malformée en levant. Elles ne servent jamais — quand la config est cassée,
+// l'application n'est pas montée du tout.
+const supabaseUrl = check.ok ? check.env.url : 'https://unconfigured.invalid';
+const supabaseAnonKey = check.ok ? check.env.anonKey : 'unconfigured';
 
 // Nettoyage unique de l'ancienne clé `advist-auth` : elle était utilisée
 // SIMULTANÉMENT par le client Supabase (session) et par zustand/persist

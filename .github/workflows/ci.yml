@@ -107,6 +107,12 @@ jobs:
 
       - name: Build application
         run: npm run build
+        env:
+          # Placeholders : ce job vérifie que le projet COMPILE, il ne déploie
+          # rien. Le build échoue désormais si ces variables sont absentes —
+          # sans elles il produisait un artefact silencieusement blanc.
+          VITE_SUPABASE_URL: https://placeholder.supabase.co
+          VITE_SUPABASE_ANON_KEY: placeholder-anon-key
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
