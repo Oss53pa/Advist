@@ -13,6 +13,13 @@ import type { AuthError } from '@supabase/supabase-js';
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  /**
+   * Vrai tant que `initialize()` n'a pas confronté l'état local à la session
+   * Supabase. Les gardes de routes doivent afficher un loader pendant ce
+   * laps de temps : sans ça, elles arbitrent sur un `isAuthenticated` non
+   * encore vérifié et redirigent à tort (/login <-> /user).
+   */
+  isBootstrapping: boolean;
   isLoading: boolean;
   error: string | null;
   accessToken: string | null;
@@ -31,6 +38,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
+      isBootstrapping: true,
       isLoading: false,
       error: null,
       accessToken: null,
@@ -110,22 +118,31 @@ export const useAuthStore = create<AuthState>()(
 
         set({ _initialized: true });
 
-        // Check for existing session
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        if (session?.user) {
-          try {
-            const user = await authService.getCurrentUser();
-            set({
-              user,
-              isAuthenticated: true,
-              isLoading: false,
-              accessToken: session.access_token,
-            });
-          } catch {
+        // Check for existing session. Supabase fait autorité : tant que ce
+        // bloc n'a pas tranché, aucune garde de route ne doit décider.
+        try {
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          if (session?.user) {
+            try {
+              const user = await authService.getCurrentUser();
+              set({
+                user,
+                isAuthenticated: true,
+                isLoading: false,
+                accessToken: session.access_token,
+              });
+            } catch {
+              set({ user: null, isAuthenticated: false, isLoading: false, accessToken: null });
+            }
+          } else {
             set({ user: null, isAuthenticated: false, isLoading: false, accessToken: null });
           }
+        } finally {
+          // Même si getSession() échoue, on doit débloquer l'UI : sinon
+          // l'application reste sur un loader indéfiniment.
+          set({ isBootstrapping: false });
         }
 
         // Listen for auth state changes (debounced to prevent loops)
@@ -158,9 +175,15 @@ export const useAuthStore = create<AuthState>()(
       clearError: () => set({ error: null }),
     }),
     {
-      name: 'advist-auth',
+      // Clé distincte de celle du client Supabase (`advist-supabase-auth`).
+      // Les deux partageaient `advist-auth` et s'écrasaient mutuellement.
+      name: 'advist-auth-cache',
+      // On ne persiste QUE le profil, pour un premier rendu sans clignotement.
+      // `isAuthenticated` n'est délibérément pas persisté : le seul juge de
+      // la session est Supabase, via `initialize()`. Le persister revenait à
+      // se déclarer connecté avant toute vérification, ce qui renvoyait
+      // /login vers /user en boucle.
       partialize: (state) => ({
-        isAuthenticated: state.isAuthenticated,
         user: state.user,
       }),
     }

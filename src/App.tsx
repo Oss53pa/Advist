@@ -95,8 +95,13 @@ const PageLoader: React.FC = () => {
 
 // Subscription Protected Route - vérifie l'abonnement en plus de l'auth
 const SubscriptionProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isBootstrapping } = useAuthStore();
   const { isLoading, canAccess, blockReason } = useSubscriptionGuard();
+
+  // Attendre que la session Supabase ait été vérifiée avant de rediriger.
+  if (isBootstrapping) {
+    return <PageLoader />;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -115,7 +120,14 @@ const SubscriptionProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ c
 
 // Public Route wrapper (redirect to app if already logged in)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isBootstrapping } = useAuthStore();
+
+  // Sans cette garde, un état persisté non vérifié renvoyait /login vers
+  // /user, qui renvoyait à son tour vers /login : la page de connexion
+  // devenait inatteignable.
+  if (isBootstrapping) {
+    return <PageLoader />;
+  }
 
   if (isAuthenticated) {
     return <Navigate to="/user" replace />;
@@ -126,8 +138,12 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 // Admin Route wrapper - checks auth + subscription + admin/org_admin role
 const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, isBootstrapping } = useAuthStore();
   const { isLoading, canAccess, blockReason } = useSubscriptionGuard();
+
+  if (isBootstrapping) {
+    return <PageLoader />;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

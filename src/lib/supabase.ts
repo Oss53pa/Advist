@@ -8,10 +8,25 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY environment variables');
 }
 
+// Nettoyage unique de l'ancienne clé `advist-auth` : elle était utilisée
+// SIMULTANÉMENT par le client Supabase (session) et par zustand/persist
+// (état UI). Les deux écrivaient des formes incompatibles sur la même
+// entrée localStorage et s'écrasaient mutuellement, ce qui bloquait la
+// page /login dans une boucle de redirection. Les deux utilisent désormais
+// des clés distinctes ; on purge le résidu empoisonné au démarrage.
+if (typeof localStorage !== 'undefined') {
+  try {
+    localStorage.removeItem('advist-auth');
+  } catch {
+    /* storage indisponible (mode privé, quota) — sans conséquence */
+  }
+}
+
 export const supabase = createAtlasSupabaseClient<Database>({
   url: supabaseUrl,
   anonKey: supabaseAnonKey,
-  storageKey: 'advist-auth',
+  // Ne JAMAIS réutiliser cette clé pour un autre store (cf. bloc ci-dessus).
+  storageKey: 'advist-supabase-auth',
 });
 
 /**
