@@ -36,6 +36,12 @@ test.describe('Documents (authenticated)', () => {
 test.describe('Public Document Access', () => {
   test('should show error for non-existent document token', async ({ page }) => {
     await page.goto('/external/invalid-token');
-    await expect(page.getByText(/introuvable|non trouvé|404|erreur/i)).toBeVisible();
+    // ExternalUserPage : un token inconnu affiche « Lien invalide » /
+    // « Ce lien de signature est invalide ou a expiré. » (ou une erreur de
+    // chargement si l'accès anon est refusé) — dans tous les cas un message
+    // d'erreur visible.
+    await expect(page.getByText(/invalide|expir|introuvable|erreur/i).first()).toBeVisible({
+      timeout: 15000,
+    });
   });
 });

@@ -184,7 +184,7 @@ export const LoginPage: React.FC = () => {
               to="/register"
               className="text-[13px] text-[#B9975B] font-semibold hover:text-[#D4B87E] transition-colors"
             >
-              {t('auth.register')}
+              {t('auth.register.createAccount', 'Créer votre compte')}
             </Link>
           </div>
         </div>
