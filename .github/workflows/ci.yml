@@ -86,7 +86,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [lint-and-test, migrate]
+    # NB : ne dépend que de lint-and-test. Le job `migrate` ne s'exécute que
+    # sur push vers main ; l'inclure dans `needs` faisait « sauter » (skip) le
+    # build — et donc les E2E — sur toutes les PR (un `needs` sauté se propage).
+    # Le build/les E2E n'ont de toute façon aucune dépendance sur `migrate`.
+    needs: [lint-and-test]
 
     steps:
       - name: Checkout code
@@ -115,15 +119,12 @@ jobs:
     name: E2E Tests (Playwright)
     runs-on: ubuntu-latest
     needs: build
-    # Désactivé du pipeline automatique : les E2E nécessitent un backend de
-    # test (Supabase) et des données seedées qui ne sont pas provisionnés en
-    # CI, donc les specs échouent/bouclent. Le job ne tourne donc plus sur
-    # push/PR — uniquement à la demande via « Run workflow » (workflow_dispatch).
-    # À réactiver (retirer ce garde) une fois l'environnement de test en place.
-    #
-    # NB : `hashFiles()` est interdit dans un `if:` de job ; le garde par
-    # présence des specs est donc porté au niveau des étapes (après checkout).
-    if: github.event_name == 'workflow_dispatch'
+    # Les E2E tournent contre un VRAI backend Supabase démarré localement dans
+    # le runner (`supabase start`) : Postgres + Auth + Storage + API, avec les
+    # migrations de `supabase/migrations` appliquées. Aucun secret externe n'est
+    # requis — la stack locale génère son URL et sa clé anon, qu'on injecte dans
+    # le serveur de dev via les variables VITE_*.
+    # Réactivé sur push/PR (le garde `workflow_dispatch` est retiré).
 
     steps:
       - name: Checkout code
@@ -138,29 +139,50 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase (backend de test local)
+        # Démarre la stack complète et applique les migrations. La commande
+        # bloque jusqu'à ce que les services soient sains : le backend est donc
+        # prêt avant l'exécution des tests.
+        run: supabase start
+
+      - name: Exposer l'URL et la clé anon du backend local
+        # `--override-name` produit les variables attendues par l'app (voir
+        # src/lib/supabase.ts). ATTENTION : `-o env` entoure les valeurs de
+        # guillemets (VITE_SUPABASE_URL="http://127.0.0.1:54321"), et
+        # `>> $GITHUB_ENV` les conserve LITTÉRALEMENT — l'app recevait donc une
+        # URL entre guillemets, rejetée par @supabase/supabase-js
+        # (« Invalid supabaseUrl »), ce qui faisait planter createClient au
+        # chargement → page blanche. On retire donc les guillemets et on ne
+        # garde que les deux variables VITE_ utiles.
+        run: |
+          supabase status -o env \
+            --override-name api.url=VITE_SUPABASE_URL \
+            --override-name auth.anon_key=VITE_SUPABASE_ANON_KEY \
+            | grep -E '^VITE_' \
+            | sed -E 's/^([A-Za-z_][A-Za-z0-9_]*)="(.*)"$/\1=\2/' \
+            >> "$GITHUB_ENV"
+
       - name: Install Playwright browsers
-        if: hashFiles('e2e/**/*.spec.ts') != ''
         run: npx playwright install --with-deps chromium
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
       - name: Run Playwright E2E tests
-        if: hashFiles('e2e/**/*.spec.ts') != ''
-        # Seul le navigateur chromium est installé ci-dessus : on restreint la
-        # config (5 projets déclarés) à ce projet pour éviter les échecs
-        # « browser not installed » sur firefox/webkit/mobile.
+        # La config déclare 5 projets ; on restreint à chromium (seul navigateur
+        # installé) pour un job rapide et fiable. Le serveur de dev démarré par
+        # Playwright (webServer) hérite des variables VITE_* ci-dessus.
         run: npx playwright test --project=chromium
         env:
           CI: true
-          # Placeholders pour permettre au serveur de dev de démarrer sans
-          # backend réel (mode mock activé).
-          VITE_SUPABASE_URL: https://placeholder.supabase.co
-          VITE_SUPABASE_ANON_KEY: placeholder-anon-key
-          VITE_MOCK_MODE: 'true'
+          # Vrai backend : on désactive explicitement le mode mock.
+          VITE_MOCK_MODE: 'false'
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

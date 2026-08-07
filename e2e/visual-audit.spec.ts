@@ -87,9 +87,13 @@ test.describe('Visual Audit - Public Pages', () => {
     await page.waitForTimeout(500);
 
     // Check form elements exist
-    const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]');
+    const emailInput = page.locator(
+      'input[type="email"], input[name="email"], input[placeholder*="email" i]'
+    );
     const passwordInput = page.locator('input[type="password"]');
-    const submitButton = page.locator('button[type="submit"], button:has-text("Connexion"), button:has-text("Login")');
+    const submitButton = page.locator(
+      'button[type="submit"], button:has-text("Connexion"), button:has-text("Login")'
+    );
 
     await expect(emailInput.first()).toBeVisible({ timeout: 10000 });
     await expect(passwordInput.first()).toBeVisible({ timeout: 10000 });
@@ -98,14 +102,16 @@ test.describe('Visual Audit - Public Pages', () => {
     await screenshotAllDevices(page, 'login-form');
   });
 
-  test('Register form visible', async ({ page }) => {
+  test('Register redirects to Atlas Studio', async ({ page }) => {
+    // L'inscription est gérée sur le portail Atlas Studio : /register affiche
+    // une page de redirection (pas de formulaire in-app). La page se
+    // redirige automatiquement au bout de ~2 s, donc on vérifie et capture
+    // immédiatement l'écran de redirection.
     await page.goto('/register', { timeout: 90000 });
-    await page.waitForTimeout(500);
-
-    const form = page.locator('form');
-    await expect(form.first()).toBeVisible({ timeout: 10000 });
-
-    await screenshotAllDevices(page, 'register-form');
+    await expect(page.getByRole('heading', { name: /atlas studio/i })).toBeVisible({
+      timeout: 10000,
+    });
+    await page.screenshot({ path: 'e2e/screenshots/register-redirect.png' });
   });
 
   test('Navigation header visible', async ({ page }) => {
@@ -148,7 +154,9 @@ test.describe('Visual Audit - Interactive Elements', () => {
     await page.goto('/login', { timeout: 90000 });
     await page.waitForTimeout(500);
 
-    const submitButton = page.locator('button[type="submit"], button:has-text("Connexion"), button:has-text("Login")').first();
+    const submitButton = page
+      .locator('button[type="submit"], button:has-text("Connexion"), button:has-text("Login")')
+      .first();
     if (await submitButton.isVisible()) {
       await submitButton.click();
       await page.waitForTimeout(500);
@@ -163,9 +171,11 @@ test.describe('Visual Audit - Interactive Elements', () => {
     await page.goto('/', { timeout: 90000 });
     await page.waitForTimeout(1000);
 
-    const ctaButtons = page.locator('button:has-text("Commencer"), button:has-text("Essayer"), button:has-text("Demo"), a:has-text("Commencer")');
+    const ctaButtons = page.locator(
+      'button:has-text("Commencer"), button:has-text("Essayer"), button:has-text("Demo"), a:has-text("Commencer")'
+    );
 
-    if (await ctaButtons.count() > 0) {
+    if ((await ctaButtons.count()) > 0) {
       await ctaButtons.first().click();
       await page.waitForTimeout(500);
 
@@ -209,7 +219,9 @@ test.describe('Visual Audit - Responsive Design', () => {
     await page.goto('/', { timeout: 90000 });
     await page.waitForTimeout(1000);
 
-    const menuButton = page.locator('[aria-label="Menu"], button:has-text("Menu"), .hamburger, [class*="menu"]').first();
+    const menuButton = page
+      .locator('[aria-label="Menu"], button:has-text("Menu"), .hamburger, [class*="menu"]')
+      .first();
 
     await page.screenshot({
       path: 'e2e/screenshots/mobile-menu-closed.png',
@@ -267,7 +279,7 @@ test.describe('Visual Audit - Accessibility', () => {
     await page.waitForTimeout(1000);
 
     const buttons = page.locator('button');
-    if (await buttons.count() > 0) {
+    if ((await buttons.count()) > 0) {
       await buttons.first().focus();
       await page.screenshot({
         path: 'e2e/screenshots/focus-state-button.png',
@@ -275,7 +287,7 @@ test.describe('Visual Audit - Accessibility', () => {
     }
 
     const links = page.locator('a');
-    if (await links.count() > 0) {
+    if ((await links.count()) > 0) {
       await links.first().focus();
       await page.screenshot({
         path: 'e2e/screenshots/focus-state-link.png',
@@ -323,7 +335,8 @@ test.describe('Visual Audit - Performance', () => {
         domContentLoaded: perf.domContentLoadedEventEnd - perf.fetchStart,
         loadComplete: perf.loadEventEnd - perf.fetchStart,
         firstPaint: performance.getEntriesByName('first-paint')[0]?.startTime || 0,
-        firstContentfulPaint: performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0,
+        firstContentfulPaint:
+          performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0,
       };
     });
 
