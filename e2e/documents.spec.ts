@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Documents (authenticated)', () => {
-  // TODO: Set up test auth state via Supabase service role key
-  // When a test Supabase instance is available, configure auth setup in
-  // e2e/auth.setup.ts using storageState pattern:
-  // https://playwright.dev/docs/auth#basic-shared-account-in-all-tests
+  // Un vrai backend Supabase est désormais démarré en CI (`supabase start`),
+  // mais ces tests authentifiés restent ignorés tant qu'un utilisateur de test
+  // n'est pas seedé et qu'un état d'auth partagé n'est pas configuré.
+  // Étape restante : créer l'utilisateur via l'API admin (clé service_role de
+  // la stack locale) puis configurer e2e/auth.setup.ts avec le pattern
+  // storageState : https://playwright.dev/docs/auth#basic-shared-account-in-all-tests
 
   test.skip('should display documents list', async ({ page }) => {
     await page.goto('/user/documents');
