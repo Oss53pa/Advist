@@ -170,6 +170,60 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: 🔎 Diagnostic rendu (console navigateur)
+        # Temporaire : reproduit la condition exacte des E2E (vrai backend +
+        # serveur de dev) et déverse dans le log CI la console navigateur, les
+        # erreurs JS, les requêtes en échec et le contenu de #root — pour
+        # diagnostiquer la page blanche observée uniquement sous le runner CI.
+        # Sert le dev sur un port dédié (5199) pour ne pas percuter le serveur
+        # que Playwright démarre lui-même (5173). Ne bloque jamais.
+        continue-on-error: true
+        env:
+          VITE_MOCK_MODE: 'false'
+        run: |
+          set +e
+          npm run dev -- --port 5199 --strictPort > /tmp/devserver.log 2>&1 &
+          DEV_PID=$!
+          echo "dev server pid=$DEV_PID — attente de http://localhost:5199 ..."
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null "http://localhost:5199/" && break
+            sleep 1
+          done
+          echo "--- tail dev server log ---"; tail -n 20 /tmp/devserver.log
+          node -e '
+            const { chromium } = require("@playwright/test");
+            (async () => {
+              const browser = await chromium.launch();
+              for (const path of ["/", "/login"]) {
+                const page = await browser.newPage();
+                const errs = [], cons = [], failed = [];
+                page.on("pageerror", e => errs.push(String(e.stack || e.message)));
+                page.on("console", m => { if (m.type() === "error") cons.push(m.text()); });
+                page.on("requestfailed", r => failed.push((r.failure() && r.failure().errorText) + " :: " + r.url()));
+                page.on("response", r => { if (r.status() >= 400) failed.push(r.status() + " :: " + r.url()); });
+                await page.goto("http://localhost:5199" + path, { waitUntil: "networkidle", timeout: 60000 }).catch(e => errs.push("goto: " + e.message));
+                await page.waitForTimeout(2500);
+                const info = await page.evaluate(() => ({
+                  title: document.title,
+                  rootLen: (document.getElementById("root") || {}).innerHTML ? document.getElementById("root").innerHTML.length : 0,
+                  rootHead: (document.getElementById("root") || {}).innerHTML ? document.getElementById("root").innerHTML.slice(0, 400) : "(no #root)",
+                  textEls: document.querySelectorAll("p,h1,h2,h3,span,a,button,label").length,
+                }));
+                console.log("\n===================== " + path + " =====================");
+                console.log("title=" + info.title + " | rootLen=" + info.rootLen + " | textEls=" + info.textEls);
+                console.log("root innerHTML head: " + JSON.stringify(info.rootHead));
+                console.log("-- PAGEERRORS (" + errs.length + ") --"); errs.slice(0, 10).forEach(e => console.log("  " + e.split("\n").slice(0, 4).join(" | ")));
+                console.log("-- CONSOLE ERRORS (" + cons.length + ") --"); cons.slice(0, 20).forEach(e => console.log("  " + e));
+                console.log("-- FAILED/4xx REQUESTS (" + failed.length + ") --"); failed.slice(0, 25).forEach(e => console.log("  " + e));
+                await page.close();
+              }
+              await browser.close();
+            })().catch(e => { console.error("diag script error:", e); });
+          '
+          kill $DEV_PID 2>/dev/null
+          pkill -f "vite" 2>/dev/null
+          echo "diagnostic terminé"
+
       - name: Run Playwright E2E tests
         # La config déclare 5 projets ; on restreint à chromium (seul navigateur
         # installé) pour un job rapide et fiable. Le serveur de dev démarré par
