@@ -21,8 +21,11 @@
       <link href="https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap" rel="stylesheet">
     </noscript>
 
-    <!-- Preload critical CSS -->
-    <link rel="modulepreload" href="/src/main.tsx">
+    <!-- Pas de modulepreload manuel vers /src/main.tsx : Vite ne le traite
+         pas comme un point d'entrée et inline le TSX source en data-URI
+         `application/octet-stream` dans le HTML de production (source
+         exposée + erreur MIME en console). Vite émet déjà les balises
+         modulepreload correctes pour l'entrée et ses dépendances. -->
   </head>
   <body>
     <div id="root"></div>
