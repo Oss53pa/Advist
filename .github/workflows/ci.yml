@@ -228,7 +228,9 @@ jobs:
         # La config déclare 5 projets ; on restreint à chromium (seul navigateur
         # installé) pour un job rapide et fiable. Le serveur de dev démarré par
         # Playwright (webServer) hérite des variables VITE_* ci-dessus.
-        run: npx playwright test --project=chromium
+        # `--retries=0` temporaire : tant que le job est non bloquant et en
+        # cours de diagnostic, on évite les reprises (×2) qui rallongent le job.
+        run: npx playwright test --project=chromium --retries=0
         env:
           CI: true
           # Vrai backend : on désactive explicitement le mode mock.
